@@ -1,7 +1,9 @@
 //IMPORTANT: The ctrl_* signals will be taken 2 cycles after ctrl_draw has been raised
 module gpu 
 #(
-    parameter QUEUE_DEPTH = 8
+    parameter QUEUE_DEPTH = 8,
+    parameter FB_WIDTH = 120,
+    parameter FB_HEIGHT = 160
 )
 (
     input clk,
@@ -23,6 +25,8 @@ module gpu
     input  [15:0] ctrl_x,        //Left position of the image to be drawn
     input  [15:0] ctrl_y,        //Top position of the image to be drawn
     input         ctrl_draw,     //Tells the GPU to save the given ctrl data and push it into the render queue
+    input         ctrl_clear,    //Tells the GPU to clear the framebuffer with ctrl_clear_color
+    input  [15:0] ctrl_clear_color,//The color with which the framebuffer will be cleared
     output        ctrl_full,     //Tells the controller that the render queue is currently full. Draw requests will be ignored
 
     output reg[7:0]  fb_x,     //The x coordinate
@@ -104,6 +108,7 @@ localparam LOADQUEUE_0 = 1;
 localparam LOADQUEUE_1 = 2;
 localparam DRAW = 3;
 localparam FINISH = 4;
+localparam CLEAR_FB = 5;
 
 always @(posedge clk) begin
     if(rstn == 0) begin
@@ -126,8 +131,10 @@ always @(posedge clk) begin
                 old_y <= 0;
                 if(!queue_empty) begin 
                     state <= LOADQUEUE_0;
-                    
                     pop <= 1;
+                end
+                else if(ctrl_clear) begin
+                    state <= CLEAR_FB;
                 end
             end
             LOADQUEUE_0: begin
@@ -136,7 +143,6 @@ always @(posedge clk) begin
             end
             LOADQUEUE_1: begin
                 mem_addr <= active_address + active_address_x + active_address_y * active_sheetsize;
-
                 state <= DRAW;
             end
             DRAW: begin
@@ -166,6 +172,22 @@ always @(posedge clk) begin
                 fb_write <= 1;
 
                 state <= IDLE;
+            end
+
+            CLEAR_FB: begin
+                fb_x <= old_x;
+                fb_y <= old_y;
+                fb_write <= 1;
+                fb_color <= ctrl_clear_color;
+
+                old_x <= old_x + 1;
+                if(old_x >= FB_WIDTH - 1) begin
+                    old_x <= 0;
+                    old_y <= old_y + 1;
+                    if(old_y >= FB_HEIGHT - 1) begin
+                        state <= IDLE;
+                    end
+                end
             end
         endcase
     end

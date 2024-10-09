@@ -15,6 +15,8 @@ reg[15:0] tb_ctrl_height = 0;
 reg[15:0] tb_ctrl_x = 0;
 reg[15:0] tb_ctrl_y = 0;
 reg tb_ctrl_draw = 0;
+reg tb_ctrl_clear = 0;
+reg[15:0] tb_ctrl_clear_color = 0;
 
 wire[15:0] gpu_mem_addr;
 wire[15:0] gpu_mem_wdata;
@@ -45,6 +47,8 @@ gpu gpu
     .ctrl_y(tb_ctrl_y),
     .ctrl_draw(tb_ctrl_draw),
     .ctrl_full(gpu_ctrl_full),
+    .ctrl_clear(tb_ctrl_clear),
+    .ctrl_clear_color(tb_ctrl_clear_color),
     
     .fb_x(gpu_fb_x),
     .fb_y(gpu_fb_y),
@@ -120,7 +124,10 @@ initial begin
     #2 tb_ctrl_draw <= 1;
     #2 tb_ctrl_draw <= 0;
 
-    #10000 $finish;
+    #1000 tb_ctrl_clear <= 1;
+    #6 tb_ctrl_clear <= 0;
+
+    #100000 $finish;
 end
 
 endmodule
