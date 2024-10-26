@@ -35,14 +35,14 @@ module gpu
     output reg       fb_write  //Tells the frame buffer to write color to (fb_x, fb_y)
 );
 
-reg[1:0] old_ctrl_draw;
+reg old_ctrl_draw;
 
 // | 143:112 | 111:96 | 95:80 | 79:64 | 63:48 | 47:32 | 31:16 |  15:0  |
 // |  addr   | addr_x | addr_y| sheet | width | height|   x   |    y   |
 wire[143:0] queue_o_data;
 wire queue_empty;
 wire queue_pop;
-reg queue_push = 0;
+wire queue_push = old_ctrl_draw == 0 && ctrl_draw == 1;
 reg pop = 0;
 
 wire[31:0] active_address;
@@ -88,11 +88,7 @@ always @(posedge clk) begin
         old_ctrl_draw <= 0;
     end
     else begin
-        old_ctrl_draw <= {old_ctrl_draw[0], ctrl_draw};
-        if(old_ctrl_draw[1] == 0 && old_ctrl_draw[0] == 1)
-            queue_push <= 1;
-        else
-            queue_push <= 0;
+        old_ctrl_draw <= ctrl_draw;
     end
 end
 
