@@ -22,8 +22,8 @@ module gpu #
     input  [15:0] ctrl_y,        //Top position of the image to be drawn
     input         ctrl_draw,     //Tells the GPU to execute a draw call
     
-    input         ctrl_clear,    //Tells the GPU to clear the framebuffer with ctrl_clear_color
     input  [15:0] ctrl_clear_color,//The color with which the framebuffer will be cleared
+    input         ctrl_clear,    //Tells the GPU to clear the framebuffer with ctrl_clear_color
 
 
     output        crtl_busy,     //Tells the controller that the gpu is busy and not open for new commands
@@ -170,7 +170,8 @@ always @(posedge clk) begin
     endcase
 end
 
-assign fb_write = drawing;
+//draw_color[0] is the transparency bit
+assign fb_write = drawing && draw_color[0];
 assign fb_x = draw_x + pos_x;
 assign fb_y = draw_y + pos_y;
 assign fb_color = draw_color;
