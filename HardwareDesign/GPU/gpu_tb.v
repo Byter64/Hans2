@@ -76,15 +76,17 @@ always @(tb_clk) begin
     #1 tb_clk <= ~tb_clk;
 end
 
+integer i;
+integer j;
 initial begin
     $dumpvars(0, main_tb);
-    for(integer i = 0; i < MEM_DEPTH; i++) begin
+    for(i = 0; i < MEM_DEPTH; i++) begin
         memory.mem[i] <= i;
         $dumpvars(0, memory.mem[i]);
     end
-    for(integer i = 0; i < 8; i++)begin
-        $dumpvars(0, gpu.queue_drawcalls.valid[i]);
-        $dumpvars(0, gpu.queue_drawcalls.queue[i]);
+    for(j = 0; j < 8; j++)begin
+        $dumpvars(0, gpu.queue_drawcalls.valid[j]);
+        $dumpvars(0, gpu.queue_drawcalls.queue[j]);
     end
 
     tb_clk <= 1;

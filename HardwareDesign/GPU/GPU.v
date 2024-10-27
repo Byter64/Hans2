@@ -29,10 +29,10 @@ module gpu #
     output        crtl_busy,     //Tells the controller that the gpu is busy and not open for new commands
 
     //Framebuffer interface
-    output reg[7:0]  fb_x,     //The x coordinate
-    output reg[7:0]  fb_y,     //The y coordinate
-    output reg[15:0] fb_color, //The color
-    output reg       fb_write  //Tells the frame buffer to write color to (fb_x, fb_y)
+    output[7:0]   fb_x,     //The x coordinate
+    output[7:0]   fb_y,     //The y coordinate
+    output[15:0]  fb_color, //The color
+    output        fb_write  //Tells the frame buffer to write color to (fb_x, fb_y)
 );
 
 reg old_ctrl_draw;
@@ -88,7 +88,7 @@ reg[15:0] draw_height;
 reg[15:0] draw_x;
 reg[15:0] draw_y;
 
-always @(next_state) begin
+always @(*) begin
     case(next_state)
     default: begin
         draw_address <= ctrl_address;
@@ -115,7 +115,7 @@ end
 
 reg[15:0] clear_color;
 
-always @(next_state) begin
+always @(*) begin
     case(next_state)
     default: begin
         clear_color <= ctrl_clear_color;
