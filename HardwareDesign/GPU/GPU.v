@@ -1,3 +1,5 @@
+`timescale 1ns/1ps
+
 module gpu #
 (
     parameter FB_WIDTH = 160,
@@ -67,7 +69,7 @@ always @(*) begin
             next_state <= drawing ? DRAW : IDLE;
         end
         CLEAR: begin
-            next_state <= drawing ? DRAW : IDLE;
+            next_state <= drawing ? CLEAR : IDLE;
         end
     endcase
 end
@@ -75,7 +77,7 @@ end
 always @(posedge clk) begin
     state <= next_state;
 
-    if(rstn == 1) begin
+    if(rstn == 0) begin
         state <= IDLE;
     end
 end
@@ -135,8 +137,8 @@ reg[7:0] pos_x = 0;
 reg[7:0] pos_y = 0;
 wire[7:0] pos_x_1 = pos_x + 1;
 wire[7:0] pos_y_1 = pos_y + 1;
-wire[7:0] next_pos_x = pos_x_1 == max_x ? draw_x : pos_x_1;
-wire[7:0] next_pos_y = pos_x_1 == max_x ? pos_y_1 : pos_y;
+wire[7:0] next_pos_x = drawing ? (pos_x_1 == max_x ? 0 : pos_x_1) : 0;
+wire[7:0] next_pos_y = drawing ? (pos_x_1 == max_x ? pos_y_1 : pos_y) : 0;
 
 always @(posedge clk) begin
     if(next_state != IDLE && state == IDLE) begin
@@ -147,7 +149,7 @@ always @(posedge clk) begin
     if(drawing) begin
         pos_x <= next_pos_x;
         pos_y <= next_pos_y;
-        drawing <= pos_y_1 != max_y;
+        drawing <= pos_y_1 != max_y || pos_x_1 != max_x;
     end
 
     if(rstn == 0) begin

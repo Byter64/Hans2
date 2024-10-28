@@ -1,4 +1,4 @@
-`timescale 1ps/1ps
+`timescale 1ns/1ps
 
 module main_tb (
     
@@ -68,6 +68,10 @@ memory
     .r_data(memory_r_data)
 );
 
+always @(tb_clk) begin
+    #500 tb_clk <= ~tb_clk;
+end
+
 initial begin
     $dumpvars(0, main_tb);
     for(integer i = 0; i < MEM_DEPTH; i += 1) begin
@@ -76,21 +80,21 @@ initial begin
     end
 
     tb_clk <= 1;
-    #10 tb_rstn <= 1;
+    #5001 tb_rstn <= 1;
 
-    #20 tb_ctrl_address <= 8;
-    #6 tb_ctrl_address_x <= 2;
-    #6 tb_ctrl_address_y <= 2;
-    #6 tb_ctrl_sheetsize <= 64;
-    #6 tb_ctrl_width <= 8;
-    #6 tb_ctrl_height <= 16;
-    #6 tb_ctrl_x <= 1;
-    #6 tb_ctrl_y <= 1;
-    #6 tb_ctrl_draw <= 1;
-    #6 tb_ctrl_draw <= 0;
+    #1000 tb_ctrl_address <= 8;
+    #3000 tb_ctrl_address_x <= 2;
+    #3000 tb_ctrl_address_y <= 2;
+    #3000 tb_ctrl_sheetsize <= 64;
+    #3000 tb_ctrl_width <= 8;
+    #3000 tb_ctrl_height <= 16;
+    #3000 tb_ctrl_x <= 1;
+    #3000 tb_ctrl_y <= 1;
+    #3000 tb_ctrl_draw <= 1;
+    #3000 tb_ctrl_draw <= 0;
     
     
-    #200 tb_ctrl_address <= 5;
+    #100000 tb_ctrl_address <= 5;
     tb_ctrl_address_x <= 2;
     tb_ctrl_address_y <= 1;
     tb_ctrl_sheetsize <= 47;
@@ -98,8 +102,8 @@ initial begin
     tb_ctrl_height <= 32;
     tb_ctrl_x <= 55;
     tb_ctrl_y <= 55;
-    #2 tb_ctrl_draw <= 1;
-    #2 tb_ctrl_draw <= 0;
+    //#2 tb_ctrl_draw <= 1;
+    //#2 tb_ctrl_draw <= 0;
 
     #200 tb_ctrl_address <= 11111;
     tb_ctrl_address_x <= 2;
@@ -109,17 +113,13 @@ initial begin
     tb_ctrl_height <= 4;
     tb_ctrl_x <= 55;
     tb_ctrl_y <= 55;
-    #2 tb_ctrl_draw <= 1;
-    #2 tb_ctrl_draw <= 0;
+    //#2 tb_ctrl_draw <= 1;
+    //#2 tb_ctrl_draw <= 0;
 
-    #1000 tb_ctrl_clear <= 1;
-    #6 tb_ctrl_clear <= 0;
+    #500000 tb_ctrl_clear <= 1;
+    #3000 tb_ctrl_clear <= 0;
 
-    #100000 $finish;
-end
-
-always @(tb_clk) begin
-    #1 tb_clk <= ~tb_clk;
+    #50000000 $finish;
 end
 
 endmodule
