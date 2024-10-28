@@ -35,6 +35,8 @@ module gpu #
     output        fb_write  //Tells the frame buffer to write color to (fb_x, fb_y)
 );
 
+assign crtl_busy = drawing;
+
 reg old_ctrl_draw;
 reg old_ctrl_clear;
 wire command_draw = old_ctrl_draw == 0 && ctrl_draw == 1;
@@ -44,7 +46,7 @@ always @(posedge clk) begin
     old_ctrl_clear <= ctrl_clear;
     old_ctrl_draw <= ctrl_draw;
 
-    if(rstn == 1) begin
+    if(rstn == 0) begin
         old_ctrl_clear <= 0;
         old_ctrl_draw <= 0;
     end
@@ -148,7 +150,7 @@ always @(posedge clk) begin
         drawing <= pos_y_1 != max_y;
     end
 
-    if(rstn == 1) begin
+    if(rstn == 0) begin
         drawing <= 0;
     end
 end

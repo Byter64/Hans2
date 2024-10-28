@@ -19,10 +19,8 @@ reg tb_ctrl_clear = 0;
 reg[15:0] tb_ctrl_clear_color = 0;
 
 wire[15:0] gpu_mem_addr;
-wire[15:0] gpu_mem_wdata;
-wire gpu_mem_write;
 wire[15:0] gpu_mem_rdata;
-wire gpu_ctrl_full;
+wire gpu_ctrl_busy;
 wire[7:0] gpu_fb_x;
 wire[7:0] gpu_fb_y;
 wire[15:0] gpu_fb_color;
@@ -33,8 +31,6 @@ gpu gpu
     .clk(tb_clk),
     .rstn(tb_rstn),
     .mem_addr(gpu_mem_addr),
-    .mem_wdata(gpu_mem_wdata),
-    .mem_write(gpu_mem_write),
     .mem_rdata(memory_r_data),
     
     .ctrl_address(tb_ctrl_address),
@@ -46,7 +42,7 @@ gpu gpu
     .ctrl_x(tb_ctrl_x),
     .ctrl_y(tb_ctrl_y),
     .ctrl_draw(tb_ctrl_draw),
-    .ctrl_full(gpu_ctrl_full),
+    .crtl_busy(gpu_ctrl_busy),
     .ctrl_clear(tb_ctrl_clear),
     .ctrl_clear_color(tb_ctrl_clear_color),
     
@@ -67,26 +63,16 @@ memory
 (
     .clk(tb_clk),
     .address(gpu_mem_addr),
-    .w_data(gpu_mem_wdata),
-    .w_write(gpu_mem_write),
+    .w_data(0),
+    .w_write(0),
     .r_data(memory_r_data)
 );
 
-always @(tb_clk) begin
-    #1 tb_clk <= ~tb_clk;
-end
-
-integer i;
-integer j;
 initial begin
     $dumpvars(0, main_tb);
-    for(i = 0; i < MEM_DEPTH; i++) begin
+    for(integer i = 0; i < MEM_DEPTH; i += 1) begin
         memory.mem[i] <= i;
         $dumpvars(0, memory.mem[i]);
-    end
-    for(j = 0; j < 8; j++)begin
-        $dumpvars(0, gpu.queue_drawcalls.valid[j]);
-        $dumpvars(0, gpu.queue_drawcalls.queue[j]);
     end
 
     tb_clk <= 1;
@@ -104,18 +90,18 @@ initial begin
     #6 tb_ctrl_draw <= 0;
     
     
-     tb_ctrl_address <= 5;
-     tb_ctrl_address_x <= 2;
-     tb_ctrl_address_y <= 1;
-     tb_ctrl_sheetsize <= 47;
-     tb_ctrl_width <= 5;
-     tb_ctrl_height <= 32;
-     tb_ctrl_x <= 55;
-     tb_ctrl_y <= 55;
+    #200 tb_ctrl_address <= 5;
+    tb_ctrl_address_x <= 2;
+    tb_ctrl_address_y <= 1;
+    tb_ctrl_sheetsize <= 47;
+    tb_ctrl_width <= 5;
+    tb_ctrl_height <= 32;
+    tb_ctrl_x <= 55;
+    tb_ctrl_y <= 55;
     #2 tb_ctrl_draw <= 1;
     #2 tb_ctrl_draw <= 0;
 
-    #4 tb_ctrl_address <= 11111;
+    #200 tb_ctrl_address <= 11111;
     tb_ctrl_address_x <= 2;
     tb_ctrl_address_y <= 1;
     tb_ctrl_sheetsize <= 50;
@@ -130,6 +116,10 @@ initial begin
     #6 tb_ctrl_clear <= 0;
 
     #100000 $finish;
+end
+
+always @(tb_clk) begin
+    #1 tb_clk <= ~tb_clk;
 end
 
 endmodule
