@@ -3,7 +3,14 @@
 
 /*********************************************************************************/
 module HDMI_Out(
-   input pclk,          // 25MHz
+   input clk_25mhz,          // 25MHz
+   input[7:0] red,      //red channel of the next pixel
+   input[7:0] green,    //green channel of the next pixel
+   input[7:0] blue,     //blue channel of the next pixel
+
+   output pixclk,       //pixel clock, 37 MHz
+   output[10:0] nextX, //X position of the next pixel. During sync and porches this will be GFX_width - 1
+   output[10:0] nextY, //Y position of the next pixel. During sync and porches this will be GFX_height - 1
    output [3:0] gpdi_dp // 0: blue 1: green 2: red 3: pixel clock
                         // gpdi_dn[3:0] generated automatically 
 			// using IO_TYPE=LVCMOS33D in ulx3s.lpf 
@@ -12,7 +19,6 @@ module HDMI_Out(
 
 /******** Video mode constants and clocks ****************************************/
 
-wire pixclk;        // pixel clock
 wire half_clk_TMDS; // TMDS clock at half freq (5*pixclk)
 
 // Select mode by uncommenting one of the lines below
@@ -123,7 +129,7 @@ wire half_clk_TMDS; // TMDS clock at half freq (5*pixclk)
 	.CLKOS_FPHASE(CLKOP_FPHASE),
         .CLKFB_DIV(CLKFB_DIV)
     ) pll_i (
-        .CLKI(pclk),
+        .CLKI(clk_25mhz),
         .CLKOP(half_clk_TMDS),
         .CLKFB(half_clk_TMDS),
 	.CLKOS(pixclk),
@@ -137,36 +143,27 @@ wire half_clk_TMDS; // TMDS clock at half freq (5*pixclk)
      );
 
 /******** X,Y,hSync,vSync,DrawArea ***********************************************/
+assign nextX = GFX_X_NEXT < GFX_width ? GFX_X_NEXT : GFX_width - 1;
+assign nextY = GFX_Y_NEXT < GFX_height ? GFX_Y_NEXT : GFX_height - 1;
 
 localparam GFX_line_width = GFX_width  + GFX_h_front_porch + GFX_h_sync_width + GFX_h_back_porch;
 localparam GFX_lines      = GFX_height + GFX_v_front_porch + GFX_v_sync_width + GFX_v_back_porch;
 
 reg [10:0] GFX_X, GFX_Y;
+wire[10:0] GFX_X_NEXT = (GFX_X==GFX_line_width-1) ? 0 : GFX_X+1;
+wire[10:0] GFX_Y_NEXT = (GFX_Y==GFX_lines-1) ? 0 : GFX_Y+1;
 reg hSync, vSync, DrawArea;
 
 always @(posedge pixclk) DrawArea <= (GFX_X<GFX_width) && (GFX_Y<GFX_height);
 
-always @(posedge pixclk) GFX_X <= (GFX_X==GFX_line_width-1) ? 0 : GFX_X+1;
-always @(posedge pixclk) if(GFX_X==GFX_line_width-1) GFX_Y <= (GFX_Y==GFX_lines-1) ? 0 : GFX_Y+1;
+always @(posedge pixclk) GFX_X <= GFX_X_NEXT;
+always @(posedge pixclk) if(GFX_X==GFX_line_width-1) GFX_Y <= GFX_Y_NEXT;
 
 always @(posedge pixclk) hSync <= 
    (GFX_X>=GFX_width+GFX_h_front_porch) && (GFX_X<GFX_width+GFX_h_front_porch+GFX_h_sync_width);
    
 always @(posedge pixclk) vSync <= 
    (GFX_Y>=GFX_height+GFX_v_front_porch) && (GFX_Y<GFX_height+GFX_v_front_porch+GFX_v_sync_width);
-
-/******** Draw something *********************************************************/
-
-// Generate 8-bits red,green,blue signals from X and Y coordinates (the "shader")
-wire [7:0] W = {8{GFX_X[7:0]==GFX_Y[7:0]}};
-wire [7:0] A = {8{GFX_X[7:5]==3'h2 && GFX_Y[7:5]==3'h2}};
-reg [7:0] red, green, blue;
-
-always @(posedge pixclk) begin
-   red   <= ({GFX_X[5:0] & {6{GFX_Y[4:3]==~GFX_X[4:3]}}, 2'b00} | W) & ~A;
-   green <= (GFX_X[7:0] & {8{GFX_Y[6]}} | W) & ~A;
-   blue  <= GFX_Y[7:0] | W | A;
-end
 
 /******** RGB TMDS encoding ***************************************************/
 // Generate 10-bits TMDS red,green,blue signals. Blue embeds HSync/VSync in its 
