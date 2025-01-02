@@ -2,37 +2,39 @@
 
 module gpu #
 (
-    parameter FB_WIDTH = 160,
-    parameter FB_HEIGHT = 120
+    parameter FB_WIDTH = 400,
+    parameter FB_HEIGHT = 240
 )
 (
     input clk,
-    input rstn,
+    input enable,
 
     //MEM INTERFACE
-    input       [15:0] mem_rdata,  //The data that was read
-    output      [31:0] mem_addr,  //The address of the memory
+    input       [15:0] mem_data,   //The data that was read
+    output      [31:0] mem_addr,    //The address of the memory
+    output             read,        //High, If data should be read
 
     //CONTROL INTERFACE: Draw
-    input  [31:0] ctrl_address,  //The base address to take the pixel data for the image from
+    input  [31:0] ctrl_address,  //The base address to take the pixel data for the excerpt from
     input  [15:0] ctrl_address_x,//The x axis offset to the base address
     input  [15:0] ctrl_address_y,//The y axis offset to the base address
-    input  [15:0] ctrl_sheetsize,//The width of the spritesheet
-    input  [15:0] ctrl_width,    //The width of the image to be drawn
-    input  [15:0] ctrl_height,   //The height of the image to be drawn
-    input  [15:0] ctrl_x,        //Left position of the image to be drawn
-    input  [15:0] ctrl_y,        //Top position of the image to be drawn
+    input  [15:0] ctrl_image_width,//The width of the image
+    input  [$log2c(FB_WIDTH)+1:0]  ctrl_width,    //The width of the excerpt to be drawn
+    input  [$log2c(FB_HEIGHT)+1:0] ctrl_height,   //The height of the excerpt to be drawn
+    input  [$log2c(FB_WIDTH)+1:0]  ctrl_x,        //Left position of the excerpt to be drawn on the screen
+    input  [$log2c(FB_HEIGHT)+1:0] ctrl_y,        //Top position of the excerpt to be drawn on the screen
     input         ctrl_draw,     //Tells the GPU to execute a draw call
     
-    input  [15:0] ctrl_clear_color,//The color with which the framebuffer will be cleared
-    input         ctrl_clear,    //Tells the GPU to clear the framebuffer with ctrl_clear_color
+    //CONTROL INTERFACE: Clear
+    input  [15:0] ctrl_clear_color, //The color with which the framebuffer will be cleared
+    input         ctrl_clear,       //Tells the GPU to clear the framebuffer with ctrl_clear_color
 
 
     output        crtl_busy,     //Tells the controller that the gpu is busy and not open for new commands
 
-    //Framebuffer interface
-    output[7:0]   fb_x,     //The x coordinate
-    output[7:0]   fb_y,     //The y coordinate
+    //FRAMEBUFFER INTERFACE
+    output[$log2c(FB_WIDTH):0]    fb_x,     //The x coordinate
+    output[$log2c(FB_HEIGHT):0]   fb_y,     //The y coordinate
     output[15:0]  fb_color, //The color
     output        fb_write  //Tells the frame buffer to write color to (fb_x, fb_y)
 );
@@ -48,7 +50,7 @@ always @(posedge clk) begin
     old_ctrl_clear <= ctrl_clear;
     old_ctrl_draw <= ctrl_draw;
 
-    if(rstn == 0) begin
+    if(enable == 0) begin
         old_ctrl_clear <= 0;
         old_ctrl_draw <= 0;
     end
@@ -77,7 +79,7 @@ end
 always @(posedge clk) begin
     state <= next_state;
 
-    if(rstn == 0) begin
+    if(enable == 0) begin
         state <= IDLE;
     end
 end
@@ -98,7 +100,7 @@ always @(*) begin
         draw_address <= ctrl_address;
         draw_address_x <= ctrl_address_x;
         draw_address_y <= ctrl_address_y;
-        draw_sheetsize <= ctrl_sheetsize;
+        draw_sheetsize <= ctrl_image_width;
         draw_width <= ctrl_width;
         draw_height <= ctrl_height;
         draw_x <= ctrl_x;
@@ -152,7 +154,7 @@ always @(posedge clk) begin
         drawing <= pos_y_1 != max_y || pos_x_1 != max_x;
     end
 
-    if(rstn == 0) begin
+    if(enable == 0) begin
         drawing <= 0;
     end
 end
@@ -163,10 +165,10 @@ reg[15:0] draw_color;
 always @(posedge clk) begin
     case (next_state)
         IDLE: begin 
-            draw_color <= mem_rdata;
+            draw_color <= mem_data;
         end
         DRAW: begin
-            draw_color <= mem_rdata;
+            draw_color <= mem_data;
         end
         CLEAR: begin
             draw_color <= clear_color;
@@ -174,8 +176,11 @@ always @(posedge clk) begin
     endcase
 end
 
+//Because bounds start at 0 und the comparison is unsigned, we only need one comparison
+wire x_in_bounds = fb_x < FB_WIDTH;
+wire y_in_bounds = fb_y < FB_HEIGHT;
 //draw_color[0] is the transparency bit
-assign fb_write = drawing && draw_color[0];
+assign fb_write = drawing && draw_color[0] && x_in_bounds && y_in_bounds;
 assign fb_x = draw_x + pos_x;
 assign fb_y = draw_y + pos_y;
 assign fb_color = draw_color;
