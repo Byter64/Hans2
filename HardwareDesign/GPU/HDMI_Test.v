@@ -7,6 +7,7 @@ reg[15:0] image[0:400*240];
 reg[15:0] pixelData;
 wire[7:0] red, green, blue;
 wire[10:0] nextX, nextY;
+wire hSync, vSync;
 wire pixclk;
 
 initial begin
@@ -33,6 +34,8 @@ HDMI_Out HDMI_Out
     .pixclk(pixclk),
     .nextX(nextX),
     .nextY(nextY),
+    .hSync(hSync),
+    .vSync(vSync),
     .gpdi_dp(gpdi_dp)
 
 );

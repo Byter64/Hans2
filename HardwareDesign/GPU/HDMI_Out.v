@@ -11,8 +11,8 @@ module HDMI_Out(
    output pixclk,       //pixel clock, 37 MHz
    output[10:0] nextX,  //X position of the next pixel. During sync and porches this will be GFX_width - 1
    output[10:0] nextY,  //Y position of the next pixel. During sync and porches this will be GFX_height - 1
-   output hSync,        //Is high on hsync
-   output vSync,        //Is high on vsync
+   output reg hSync,    //Is high on hsync
+   output reg vSync,    //Is high on vsync
    output [3:0] gpdi_dp // 0: blue 1: green 2: red 3: pixel clock
                         // gpdi_dn[3:0] generated automatically 
 			// using IO_TYPE=LVCMOS33D in ulx3s.lpf 
