@@ -9,8 +9,10 @@ module HDMI_Out(
    input[7:0] blue,     //blue channel of the next pixel
 
    output pixclk,       //pixel clock, 37 MHz
-   output[10:0] nextX, //X position of the next pixel. During sync and porches this will be GFX_width - 1
-   output[10:0] nextY, //Y position of the next pixel. During sync and porches this will be GFX_height - 1
+   output[10:0] nextX,  //X position of the next pixel. During sync and porches this will be GFX_width - 1
+   output[10:0] nextY,  //Y position of the next pixel. During sync and porches this will be GFX_height - 1
+   output hSync,        //Is high on hsync
+   output vSync,        //Is high on vsync
    output [3:0] gpdi_dp // 0: blue 1: green 2: red 3: pixel clock
                         // gpdi_dn[3:0] generated automatically 
 			// using IO_TYPE=LVCMOS33D in ulx3s.lpf 
@@ -152,7 +154,7 @@ localparam GFX_lines      = GFX_height + GFX_v_front_porch + GFX_v_sync_width + 
 reg [10:0] GFX_X, GFX_Y;
 wire[10:0] GFX_X_NEXT = (GFX_X==GFX_line_width-1) ? 0 : GFX_X+1;
 wire[10:0] GFX_Y_NEXT = (GFX_Y==GFX_lines-1) ? 0 : GFX_Y+1;
-reg hSync, vSync, DrawArea;
+reg DrawArea;
 
 always @(posedge pixclk) DrawArea <= (GFX_X<GFX_width) && (GFX_Y<GFX_height);
 
