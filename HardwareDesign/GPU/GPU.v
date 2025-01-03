@@ -39,7 +39,7 @@ module GPU #
     output        fb_write  //Tells the frame buffer to write color to (fb_x, fb_y)
 );
 
-assign crtl_busy = state != IDLE;
+assign crtl_busy = state != IDLE || next_state != IDLE;
 
 reg old_ctrl_draw;
 reg old_ctrl_clear;

@@ -79,7 +79,7 @@ reg[7:0] counterX = 0;
 wire[7:0] counterXNext = counterX < 144 ? counterX+1 : 0;
 reg counterY = 0; //Gibt nur 2 Reihen im Testbild
 reg oldVSync = 0;
-reg[10:0] drawState = 0;
+reg[0:0] drawState = 0;
 assign led[7:3] = 0;
 assign led[2] = drawState >= 2;
 assign led[1] = drawState == 1;
@@ -89,13 +89,13 @@ always @(posedge pixclk) begin
     GPU_CtrlDraw <= 0;
     GPU_CtrlClear <= 0;
     if(oldVSync == 0 && vSync == 1 && drawState == 0) begin
-        GPU_CtrlDraw <= 1;
+        GPU_CtrlClear <= 1;
         drawState <= 1;
         counterX <= counterXNext;
         if(counterXNext == 0) counterY <= ~counterY;
     end
 
-    if(drawState >= 1 && GPU_CtrlBusy) begin
+    if(drawState >= 1 && GPU_CtrlBusy == 0) begin
         GPU_CtrlDraw <= 1;
         drawState <= drawState + 1;
     end
