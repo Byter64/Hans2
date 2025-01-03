@@ -2,8 +2,7 @@
 
 module HDMI_Test (
     input clk_25mhz,
-    output[3:0] gpdi_dp,
-    output[7:0] led
+    output[3:0] gpdi_dp
 );
 
 localparam SCREEN_WIDTH = 400;
@@ -81,10 +80,6 @@ reg counterY = 0; //Gibt nur 2 Reihen im Testbild
 reg oldVSync = 0;
 reg vSyncCounter = 0;
 reg[1:0] drawState = 0;
-assign led[7:3] = 0;
-assign led[2] = drawState >= 2;
-assign led[1] = drawState == 1;
-assign led[0] = drawState == 0;
 always @(posedge pixclk) begin
     oldVSync <= vSync;
     GPU_CtrlDraw <= 0;
