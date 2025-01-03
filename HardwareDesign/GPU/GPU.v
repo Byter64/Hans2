@@ -39,7 +39,7 @@ module GPU #
     output        fb_write  //Tells the frame buffer to write color to (fb_x, fb_y)
 );
 
-assign crtl_busy = drawing;
+assign crtl_busy = state != IDLE;
 
 reg old_ctrl_draw;
 reg old_ctrl_clear;
@@ -131,31 +131,34 @@ always @(*) begin
         clear_color <= ctrl_clear_color;
     end
     CLEAR: begin
-        
+        clear_color <= clear_color;
     end
     endcase
 end
 
 reg drawing = 0;
-wire[7:0] max_x = draw_width;
-wire[7:0] max_y = draw_height;
-reg[7:0] pos_x = 0;
-reg[7:0] pos_y = 0;
-wire[7:0] pos_x_1 = pos_x + 1;
-wire[7:0] pos_y_1 = pos_y + 1;
-wire[7:0] next_pos_x = drawing ? (pos_x_1 == max_x ? 0 : pos_x_1) : 0;
-wire[7:0] next_pos_y = drawing ? (pos_x_1 == max_x ? pos_y_1 : pos_y) : 0;
+wire[$clog2(FB_WIDTH)+1:0] max_x = draw_width;
+wire[$clog2(FB_HEIGHT)+1:0] max_y = draw_height;
+reg[$clog2(FB_WIDTH)+1:0] pos_x = 0;
+reg[$clog2(FB_HEIGHT)+1:0] pos_y = 0;
+wire[$clog2(FB_WIDTH)+1:0] pos_x_1 = pos_x + 1;
+wire[$clog2(FB_HEIGHT)+1:0] pos_y_1 = pos_y + 1;
+wire[$clog2(FB_WIDTH)+1:0] next_pos_x = drawing ? (pos_x_1 == max_x ? 0 : pos_x_1) : 0;
+wire[$clog2(FB_HEIGHT)+1:0] next_pos_y = drawing ? (pos_x_1 == max_x ? pos_y_1 : pos_y) : 0;
 
 always @(posedge clk) begin
     if(next_state != IDLE && state == IDLE) begin
-        pos_x <= 0;
-        pos_y <= 0;
         drawing <= 1;
     end
+
     if(drawing) begin
         pos_x <= next_pos_x;
         pos_y <= next_pos_y;
         drawing <= pos_y < max_y;
+    end
+    else begin
+        pos_x <= 0;
+        pos_y <= 0;
     end
 
     if(enable == 0) begin

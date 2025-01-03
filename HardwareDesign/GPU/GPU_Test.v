@@ -11,7 +11,7 @@ localparam SCREEN_HEIGHT = 240;
 
 //Framebuffer sozusagen
 reg[15:0] frameBuffer[0:SCREEN_WIDTH * SCREEN_HEIGHT];
-initial $readmemh("testbild.txt", frameBuffer);
+//initial $readmemh("testbild.txt", frameBuffer);
 //Framebuffer sozusagen Ende
 
 //HDMI Out
@@ -58,8 +58,10 @@ wire GPU_MemRead;
 
 wire[15:0] GPU_CtrlAddress, GPU_CtrlAddressX, GPU_CtrlAddressY;
 wire[15:0] GPU_CtrlImageWidth;
-wire[9:0] GPU_CtrlWidth, GPU_CtrlX;
-wire[8:0] GPU_CtrlHeight, GPU_CtrlY;
+wire[9:0] GPU_CtrlWidth;
+wire[8:0] GPU_CtrlHeight;
+wire[9:0] GPU_CtrlX;
+wire[8:0] GPU_CtrlY;
 reg GPU_CtrlDraw;
 
 wire[15:0] GPU_CtrlClearColor;
@@ -73,41 +75,45 @@ wire GPU_FbWrite;
 assign GPU_Clk = pixclk;
 always @(posedge GPU_Clk) if(GPU_MemRead) GPU_MemData <= memory[GPU_MemAddr];
 
-reg[4:0] counterX = 0;
-wire[4:0] counterXNext = counterX < 18 ? counterX : 0;
+reg[7:0] counterX = 0;
+wire[7:0] counterXNext = counterX < 144 ? counterX+1 : 0;
 reg counterY = 0; //Gibt nur 2 Reihen im Testbild
-
-reg[31:0] temp = 0;
-assign led = 0;
-//assign led = GPU_MemAddr[7:0];
 reg oldVSync = 0;
-
-//using vSync as clock creates a clock domain with vSync which makes routing in time impossible
+reg[10:0] drawState = 0;
+assign led[7:3] = 0;
+assign led[2] = drawState >= 2;
+assign led[1] = drawState == 1;
+assign led[0] = drawState == 0;
 always @(posedge pixclk) begin
     oldVSync <= vSync;
-    if(oldVSync == 0 && vSync == 1) begin
-        temp <= temp + 1;
-        //counterX <= counterXNext;
-        GPU_CtrlDraw <= temp >= 120 && temp <= 300;
-        //if(counterXNext == 0) counterY <= ~counterY;
+    GPU_CtrlDraw <= 0;
+    GPU_CtrlClear <= 0;
+    if(oldVSync == 0 && vSync == 1 && drawState == 0) begin
+        GPU_CtrlDraw <= 1;
+        drawState <= 1;
+        counterX <= counterXNext;
+        if(counterXNext == 0) counterY <= ~counterY;
+    end
+
+    if(drawState >= 1 && GPU_CtrlBusy) begin
+        GPU_CtrlDraw <= 1;
+        drawState <= drawState + 1;
     end
 end
+
 assign GPU_CtrlAddress = 0;
-assign GPU_CtrlAddressX = 0 /*counterX * 21*/;
-assign GPU_CtrlAddressY = 0 /*counterY * 23*/;
+assign GPU_CtrlAddressX = counterX[7:3] * 21;
+assign GPU_CtrlAddressY = counterY * 23;
+assign GPU_CtrlX = 0;
+assign GPU_CtrlY = 0;
 assign GPU_CtrlImageWidth = 19 * 21; //19 Bilder mit Breite 21
 assign GPU_CtrlWidth = 21;
 assign GPU_CtrlHeight = 23;
-assign GPU_CtrlX = 0;
-assign GPU_CtrlY = 0;
 
-assign GPU_CtrlClearColor = 1; //This is black (0, 0, 0, 1) as (R, G, B, A)
+assign GPU_CtrlClearColor = 16'b1101100010110111; //R5G5B5A1
 always @(posedge pixclk) if(GPU_FbWrite) frameBuffer[GPU_FbX + GPU_FbY * SCREEN_WIDTH] <= GPU_FbColor;
 
-GPU /*#(
-    .FB_WIDTH(SCREEN_WIDTH),
-    .FB_HEIGHT(SCREEN_HEIGHT)
-) */GPU (
+GPU GPU (
     .clk(GPU_Clk),
     .enable(1'b1),
 
