@@ -38,11 +38,8 @@ module GPU #
     output[15:0]  fb_color, //The color
     output        fb_write  //Tells the frame buffer to write color to (fb_x, fb_y)
 );
-/*localparam FB_WIDTH = 400;
-localparam FB_HEIGHT = 240;
-*/
+
 assign crtl_busy = drawing;
-assign mem_read = next_state == DRAW;
 
 reg old_ctrl_draw;
 reg old_ctrl_clear;
@@ -158,7 +155,7 @@ always @(posedge clk) begin
     if(drawing) begin
         pos_x <= next_pos_x;
         pos_y <= next_pos_y;
-        drawing <= pos_y_1 != max_y || pos_x_1 != max_x;
+        drawing <= pos_y < max_y;
     end
 
     if(enable == 0) begin
@@ -166,24 +163,25 @@ always @(posedge clk) begin
     end
 end
 
+assign mem_read = next_state == DRAW;
 assign mem_addr = draw_address + draw_address_x + next_pos_x + ((draw_address_y + next_pos_y) * draw_image_width);
 reg[15:0] draw_color;
 
-always @(posedge clk) begin
-    case (next_state)
+always @(*) begin
+    case (state)
         IDLE: begin 
             draw_color <= mem_data;
         end
         DRAW: begin
             draw_color <= mem_data;
         end
-        CLEAR: begin
+        default: begin
             draw_color <= clear_color;
         end
     endcase
 end
 
-//Because bounds start at 0 und the comparison is unsigned, we only need one comparison
+//Because bounds start at 0 and the comparison is unsigned, we only need one comparison
 wire x_in_bounds = fb_x < FB_WIDTH;
 wire y_in_bounds = fb_y < FB_HEIGHT;
 //draw_color[0] is the transparency bit

@@ -3,14 +3,14 @@
 module HDMI_Test (
     input clk_25mhz,
     output[3:0] gpdi_dp,
-    output reg[7:0] led
+    output[7:0] led
 );
 
 localparam SCREEN_WIDTH = 400;
 localparam SCREEN_HEIGHT = 240;
 
 //Framebuffer sozusagen
-reg[15:0] frameBuffer[0:SCREEN_WIDTH*240];
+reg[15:0] frameBuffer[0:SCREEN_WIDTH * SCREEN_HEIGHT];
 initial $readmemh("testbild.txt", frameBuffer);
 //Framebuffer sozusagen Ende
 
@@ -63,37 +63,45 @@ wire[8:0] GPU_CtrlHeight, GPU_CtrlY;
 reg GPU_CtrlDraw;
 
 wire[15:0] GPU_CtrlClearColor;
-wire GPU_CtrlClear;
+reg GPU_CtrlClear;
 wire GPU_CtrlBusy;
 wire[8:0] GPU_FbX;
 wire[7:0] GPU_FbY;
 wire[15:0] GPU_FbColor;
 wire GPU_FbWrite;
 
-assign GPU_Clk = pixclk; //Schaffen wir 37 MHz?
+assign GPU_Clk = pixclk;
 always @(posedge GPU_Clk) if(GPU_MemRead) GPU_MemData <= memory[GPU_MemAddr];
 
 reg[4:0] counterX = 0;
 wire[4:0] counterXNext = counterX < 18 ? counterX : 0;
 reg counterY = 0; //Gibt nur 2 Reihen im Testbild
-always @(posedge vSync) begin
-    led <= 0;
-    //counterX <= counterXNext;
-    GPU_CtrlDraw <= ~GPU_CtrlDraw;
-    led[1] <= 1;
-    if(counterXNext == 0) counterY <= ~counterY;
+
+reg[31:0] temp = 0;
+assign led = 0;
+//assign led = GPU_MemAddr[7:0];
+reg oldVSync = 0;
+
+//using vSync as clock creates a clock domain with vSync which makes routing in time impossible
+always @(posedge pixclk) begin
+    oldVSync <= vSync;
+    if(oldVSync == 0 && vSync == 1) begin
+        temp <= temp + 1;
+        //counterX <= counterXNext;
+        GPU_CtrlDraw <= temp >= 120 && temp <= 300;
+        //if(counterXNext == 0) counterY <= ~counterY;
+    end
 end
 assign GPU_CtrlAddress = 0;
-assign GPU_CtrlAddressX = counterX * 21;
-assign GPU_CtrlAddressY = counterY * 23;
-assign GPU_CtrlImageWidth = 21 * 18; //18 Bilder mit Breite 21
+assign GPU_CtrlAddressX = 0 /*counterX * 21*/;
+assign GPU_CtrlAddressY = 0 /*counterY * 23*/;
+assign GPU_CtrlImageWidth = 19 * 21; //19 Bilder mit Breite 21
 assign GPU_CtrlWidth = 21;
 assign GPU_CtrlHeight = 23;
 assign GPU_CtrlX = 0;
 assign GPU_CtrlY = 0;
 
-assign GPU_CtrlClearColor = 0;
-assign GPU_CtrlClear = 0;
+assign GPU_CtrlClearColor = 1; //This is black (0, 0, 0, 1) as (R, G, B, A)
 always @(posedge pixclk) if(GPU_FbWrite) frameBuffer[GPU_FbX + GPU_FbY * SCREEN_WIDTH] <= GPU_FbColor;
 
 GPU /*#(
