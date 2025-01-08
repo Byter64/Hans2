@@ -7,7 +7,7 @@ module GPU #
 )
 (
     input clk,
-    input enable,
+    input reset,
 
     //MEM INTERFACE
     input       [15:0] mem_data,    //The data that was read
@@ -50,7 +50,7 @@ always @(posedge clk) begin
     old_ctrl_clear <= ctrl_clear;
     old_ctrl_draw <= ctrl_draw;
 
-    if(enable == 0) begin
+    if(reset) begin
         old_ctrl_clear <= 0;
         old_ctrl_draw <= 0;
     end
@@ -79,7 +79,7 @@ end
 always @(posedge clk) begin
     state <= next_state;
 
-    if(enable == 0) begin
+    if(reset) begin
         state <= IDLE;
     end
 end
@@ -161,7 +161,7 @@ always @(posedge clk) begin
         pos_y <= 0;
     end
 
-    if(enable == 0) begin
+    if(reset) begin
         drawing <= 0;
     end
 end
