@@ -119,7 +119,7 @@ always @(posedge pixclk) if(GPU_FbWrite) frameBuffer[GPU_FbX + GPU_FbY * SCREEN_
 
 GPU GPU (
     .clk(GPU_Clk),
-    .enable(1'b1),
+    .reset(1'b0),
 
     //MEM INTERFACE
     .mem_data(GPU_MemData),
