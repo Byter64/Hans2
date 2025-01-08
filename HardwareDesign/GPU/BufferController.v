@@ -9,44 +9,31 @@ module BufferController (
     output fbHDMI
 );
 
-reg[1:0] state = 0;
+reg[1:0] state;
+reg[1:0] nextState;
+localparam IDLE = 0;
 localparam WAIT = 1;
 localparam SWAP = 2;
 
 reg oldSwapIn;
 reg oldVSync;
 
-always @(posedge clk) begin
-    if(state == SWAP) begin
-        fbGPU <= ~fbGPU;
-    end
+always@(*) begin
+    case (state)
+        IDLE: nextState <= (oldSwapIn == 0 && swapIn == 1) ? (isSynchronized ? WAIT : SWAP) : state;
+        WAIT: nextState <= (oldVSync == 0 && vSync == 1) ? SWAP : state;
+        SWAP: nextState <= IDLE;
+        default: nextState <= IDLE;
+    endcase
 end
-assign fbHDMI = ~fbGPU;
 
+always @(posedge clk) begin
+    state <= nextState;
+end
 
 always @(posedge clk) begin
     oldSwapIn <= swapIn;
     oldVSync <= vSync;
-
-    if(isSynchronized) begin
-        if(state == 0 && oldSwapIn == 0 && swapIn == 1) begin
-            state <= WAIT;
-        end
-        if(state == WAIT && oldVSync == 0 && vSync == 1) begin
-            state <= SWAP;
-        end
-        if(state == SWAP) begin
-            state <= 0;
-        end
-    end
-    else begin
-        if(state == 0 && oldSwapIn == 0 && swapIn == 1) begin
-            state <= SWAP;
-        end
-        if(state == SWAP) begin
-            state <= 0;
-        end
-    end
 
     if(reset) begin
         state <= 0;
@@ -54,5 +41,12 @@ always @(posedge clk) begin
         oldVSync <= 0;
     end
 end
+
+always @(posedge clk) begin
+    if(state == SWAP) begin
+        fbGPU <= ~fbGPU;
+    end
+end
+assign fbHDMI = ~fbGPU;
 
 endmodule
