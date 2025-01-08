@@ -13,14 +13,14 @@ module GraphicSystem
     input[15:0]  gpu_MemData,
     input[31:0]  gpu_MemAddr,
     input        gpu_MemRead,
-    input[15:0]  gpu_CtrlAddress,
+    input[31:0]  gpu_CtrlAddress,
     input[15:0]  gpu_CtrlAddressX,
     input[15:0]  gpu_CtrlAddressY,
     input[15:0]  gpu_CtrlImageWidth,
-    input[9:0]   gpu_CtrlWidth,
-    input[8:0]   gpu_CtrlHeight,
-    input[9:0]   gpu_CtrlX,
-    input[8:0]   gpu_CtrlY,
+    input[10:0]  gpu_CtrlWidth,
+    input[9:0]   gpu_CtrlHeight,
+    input[10:0]  gpu_CtrlX,
+    input[9:0]   gpu_CtrlY,
     input        gpu_CtrlDraw,
     input[15:0]  gpu_CtrlClearColor,
     input        gpu_CtrlClear,
@@ -138,8 +138,8 @@ Framebuffer #(
 
 wire        gpu_Clk;
 /*The gpu_mem... and gpu_Ctrl... signals are direct in-/outputs on the GraphicSystem*/
-wire[8:0]   gpu_FbX;
-wire[7:0]   gpu_FbY;
+wire[9:0]   gpu_FbX;
+wire[8:0]   gpu_FbY;
 wire[15:0]  gpu_FbColor;
 wire        gpu_FbWrite;
 GPU #(
@@ -195,7 +195,7 @@ HDMI_Out hdmi_Out
     .pixclk(hdmi_pixClk),
     .nextX(hdmi_nextX),
     .nextY(hdmi_nextY),
-    .hSync(hSyhdmi_hSyncnc),
+    .hSync(hdmi_hSync),
     .vSync(hdmi_vSync),
     .gpdi_dp(hdmi_gpdiDp)
 
