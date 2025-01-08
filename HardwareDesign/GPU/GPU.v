@@ -60,7 +60,7 @@ localparam IDLE = 1;
 localparam DRAW = 2;
 localparam CLEAR = 4;
 reg[2:0] next_state;
-reg[2:0] state = 0;
+reg[2:0] state;
 
 always @(*) begin
     case (state)
