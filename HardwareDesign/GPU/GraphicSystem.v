@@ -11,8 +11,8 @@ module GraphicSystem
     input isVSynced,
 
     input[15:0]  gpu_MemData,
-    input[31:0]  gpu_MemAddr,
-    input        gpu_MemRead,
+    output[31:0] gpu_MemAddr,
+    output       gpu_MemRead,
     input[31:0]  gpu_CtrlAddress,
     input[15:0]  gpu_CtrlAddressX,
     input[15:0]  gpu_CtrlAddressY,
@@ -43,7 +43,7 @@ assign bfCont_vSync = hdmi_vSync;
 assign bfCont_isSynchronized = isVSynced;
 
 wire[15:0] gpu_fbAddress = gpu_FbX + gpu_FbY * SCREEN_WIDTH;
-wire[15:0] hdmi_fbAddress = ((hdmi_nextX >> 1) + (hdmi_nextY >> 1) * SCREEN_WIDTH); //this halves the resoluton from 480x800 to 240x400
+wire[16:0] hdmi_fbAddress = ((hdmi_nextX >> 1) + (hdmi_nextY >> 1) * SCREEN_WIDTH); //this halves the resoluton from 480x800 to 240x400
 
 assign fb1_dataInA = gpu_FbColor;
 assign fb1_addressA = gpu_fbAddress;
