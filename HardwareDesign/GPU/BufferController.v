@@ -29,6 +29,9 @@ end
 
 always @(posedge clk) begin
     state <= nextState;
+
+    if(reset) 
+        state <= IDLE;
 end
 
 always @(posedge clk) begin
@@ -36,7 +39,6 @@ always @(posedge clk) begin
     oldVSync <= vSync;
 
     if(reset) begin
-        state <= 0;
         oldSwapIn <= 0;
         oldVSync <= 0;
     end
