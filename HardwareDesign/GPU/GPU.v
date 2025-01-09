@@ -11,6 +11,7 @@ module GPU #
 
     //MEM INTERFACE
     input       [15:0] mem_data,    //The data that was read
+    input              mem_valid,   //High, if mem_data is valid
     output      [31:0] mem_addr,    //The address of the memory
     output             mem_read,    //High, If data should be read
 
@@ -39,7 +40,7 @@ module GPU #
     output        fb_write  //Tells the frame buffer to write color to (fb_x, fb_y)
 );
 
-assign crtl_busy = state != IDLE || next_state != IDLE;
+assign crtl_busy = !state[I_IDLE] || !next_state[I_IDLE];
 
 reg old_ctrl_draw;
 reg old_ctrl_clear;
@@ -59,21 +60,21 @@ end
 localparam IDLE = 1;
 localparam DRAW = 2;
 localparam CLEAR = 4;
+
+localparam I_IDLE = 0;
+localparam I_DRAW = 1;
+localparam I_CLEAR = 2;
+
 reg[2:0] next_state;
-reg[2:0] state;
+reg[2:0] state = IDLE; //Don't remove initial value. Else yosys will make this an fsm, which for some reason breaks the functionality
 
 always @(*) begin
-    case (state)
-        default: begin
-            next_state <= command_draw ? DRAW : command_clear ? CLEAR : IDLE;
-        end
-        DRAW: begin
-            next_state <= drawing ? DRAW : IDLE;
-        end
-        CLEAR: begin
-            next_state <= drawing ? CLEAR : IDLE;
-        end
-    endcase
+    if(state[I_DRAW])
+        next_state <= drawing ? DRAW : IDLE;
+    else if(state[I_CLEAR])
+        next_state <= drawing ? CLEAR : IDLE;
+    else //IDLE
+        next_state <= command_draw ? DRAW : command_clear ? CLEAR : IDLE;
 end
 
 always @(posedge clk) begin
@@ -97,8 +98,7 @@ reg[$clog2(FB_WIDTH)+1:0] draw_x;
 reg[$clog2(FB_HEIGHT)+1:0] draw_y;
 
 always @(posedge clk) begin
-    case(next_state)
-    IDLE: begin
+    if(next_state[I_IDLE]) begin
         draw_address <= ctrl_address;
         draw_address_x <= ctrl_address_x;
         draw_address_y <= ctrl_address_y;
@@ -107,33 +107,25 @@ always @(posedge clk) begin
         draw_height <= ctrl_height;
         draw_x <= ctrl_x;
         draw_y <= ctrl_y;
-    end
-    DRAW: begin
+    end else if (next_state[I_DRAW]) begin
         //Don't read from ctrl anymore so that the controller can already
         //prepare data for the next call
-
-    end
-    CLEAR: begin
+    end else if (next_state[I_CLEAR]) begin
         draw_width <= FB_WIDTH;
         draw_height <= FB_HEIGHT;
         draw_x <= 0;
         draw_y <= 0;
     end
-    endcase
 end
 
 
 reg[15:0] clear_color;
 
 always @(*) begin
-    case(next_state)
-    default: begin
+    if(!next_state[I_CLEAR])
         clear_color <= ctrl_clear_color;
-    end
-    CLEAR: begin
+    else
         clear_color <= clear_color;
-    end
-    endcase
 end
 
 reg drawing = 0;
@@ -147,11 +139,11 @@ wire[$clog2(FB_WIDTH)+1:0] next_pos_x = drawing ? (pos_x_1 == max_x ? 0 : pos_x_
 wire[$clog2(FB_HEIGHT)+1:0] next_pos_y = drawing ? (pos_x_1 == max_x ? pos_y_1 : pos_y) : 0;
 
 always @(posedge clk) begin
-    if(next_state != IDLE && state == IDLE) begin
+    if(!next_state[I_IDLE] && state[I_IDLE]) begin
         drawing <= 1;
     end
 
-    if(drawing) begin
+    if(drawing && (mem_valid || !state[I_DRAW])) begin
         pos_x <= next_pos_x;
         pos_y <= next_pos_y;
         drawing <= pos_y < max_y;
@@ -166,22 +158,15 @@ always @(posedge clk) begin
     end
 end
 
-assign mem_read = next_state == DRAW;
+assign mem_read = next_state[I_DRAW];
 assign mem_addr = draw_address + draw_address_x + next_pos_x + ((draw_address_y + next_pos_y) * draw_image_width);
 reg[15:0] draw_color;
 
 always @(*) begin
-    case (state)
-        IDLE: begin 
-            draw_color <= mem_data;
-        end
-        DRAW: begin
-            draw_color <= mem_data;
-        end
-        default: begin
-            draw_color <= clear_color;
-        end
-    endcase
+    if(!state[I_CLEAR])
+        draw_color <= mem_data;
+    else
+        draw_color <= clear_color;
 end
 
 //Because bounds start at 0 and the comparison is unsigned, we only need one comparison

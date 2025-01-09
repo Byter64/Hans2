@@ -123,6 +123,7 @@ GPU GPU (
 
     //MEM INTERFACE
     .mem_data(GPU_MemData),
+    .mem_valid(1'b1),
     .mem_addr(GPU_MemAddr), //out
     .mem_read(GPU_MemRead), //out
 
