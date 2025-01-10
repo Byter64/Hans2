@@ -11,6 +11,7 @@ module GraphicSystem
     input isVSynced,
 
     input[15:0]  gpu_MemData,
+    input        gpu_memValid,
     output[31:0] gpu_MemAddr,
     output       gpu_MemRead,
     input[31:0]  gpu_CtrlAddress,
@@ -101,6 +102,7 @@ GPU #(
     .reset(reset),
     //MEM INTERFACE
     .mem_data(gpu_MemData),
+    .mem_valid(gpu_memValid),
     .mem_addr(gpu_MemAddr),
     .mem_read(gpu_MemRead),
     //CONTROL INTERFACE: Draw
