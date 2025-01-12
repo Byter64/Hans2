@@ -37,8 +37,7 @@ always @(posedge hdmi_pixClk) begin
         end
         SET_CLEAR_DATA: begin
             state <= SET_CLEAR;
-            //This line causes combinational loops?!?!?
-            //gpu_CtrlClearColor <= gpu_CtrlClearColor + 1;
+            gpu_CtrlClearColor <= gpu_CtrlClearColor + 2;
         end
         SET_CLEAR: begin
             gpu_CtrlClear <= 1;
@@ -58,8 +57,8 @@ always @(posedge hdmi_pixClk) begin
             gpu_CtrlImageWidth <= 19 * 21; //19 Bilder mit Breite 21
             gpu_CtrlWidth <= 21;
             gpu_CtrlHeight <= 23;
-            gpu_CtrlX <= 0;
-            gpu_CtrlY <= 0;
+            gpu_CtrlX <= 40;
+            gpu_CtrlY <= 40;
             state <= SET_DRAW;
         end
         SET_DRAW: begin
