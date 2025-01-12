@@ -108,8 +108,8 @@ end
 assign GPU_CtrlAddress = 0;
 assign GPU_CtrlAddressX = counterX[6:2] * 21;
 assign GPU_CtrlAddressY = counterY * 23;
-assign GPU_CtrlX = 0;
-assign GPU_CtrlY = 0;
+assign GPU_CtrlX = 40;
+assign GPU_CtrlY = 40;
 assign GPU_CtrlImageWidth = 19 * 21; //19 Bilder mit Breite 21
 assign GPU_CtrlWidth = 21;
 assign GPU_CtrlHeight = 23;
