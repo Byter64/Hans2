@@ -1,7 +1,6 @@
-`include "pll/ecp5pll.sv"
 module topmodule (
     input  logic clk_25mhz,
-    input logic [7:0] btn,
+    input  logic [7:0] btn,
 
     output logic [7:0] led
 );
@@ -28,5 +27,5 @@ module topmodule (
         .clk_i(clk_25mhz),
         .clk_o({clock_faster,clock_fast,clock_middle,clock_slow})
     );
-
+    
 endmodule
