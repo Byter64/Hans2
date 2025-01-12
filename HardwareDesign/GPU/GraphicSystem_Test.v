@@ -58,8 +58,8 @@ always @(posedge hdmi_pixClk) begin
             gpu_CtrlImageWidth <= 19 * 21; //19 Bilder mit Breite 21
             gpu_CtrlWidth <= 21;
             gpu_CtrlHeight <= 23;
-            gpu_CtrlX <= 40;
-            gpu_CtrlY <= 40;
+            gpu_CtrlX <= 0;
+            gpu_CtrlY <= 0;
             state <= SET_DRAW;
         end
         SET_DRAW: begin
