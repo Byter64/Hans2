@@ -129,6 +129,7 @@ always @(*) begin
 end
 
 reg drawing = 0;
+wire next_drawing = pos_y < max_y;
 wire[$clog2(FB_WIDTH)+1:0] max_x = draw_width;
 wire[$clog2(FB_HEIGHT)+1:0] max_y = draw_height;
 reg[$clog2(FB_WIDTH)+1:0] pos_x = 0;
@@ -146,7 +147,7 @@ always @(posedge clk) begin
     if(drawing && (mem_valid || !state[I_DRAW])) begin
         pos_x <= next_pos_x;
         pos_y <= next_pos_y;
-        drawing <= pos_y < max_y;
+        drawing <= next_drawing;
     end
     else begin
         pos_x <= 0;
@@ -173,7 +174,7 @@ end
 wire x_in_bounds = fb_x < FB_WIDTH;
 wire y_in_bounds = fb_y < FB_HEIGHT;
 //draw_color[0] is the transparency bit
-assign fb_write = drawing && draw_color[0] && x_in_bounds && y_in_bounds;
+assign fb_write = next_drawing && draw_color[0] && x_in_bounds && y_in_bounds;
 assign fb_x = draw_x + pos_x;
 assign fb_y = draw_y + pos_y;
 assign fb_color = draw_color;
