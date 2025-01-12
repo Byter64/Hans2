@@ -121,8 +121,8 @@ end
 
 reg[15:0] clear_color;
 
-always @(*) begin
-    if(!next_state[I_CLEAR])
+always @(posedge clk) begin
+    if(!state[I_CLEAR])
         clear_color <= ctrl_clear_color;
     else
         clear_color <= clear_color;
