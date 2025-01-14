@@ -1,20 +1,32 @@
 `timescale 1ns/1ns
-`include "Timer.sv"
 module Timer_tb;
-
-    localparam TIMER_ADDITIONAL_BITS = 8;
+    //global parameters
     localparam HALF_CLOCK_CYCLE = 5;
     localparam CLOCK_CYCLE = 2*HALF_CLOCK_CYCLE;
-
+    
+    //global variables
+    integer test = 0;
+    integer sucessfull_tests = 0;
+   
+    //global logic
     logic clk;
     logic rst;
 
+    initial clk = 0;
+    always #(HALF_CLOCK_CYCLE) clk = ~clk;
+    
+
+    //parameters for test
+    localparam TIMER_ADDITIONAL_BITS = 8;
+    
+    //logic for test
     logic write;
     logic [31:0] data_in;
 
     logic timer_interrupt;
     logic [31:0] data_out;
 
+    //module instantiations
     Timer #(
         .TIMER_ADDITIONAL_BITS(TIMER_ADDITIONAL_BITS)
     ) uut (
@@ -26,32 +38,27 @@ module Timer_tb;
         .data_out(data_out)
     );
 
-    initial clk = 0;
-    always #(HALF_CLOCK_CYCLE) clk = ~clk;
-
-    // Testbench process
+    // Main testbench process
     initial begin
         rst = 1;
         apply_reset();
         testTimer();
         apply_reset();
         repeat(10) testTimer();
+        
+        $display("%d/%d Tests ran successfully!", sucessfull_tests,test);
 
         // End of simulation
         $finish;
     end
-    
-    `ifdef VCD
-        initial begin
-            $dumpfile("timer_tb.vcd");
-            $dumpvars(0);
-        end
-    `endif
+
+    //Variables for Task
     integer randomTime;
     integer counter;
-    integer test = 0;
+
+    //task that tests module
     task testTimer();
-        test = test + 1;
+        test++;
         randomTime = $urandom_range(0,2000);
         counter = 0;
         #(CLOCK_CYCLE)
@@ -69,16 +76,26 @@ module Timer_tb;
             $display("Test %D Fehler: Counter: %D Soll: %D",test,counter/2**TIMER_ADDITIONAL_BITS,randomTime);
         end
         else begin
+            sucessfull_tests++;
             `ifdef CONFIRM
             $display("Test %d bestanden!", test);
             `endif
         end
     endtask
 
+    //Reset task
     task apply_reset();
-        rst <= 0;
+        rst <= 1;
         repeat(2) @(posedge clk) 
         rst <= 0;
         #(CLOCK_CYCLE);
     endtask
+
+    //Print VCD if necessary
+    `ifdef VCD
+        initial begin
+            $dumpfile("timer_tb.vcd");
+            $dumpvars(0);
+        end
+    `endif
 endmodule
