@@ -1,5 +1,5 @@
 /*
-
+read_verilog -sv  CPU_with_GPU.sv ../Processor/picorv32.v ../Graphicsystem/BufferController.v ../Graphicsystem/Framebuffer.v ../Graphicsystem/GPU.v ../Graphicsystem/GraphicSystem.v ../Graphicsystem/HDMI_Out.v ../Graphicsystem/ULX3S_hdmi/TMDS_encoder.v 
 === top ===
 
    Number of wires:               3772
@@ -32,7 +32,7 @@ module top(
 
 	localparam MEM_SIZE = 8192;
 	localparam [31:0] STACKADDR = 32'h 0000_0000 + (MEM_SIZE);
-	localparam [31:0] PROGADDR_RESET = 32'h00000; 
+	localparam [31:0] PROGADDR_RESET = 32'h0000_0000; 
 
 	logic mem_valid;
 	logic mem_ready;

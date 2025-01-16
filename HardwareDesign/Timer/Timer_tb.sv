@@ -14,66 +14,71 @@ module Timer_tb;
 
     initial clk = 0;
     always #(HALF_CLOCK_CYCLE) clk = ~clk;
-    
-
-    //parameters for test
-    localparam TIMER_ADDITIONAL_BITS = 8;
-    
+        
     //logic for test
-    logic write;
-    logic [31:0] data_in;
+    logic [7:0] write;
+    logic [31:0] data_in[7:0];
 
-    logic timer_interrupt;
-    logic [31:0] data_out;
+    logic [7:0] timer_interrupt;
+    logic [31:0] data_out[7:0];
 
-    //module instantiations
-    Timer #(
-        .TIMER_ADDITIONAL_BITS(TIMER_ADDITIONAL_BITS)
-    ) uut (
-        .clk(clk),
-        .rst(rst),
-        .write(write),
-        .data_in(data_in),
-        .timer_interrupt(timer_interrupt),
-        .data_out(data_out)
-    );
+    genvar i;
+    generate
+        for (i = 0; i < 8; i++) begin : timer_instances
+            Timer #(
+                .TIMER_ADDITIONAL_BITS(i)
+            ) uut (
+                .clk(clk),
+                .rst(rst),
+                .write(write[i]),
+                .data_in(data_in[i]),
+                .timer_interrupt(timer_interrupt[i]),
+                .data_out(data_out[i])
+            );
+        end
+    endgenerate
 
     // Main testbench process
+    integer test_index;
+
     initial begin
         rst = 1;
         apply_reset();
-        testTimer();
+        testTimer(0);
         apply_reset();
-        repeat(10) testTimer();
-        
+        for(test_index = 0; test_index<8; test_index++) begin
+            fork
+                repeat(20) testTimer(test_index);
+            join
+        end
         $display("%d/%d Tests ran successfully!", sucessfull_tests,test);
-
         // End of simulation
         $finish;
     end
 
-    //Variables for Task
-    integer randomTime;
-    integer counter;
+
 
     //task that tests module
-    task testTimer();
+    task automatic testTimer(integer i);
+        //Variables for Task
+        integer randomTime;
+        integer counter;
         test++;
         randomTime = $urandom_range(0,2000);
         counter = 0;
         #(CLOCK_CYCLE)
-        data_in <= randomTime;
+        data_in[i] <= randomTime;
         #(CLOCK_CYCLE)
-        write <= 1;
+        write[i] <= 1'b1;
         #(CLOCK_CYCLE)
-        write <= 0;
+        write[i] <= 1'b0;
         #(CLOCK_CYCLE);
-        while(timer_interrupt == 0) begin
+        while(timer_interrupt[i] == 1'b0) begin
             @(posedge clk)
             counter = counter + 1;
         end
-        if(counter/2**TIMER_ADDITIONAL_BITS!=randomTime) begin
-            $display("Test %D Fehler: Counter: %D Soll: %D",test,counter/2**TIMER_ADDITIONAL_BITS,randomTime);
+        if(counter/2**i!=randomTime) begin
+            $display("Test %D Fehler: Counter: %D Soll: %D",test,counter/2**i,randomTime);
         end
         else begin
             sucessfull_tests++;
@@ -85,9 +90,9 @@ module Timer_tb;
 
     //Reset task
     task apply_reset();
-        rst <= 1;
+        rst <= 1'b1;
         repeat(2) @(posedge clk) 
-        rst <= 0;
+        rst <= 1'b0;
         #(CLOCK_CYCLE);
     endtask
 

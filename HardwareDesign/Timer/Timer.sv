@@ -28,8 +28,11 @@ module Timer #(
 
     assign timer_reg_minus_one = (timer_reg > 0) ? (timer_reg - 1) : 0;
     assign timer_reg_input[TIMER_BITS-1:TIMER_ADDITIONAL_BITS] = data_in;
+    
+    if (TIMER_ADDITIONAL_BITS > 0) begin
     assign timer_reg_input[TIMER_ADDITIONAL_BITS-1:0] = 0;
-
+    end
+    
     assign timer_interrupt = (timer_reg == 1);
 
     assign data_out =  timer_reg[TIMER_BITS-1:TIMER_ADDITIONAL_BITS];
