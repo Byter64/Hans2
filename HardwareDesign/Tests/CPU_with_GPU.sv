@@ -1,3 +1,30 @@
+/*
+
+=== top ===
+
+   Number of wires:               3772
+   Number of wire bits:          17245
+   Number of public wires:        3772
+   Number of public wire bits:   17245
+   Number of ports:                  2
+   Number of port bits:              5
+   Number of memories:               0
+   Number of memory bits:            0
+   Number of processes:              0
+   Number of cells:               4842
+     $scopeinfo                     12
+     CCU2C                         483
+     DP16KD                        184
+     EHXPLLL                         1
+     L6MUX21                        18
+     LUT4                         2467
+     MULT18X18D                      6
+     ODDRX1F                         3
+     PFUMX                         310
+     TRELLIS_DPR16X4                32
+     TRELLIS_FF                   1326
+*/
+
 module top(
     input logic clk_25mhz,
     output logic [3:0] gpdi_dp
@@ -14,20 +41,23 @@ module top(
 	logic [3:0] mem_wstrb;
 	logic [31:0] mem_rdata;
 
-    logic [3:0] clocks;
-    ecp5pll
-    #(
-        .in_hz(25*10**6),
-        .out0_hz(25*10**6),                 .out0_tol_hz(0),
-        .out1_hz(50*10**6), .out1_deg( 90), .out1_tol_hz(0),
-        .out2_hz(100*10**6), .out2_deg(180), .out2_tol_hz(0),
-        .out3_hz(144*10**6), .out3_deg(300), .out3_tol_hz(0)
-    )
-    ecp5pll_inst
-    (
-        .clk_i(clk_25mhz),
-        .clk_o(clocks)
-    );
+    reg resetn;
+    reg [31:0] counter;
+
+    // Reset Logic
+    initial begin
+        resetn <= 0;
+        counter <= 0;
+    end
+
+    always @(posedge clk_25mhz) begin
+        if (counter < 100) begin
+            counter <= counter + 1;
+            resetn <= 0;
+        end else begin
+            resetn <= 1;
+        end
+    end
 
 	picorv32 #(
 		.ENABLE_FAST_MUL(1),
@@ -36,13 +66,15 @@ module top(
 		.STACKADDR(STACKADDR),
 		.PROGADDR_RESET(PROGADDR_RESET)
 	) uut (
-		.clk         (clocks[0]  ),
-		.mem_valid   (mem_valid  ),
-		.mem_ready   (mem_ready  ),
-		.mem_addr    (mem_addr   ),
-		.mem_wdata   (mem_wdata  ),
-		.mem_wstrb   (mem_wstrb  ),
-		.mem_rdata   (mem_rdata  )
+		.clk         (clk_25mhz  ), //input
+		.resetn      (resetn     ), //input
+        .mem_valid   (mem_valid  ), //output
+        .mem_instr   (mem_instr  ), //output
+		.mem_addr    (mem_addr   ), //output
+		.mem_wdata   (mem_wdata  ), //output
+		.mem_wstrb   (mem_wstrb  ), //output
+		.mem_ready   (mem_ready  ), //input
+		.mem_rdata   (mem_rdata  )  //input
 	);
 
 
@@ -68,8 +100,8 @@ module top(
 
 GraphicSystem graphicSystem 
 (
-    .clk25Mhz(clocks[0]),
-    .cpuClk(clocks[0]),
+    .clk25Mhz(clk_25mhz),
+    .cpuClk(clk_25mhz),
     .reset(1'b0),
     .gpdiDp(gpdi_dp),
     .hdmi_vSync(hdmi_vSync),
