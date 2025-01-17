@@ -5,9 +5,10 @@ module Timer_tb;
     localparam CLOCK_CYCLE = 2*HALF_CLOCK_CYCLE;
     
     //global variables
-    integer test = 0;
-    integer sucessfull_tests = 0;
+    int test = 0;
+    int sucessfull_tests = 0;
    
+    localparam test_amount = 10;
     //global logic
     logic clk;
     logic rst;
@@ -38,19 +39,19 @@ module Timer_tb;
         end
     endgenerate
 
-    // Main testbench process
-    integer test_index;
-
     initial begin
         rst = 1;
         apply_reset();
-        testTimer(0);
-        apply_reset();
-        for(test_index = 0; test_index<8; test_index++) begin
-            fork
-                repeat(20) testTimer(test_index);
-            join
-        end
+        fork
+            repeat(test_amount) testTimer(7);
+            repeat(test_amount) testTimer(6);
+            repeat(test_amount) testTimer(5);
+            repeat(test_amount) testTimer(4);
+            repeat(test_amount) testTimer(3);
+            repeat(test_amount) testTimer(2);
+            repeat(test_amount) testTimer(1);
+            repeat(test_amount) testTimer(0);
+        join
         $display("%d/%d Tests ran successfully!", sucessfull_tests,test);
         // End of simulation
         $finish;
@@ -63,7 +64,10 @@ module Timer_tb;
         //Variables for Task
         integer randomTime;
         integer counter;
+        integer thistest;
+        automatic int this_test;
         test++;
+        this_test = test;
         randomTime = $urandom_range(0,2000);
         counter = 0;
         #(CLOCK_CYCLE)
@@ -78,12 +82,12 @@ module Timer_tb;
             counter = counter + 1;
         end
         if(counter/2**i!=randomTime) begin
-            $display("Test %D Fehler: Counter: %D Soll: %D",test,counter/2**i,randomTime);
+            $display("Test: %D in Timer Modul[%D] Error: Counter: %D Should: %D",this_test,i,counter/2**i,randomTime);
         end
         else begin
             sucessfull_tests++;
             `ifdef CONFIRM
-            $display("Test %d bestanden!", test);
+            $display("Test %d sucessfull!", this_test);
             `endif
         end
     endtask
