@@ -51,16 +51,6 @@ module topmodule (
 	logic cpu_wbm_ack_i;
 	logic cpu_wbm_cyc_o;
 
-	// Pico Co-Processor Interface (PCPI)
-	logic        cpu_pcpi_valid;
-	logic [31:0] cpu_pcpi_insn;
-	logic [31:0] cpu_pcpi_rs1;
-	logic [31:0] cpu_pcpi_rs2;
-	logic        cpu_pcpi_wr;
-	logic [31:0] cpu_pcpi_rd;
-	logic        cpu_pcpi_wait;
-	logic        cpu_pcpi_ready;
-
 	// IRQ interface
 	logic [31:0] cpu_irq;
 	logic [31:0] cpu_eoi;
@@ -71,7 +61,7 @@ module topmodule (
 
 	logic cpu_mem_instr;
 
-	picorv32_wb #(
+	ProcessingUnit #(
 		.ENABLE_COUNTERS     (1),//0? TODO
 		.ENABLE_COUNTERS64   (1),//0? TODO
 		.ENABLE_REGS_16_31   (1),
@@ -111,15 +101,6 @@ module topmodule (
 	    .wbm_stb_o(cpu_wbm_stb_o),
 	    .wbm_ack_i(cpu_wbm_ack_i),
 	    .wbm_cyc_o(cpu_wbm_cyc_o),
-
-		.pcpi_valid(cpu_pcpi_valid),
-		.pcpi_insn (cpu_pcpi_insn ),
-		.pcpi_rs1  (cpu_pcpi_rs1  ),
-		.pcpi_rs2  (cpu_pcpi_rs2  ),
-		.pcpi_wr   (cpu_pcpi_wr   ),
-		.pcpi_rd   (cpu_pcpi_rd   ),
-		.pcpi_wait (cpu_pcpi_wait ),
-		.pcpi_ready(cpu_pcpi_ready),
 
 		.irq(cpu_irq),
 		.eoi(cpu_eoi),
