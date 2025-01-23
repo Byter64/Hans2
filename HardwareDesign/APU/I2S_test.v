@@ -1,59 +1,69 @@
-`include "ecp5pll.sv"
+//yosys -p"read_verilog -sv ecp5pll.sv I2S_test.v; synth_ecp5 -json Ausgabe.json"
 
 module I2S_Test (
     input[6:0] btn,
     input clk_25mhz,
-    output audio_sclk,
     output audio_bclk,
-    output audio_din,
     output audio_lrclk,
-    output audio_xsmt
+    output audio_din,
+    output v_out = 1
 );
 
-assign audio_sclk = 0; //PCM5102a will generate a sclk itself if sclk is low
-assign lr_clk = lr_clk; //lrclk
+assign audio_bclk = clk_1024khz; //bclk
+assign audio_lrclk = clk_64khz; //lrclk
 assign audio_din = data_out; //din
-assign audio_bclk = bit_clk; //bclk
-assign audio_xsmt = 1; //XSFMT
 
-//I²S
-wire bit_clk;
-wire lr_clk;
 reg data_out;
 
-wire unused;
-wire unused2;
+wire clk_100mhz;
 ecp5pll
 #(
-    .in_hz(25000000),
-    .out0_hz(10000000),                 .out0_tol_hz(100000000),
-    .out1_hz(10000000), .out1_deg(0), .out1_tol_hz(100000000),
-    .out2_hz(64000), .out2_deg(0), .out2_tol_hz(1000),
-    .out3_hz(1024000), .out3_deg(0), .out3_tol_hz(1000)
+    .in_hz   (25000000),
+    .out0_hz(100000000), .out0_tol_hz(50),
 )
 ecp5pll_inst
 (
     .clk_i(clk_25mhz),
-    .clk_o({bit_clk, lr_clk, unused, unused2})
+    .clk_o({clk_100mhz})
 );
 
-reg[15:0] amplitude = 16'b100000000;
-reg[3:0] bitIndex = 4'b0;
-wire[3:0] nextBit = bitIndex + 1;
-
-reg[7:0] freqCounter = 0;
-wire[7:0] nextFreqCounter = freqCounter + 1;
-
-always @(posedge lr_clk) begin
-    freqCounter <= nextFreqCounter;
-    if(freqCounter >= 100) begin
-        freqCounter <= 0;
-        amplitude <= -amplitude;
+reg[9:0] clk_64khz_counter;
+reg clk_64khz; 
+always @(posedge clk_1024khz) begin
+    clk_64khz_counter <= clk_64khz_counter + 1;
+    if(clk_64khz_counter + 1 == 16) begin
+        clk_64khz_counter <= 0;
+        clk_64khz <= ~clk_64khz;
     end
 end
 
+reg[9:0] clk_1024khz_counter;
+reg clk_1024khz; 
+always @(posedge clk_100mhz) begin
+    clk_1024khz_counter <= clk_1024khz_counter + 1;
+    if(clk_1024khz_counter + 1 == 49) begin
+        clk_1024khz_counter <= 0;
+        clk_1024khz <= ~clk_1024khz;
+    end
+end
+
+
+reg[15:0] memory[239616];
+reg[31:0] pointer = 0;
+
+initial $readmemh("audiotest.hex", memory);
+
+reg[15:0] amplitude;
+always @(posedge clk_64khz) begin
+    pointer <= pointer + 1;
+    //turning little endian into big endian
+    amplitude <= {memory[pointer[31:0]][7:0], memory[pointer[31:0]][15:8]};
+end
+
+reg[3:0] bitIndex = 4'b0;
+wire[3:0] nextBit = bitIndex + 1;
 //MSB first
-always @(posedge bit_clk) begin
+always @(posedge clk_1024khz) begin
     bitIndex <= nextBit;
     case (bitIndex)
         4'b0000: data_out <= amplitude[15];
