@@ -24,15 +24,15 @@ read_verilog -sv  CPU_with_GPU.sv ../Processor/picorv32.v ../Graphicsystem/Buffe
      TRELLIS_DPR16X4                32
      TRELLIS_FF                   1326
 */
+`define PICORV32_REGS picosoc_regs
 
-module top(
+
+module CPU_with_GPU(
     input logic clk_25mhz,
     output logic [3:0] gpdi_dp
     );
 
-	localparam MEM_SIZE = 8192;
-	localparam [31:0] STACKADDR = 32'h 0000_0000 + (MEM_SIZE);
-	localparam [31:0] PROGADDR_RESET = 32'h0000_0000; 
+	localparam MEM_SIZE = 57344;
 
 	logic mem_valid;
 	logic mem_ready;
@@ -41,30 +41,18 @@ module top(
 	logic [3:0] mem_wstrb;
 	logic [31:0] mem_rdata;
 
-    reg resetn;
-    reg [31:0] counter;
+	logic [5:0] reset_cnt = 0;
+	logic resetn;
+    assign resetn = &reset_cnt;
 
-    // Reset Logic
-    initial begin
-        resetn <= 0;
-        counter <= 0;
-    end
-
-    always @(posedge clk_25mhz) begin
-        if (counter < 100) begin
-            counter <= counter + 1;
-            resetn <= 0;
-        end else begin
-            resetn <= 1;
-        end
-    end
+	always_ff @(posedge clk_25mhz) begin
+		reset_cnt <= reset_cnt + !resetn;
+	end
 
 	picorv32 #(
 		.ENABLE_FAST_MUL(1),
 		.ENABLE_DIV(1),
-		.BARREL_SHIFTER(1),
-		.STACKADDR(STACKADDR),
-		.PROGADDR_RESET(PROGADDR_RESET)
+		.BARREL_SHIFTER(1)
 	) uut (
 		.clk         (clk_25mhz  ), //input
 		.resetn      (resetn     ), //input
@@ -76,6 +64,9 @@ module top(
 		.mem_ready   (mem_ready  ), //input
 		.mem_rdata   (mem_rdata  )  //input
 	);
+
+    logic[31:0] l_e_data;
+    assign l_e_data = {mem_wdata[7:0],mem_wdata[15:8],mem_wdata[23:16],mem_wdata[31:24]};
 
 
     logic         swapBuffers;
@@ -127,15 +118,15 @@ GraphicSystem graphicSystem
 
 	logic [31:0] memory [0:MEM_SIZE/4-1];
 	initial begin 
-        $readmemh("firmware.hex", memory);
+        $readmemh("Software/firmware.hex", memory);
     end
 
     always_ff @(posedge clk_25mhz) begin
-        mem_ready <= (mem_valid && (mem_addr < MEMSIZE+32'h0200));
+        mem_ready <= (mem_valid && (mem_addr < MEM_SIZE + 32'h0200));
     end
     
     always_ff @(posedge clk_25mhz ) begin
-        mem_rdata <= (mem_addr < MEMSIZE) ? memory[mem_addr >> 2] : (mem_addr == MEM_SIZE + 32'h002C)? {31'b0,gpu_CtrlBusy} : (mem_addr == MEM_SIZE+32'h0108) ? {31'b0,hdmi_vSync} : 32'b0;
+        mem_rdata <= (mem_addr < MEM_SIZE) ? memory[mem_addr >> 2] : (mem_addr == MEM_SIZE + 32'h002C)? {32{gpu_CtrlBusy}} : (mem_addr == MEM_SIZE+32'h0108) ? {31'b0,hdmi_vSync} : 32'b0;
     end
 
     always_ff @(posedge clk_25mhz) begin
@@ -151,20 +142,39 @@ GraphicSystem graphicSystem
                     if (mem_wstrb[2]) memory[mem_addr >> 2][23:16] <= mem_wdata[23:16];
                     if (mem_wstrb[3]) memory[mem_addr >> 2][31:24] <= mem_wdata[31:24];
                 end
-                (mem_addr == MEM_SIZE+32'h0000): gpu_CtrlAddress <= mem_wdata;
-                (mem_addr == MEM_SIZE+32'h0004): gpu_CtrlAddressX <= mem_wdata;
-                (mem_addr == MEM_SIZE+32'h0008): gpu_CtrlAddressY <= mem_wdata;
-                (mem_addr == MEM_SIZE+32'h000C): gpu_CtrlImageWidth <= mem_wdata;
-                (mem_addr == MEM_SIZE+32'h0010): gpu_CtrlWidth <= mem_wdata;
-                (mem_addr == MEM_SIZE+32'h0014): gpu_CtrlHeight <= mem_wdata;
-                (mem_addr == MEM_SIZE+32'h0018): gpu_CtrlX <= mem_wdata;
-                (mem_addr == MEM_SIZE+32'h001C): gpu_CtrlY <= mem_wdata;
-                (mem_addr == MEM_SIZE+32'h0020): gpu_CtrlDraw <= mem_wdata;
-                (mem_addr == MEM_SIZE+32'h0024): gpu_CtrlClearColor <= mem_wdata;
-                (mem_addr == MEM_SIZE+32'h0028): gpu_CtrlClear <= mem_wdata;
-                (mem_addr == MEM_SIZE+32'h0100): swapBuffers <= mem_wdata;
-                (mem_addr == MEM_SIZE+32'h010C): isVSynced <= mem_wdata;
+                (mem_addr == MEM_SIZE+32'h0000): gpu_CtrlAddress <= l_e_data;
+                (mem_addr == MEM_SIZE+32'h0004): gpu_CtrlAddressX <= l_e_data;
+                (mem_addr == MEM_SIZE+32'h0008): gpu_CtrlAddressY <= l_e_data;
+                (mem_addr == MEM_SIZE+32'h000C): gpu_CtrlImageWidth <= l_e_data;
+                (mem_addr == MEM_SIZE+32'h0010): gpu_CtrlWidth <= l_e_data;
+                (mem_addr == MEM_SIZE+32'h0014): gpu_CtrlHeight <= l_e_data;
+                (mem_addr == MEM_SIZE+32'h0018): gpu_CtrlX <= l_e_data;
+                (mem_addr == MEM_SIZE+32'h001C): gpu_CtrlY <= l_e_data;
+                (mem_addr == MEM_SIZE+32'h0020): gpu_CtrlDraw <= l_e_data;
+                (mem_addr == MEM_SIZE+32'h0024): gpu_CtrlClearColor <= l_e_data;
+                (mem_addr == MEM_SIZE+32'h0028): gpu_CtrlClear <= l_e_data;
+                (mem_addr == MEM_SIZE+32'h0100): swapBuffers <= l_e_data;
+                (mem_addr == MEM_SIZE+32'h010C): isVSynced <= l_e_data;
             endcase
         end
     end
+endmodule
+
+
+module picosoc_regs (
+	input clk, wen,
+	input [5:0] waddr,
+	input [5:0] raddr1,
+	input [5:0] raddr2,
+	input [31:0] wdata,
+	output [31:0] rdata1,
+	output [31:0] rdata2
+);
+	reg [31:0] regs [0:31];
+
+	always @(posedge clk)
+		if (wen) regs[waddr[4:0]] <= wdata;
+
+	assign rdata1 = regs[raddr1[4:0]];
+	assign rdata2 = regs[raddr2[4:0]];
 endmodule
