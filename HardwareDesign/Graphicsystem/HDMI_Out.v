@@ -112,7 +112,7 @@ wire half_clk_TMDS; // TMDS clock at half freq (5*pixclk)
 `endif
 
 /******** The PLL ************************************************************/
-
+`ifdef SYNTHESIS
    // The PLL converts a 25 MHz clock into a (pixel_clock_freq * 5) clock
    // The TMDS serializers operate at (pixel_clock_freq * 10), but we use
    // DDR mode, hence (pixel_clock_freq * 5).
@@ -125,16 +125,16 @@ wire half_clk_TMDS; // TMDS clock at half freq (5*pixclk)
         .CLKOP_DIV(CLKOP_DIV),
         .CLKOP_CPHASE(CLKOP_CPHASE),
         .CLKOP_FPHASE(CLKOP_FPHASE),
-	.CLKOS_ENABLE("ENABLED"),
-	.CLKOS_DIV(5*CLKOP_DIV),
-	.CLKOS_CPHASE(CLKOP_CPHASE),
-	.CLKOS_FPHASE(CLKOP_FPHASE),
+	     .CLKOS_ENABLE("ENABLED"),
+	     .CLKOS_DIV(5*CLKOP_DIV),
+	     .CLKOS_CPHASE(CLKOP_CPHASE),
+	     .CLKOS_FPHASE(CLKOP_FPHASE),
         .CLKFB_DIV(CLKFB_DIV)
     ) pll_i (
         .CLKI(clk_25mhz),
         .CLKOP(half_clk_TMDS),
         .CLKFB(half_clk_TMDS),
-	.CLKOS(pixclk),
+	     .CLKOS(pixclk),
         .PHASESEL0(1'b0),
         .PHASESEL1(1'b0),
         .PHASEDIR(1'b1),
@@ -143,11 +143,13 @@ wire half_clk_TMDS; // TMDS clock at half freq (5*pixclk)
         .PLLWAKESYNC(1'b0),
         .ENCLKOP(1'b0)
      );
-
+`else 
+   reg half_clk = 0;
+   always #2 half_clk = ~half_clk;
+   assign pixclk = half_clk;
+   assign half_clk_TMDS = half_clk;
+`endif
 /******** X,Y,hSync,vSync,DrawArea ***********************************************/
-assign nextX = GFX_X_NEXT < GFX_width ? GFX_X_NEXT : GFX_width - 1;
-assign nextY = GFX_Y_NEXT < GFX_height ? GFX_Y_NEXT : GFX_height - 1;
-
 localparam GFX_line_width = GFX_width  + GFX_h_front_porch + GFX_h_sync_width + GFX_h_back_porch;
 localparam GFX_lines      = GFX_height + GFX_v_front_porch + GFX_v_sync_width + GFX_v_back_porch;
 
@@ -155,6 +157,11 @@ reg [10:0] GFX_X, GFX_Y;
 wire[10:0] GFX_X_NEXT = (GFX_X==GFX_line_width-1) ? 0 : GFX_X+1;
 wire[10:0] GFX_Y_NEXT = (GFX_Y==GFX_lines-1) ? 0 : GFX_Y+1;
 reg DrawArea;
+
+assign nextX = GFX_X_NEXT < GFX_width ? GFX_X_NEXT : GFX_width - 1;
+assign nextY = GFX_Y_NEXT < GFX_height ? GFX_Y_NEXT : GFX_height - 1;
+
+
 
 always @(posedge pixclk) DrawArea <= (GFX_X<GFX_width) && (GFX_Y<GFX_height);
 
@@ -205,3 +212,23 @@ assign gpdi_dp[3] = pixclk;
 // Note (again): gpdi_dn[3:0] is generated automatically by LVCMOS33D mode in ulx3s.lpf
 
 endmodule
+
+
+`ifndef SYNTHESIS
+//FOR SIMULATIONS
+module ODDRX1F(D0, D1, RST, SCLK, Q);
+    input D0, D1, RST, SCLK;
+    output Q;
+
+    reg [1:0] pipe_1, pipe_2, pipe_3;
+
+    assign Q = SCLK ? pipe_3[1] : pipe_3[0];
+    always @(posedge SCLK) begin
+	pipe_1 <= {D0, D1};
+	pipe_2 <= pipe_1;
+	pipe_3 <= pipe_2;
+    end
+
+    
+endmodule // ODDRX1F
+`endif

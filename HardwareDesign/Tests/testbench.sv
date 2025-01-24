@@ -2,6 +2,7 @@
 `undef VERBOSE_MEM
 `undef WRITE_VCD
 `undef MEM8BIT
+// iverilog -g2012 testbench.sv ../Processor/picorv32.v ../Graphicsystem/BufferController.v ../Graphicsystem/Framebuffer.v ../Graphicsystem/GPU.v ../Graphicsystem/GraphicSystem.v ../Graphicsystem/HDMI_Out.v ../Graphicsystem/ULX3S_hdmi/TMDS_encoder.v 
 
 module testbench;
 	logic clk = 1;
@@ -29,7 +30,7 @@ module testbench;
     logic[15:0]   gpu_MemData;
     logic[31:0]   gpu_MemAddr;
     logic         gpu_MemRead;
-    logic         gpu_MemValid;
+    logic         gpu_MemValid = 1'b0;
     logic[31:0]   gpu_CtrlAddress;
     logic[15:0]   gpu_CtrlAddressX;
     logic[15:0]   gpu_CtrlAddressY;
@@ -45,7 +46,7 @@ module testbench;
     logic         hdmi_pixClk;
     logic         hdmi_vSync;
 
-	localparam MEM_SIZE = 57344;
+	localparam MEM_SIZE = 32768;
 	
 	logic [31:0] memory [0:MEM_SIZE/4-1];
 	initial $readmemh("Software/firmware32.hex", memory);
@@ -70,8 +71,8 @@ module testbench;
 
 	GraphicSystem graphicSystem 
 	(
-		.clk25Mhz(clk_25mhz),
-		.cpuClk(clk_25mhz),
+		.clk25Mhz(clk),
+		.cpuClk(clk),
 		.reset(~resetn),
 		.gpdiDp(gpdi_dp),
 		.hdmi_pixClk(hdmi_pixClk),
@@ -101,7 +102,11 @@ module testbench;
 		gpu_CtrlDraw <= 0;
         gpu_CtrlClear <= 0;
         swapBuffers <= 0;
-		if (mem_valid && !mem_ready) begin
+		gpu_MemValid <= 0;
+		if(gpu_MemRead) begin
+			gpu_MemData <= memory[gpu_MemAddr >> 2];
+			gpu_MemValid <= 1;
+		end else if (mem_valid && !mem_ready) begin
 			mem_ready <= 1;
 			mem_rdata <= 'bx;
 			case (1)
@@ -146,14 +151,9 @@ module testbench;
 
 	initial begin
 		$dumpfile("testbench.vcd");
-		$dumpvars(0, testbench);
+		$dumpvars(1, testbench);
+		repeat(500000) @(posedge clk);
+		$finish;
 	end
 
-	always @(posedge clk) begin
-		if (resetn && trap) begin
-			repeat (10) @(posedge clk);
-			$display("TRAP");
-			$finish;
-		end
-	end
 endmodule

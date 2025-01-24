@@ -33,12 +33,23 @@ module GraphicSystem
 localparam SCREEN_WIDTH = 400;
 localparam SCREEN_HEIGHT = 240;
 
+wire[9:0]   gpu_FbX;
+wire[8:0]   gpu_FbY;
+wire[15:0]  gpu_FbColor;
+wire        gpu_FbWrite;
+wire[10:0]  hdmi_nextX;
+wire[10:0]  hdmi_nextY;
+wire        hdmi_hSync;
+wire[15:0]  fb2_dataOutA;
+wire[15:0]  fb2_dataOutB;
+wire bfCont_fbGPU;
+wire bfCont_fbHDMI;
+wire[15:0]  fb1_dataOutA;
+wire[15:0]  fb1_dataOutB;
 wire[16:0] gpu_fbAddress = gpu_FbX + gpu_FbY * SCREEN_WIDTH;
 wire[16:0] hdmi_fbAddress = ((hdmi_nextX >> 1) + (hdmi_nextY >> 1) * SCREEN_WIDTH); //this halves the resoluton from 480x800 to 240x400
 wire[15:0] hdmi_color = bfCont_fbHDMI == 0 ? fb1_dataOutB : fb2_dataOutB;
 
-wire bfCont_fbGPU;
-wire bfCont_fbHDMI;
 BufferController bfCont(
     .clk(cpuClk),
     .reset(reset),
@@ -50,8 +61,6 @@ BufferController bfCont(
     .fbHDMI(bfCont_fbHDMI)
 );
 
-wire[15:0]  fb1_dataOutA;
-wire[15:0]  fb1_dataOutB;
 Framebuffer #(
     .WIDTH(16),
     .DEPTH(SCREEN_HEIGHT * SCREEN_WIDTH)
@@ -70,8 +79,6 @@ Framebuffer #(
     .dataOutB(fb1_dataOutB)
 );
 
-wire[15:0]  fb2_dataOutA;
-wire[15:0]  fb2_dataOutB;
 Framebuffer #(
     .WIDTH(16),
     .DEPTH(SCREEN_HEIGHT * SCREEN_WIDTH)
@@ -92,10 +99,6 @@ Framebuffer #(
 
 
 /*The gpu_mem... and gpu_Ctrl... signals are direct in-/outputs on the GraphicSystem*/
-wire[9:0]   gpu_FbX;
-wire[8:0]   gpu_FbY;
-wire[15:0]  gpu_FbColor;
-wire        gpu_FbWrite;
 GPU #(
     .FB_WIDTH(SCREEN_WIDTH),
     .FB_HEIGHT(SCREEN_HEIGHT)
@@ -129,10 +132,6 @@ GPU #(
 );
 
 
-wire        hdmi_pixClk;
-wire[10:0]  hdmi_nextX;
-wire[10:0]  hdmi_nextY;
-wire        hdmi_hSync;
 HDMI_Out hdmi_Out 
 (
     //In
