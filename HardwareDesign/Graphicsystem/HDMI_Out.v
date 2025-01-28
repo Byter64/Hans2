@@ -144,16 +144,20 @@ wire half_clk_TMDS; // TMDS clock at half freq (5*pixclk)
         .ENCLKOP(1'b0)
      );
 `else 
-   reg half_clk = 0;
-   always #2 half_clk = ~half_clk;
-   assign pixclk = half_clk;
-   assign half_clk_TMDS = half_clk;
+   reg half_clk_tmp = 0;
+   always #1 half_clk_tmp = ~half_clk_tmp;
+
+   reg pixclk_tmp = 0;
+   always #4 pixclk_tmp = ~pixclk_tmp;
+   
+   assign pixclk = pixclk_tmp;
+   assign half_clk_TMDS = half_clk_tmp;
 `endif
 /******** X,Y,hSync,vSync,DrawArea ***********************************************/
 localparam GFX_line_width = GFX_width  + GFX_h_front_porch + GFX_h_sync_width + GFX_h_back_porch;
 localparam GFX_lines      = GFX_height + GFX_v_front_porch + GFX_v_sync_width + GFX_v_back_porch;
 
-reg [10:0] GFX_X, GFX_Y;
+reg [10:0] GFX_X = 0, GFX_Y = 0;
 wire[10:0] GFX_X_NEXT = (GFX_X==GFX_line_width-1) ? 0 : GFX_X+1;
 wire[10:0] GFX_Y_NEXT = (GFX_Y==GFX_lines-1) ? 0 : GFX_Y+1;
 reg DrawArea;
