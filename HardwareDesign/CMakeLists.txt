@@ -3,26 +3,21 @@ project("Hans2")
 
 # Target definition for subdirectories
 function(add_simulation testbench, sources)
-  # Join internal list structure a;b;c to string a b c
-  list(JOIN sources " " sources_var)
-
   add_custom_command(OUTPUT ${testbench}.out
     DEPENDS ${sources}
-    COMMAND "iverilog -g2012 -s ${testbench} -o ${testbench}.out ${sources_var}"
+    COMMAND iverilog -g2012 -s ${testbench} -o ${CMAKE_CURRENT_BINARY_DIR}/${testbench}.out ${sources}
   )
 
   add_custom_target(${testbench}_simulation
     DEPENDS ${testbench}.out
-    COMMAND "vvp ${testbench}.out"
+    COMMAND vvp ${CMAKE_CURRENT_BINARY_DIR}/${testbench}.out
   )
 endfunction()
 
 function(add_synthesis top, sources)
-  list(JOIN sources " " sources_var)
-
   add_custom_command(OUTPUT ${top}.json
     DEPENDS ${sources}
-    COMMAND "yosys -p \"synth_ecp5 -top ${top}; write_json ${top}.json\" ${sources_var}"
+    COMMAND yosys -p \"synth_ecp5 -top ${top}\; write_json ${CMAKE_CURRENT_BINARY_DIR}/${top}.json\" ${sources}
   )
 
   add_custom_target(${top}_synthesis
@@ -33,9 +28,9 @@ endfunction()
 function(add_pr top)
   add_custom_command(OUTPUT ${top}.config
     DEPENDS ${top}.json
-    DEPENDS ulx3s.pcf
+    DEPENDS ulx3s.lpf
 
-    COMMAND "nextpnr-ecp5 --85k --package CABGA381 --lpf ulx3s.lpf --lpf-allow-unconstrained --json ${top}.json --textcfg ${top}.config"
+    COMMAND nextpnr-ecp5 --85k --package CABGA381 --lpf ${CMAKE_CURRENT_SOURCE_DIR}/ulx3s.lpf --lpf-allow-unconstrained --json ${CMAKE_CURRENT_BINARY_DIR}/${top}.json --textcfg ${CMAKE_CURRENT_BINARY_DIR}/${top}.config
   )
 
   add_custom_target(${top}_pr
@@ -47,7 +42,7 @@ function(add_bitstream top)
   add_custom_command(OUTPUT ${top}.bit
     DEPENDS ${top}.config
 
-    COMMAND "ecppack ${top}.config ${top}.bit"
+    COMMAND ecppack ${CMAKE_CURRENT_BINARY_DIR}/${top}.config ${CMAKE_CURRENT_BINARY_DIR}/${top}.bit
   )
 
   add_custom_target(${top}_bitstream
@@ -57,7 +52,7 @@ endfunction()
 
 function(add_flash top)
   add_custom_target(${top}_flash
-    COMMNAND "fujprog -j flash ${top}.bit"
+    COMMAND fujprog -j flash ${CMAKE_CURRENT_BINARY_DIR}/${top}.bit
   )
 endfunction()
 
