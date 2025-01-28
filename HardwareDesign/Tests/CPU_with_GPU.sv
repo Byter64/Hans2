@@ -28,7 +28,7 @@ module topmodule
 	logic  [31:0] mem_rdata;
 
 	logic         swapBuffers;
-    logic         isVSynced = 1'b0;
+    logic         isVSynced = 1'b1;
     logic[15:0]   gpu_MemData;
     logic[31:0]   gpu_MemAddr;
     logic         gpu_MemRead;
@@ -105,12 +105,11 @@ module topmodule
         gpu_CtrlClear <= 0;
         swapBuffers <= 0;
 		gpu_MemValid <= 0;
-		if(gpu_MemRead && !gpu_MemValid) begin
+		if(gpu_MemRead) begin
 			gpu_MemData <= memory[gpu_MemAddr >> 2];
 			gpu_MemValid <= 1;
 		end else if (mem_valid && !mem_ready) begin
 			mem_ready <= 1;
-			mem_rdata <= 'bx;
 			case (1)
 				mem_addr < MEM_SIZE: begin
 					if (|mem_wstrb) begin
@@ -133,7 +132,7 @@ module topmodule
                 (mem_addr == MEM_SIZE+32'h0020): if (&mem_wstrb) gpu_CtrlDraw 		<= mem_wdata;
                 (mem_addr == MEM_SIZE+32'h0024): if (&mem_wstrb) gpu_CtrlClearColor <= mem_wdata;
                 (mem_addr == MEM_SIZE+32'h0028): if (&mem_wstrb) gpu_CtrlClear 		<= mem_wdata;
-                (mem_addr == MEM_SIZE+32'h0100): if (&mem_wstrb) swapBuffers 		<= mem_wdata;
+                (mem_addr == MEM_SIZE+32'h0100): if (&mem_wstrb) swapBuffers  		<= swapBuffers ? 0 : mem_wdata;
                 (mem_addr == MEM_SIZE+32'h010C): if (&mem_wstrb) isVSynced 			<= mem_wdata;
 				(mem_addr == MEM_SIZE+32'h002C): if (~|mem_wstrb) mem_rdata 		<= {31'b0,gpu_CtrlBusy};
 				(mem_addr == MEM_SIZE+32'h0108): if (~|mem_wstrb) mem_rdata 		<= {31'b0,hdmi_vSync};

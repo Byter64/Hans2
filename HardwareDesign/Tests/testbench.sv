@@ -1,7 +1,4 @@
 `timescale 1 ns / 1 ps
-`undef VERBOSE_MEM
-`undef WRITE_VCD
-`undef MEM8BIT
 // iverilog -g2012 testbench.sv ../Processor/picorv32.v ../Graphicsystem/BufferController.v ../Graphicsystem/Framebuffer.v ../Graphicsystem/GPU.v ../Graphicsystem/GraphicSystem.v ../Graphicsystem/HDMI_Out.v ../Graphicsystem/ULX3S_hdmi/TMDS_encoder.v 
 
 module testbench;
@@ -26,7 +23,7 @@ module testbench;
 
 	logic[3:0]    gpdi_dp;
 	logic         swapBuffers;
-    logic         isVSynced = 1'b0;
+    logic         isVSynced = 1'b1;
     logic[15:0]   gpu_MemData;
     logic[31:0]   gpu_MemAddr;
     logic         gpu_MemRead;
@@ -108,7 +105,6 @@ module testbench;
 			gpu_MemValid <= 1;
 		end else if (mem_valid && !mem_ready) begin
 			mem_ready <= 1;
-			mem_rdata <= 'bx;
 			case (1)
 				mem_addr < MEM_SIZE: begin
 					if (|mem_wstrb) begin
@@ -131,7 +127,7 @@ module testbench;
                 (mem_addr == MEM_SIZE+32'h0020): if (&mem_wstrb) gpu_CtrlDraw 		<= mem_wdata;
                 (mem_addr == MEM_SIZE+32'h0024): if (&mem_wstrb) gpu_CtrlClearColor <= mem_wdata;
                 (mem_addr == MEM_SIZE+32'h0028): if (&mem_wstrb) gpu_CtrlClear 		<= mem_wdata;
-                (mem_addr == MEM_SIZE+32'h0100): if (&mem_wstrb) swapBuffers 		<= mem_wdata;
+                (mem_addr == MEM_SIZE+32'h0100): if (&mem_wstrb) swapBuffers  		<= swapBuffers ? 0 : mem_wdata;
                 (mem_addr == MEM_SIZE+32'h010C): if (&mem_wstrb) isVSynced 			<= mem_wdata;
 				(mem_addr == MEM_SIZE+32'h002C): if (~|mem_wstrb) mem_rdata 		<= {31'b0,gpu_CtrlBusy};
 				(mem_addr == MEM_SIZE+32'h0108): if (~|mem_wstrb) mem_rdata 		<= {31'b0,hdmi_vSync};
@@ -151,8 +147,8 @@ module testbench;
 
 	initial begin
 		$dumpfile("testbench.vcd");
-		$dumpvars(1, testbench);
-		repeat(500000) @(posedge clk);
+		$dumpvars(0, testbench);
+		repeat(1000000) @(posedge clk);
 		$finish;
 	end
 
