@@ -10,7 +10,7 @@ function(add_simulation testbench, sources)
 
   add_custom_target(${testbench}_simulation
     DEPENDS ${testbench}.out
-    COMMAND vvp ${CMAKE_CURRENT_BINARY_DIR}/${testbench}.out
+    COMMAND vvp ${CMAKE_CURRENT_BINARY_DIR}/${testbench}.out -lxt2
   )
 endfunction()
 
@@ -47,6 +47,12 @@ function(add_bitstream top)
 
   add_custom_target(${top}_bitstream
     DEPENDS ${top}.bit
+  )
+endfunction()
+
+function(add_upload top)
+  add_custom_target(${top}_upload
+    COMMAND fujprog ${CMAKE_CURRENT_BINARY_DIR}/${top}.bit
   )
 endfunction()
 
