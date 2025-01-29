@@ -81,7 +81,7 @@ always @(posedge hdmi_pixClk) begin
 end
 
 always @(posedge hdmi_pixClk) begin
-    gpu_MemData <= memory[gpu_MemAddr];
+    gpu_MemData <= memory[gpu_MemAddr >> 1];
 end
 
 
