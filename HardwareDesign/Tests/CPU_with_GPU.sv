@@ -74,7 +74,8 @@ module topmodule
 	GraphicSystem graphicSystem 
 	(
 		.clk25Mhz(clk_25mhz),
-		.cpuClk(clk),
+		.gpuClk(hdmi_pixClk),
+		.bufferControllerClk(hdmi_pixClk),
 		.reset(~resetn),
 		.gpdiDp(gpdi_dp),
 		.hdmi_pixClk(hdmi_pixClk),

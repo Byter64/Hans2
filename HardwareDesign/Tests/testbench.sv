@@ -9,7 +9,7 @@ module testbench;
 	always #5 clk = ~clk;
 
 	initial begin
-		repeat (100) @(posedge clk);
+		repeat (100) @(posedge hdmi_pixClk);
 		resetn <= 1;
 	end
 
@@ -69,7 +69,8 @@ module testbench;
 	GraphicSystem graphicSystem 
 	(
 		.clk25Mhz(clk),
-		.cpuClk(clk),
+		.gpuClk(hdmi_pixClk),
+		.bufferControllerClk(hdmi_pixClk),
 		.reset(~resetn),
 		.gpdiDp(gpdi_dp),
 		.hdmi_pixClk(hdmi_pixClk),
@@ -99,7 +100,7 @@ module testbench;
 	assign gpu_MemData = tmp_gpu_addr[1] ? tmp_gpu_MemData[31:16] : tmp_gpu_MemData[15:0];
 
 
-	always_ff @(posedge clk) begin
+	always_ff @(posedge hdmi_pixClk) begin
 		mem_ready <= 0;
 		gpu_CtrlDraw <= 0;
         gpu_CtrlClear <= 0;
