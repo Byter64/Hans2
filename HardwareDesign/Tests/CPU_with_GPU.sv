@@ -3,6 +3,7 @@
 module topmodule
     (
         input logic clk_25mhz,
+		input logic [6:0] btn,
         output logic [3:0] gpdi_dp
     );
 	logic clk;
@@ -18,6 +19,8 @@ module topmodule
             resetn <= 1;
         end
     end
+	
+	logic[6:0] btn_reg;
 
 	logic mem_valid;
 	logic mem_instr;
@@ -142,8 +145,31 @@ module topmodule
                 (mem_addr == MEM_SIZE+32'h010C): if (&mem_wstrb) isVSynced 			<= mem_wdata;
 				(mem_addr == MEM_SIZE+32'h002C): if (~|mem_wstrb) mem_rdata 		<= {31'b0,gpu_CtrlBusy};
 				(mem_addr == MEM_SIZE+32'h0108): if (~|mem_wstrb) mem_rdata 		<= {31'b0,hdmi_vSync};
+				(mem_addr == MEM_SIZE+32'h0200): if (~|mem_wstrb) mem_rdata 		<= {31'b0,btn_reg[1]};
+				(mem_addr == MEM_SIZE+32'h0204): if (~|mem_wstrb) mem_rdata 		<= {31'b0,btn_reg[2]};
+				(mem_addr == MEM_SIZE+32'h0208): if (~|mem_wstrb) mem_rdata 		<= {31'b0,btn_reg[3]};
+				(mem_addr == MEM_SIZE+32'h020C): if (~|mem_wstrb) mem_rdata 		<= {31'b0,btn_reg[4]};
+				(mem_addr == MEM_SIZE+32'h0210): if (~|mem_wstrb) mem_rdata 		<= {31'b0,btn_reg[5]};
+				(mem_addr == MEM_SIZE+32'h0214): if (~|mem_wstrb) mem_rdata 		<= {31'b0,btn_reg[6]};
 			endcase
 		end
 	end
+	
+	logic [11:0] btn_timer [0:6];  
+
+	always_ff @(posedge hdmi_pixClk) begin
+		for (int i = 0; i < 7; i++) begin
+			if (btn_timer[i] == 12'h0000)  begin
+				btn_reg[i] <= btn[i]; 
+				if(btn[i]) begin
+					btn_timer[i] <= 12'h0001;
+				end 
+			end
+			else begin
+					btn_timer[i] <= btn_timer[i] + 1;
+			end
+		end  
+	end
+
 
 endmodule
