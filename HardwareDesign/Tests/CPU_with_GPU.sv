@@ -10,7 +10,7 @@ module topmodule
 	logic resetn = 0;
 	logic trap;
     logic [7:0] reset_counter = 100;
-    always_ff @(posedge clk ) begin
+    always_ff @(posedge hdmi_pixClk ) begin
         if(reset_counter>0) begin
             reset_counter <= reset_counter - 1;
         end
@@ -48,7 +48,7 @@ module topmodule
     logic         hdmi_pixClk;
     logic         hdmi_vSync;
 
-	localparam MEM_SIZE = 32768;
+	localparam MEM_SIZE = 24576;
 	
 	logic [31:0] memory [0:MEM_SIZE/4-1];
 	initial $readmemh("Software/firmware32.hex", memory);
@@ -59,7 +59,7 @@ module topmodule
 		.ENABLE_DIV(1),
 		.BARREL_SHIFTER(1)
 	) uut (
-		.clk         (clk        ),
+		.clk         (hdmi_pixClk        ),
 		.resetn      (resetn     ),
 		.trap        (trap       ),
 		.mem_valid   (mem_valid  ),
@@ -98,15 +98,20 @@ module topmodule
 		.gpu_CtrlClear(gpu_CtrlClear),
 		.gpu_CtrlBusy(gpu_CtrlBusy)
 	);
+	logic test;
+	logic [31:0] tmp_gpu_MemData;
+	logic [31:0] tmp_gpu_addr;
+	assign gpu_MemData = tmp_gpu_addr[1] ? tmp_gpu_MemData[31:16] : tmp_gpu_MemData[15:0];
 
-	always_ff @(posedge clk) begin
+	always_ff @(posedge hdmi_pixClk) begin
 		mem_ready <= 0;
 		gpu_CtrlDraw <= 0;
         gpu_CtrlClear <= 0;
         swapBuffers <= 0;
 		gpu_MemValid <= 0;
 		if(gpu_MemRead) begin
-			gpu_MemData <= memory[gpu_MemAddr >> 2];
+			tmp_gpu_addr <= gpu_MemAddr;
+			tmp_gpu_MemData <= memory[gpu_MemAddr >> 2];
 			gpu_MemValid <= 1;
 		end else if (mem_valid && !mem_ready) begin
 			mem_ready <= 1;

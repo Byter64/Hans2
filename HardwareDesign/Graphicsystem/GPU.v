@@ -40,12 +40,37 @@ module GPU #
     output        fb_write  //Tells the frame buffer to write color to (fb_x, fb_y)
 );
 
-assign crtl_busy = !state[I_IDLE] || !next_state[I_IDLE];
+reg[15:0] draw_color;
 
 reg old_ctrl_draw;
 reg old_ctrl_clear;
 wire command_draw = old_ctrl_draw == 0 && ctrl_draw == 1;
 wire command_clear = old_ctrl_clear == 0 && ctrl_clear == 1;
+
+
+//Don't give these initial values because they will become latches and yosys dies and what not
+//Does apply for any reg that is set in a combinational always
+reg[31:0] draw_address;
+reg[15:0] draw_address_x;
+reg[15:0] draw_address_y;
+reg[15:0] draw_image_width;
+reg[$clog2(FB_WIDTH)+2:0] draw_width;
+reg[$clog2(FB_HEIGHT)+2:0] draw_height;
+reg[$clog2(FB_WIDTH)+2:0] draw_x;
+reg[$clog2(FB_HEIGHT)+2:0] draw_y;
+
+reg drawing = 0;
+wire[$clog2(FB_WIDTH)+2:0] max_x = draw_width;
+wire[$clog2(FB_HEIGHT)+2:0] max_y = draw_height;
+reg[$clog2(FB_WIDTH)+2:0] pos_x = 0;
+reg[$clog2(FB_HEIGHT)+2:0] pos_y = 0;
+wire[$clog2(FB_WIDTH)+2:0] pos_x_1 = pos_x + 1;
+wire[$clog2(FB_HEIGHT)+2:0] pos_y_1 = pos_y + 1;
+wire[$clog2(FB_WIDTH)+2:0] next_pos_x = drawing ? (pos_x_1 == max_x ? 0 : pos_x_1) : 0;
+wire[$clog2(FB_HEIGHT)+2:0] next_pos_y = drawing ? (pos_x_1 == max_x ? pos_y_1 : pos_y) : 0;
+wire[$clog2(FB_WIDTH)+2:0] next_mem_x = (drawing ? (pos_x_1 == max_x ? 0 : pos_x_1) : 0) << 1;
+wire[$clog2(FB_HEIGHT)+2:0] next_mem_y = (drawing ? (pos_x_1 == max_x ? pos_y_1 : pos_y) : 0) << 1;
+wire next_drawing = pos_y < max_y;
 
 always @(posedge clk) begin
     old_ctrl_clear <= ctrl_clear;
@@ -86,16 +111,6 @@ always @(posedge clk) begin
 end
 
 
-//Don't give these initial values because they will become latches and yosys dies and what not
-//Does apply for any reg that is set in a combinational always
-reg[31:0] draw_address;
-reg[15:0] draw_address_x;
-reg[15:0] draw_address_y;
-reg[15:0] draw_image_width;
-reg[$clog2(FB_WIDTH)+2:0] draw_width;
-reg[$clog2(FB_HEIGHT)+2:0] draw_height;
-reg[$clog2(FB_WIDTH)+2:0] draw_x;
-reg[$clog2(FB_HEIGHT)+2:0] draw_y;
 
 always @(posedge clk) begin
     if(next_state[I_IDLE]) begin
@@ -128,19 +143,6 @@ always @(posedge clk) begin
         clear_color <= clear_color;
 end
 
-reg drawing = 0;
-wire next_drawing = pos_y < max_y;
-wire[$clog2(FB_WIDTH)+2:0] max_x = draw_width;
-wire[$clog2(FB_HEIGHT)+2:0] max_y = draw_height;
-reg[$clog2(FB_WIDTH)+2:0] pos_x = 0;
-reg[$clog2(FB_HEIGHT)+2:0] pos_y = 0;
-wire[$clog2(FB_WIDTH)+2:0] pos_x_1 = pos_x + 1;
-wire[$clog2(FB_HEIGHT)+2:0] pos_y_1 = pos_y + 1;
-wire[$clog2(FB_WIDTH)+2:0] next_pos_x = drawing ? (pos_x_1 == max_x ? 0 : pos_x_1) : 0;
-wire[$clog2(FB_HEIGHT)+2:0] next_pos_y = drawing ? (pos_x_1 == max_x ? pos_y_1 : pos_y) : 0;
-wire[$clog2(FB_WIDTH)+2:0] next_mem_x = (drawing ? (pos_x_1 == max_x ? 0 : pos_x_1) : 0) << 1;
-wire[$clog2(FB_HEIGHT)+2:0] next_mem_y = (drawing ? (pos_x_1 == max_x ? pos_y_1 : pos_y) : 0) << 1;
-
 always @(posedge clk) begin
     if(!next_state[I_IDLE] && state[I_IDLE]) begin
         drawing <= 1;
@@ -163,7 +165,6 @@ end
 
 assign mem_read = next_state[I_DRAW];
 assign mem_addr = draw_address + draw_address_x + next_mem_x + ((draw_address_y + next_mem_y) * draw_image_width);
-reg[15:0] draw_color;
 
 always @(*) begin
     if(!state[I_CLEAR])
@@ -180,5 +181,7 @@ assign fb_write = next_drawing && draw_color[0] && x_in_bounds && y_in_bounds;
 assign fb_x = draw_x + pos_x;
 assign fb_y = draw_y + pos_y;
 assign fb_color = draw_color;
+
+assign crtl_busy = !state[I_IDLE] || !next_state[I_IDLE];
 
 endmodule

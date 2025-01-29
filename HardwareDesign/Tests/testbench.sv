@@ -43,7 +43,7 @@ module testbench;
     logic         hdmi_pixClk;
     logic         hdmi_vSync;
 
-	localparam MEM_SIZE = 32768;
+	localparam MEM_SIZE = 24576;
 	
 	logic [31:0] memory [0:MEM_SIZE/4-1];
 	initial $readmemh("Software/firmware32.hex", memory);
@@ -94,6 +94,11 @@ module testbench;
 		.gpu_CtrlBusy(gpu_CtrlBusy)
 	);
 
+	logic [31:0] tmp_gpu_MemData;
+	logic [31:0] tmp_gpu_addr;
+	assign gpu_MemData = tmp_gpu_addr[1] ? tmp_gpu_MemData[31:16] : tmp_gpu_MemData[15:0];
+
+
 	always_ff @(posedge clk) begin
 		mem_ready <= 0;
 		gpu_CtrlDraw <= 0;
@@ -101,7 +106,8 @@ module testbench;
         swapBuffers <= 0;
 		gpu_MemValid <= 0;
 		if(gpu_MemRead) begin
-			gpu_MemData <= memory[gpu_MemAddr >> 2];
+			tmp_gpu_addr <= gpu_MemAddr;
+			tmp_gpu_MemData <= memory[gpu_MemAddr >> 2];
 			gpu_MemValid <= 1;
 		end else if (mem_valid && !mem_ready) begin
 			mem_ready <= 1;
@@ -144,10 +150,13 @@ module testbench;
 			end
 		end
 	end
-
+	integer idx;
 	initial begin
 		$dumpfile("testbench.vcd");
 		$dumpvars(0, testbench);
+		for (idx = 1582; idx < 1710; idx = idx + 1) begin
+			$dumpvars(0,memory[idx]);
+		end
 		repeat(1000000) @(posedge clk);
 		$finish;
 	end
