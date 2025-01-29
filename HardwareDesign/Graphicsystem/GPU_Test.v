@@ -72,7 +72,7 @@ wire[15:0] GPU_FbColor;
 wire GPU_FbWrite;
 
 assign GPU_Clk = pixclk;
-always @(posedge GPU_Clk) if(GPU_MemRead) GPU_MemData <= memory[GPU_MemAddr];
+always @(posedge GPU_Clk) if(GPU_MemRead) GPU_MemData <= memory[GPU_MemAddr >> 1];
 
 reg[6:0] counterX = 0;
 wire[6:0] counterXNext = counterX < 72 ? counterX+1 : 0;
