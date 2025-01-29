@@ -3,7 +3,8 @@
 module GraphicSystem 
 (
     input clk25Mhz,
-    input cpuClk,
+    input gpuClk,
+    input bufferControllerClk,
     input reset,
     output[3:0] gpdiDp,
     output hdmi_pixClk,
@@ -51,7 +52,7 @@ wire[16:0] hdmi_fbAddress = ((hdmi_nextX >> 1) + (hdmi_nextY >> 1) * SCREEN_WIDT
 wire[15:0] hdmi_color = bfCont_fbHDMI == 0 ? fb1_dataOutB : fb2_dataOutB;
 
 BufferController bfCont(
-    .clk(cpuClk),
+    .clk(bufferControllerClk),
     .reset(reset),
     .swapIn(swapBuffers),
     .vSync(hdmi_vSync),
@@ -103,7 +104,7 @@ GPU #(
     .FB_WIDTH(SCREEN_WIDTH),
     .FB_HEIGHT(SCREEN_HEIGHT)
 ) gpu (
-    .clk(hdmi_pixClk),
+    .clk(gpuClk),
     .reset(reset),
     //MEM INTERFACE
     .mem_data(gpu_MemData),
