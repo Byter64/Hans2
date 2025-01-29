@@ -5,8 +5,7 @@ module I2S_Test (
     input clk_25mhz,
     output audio_bclk,
     output audio_lrclk,
-    output audio_din,
-    output v_out = 1
+    output audio_din
 );
 
 assign audio_bclk = clk_1024khz; //bclk
