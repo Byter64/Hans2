@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.24.0)
-project("Hans2")
+project("Hans2_Hardware")
 
 # Target definition for subdirectories
 function(add_simulation testbench, sources)
