@@ -1,13 +1,18 @@
-// iverilog -g2012 testbench.sv ../Processor/picorv32.v ../Graphicsystem/BufferController.v ../Graphicsystem/Framebuffer.v ../Graphicsystem/GPU.v ../Graphicsystem/GraphicSystem.v ../Graphicsystem/HDMI_Out.v ../Graphicsystem/ULX3S_hdmi/TMDS_encoder.v 
+// iverilog -g2012 testbench.sv ../Processor/picorv32.v ../Graphicsystem/BufferController.v ../Graphicsystem/Framebuffer.v ../Graphicsystem/GPU.v ../Graphicsystem/GraphicSystem.v ../Graphicsystem/HDMI_Out.v ../Graphicsystem/ULX3S_hdmi/TMDS_encoder.v ../Controller/controller.sv
 
 module topmodule
     (
         input logic clk_25mhz,
 		input logic [6:0] btn,
-        output logic [3:0] gpdi_dp
+        output logic [3:0] gpdi_dp,
+		output logic v33out = 1,
+    	input  logic cont_data,
+    	output logic cont_clk,
+    	output logic cont_activate
     );
 	logic clk;
     assign clk = clk_25mhz;
+	logic controller_clk = 0;
 	logic resetn = 0;
 	logic trap;
     logic [7:0] reset_counter = 100;
@@ -20,36 +25,38 @@ module topmodule
         end
     end
 	
-	logic[6:0] btn_reg;
+	logic [6:0] 	btn_reg;
 
-	logic mem_valid;
-	logic mem_instr;
-	logic mem_ready;
-	logic [31:0] mem_addr;
-	logic [31:0] mem_wdata;
-	logic [3:0] mem_wstrb;
-	logic  [31:0] mem_rdata;
+	logic 			mem_valid;
+	logic 			mem_instr;
+	logic 			mem_ready;
+	logic [31:0] 	mem_addr;
+	logic [31:0] 	mem_wdata;
+	logic [3:0] 	mem_wstrb;
+	logic [31:0] 	mem_rdata;
 
-	logic         swapBuffers;
-    logic         isVSynced = 1'b1;
-    logic[15:0]   gpu_MemData;
-    logic[31:0]   gpu_MemAddr;
-    logic         gpu_MemRead;
-    logic         gpu_MemValid = 1'b0;
-    logic[31:0]   gpu_CtrlAddress;
-    logic[15:0]   gpu_CtrlAddressX;
-    logic[15:0]   gpu_CtrlAddressY;
-    logic[15:0]   gpu_CtrlImageWidth;
-    logic[10:0]   gpu_CtrlWidth;
-    logic[9:0]    gpu_CtrlHeight;
-    logic[10:0]   gpu_CtrlX;
-    logic[9:0]    gpu_CtrlY;
-    logic         gpu_CtrlDraw;
-    logic[15:0]   gpu_CtrlClearColor = 16'b1101100010110111;
-    logic         gpu_CtrlClear;
-    logic         gpu_CtrlBusy;
-    logic         hdmi_pixClk;
-    logic         hdmi_vSync;
+	logic         	swapBuffers;
+    logic         	isVSynced = 1'b1;
+    logic [15:0]   	gpu_MemData;
+    logic [31:0]   	gpu_MemAddr;
+    logic         	gpu_MemRead;
+    logic         	gpu_MemValid = 1'b0;
+    logic [31:0]   	gpu_CtrlAddress;
+    logic [15:0]   	gpu_CtrlAddressX;
+    logic [15:0]   	gpu_CtrlAddressY;
+    logic [15:0]   	gpu_CtrlImageWidth;
+    logic [10:0]   	gpu_CtrlWidth;
+    logic [9:0]    	gpu_CtrlHeight;
+    logic [10:0]   	gpu_CtrlX;
+    logic [9:0]    	gpu_CtrlY;
+    logic         	gpu_CtrlDraw;
+    logic [15:0]   	gpu_CtrlClearColor = 16'b1101100010110111;
+    logic         	gpu_CtrlClear;
+    logic         	gpu_CtrlBusy;
+    logic         	hdmi_pixClk;
+    logic         	hdmi_vSync;
+
+	logic[11:0]   	controller_btns;
 
 	localparam MEM_SIZE = 24576;
 	
@@ -102,7 +109,16 @@ module topmodule
 		.gpu_CtrlClear(gpu_CtrlClear),
 		.gpu_CtrlBusy(gpu_CtrlBusy)
 	);
-	logic test;
+	
+	Controller controller
+	(
+		.clk(controller_clk),
+		.controller_btns(controller_btns),
+		.cont_data(cont_data),
+		.cont_clk(cont_clk),
+		.cont_activate(cont_activate)
+	);
+
 	logic [31:0] tmp_gpu_MemData;
 	logic [31:0] tmp_gpu_addr;
 	assign gpu_MemData = tmp_gpu_addr[1] ? tmp_gpu_MemData[31:16] : tmp_gpu_MemData[15:0];
@@ -130,6 +146,7 @@ module topmodule
 						mem_rdata <= memory[mem_addr >> 2];
 					end
 				end
+				//GPU
 				(mem_addr == MEM_SIZE+32'h0000): if (&mem_wstrb) gpu_CtrlAddress 	<= mem_wdata;
                 (mem_addr == MEM_SIZE+32'h0004): if (&mem_wstrb) gpu_CtrlAddressX 	<= mem_wdata;
                 (mem_addr == MEM_SIZE+32'h0008): if (&mem_wstrb) gpu_CtrlAddressY 	<= mem_wdata;
@@ -145,16 +162,44 @@ module topmodule
                 (mem_addr == MEM_SIZE+32'h010C): if (&mem_wstrb) isVSynced 			<= mem_wdata;
 				(mem_addr == MEM_SIZE+32'h002C): if (~|mem_wstrb) mem_rdata 		<= {31'b0,gpu_CtrlBusy};
 				(mem_addr == MEM_SIZE+32'h0108): if (~|mem_wstrb) mem_rdata 		<= {31'b0,hdmi_vSync};
+				//BTNS
 				(mem_addr == MEM_SIZE+32'h0200): if (~|mem_wstrb) mem_rdata 		<= {31'b0,btn_reg[1]};
 				(mem_addr == MEM_SIZE+32'h0204): if (~|mem_wstrb) mem_rdata 		<= {31'b0,btn_reg[2]};
 				(mem_addr == MEM_SIZE+32'h0208): if (~|mem_wstrb) mem_rdata 		<= {31'b0,btn_reg[3]};
 				(mem_addr == MEM_SIZE+32'h020C): if (~|mem_wstrb) mem_rdata 		<= {31'b0,btn_reg[4]};
 				(mem_addr == MEM_SIZE+32'h0210): if (~|mem_wstrb) mem_rdata 		<= {31'b0,btn_reg[5]};
 				(mem_addr == MEM_SIZE+32'h0214): if (~|mem_wstrb) mem_rdata 		<= {31'b0,btn_reg[6]};
+				//Controller
+				(mem_addr == MEM_SIZE+32'h0400): if (~|mem_wstrb) mem_rdata 		<= {31'b0,controller_btns[0]};
+				(mem_addr == MEM_SIZE+32'h0404): if (~|mem_wstrb) mem_rdata 		<= {31'b0,controller_btns[1]};
+				(mem_addr == MEM_SIZE+32'h0408): if (~|mem_wstrb) mem_rdata 		<= {31'b0,controller_btns[2]};
+				(mem_addr == MEM_SIZE+32'h040C): if (~|mem_wstrb) mem_rdata 		<= {31'b0,controller_btns[3]};
+				(mem_addr == MEM_SIZE+32'h0410): if (~|mem_wstrb) mem_rdata 		<= {31'b0,controller_btns[4]};
+				(mem_addr == MEM_SIZE+32'h0414): if (~|mem_wstrb) mem_rdata 		<= {31'b0,controller_btns[5]};
+				(mem_addr == MEM_SIZE+32'h0418): if (~|mem_wstrb) mem_rdata 		<= {31'b0,controller_btns[6]};
+				(mem_addr == MEM_SIZE+32'h041C): if (~|mem_wstrb) mem_rdata 		<= {31'b0,controller_btns[7]};
+				(mem_addr == MEM_SIZE+32'h0420): if (~|mem_wstrb) mem_rdata 		<= {31'b0,controller_btns[8]};
+				(mem_addr == MEM_SIZE+32'h0424): if (~|mem_wstrb) mem_rdata 		<= {31'b0,controller_btns[9]};
+				(mem_addr == MEM_SIZE+32'h0428): if (~|mem_wstrb) mem_rdata 		<= {31'b0,controller_btns[10]};
+				(mem_addr == MEM_SIZE+32'h042C): if (~|mem_wstrb) mem_rdata 		<= {31'b0,controller_btns[11]};
 			endcase
 		end
 	end
-	
+
+	logic[7:0] controller_clk_counter = 0;
+	logic[7:0] controller_clk_counter_next;
+
+	assign controller_clk_counter_next = controller_clk_counter + 1;
+
+	always_ff @(posedge clk_25mhz) begin
+		if(controller_clk_counter_next == 10) begin
+			controller_clk_counter <= 0;
+			controller_clk <= ~controller_clk;
+		end else begin
+			controller_clk_counter <= controller_clk_counter_next;
+		end
+	end
+
 	logic [11:0] btn_timer [0:6];  
 
 	always_ff @(posedge hdmi_pixClk) begin
