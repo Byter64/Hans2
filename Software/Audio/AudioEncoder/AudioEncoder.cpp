@@ -25,6 +25,22 @@ int16_t EncodeDelta(std::queue<bool>& bits, int32_t delta)
 	return realDelta;
 }
 
+int CountSamples(std::ifstream* file)
+{
+	file->clear();
+	std::streampos oldPos = file->tellg();
+	std::streampos fsize = 0;
+
+	file->seekg(0);
+	fsize = file->tellg();
+	file->seekg(0, std::ios::end);
+	fsize = file->tellg() - fsize;
+
+	file->seekg(oldPos);
+
+	return fsize / 2;
+}
+
 int main(int argc, char* argv[])
 {
 	if (argc != 3)
@@ -34,8 +50,12 @@ int main(int argc, char* argv[])
 		return -1;
 	}
 	
+	long error = 0;
+
 	std::ifstream source = std::ifstream(argv[1], std::ios::binary);
 	std::ofstream destination = std::ofstream(argv[2], std::ios::binary);
+
+	std::cout << "Encoding file: " << argv[1] << std::endl;
 
 	std::queue<bool> bits;
 	int16_t lastSample = 0;
@@ -63,8 +83,14 @@ int main(int argc, char* argv[])
 		}
 
 		lastSample = lastSample + realDelta; //Using the actual delta here has the positive of not accumulating errors
+		error += std::abs(sample - lastSample);
 	}
 
+	int sampleCount = CountSamples(&source);
+
+	std::cout << "Samples: " << sampleCount << std::endl;
+	std::cout << "Accumulated error: " << error << std::endl;
+	std::cout << "Average error per sample:" << error / (float)sampleCount << std::endl;
 
 	source.close();
 	destination.close();
