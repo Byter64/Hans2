@@ -12,7 +12,7 @@ endif()
 project ("AudioDecoder")
 
 # Fügen Sie der ausführbaren Datei dieses Projekts eine Quelle hinzu.
-add_executable (AudioDecoder "AudioDecoder.cpp" "AudioDecoder.h")
+add_executable (AudioDecoder "AudioDecoder.cpp" )
 
 if (CMAKE_VERSION VERSION_GREATER 3.12)
   set_property(TARGET AudioDecoder PROPERTY CXX_STANDARD 20)
