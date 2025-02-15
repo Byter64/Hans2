@@ -1,12 +1,12 @@
 ﻿#include <iostream>
 #include <fstream>
-#include <queue>
+#include <list>
 
 //Delta has 12 Bits, with bitnumbers 1-12
 static int DELTA_MAX = (1 << 12) - 2; 
 static int DELTA_MIN = -(1 << 12);
 
-int16_t EncodeDelta(std::queue<bool>& bits, int32_t delta)
+int16_t EncodeDelta(std::list<unsigned char>& bytes, int32_t delta, bool isEven)
 {
 	if (delta > DELTA_MAX)
 		delta = DELTA_MAX;
@@ -14,9 +14,18 @@ int16_t EncodeDelta(std::queue<bool>& bits, int32_t delta)
 		delta = DELTA_MIN;
 
 	uint32_t u_delta = *(uint32_t*)&delta;
-	for(int i = 12; i >= 1; i--)
+	if (isEven)
 	{
-		bits.push((u_delta >> i) & 1);
+		bytes.push_back((u_delta >> 5) & 0xFF); //Storing bits 5 to 12
+		bytes.push_back((u_delta << 3) & 0xF0); //Storing bits 1 to 4
+	}
+	else
+	{
+		unsigned char lastByte = bytes.back();
+		bytes.pop_back();
+		lastByte |= (u_delta >> 9) & 0x0F;
+		bytes.push_back(lastByte);				 //Storing bits 9 to 12
+		bytes.push_back((u_delta >> 1) & 0xFF); //Storing bits 1 to 8
 	}
 
 	int16_t realDelta = delta;
@@ -57,9 +66,10 @@ int main(int argc, char* argv[])
 
 	std::cout << "Encoding file: " << argv[1] << std::endl;
 
-	std::queue<bool> bits;
+	std::list<unsigned char> bytes;
 	int16_t lastSample = 0;
 
+	bool isEven = true;
 	while (!source.eof())
 	{
 		unsigned char byte0 = static_cast<unsigned char>(source.get());
@@ -68,22 +78,19 @@ int main(int argc, char* argv[])
 		int16_t sample = *(int16_t*)&u_sample;
 		int32_t delta = sample - lastSample;
 
-		int16_t realDelta = EncodeDelta(bits, delta);
+		int16_t realDelta = EncodeDelta(bytes, delta, isEven);
 
 
-		while (bits.size() >= 8)
+		while (bytes.size() > 1)
 		{
-			unsigned char byte = 0;
-			for (int i = 7; i >= 0; i--)
-			{
-				byte += bits.front() << i;
-				bits.pop();
-			}
+			unsigned char byte = bytes.front();
+			bytes.pop_front();
 			destination.put((byte));
 		}
 
 		lastSample = lastSample + realDelta; //Using the actual delta here has the positive of not accumulating errors
 		error += std::abs(sample - lastSample);
+		isEven = !isEven;
 	}
 
 	int sampleCount = CountSamples(&source);
