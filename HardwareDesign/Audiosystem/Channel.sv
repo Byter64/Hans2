@@ -2,6 +2,8 @@ module Channel (
     input clk,
     input rst,
 
+    
+
 );
 
 logic[31:0] data; //Meint gerade noch 12 Bit enkodierte Punkte
