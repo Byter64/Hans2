@@ -41,15 +41,9 @@ APU APU
     .readRAM(readRAM)
 );
 
-initial APU.reg0 = 0;
-initial APU.regs[0] = 0;
-initial APU.regs[1] = 0;
-initial APU.regs[2] = 0;
-
 integer i;
 initial begin
     $dumpvars(0, APU_tb);
-    $dumpvars(0, APU.reg0);
     $dumpvars(0, APU.regs[0]);
     $dumpvars(0, APU.regs[1]);
     $dumpvars(0, APU.regs[2]);

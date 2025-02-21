@@ -40,22 +40,33 @@ localparam BEZ  = 4'b0101;
 localparam CMP  = 4'b0110;
 localparam DEC  = 4'b0111;
 
-logic[7:0] activeInstruction;
-logic[3:0] operation = activeInstruction[7:4];
-logic[1:0] source1 = activeInstruction[3:2]; //This is also the destination register
-logic[1:0] source2 = activeInstruction[1:0];
+logic[7:0] activeInstruction = 0;
+logic[3:0] operation;
+logic[1:0] source1; //This is also the destination register
+logic[1:0] source2;
 
-logic[31:0] reg0;
+assign operation = activeInstruction[7:4];
+assign source1 = activeInstruction[3:2];
+assign source2 = activeInstruction[1:0];
+
+logic[31:0] reg0 = 0;
 logic[15:0] regs[3];
+initial regs[0] = 0;
+initial regs[1] = 0;
+initial regs[2] = 0;
+
+logic[31:0] regA;
+logic[31:0] regB;
+
+assign regA = source1 == 0 ? reg0 : regs[source1 - 1];
+assign regB = source2 == 0 ? reg0 : regs[source2 - 1];
+
 logic[7:0] pc; //Always points towards the current instruction
 logic[7:0] nextPC;
 
-logic[31:0] regA = source1 == 0 ? reg0 : regs[source1];
-logic[31:0] regB = source2 == 0 ? reg0 : regs[source2];
-
 localparam FETCH = 0;
 localparam EXECUTION = 1;
-logic state = EXECUTION;
+logic state = FETCH;
 
 assign address = state == FETCH ? pc : regA;
 assign readEnable = state == FETCH ? 1'b1 : operation == LOAD;
@@ -72,13 +83,9 @@ always_comb begin : nextPCDecider
             if(operation == JMP)
                 nextPC = regA;
             else if(operation == BEZ)
-                nextPC = regA == 0 ? regB : pc + 1;
-            else if(operation == LOAD)
-                nextPC = dataReady ? pc + 1 : pc;
-            else if(operation == STORE)
-                nextPC = writeAcknowledge ? pc + 1 : pc;
+                nextPC = regA == 0 ? regB : pc;
             else
-                nextPC = pc + 1;
+                nextPC = pc;
             end
     endcase
 end
@@ -101,13 +108,13 @@ always_ff @(posedge clk) begin : Controller
         EXECUTION: begin
             if((operation != LOAD && operation != STORE) || 
             (writeAcknowledge | dataReady)) begin
-                pc <= pc + 1;
+                state <= FETCH;
             end
         end
     endcase
 
     if(rst) begin
-        state = FETCH;
+        state <= FETCH;
         activeInstruction <= 0;
     end
 end
@@ -116,14 +123,23 @@ always_ff @(posedge clk) begin : ALU
     if(state == EXECUTION) begin
         case (operation)
             ADD: begin
-                regA <= regA + regB;
+                if(source1 == 0)
+                    reg0 <= regA + regB;
+                else
+                    regs[source1 - 1] <= regA + regB;
             end
             MUL: begin
-                regA <= ((regA << 4) * regB) >> 4;
+                if(source1 == 0)
+                    reg0 <= ((regA << 4) * regB) >> 4;
+                else
+                    regs[source1 - 1] <= ((regA << 4) * regB) >> 4;
             end
             LOAD: begin
                 if(dataReady) begin
-                    regB <= dataIn;
+                    if(source2 == 0)
+                        reg0 <= dataIn;
+                    else
+                        regs[source2 - 1] <= dataIn;
                 end
             end
             STORE: begin
@@ -136,10 +152,16 @@ always_ff @(posedge clk) begin : ALU
                 //See PC Block
             end
             CMP: begin
-                regA <= regB == 0;
+                if(source1 == 0)
+                    reg0 <= regB == 0;
+                else
+                    regs[source1 - 1] <= regB == 0;
             end
             DEC: begin
-                regA <= {{3{regA[11]}}, regA, 1'b0};
+                if(source1 == 0)
+                    reg0 <= {{3{regA[11]}}, regA, 1'b0};
+                else
+                    regs[source1 - 1] <= {{3{regA[11]}}, regA, 1'b0};
             end
             default: begin //This is the SET command
                 regs[2] <= activeInstruction[6:0];
