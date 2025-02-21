@@ -13,7 +13,7 @@
 ** else: SET    //SPECIAL CASE: Bits [6:0] are an unsigned, absolute value to which register 3 will be set
 */
 
-//Store/Load: The first 2048 Bytes need to address the BRAM, the others the RAM
+//If a load OP with source 1 == R0 happens, readRAM is high, else low.
 
 module APU (
     input clk,
@@ -25,7 +25,8 @@ module APU (
     output[31:0] address,
     output[15:0] dataOut,
     output writeEnable,
-    output readEnable
+    output readEnable,
+    output readRAM //1 if data should be read from RAM, 0 if from BRAM
 );
 
 localparam PROGRAMSTART = 0;
@@ -41,18 +42,17 @@ localparam DEC  = 4'b0111;
 
 logic[7:0] activeInstruction;
 logic[3:0] operation = activeInstruction[7:4];
-logic[1:0] source1 = activeInstruction[3:2]; //This is also the target
+logic[1:0] source1 = activeInstruction[3:2]; //This is also the destination register
 logic[1:0] source2 = activeInstruction[1:0];
 
 logic[31:0] reg0;
 logic[15:0] regs[3];
-logic[7:0] pc = 0; //Always points towards the current instruction
+logic[7:0] pc; //Always points towards the current instruction
 logic[7:0] nextPC;
 
 logic[31:0] regA = source1 == 0 ? reg0 : regs[source1];
 logic[31:0] regB = source2 == 0 ? reg0 : regs[source2];
 
-//PC und Load/Store muss noch gemacht werden
 localparam FETCH = 0;
 localparam EXECUTION = 1;
 logic state = EXECUTION;
@@ -61,8 +61,9 @@ assign address = state == FETCH ? pc : regA;
 assign readEnable = state == FETCH ? 1'b1 : operation == LOAD;
 assign writeEnable = state == FETCH ? 1'b0 : operation == STORE;
 assign dataOut = regB;
+assign readRAM = operation == LOAD && source1 == 0;
 
-always_comb begin : nextPC
+always_comb begin : nextPCDecider
     case (state)
         FETCH: begin
             nextPC = pc + 1;
@@ -112,7 +113,6 @@ always_ff @(posedge clk) begin : Controller
 end
 
 always_ff @(posedge clk) begin : ALU
-
     if(state == EXECUTION) begin
         case (operation)
             ADD: begin
@@ -139,15 +139,12 @@ always_ff @(posedge clk) begin : ALU
                 regA <= regB == 0;
             end
             DEC: begin
-                regA <= {3{regA[11]}, regA, 1'b0};
+                regA <= {{3{regA[11]}}, regA, 1'b0};
             end
             default: begin //This is the SET command
-                regs[3] <= activeInstruction[6:0];
+                regs[2] <= activeInstruction[6:0];
             end
         endcase
-    end
-    if(rst) begin
-        writeEnable <= 0;
     end
 end
     
