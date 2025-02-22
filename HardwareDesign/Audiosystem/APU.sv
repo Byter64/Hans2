@@ -7,9 +7,10 @@
 ** 0010: Load   //Source1 is the address, Value will be written to Source2
 ** 0011: Store  //Source1 is the address, Value will be written from Source2
 ** 0100: Jmp    //Takes only source 1
-** 0101: Cmp    //regb == 0?
+** 0101: Cmp    //Sets compare registers
 ** 0110: DEC    //Decodes Source1
-** 0111: BEQ    //If source 1 == 0, program jumps to source 2
+** 0111: BRU    //SPECIAL: 1:0 decides the branch condition. If fullfilled, the programm jumps to source 1. 
+                //00 - less, 01 - equal, 10 - greater, 11 - unequal
 ** else: SET    //SPECIAL CASE: Bits [6:0] are an unsigned, absolute value to which register 3 will be set
 */
 
@@ -36,7 +37,7 @@ localparam MUL  = 4'b0001;
 localparam LOAD = 4'b0010;
 localparam STORE= 4'b0011;
 localparam JMP  = 4'b0100; 
-localparam BEZ  = 4'b0101;
+localparam BRU  = 4'b0101;
 localparam CMP  = 4'b0110;
 localparam DEC  = 4'b0111;
 
@@ -61,6 +62,10 @@ logic[31:0] regB;
 assign regA = source1 == 0 ? reg0 : regs[source1 - 1];
 assign regB = source2 == 0 ? reg0 : regs[source2 - 1];
 
+logic isLess;
+logic isEqual;
+logic isGreater;
+
 logic[7:0] pc; //Always points towards the current instruction
 logic[7:0] nextPC;
 
@@ -82,8 +87,14 @@ always_comb begin : nextPCDecider
         default: begin
             if(operation == JMP)
                 nextPC = regA;
-            else if(operation == BEZ)
-                nextPC = regA == 0 ? regB : pc;
+            else if(operation == BRU)
+                if((source2 == 2'b00 && isLess) || 
+                (source2 == 2'b01 && isEqual)   || 
+                (source2 == 2'b10 && isGreater) || 
+                (source2 == 2'b11 && !isEqual))
+                    nextPC = regA;
+                else
+                    nextPC = pc;
             else
                 nextPC = pc;
             end
@@ -148,14 +159,13 @@ always_ff @(posedge clk) begin : ALU
             JMP: begin
                 //See PC Block
             end
-            BEZ: begin
+            BRU: begin
                 //See PC Block
             end
             CMP: begin
-                if(source1 == 0)
-                    reg0 <= regB == 0;
-                else
-                    regs[source1 - 1] <= regB == 0;
+                isLess <= regA < regB;
+                isEqual <= regA == regB;
+                isGreater <= regA > regB;
             end
             DEC: begin
                 if(source1 == 0)
