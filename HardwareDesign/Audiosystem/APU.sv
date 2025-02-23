@@ -9,9 +9,9 @@
 ** 0100: Jmp    //Takes only source 1
 ** 0101: Cmp    //Sets compare registers
 ** 0110: DEC    //Decodes Source1
-** 0111: BRU    //SPECIAL: 1:0 decides the branch condition. If fullfilled, the program jumps to source 1 
+** 0111: BRU    //SPECIAL: [1:0] decides the branch condition. If fullfilled, the program jumps to source 1 
                 //00 - less, 01 - equal, 10 - greater, 11 - unequal
-** else: SET    //SPECIAL CASE: Bits [6:0] are an unsigned, absolute value to which register 3 will be set
+** else: SET    //SPECIAL CASE: Bits [6:0] are a signed integer that will be added to register 3
 */
 
 //If a load OP with source 1 == R0 happens, readRAM is high, else low.
@@ -175,7 +175,7 @@ always_ff @(posedge clk) begin : ALU
                     regs[source1 - 1] <= {{3{regA[11]}}, regA, 1'b0};
             end
             default: begin //This is the SET command
-                regs[2] <= activeInstruction[6:0];
+                regs[2] <= regs[2] + {{25{activeInstruction[6]}} activeInstruction[6:0]};
             end
         endcase
     end

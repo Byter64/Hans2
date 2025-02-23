@@ -16,7 +16,6 @@ typedef struct ChannelData {
     
     uint24_t sampleCount;
 
-    bool isLooping;
     uint24_t loopStart;
     uint24_t loopEnd;
     uint16_t loopStartSample;
@@ -26,6 +25,7 @@ typedef struct ChannelData {
     
     uint8_t volume; //Festkommazahl, 4 Bit vor, 4 Bit nach (Zahlenraum: [-8,0 ; 7,9375])
     
+    bool isLooping;
     bool isPlaying; //reset
     bool isMono; //If stereo, then stride data by 2
     bool isLeft; //Decides if stride offset is 0 or 1
