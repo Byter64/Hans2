@@ -9,12 +9,13 @@
 ** 0100: Jmp    //Takes only source 1
 ** 0101: Cmp    //Sets compare registers
 ** 0110: DEC    //Decodes Source1
-** 0111: BRU    //SPECIAL: 1:0 decides the branch condition. If fullfilled, the programm jumps to source 1. 
+** 0111: BRU    //SPECIAL: 1:0 decides the branch condition. If fullfilled, the program jumps to source 1 
                 //00 - less, 01 - equal, 10 - greater, 11 - unequal
 ** else: SET    //SPECIAL CASE: Bits [6:0] are an unsigned, absolute value to which register 3 will be set
 */
 
 //If a load OP with source 1 == R0 happens, readRAM is high, else low.
+//If readRAM is low, an offset of 1876 is added to the address (2048 - 172 = 1876)
 
 module APU (
     input clk,
@@ -73,7 +74,7 @@ localparam FETCH = 0;
 localparam EXECUTION = 1;
 logic state = FETCH;
 
-assign address = state == FETCH ? pc : regA;
+assign address = state == FETCH ? pc : source1 == 2'b00 ? regA :(regA + 1876);
 assign readEnable = state == FETCH ? 1'b1 : operation == LOAD;
 assign writeEnable = state == FETCH ? 1'b0 : operation == STORE;
 assign dataOut = regB;

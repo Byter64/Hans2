@@ -10,6 +10,7 @@ typedef uint16_t uint12_t;
 
 //data zeigt auf 12-Bit breite Worte. Das muss beim Datenladen umgewandelt werden
 
+//Current Size: 172 Bit = 21,5 Byte
 typedef struct ChannelData {
     uint12_t* data; //Meint 12 Bit enkodierte Punkte
     
@@ -38,12 +39,6 @@ int16_t samples[CHANNEL_COUNT];
 
 void main()
 {
-    //Diese Initialisierung kann man weglassen, wenn Speichernot ist
-    for(int i = 0; i < CHANNEL_COUNT; i++)
-    {
-        samples[i] = 0;
-        datas[i] = { 0 };
-    }
     while(true)
     {
         RenderChannels(true);
