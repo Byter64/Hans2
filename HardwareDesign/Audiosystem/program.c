@@ -1,7 +1,7 @@
 #include <stdint.h>
 typedef uint32_t uint24_t;
 typedef uint8_t bool;
-typedef uint16_t uint12_t;
+typedef uint16_t int12_t;
 #define true 1
 #define false 0
 
@@ -12,7 +12,7 @@ typedef uint16_t uint12_t;
 
 //Current Size: 172 Bit = 21,5 Byte
 typedef struct ChannelData {
-    uint12_t* data; //Meint 12 Bit enkodierte Punkte
+    int12_t* data; //Meint 12 Bit enkodierte Punkte
     
     uint24_t sampleCount;
 
@@ -36,7 +36,13 @@ typedef struct ChannelData {
 ChannelData datas[CHANNEL_COUNT];
 ChannelData* channelEnd = datas + CHANNEL_COUNT;
 
-void main()
+void RenderChannels(bool isLeft);
+void SetI2SData(int16_t data);
+int16_t DecodeSample(ChannelData* channel);
+int16_t GetDelta(ChannelData* channel);
+void WaitForLRClock();
+
+int main()
 {
     while(true)
     {
@@ -45,6 +51,7 @@ void main()
         RenderChannels(false);
         WaitForLRClock();
     }
+    return 0;
 }
 
 void RenderChannels(bool isLeft)
@@ -89,7 +96,7 @@ int16_t DecodeSample(ChannelData* channel)
 
 int16_t GetDelta(ChannelData* channel)
 {
-    char* address = channel->data;
+    int12_t* address = channel->data;
     if(channel->isMono)
         address += channel->currentPosition;
     else if(channel->isLeft)
@@ -97,5 +104,15 @@ int16_t GetDelta(ChannelData* channel)
     else
         address += channel->currentPosition * 2 + 1;
     int16_t delta = *address;
-    return Decode(delta); //This should be done by hardware (left shift + sign expansion)
+    return delta; //We are pretending that the delta is magically decoded currently
+}
+
+void WaitForLRClock()
+{
+    return;
+}
+
+void SetI2SData(int16_t data)
+{
+
 }
