@@ -35,7 +35,6 @@ typedef struct ChannelData {
 #define CHANNEL_COUNT 8
 ChannelData datas[CHANNEL_COUNT];
 ChannelData* channelEnd = datas + CHANNEL_COUNT;
-int16_t samples[CHANNEL_COUNT];
 
 void main()
 {
