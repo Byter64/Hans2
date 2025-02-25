@@ -175,7 +175,7 @@ always_ff @(posedge clk) begin : ALU
                     regs[source1 - 1] <= {{3{regA[11]}}, regA, 1'b0};
             end
             default: begin //This is the SET command
-                regs[2] <= regs[2] + {{25{activeInstruction[6]}} activeInstruction[6:0]};
+                regs[2] <= regs[2] + {{25{activeInstruction[6]}}, activeInstruction[6:0]};
             end
         endcase
     end
