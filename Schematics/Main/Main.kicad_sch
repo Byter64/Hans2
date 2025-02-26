@@ -10,8 +10,8 @@
 	)
 	(lib_symbols)
 	(sheet
-		(at 64.77 68.58)
-		(size 27.94 19.05)
+		(at 91.44 124.46)
+		(size 46.99 21.59)
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
@@ -24,9 +24,9 @@
 		(fill
 			(color 0 0 0 0.0000)
 		)
-		(uuid "1fa0340b-df84-4175-87a4-4069c79bd3c0")
-		(property "Sheetname" "PAM8403-Board"
-			(at 64.77 67.8684 0)
+		(uuid "64921ae5-eabb-49e5-933f-c558e83970f3")
+		(property "Sheetname" "Audiosystem"
+			(at 91.44 123.7484 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -34,8 +34,8 @@
 				(justify left bottom)
 			)
 		)
-		(property "Sheetfile" "PAM8403-Board.kicad_sch"
-			(at 64.77 88.2146 0)
+		(property "Sheetfile" "Audiosystem.kicad_sch"
+			(at 91.44 146.6346 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -43,9 +43,9 @@
 				(justify left top)
 			)
 		)
-		(pin "5V" input
-			(at 64.77 71.12 180)
-			(uuid "68919eae-6d9f-41cf-bc65-8721778ff664")
+		(pin "BCK" input
+			(at 91.44 128.27 180)
+			(uuid "de8f097e-45a9-4824-8bee-f7cc20ed98e8")
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -53,29 +53,9 @@
 				(justify left)
 			)
 		)
-		(pin "GND" input
-			(at 64.77 73.66 180)
-			(uuid "8371d0cd-a123-4267-a092-33d4306a2c6e")
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(pin "GNDIN" input
-			(at 64.77 82.55 180)
-			(uuid "8d81a2be-77d2-4fb1-a5a0-403df0babdf0")
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(pin "LIN" input
-			(at 64.77 85.09 180)
-			(uuid "171e0a53-d8ce-42c1-9d24-e9760c5d035e")
+		(pin "DIN" input
+			(at 91.44 130.81 180)
+			(uuid "2a94e736-4a9a-4ce7-b7df-ca6ad17077c7")
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -84,8 +64,8 @@
 			)
 		)
 		(pin "LOUT+" output
-			(at 92.71 85.09 0)
-			(uuid "b2663571-04f2-4d39-96cd-62dd566b2a9f")
+			(at 138.43 128.27 0)
+			(uuid "e5ec9ddf-03af-4982-a73f-07c0884edf07")
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -94,8 +74,8 @@
 			)
 		)
 		(pin "LOUT-" output
-			(at 92.71 82.55 0)
-			(uuid "c28f6c74-6c11-42c1-83a6-9ecc71c8008c")
+			(at 138.43 130.81 0)
+			(uuid "67658cab-1cb8-46f3-ba5d-cfceef4ef1c1")
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -103,9 +83,9 @@
 				(justify right)
 			)
 		)
-		(pin "RIN" input
-			(at 64.77 80.01 180)
-			(uuid "53d9a27a-ded7-494c-8a72-64f64af45a32")
+		(pin "LRCK" input
+			(at 91.44 133.35 180)
+			(uuid "a97d435c-028c-423f-9de9-1021594bb25f")
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -114,8 +94,8 @@
 			)
 		)
 		(pin "ROUT+" output
-			(at 92.71 71.12 0)
-			(uuid "7ca83751-b64d-4d18-a413-ca9b02447481")
+			(at 138.43 138.43 0)
+			(uuid "c7c06cef-3b9c-4fa4-af72-35a3d2d561f4")
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -124,8 +104,8 @@
 			)
 		)
 		(pin "ROUT-" output
-			(at 92.71 73.66 0)
-			(uuid "9c33d2a4-2e1c-49ed-b6cd-8b7e72974325")
+			(at 138.43 140.97 0)
+			(uuid "46ebafdb-5981-40aa-a15a-c1eedf2462e4")
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -133,51 +113,9 @@
 				(justify right)
 			)
 		)
-		(instances
-			(project "Main"
-				(path "/2b6c83b8-b6db-46e9-a845-f7ffa0649aa2"
-					(page "3")
-				)
-			)
-		)
-	)
-	(sheet
-		(at 201.93 115.57)
-		(size 38.1 25.4)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(fields_autoplaced yes)
-		(stroke
-			(width 0.1524)
-			(type solid)
-		)
-		(fill
-			(color 0 0 0 0.0000)
-		)
-		(uuid "c1cb368a-23b7-4a05-a705-4f8ff301bfff")
-		(property "Sheetname" "PCM5102A-Board"
-			(at 201.93 114.8584 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left bottom)
-			)
-		)
-		(property "Sheetfile" "PCM5102A-Board.kicad_sch"
-			(at 201.93 141.5546 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left top)
-			)
-		)
-		(pin "BCK" output
-			(at 201.93 121.92 180)
-			(uuid "e98f871b-75d2-4eb1-9634-e0fd69185ab5")
+		(pin "5V0" input
+			(at 91.44 139.7 180)
+			(uuid "47c13da5-907a-4ffd-a3aa-7fa6c7ce6ae8")
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -185,134 +123,14 @@
 				(justify left)
 			)
 		)
-		(pin "DIN" output
-			(at 201.93 124.46 180)
-			(uuid "d64d69f2-4e6a-4374-a7f5-213249f77ca7")
+		(pin "GND" input
+			(at 91.44 142.24 180)
+			(uuid "e0dedb86-ed43-4369-9448-00b34553c98a")
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
 				(justify left)
-			)
-		)
-		(pin "GND" output
-			(at 201.93 127 180)
-			(uuid "e16fee15-f392-46eb-8c23-284e87f79bdd")
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(pin "LRCK" output
-			(at 201.93 129.54 180)
-			(uuid "548fd0e4-58ff-46a3-905e-0a26ee14397e")
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(pin "SCK" output
-			(at 201.93 132.08 180)
-			(uuid "2b81d004-02bc-4371-8523-aa94a24ed167")
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(pin "VIN" output
-			(at 201.93 134.62 180)
-			(uuid "e180fd16-daff-4fe2-9ad9-cb35db698f50")
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(pin "A3V3" output
-			(at 240.03 120.65 0)
-			(uuid "2ecd9ad4-3a5e-4658-9b6c-94cb317db7d6")
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify right)
-			)
-		)
-		(pin "AGND" output
-			(at 240.03 125.73 0)
-			(uuid "7b8aef99-4087-44bd-8306-e9b759268392")
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify right)
-			)
-		)
-		(pin "DEMP" input
-			(at 219.71 115.57 90)
-			(uuid "defbf105-d1b6-4c05-bfb9-655c627a6746")
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify right)
-			)
-		)
-		(pin "FLT" input
-			(at 222.25 115.57 90)
-			(uuid "4e660d49-6e11-4682-b7ff-91d2ff615712")
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify right)
-			)
-		)
-		(pin "FMT" input
-			(at 224.79 115.57 90)
-			(uuid "3df076d0-25f7-42b5-b606-e728e50a2c08")
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify right)
-			)
-		)
-		(pin "LOUT" output
-			(at 240.03 123.19 0)
-			(uuid "ecdd8dda-b930-426c-ad05-3783b11c0de4")
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify right)
-			)
-		)
-		(pin "ROUT" output
-			(at 240.03 128.27 0)
-			(uuid "5dfd17fa-d304-4c17-8b8f-3e2c568e1d98")
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify right)
-			)
-		)
-		(pin "XSMT" input
-			(at 227.33 115.57 90)
-			(uuid "c3b0eb72-ddb8-460e-8f17-6ad919be4aa8")
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify right)
 			)
 		)
 		(instances

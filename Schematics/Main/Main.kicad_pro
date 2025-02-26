@@ -594,11 +594,15 @@
       "Root"
     ],
     [
-      "c1cb368a-23b7-4a05-a705-4f8ff301bfff",
+      "64921ae5-eabb-49e5-933f-c558e83970f3",
+      "Audiosystem"
+    ],
+    [
+      "fdd8b66b-0267-4299-be09-36e1c4d052f4",
       "PCM5102A-Board"
     ],
     [
-      "1fa0340b-df84-4175-87a4-4069c79bd3c0",
+      "5f3573ca-38e1-4e10-a548-ef68c1605c60",
       "PAM8403-Board"
     ]
   ],
