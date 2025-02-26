@@ -596,6 +596,10 @@
     [
       "c1cb368a-23b7-4a05-a705-4f8ff301bfff",
       "PCM5102A-Board"
+    ],
+    [
+      "1fa0340b-df84-4175-87a4-4069c79bd3c0",
+      "PAM8403-Board"
     ]
   ],
   "text_variables": {}
