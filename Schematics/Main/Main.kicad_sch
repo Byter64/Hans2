@@ -43,6 +43,96 @@
 				(justify left top)
 			)
 		)
+		(pin "5V" input
+			(at 64.77 71.12 180)
+			(uuid "68919eae-6d9f-41cf-bc65-8721778ff664")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(pin "GND" input
+			(at 64.77 73.66 180)
+			(uuid "8371d0cd-a123-4267-a092-33d4306a2c6e")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(pin "GNDIN" input
+			(at 64.77 82.55 180)
+			(uuid "8d81a2be-77d2-4fb1-a5a0-403df0babdf0")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(pin "LIN" input
+			(at 64.77 85.09 180)
+			(uuid "171e0a53-d8ce-42c1-9d24-e9760c5d035e")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(pin "LOUT+" output
+			(at 92.71 85.09 0)
+			(uuid "b2663571-04f2-4d39-96cd-62dd566b2a9f")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(pin "LOUT-" output
+			(at 92.71 82.55 0)
+			(uuid "c28f6c74-6c11-42c1-83a6-9ecc71c8008c")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(pin "RIN" input
+			(at 64.77 80.01 180)
+			(uuid "53d9a27a-ded7-494c-8a72-64f64af45a32")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(pin "ROUT+" output
+			(at 92.71 71.12 0)
+			(uuid "7ca83751-b64d-4d18-a413-ca9b02447481")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(pin "ROUT-" output
+			(at 92.71 73.66 0)
+			(uuid "9c33d2a4-2e1c-49ed-b6cd-8b7e72974325")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
 		(instances
 			(project "Main"
 				(path "/2b6c83b8-b6db-46e9-a845-f7ffa0649aa2"
