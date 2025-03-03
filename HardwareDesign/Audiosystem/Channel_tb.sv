@@ -1,101 +1,94 @@
-`timescale 1ns/1ns
-module Channel_tb;
-    //global parameters
-    localparam HALF_CLOCK_CYCLE = 5;
-    localparam CLOCK_CYCLE = 2*HALF_CLOCK_CYCLE;
-    
-    //global variables
-    integer test = 0;
-    integer sucessfull_tests = 0;
-   
-    //global logic
-    logic clk;
-    logic rst;
+import audio_data_types::*;
 
-    initial clk = 0;
-    always #(HALF_CLOCK_CYCLE) clk = ~clk;
-    
+module moduleName (
+    input logic clk_25mhz
+);
 
-    //parameters for test
-    localparam TIMER_ADDITIONAL_BITS = 8;
-    
-    //logic for test
-    logic write;
-    logic [31:0] data_in;
+ChannelData channelData;
+initial begin
+channelData.startDataAddress = 0;
+channelData.sampleCount = 0; //TODO
+channelData.loopStart = 0; //TODO
+channelData.loopEnd = 0; //TODO
+channelData.currentPosition = 0;
+channelData.lastSample = 0;
+channelData.volume = 8'b11111111;
+channelData.isLooping = 1;
+channelData.isPlaying = 1;
+channelData.isMono = 1;
+channelData.isLeft = 1;
+end
 
-    logic timer_interrupt;
-    logic [31:0] data_out;
+ChannelSettings channelSettings = SET_STARTADDRESS;
+logic[23:0] w_ChannelData = channelData.startDataAddress;
 
-    //module instantiations
-    Timer #(
-        .TIMER_ADDITIONAL_BITS(TIMER_ADDITIONAL_BITS)
-    ) uut (
-        .clk(clk),
-        .rst(rst),
-        .write(write),
-        .data_in(data_in),
-        .timer_interrupt(timer_interrupt),
-        .data_out(data_out)
-    );
+always_ff @(posedge clk_25mhz) begin
+    case (channelSettings)
+        SET_STARTADDRESS: begin
+            w_ChannelData <= channelData.sampleCount;
+            channelSettings <= SET_SAMPLECOUNT;
+        end
+        SET_SAMPLECOUNT: begin
+            w_ChannelData <= channelData.loopStart;
+            channelSettings <= SET_LOOPSTART;
+        end
+        SET_LOOPSTART: begin
+            w_ChannelData <= channelData.loopEnd;
+            channelSettings <= SET_LOOPEND;
+        end
+        SET_LOOPEND: begin
+            w_ChannelData <= channelData.currentPosition;
+            channelSettings <= SET_CURRENTPOSITION;
+        end
+        SET_CURRENTPOSITION: begin
+            w_ChannelData <= channelData.lastSample;
+            channelSettings <= SET_LASTSAMPLE;
+        end
+        SET_LASTSAMPLE: begin
+            w_ChannelData <= channelData.volume;
+            channelSettings <= SET_VOLUME;
+        end
+        SET_VOLUME: begin
+            w_ChannelData <= channelData.isLooping;
+            channelSettings <= SET_ISLOOPING;
+        end
+        SET_ISLOOPING: begin
+            w_ChannelData <= channelData.isMono;
+            channelSettings <= SET_ISMONO;
+        end
+        SET_ISMONO: begin
+            w_ChannelData <= channelData.isLeft;
+            channelSettings <= SET_ISLEFT;
+        end
+        SET_ISLEFT: begin
+            w_ChannelData <= channelData.isPlaying;
+            channelSettings <= SET_ISPLAYING;
+        end
+        SET_ISPLAYING: begin
+            w_ChannelData <= 24'b0;
+            channelSettings <= IDLE;
+        end
+    endcase
+end
 
-    // Main testbench process
-    initial begin
-        rst = 1;
-        apply_reset();
-        testTimer();
-        apply_reset();
-        repeat(10) testTimer();
-        
-        $display("%d/%d Tests ran successfully!", sucessfull_tests,test);
+logic [31:0] lr_clk_generator;
+logic lr_rising_edge_clk;
+localparam lrclkParam = 234;
 
-        // End of simulation
-        $finish;
+always_ff @(posedge clk_25mhz) begin
+    lr_clk_generator <= lr_clk_generator + 1;
+    lr_rising_edge_clk <= 0;
+    if(lr_clk_generator > lrclkParam) begin
+        lr_clk_generator <= 0;
+        lr_rising_edge_clk <= 1;
     end
+end
+logic [31:0] o_nextSampleAddress;
+logic [15:0] o_SampleOut;
+logic [11:0] ram [16384];
+initial $readmemh("program.txt", ram);
+logic [11:0] i_sampleDelta;
+assign i_sampleDelta = ram[o_nextSampleAddress];
 
-    //Variables for Task
-    integer randomTime;
-    integer counter;
 
-    //task that tests module
-    task testTimer();
-        test++;
-        randomTime = $urandom_range(0,2000);
-        counter = 0;
-        #(CLOCK_CYCLE)
-        data_in <= randomTime;
-        #(CLOCK_CYCLE)
-        write <= 1;
-        #(CLOCK_CYCLE)
-        write <= 0;
-        #(CLOCK_CYCLE);
-        while(timer_interrupt == 0) begin
-            @(posedge clk)
-            counter = counter + 1;
-        end
-        if(counter/2**TIMER_ADDITIONAL_BITS!=randomTime) begin
-            $display("Test %D Fehler: Counter: %D Soll: %D",test,counter/2**TIMER_ADDITIONAL_BITS,randomTime);
-        end
-        else begin
-            sucessfull_tests++;
-            `ifdef CONFIRM
-            $display("Test %d bestanden!", test);
-            `endif
-        end
-    endtask
-
-    //Reset task
-    task apply_reset();
-        rst <= 1;
-        repeat(2) @(posedge clk) 
-        rst <= 0;
-        #(CLOCK_CYCLE);
-    endtask
-
-    //Print VCD if necessary
-    `ifdef VCD
-        initial begin
-            $dumpfile("timer_tb.vcd");
-            $dumpvars(0);
-        end
-    `endif
 endmodule
