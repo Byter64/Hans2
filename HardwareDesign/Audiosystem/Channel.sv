@@ -8,7 +8,7 @@ module Channel (
 
     input logic [11:0] i_sampleDelta,
 
-    input logic lr_rising_edge_clk,
+    input logic lrclk,
 
     output logic [15:0] o_SampleOut,
     output logic [31:0] o_nextSampleAddress
@@ -57,8 +57,10 @@ module Channel (
 
     assign o_SampleOut              = (nextSample  * (channelData.volume<<<4))>>>4;
     
+
+    logic old_lrclk;
     always_ff @(posedge clk) begin
-        if(lr_rising_edge_clk) begin
+        if(old_lrclk == 0 && lrclk == 1) begin
             channelData.lastSample <= nextSample;
         end
         if(w_selectChannelData == SET_LASTSAMPLE) begin
@@ -66,8 +68,10 @@ module Channel (
         end
     end
 
+
     always_ff @(posedge clk) begin
-        if(lr_rising_edge_clk) begin
+        old_lrclk <= lrclk;
+        if(old_lrclk == 0 && lrclk == 1) begin
             channelData.currentPosition <= nextPosition;
         end
         if(w_selectChannelData == SET_CURRENTPOSITION) begin

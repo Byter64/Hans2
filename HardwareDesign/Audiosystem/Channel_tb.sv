@@ -1,15 +1,52 @@
+//yosys -m slang -p"read_verilog -sv ecp5pll.sv; read_slang AudioDataTypes.sv Channel.sv Channel_tb.sv; synth_ecp5 -json Ausgabe.json;"
 import audio_data_types::*;
 
 module moduleName (
-    input logic clk_25mhz
+    input logic clk_25mhz,
+    output logic audio_bclk,
+    output logic audio_lrclk,
+    output logic audio_din
 );
+
+/* CLOCK GENERATION */
+wire clk_100mhz;
+ecp5pll
+#(
+    .in_hz   (25000000),
+    .out0_hz(100000000), .out0_tol_hz(50)
+)
+ecp5pll_inst
+(
+    .clk_i(clk_25mhz),
+    .clk_o({clk_100mhz})
+);
+
+reg[9:0] clk_1024khz_counter;
+reg clk_1024khz; 
+always @(posedge clk_100mhz) begin
+    clk_1024khz_counter <= clk_1024khz_counter + 1;
+    if(clk_1024khz_counter + 1 == 49) begin
+        clk_1024khz_counter <= 0;
+        clk_1024khz <= ~clk_1024khz;
+    end
+end
+
+reg[9:0] clk_64khz_counter;
+reg clk_64khz; 
+always @(posedge clk_1024khz) begin
+    clk_64khz_counter <= clk_64khz_counter + 1;
+    if(clk_64khz_counter + 1 == 16) begin
+        clk_64khz_counter <= 0;
+        clk_64khz <= ~clk_64khz;
+    end
+end
 
 ChannelData channelData;
 initial begin
 channelData.startDataAddress = 0;
-channelData.sampleCount = 0; //TODO
-channelData.loopStart = 0; //TODO
-channelData.loopEnd = 0; //TODO
+channelData.sampleCount = 128000;
+channelData.loopStart = 0; 
+channelData.loopEnd = 127999;
 channelData.currentPosition = 0;
 channelData.lastSample = 0;
 channelData.volume = 8'b11111111;
@@ -71,24 +108,31 @@ always_ff @(posedge clk_25mhz) begin
     endcase
 end
 
-logic [31:0] lr_clk_generator;
-logic lr_rising_edge_clk;
-localparam lrclkParam = 234;
-
-always_ff @(posedge clk_25mhz) begin
-    lr_clk_generator <= lr_clk_generator + 1;
-    lr_rising_edge_clk <= 0;
-    if(lr_clk_generator > lrclkParam) begin
-        lr_clk_generator <= 0;
-        lr_rising_edge_clk <= 1;
-    end
-end
 logic [31:0] o_nextSampleAddress;
 logic [15:0] o_SampleOut;
-logic [11:0] ram [16384];
-initial $readmemh("program.txt", ram);
+logic [11:0] ram [283989];
+initial $readmemb("encoded.bin", ram);
 logic [11:0] i_sampleDelta;
-assign i_sampleDelta = ram[o_nextSampleAddress];
 
+Channel channel(
+    .clk(clk),
+    .rst(rst),
+
+    .w_ChannelData(w_ChannelData),
+    .w_selectChannelData(channelSettings),
+    .i_sampleDelta(i_sampleDelta),
+    .lrclk(lrclk),
+    .o_SampleOut(o_SampleOut),
+    .o_nextSampleAddress(o_nextSampleAddress)
+);
+
+
+always_ff @(posedge clk_25mhz) begin : blockName
+    i_sampleDelta <= ram[o_nextSampleAddress];
+end
+
+assign audio_bclk = clk_1024khz; //bclk
+assign audio_lrclk = clk_64khz; //lrclk
+assign audio_din = o_SampleOut; //din
 
 endmodule
