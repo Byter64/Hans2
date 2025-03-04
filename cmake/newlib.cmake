@@ -10,16 +10,18 @@ message("Fetching newlib")
 FetchContent_MakeAvailable(newlib_sources)
 
 add_library(newlib
+  ${CMAKE_CURRENT_SOURCE_DIR}/glue.c
+  ${CMAKE_CURRENT_SOURCE_DIR}/sbrk_hans.c
   # ${newlib_sources_SOURCE_DIR}/newlib/libc/signal/sig2str.c
   # ${newlib_sources_SOURCE_DIR}/newlib/libc/signal/raise.c
   # ${newlib_sources_SOURCE_DIR}/newlib/libc/signal/psignal.c
   # ${newlib_sources_SOURCE_DIR}/newlib/libc/signal/signal.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/machine/riscv/ffs.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/machine/riscv/strcpy.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/machine/riscv/strlen.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/machine/riscv/ieeefp.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/machine/riscv/memcpy.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/machine/riscv/memmove-stub.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/machine/riscv/ffs.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/machine/riscv/strcpy.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/machine/riscv/strlen.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/machine/riscv/ieeefp.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/machine/riscv/memcpy.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/machine/riscv/memmove-stub.c
   # ${newlib_sources_SOURCE_DIR}/newlib/libc/argz/argz_add_sep.c
   # ${newlib_sources_SOURCE_DIR}/newlib/libc/argz/buf_findstr.c
   # ${newlib_sources_SOURCE_DIR}/newlib/libc/argz/argz_create.c
@@ -108,329 +110,149 @@ add_library(newlib
   ${newlib_sources_SOURCE_DIR}/newlib/libc/ctype/iswgraph.c
   ${newlib_sources_SOURCE_DIR}/newlib/libc/ctype/iswlower.c
   ${newlib_sources_SOURCE_DIR}/newlib/libc/ctype/iswalnum.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/wcrtomb.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/strtodg.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/gdtoa-dmisc.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/jrand48.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/mbstowcs.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/mtrim.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/freer.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/l64a.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/quick_exit.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/imaxdiv.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/strtoul.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/wcstoul.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/btowc.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/wcstombs_r.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/wcstombs.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/labs.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/lcong48.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/system.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/arc4random.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/msize.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/cfreer.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/_Exit.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/ldtoa.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/strtold.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/mstats.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/arc4random_uniform.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/mbrtowc.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/wctob.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/malignr.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/calloc.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/seed48.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/wcstoll_r.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/malign.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/callocr.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/malloptr.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/mbsrtowcs.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/pvallocr.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/mlock.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/gdtoa-ldtoa.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/cxa_atexit.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/__atexit.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/random.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/rpmatch.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/atoi.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/mallstatsr.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/utoa.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/ecvtbuf.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/atol.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/atexit.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/wcsrtombs.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/llabs.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/wcstod.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/mbsinit.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/sb_charsets.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/wcstoull.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/strtoll_r.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/strtol.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/exit.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/itoa.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/realloc.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/mallocr.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/cxa_finalize.c
+
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/wcrtomb.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/strtodg.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/gdtoa-dmisc.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/jrand48.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/mbstowcs.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/mtrim.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/freer.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/l64a.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/quick_exit.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/imaxdiv.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/strtoul.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/wcstoul.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/btowc.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/wcstombs_r.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/wcstombs.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/labs.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/lcong48.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/system.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/arc4random.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/msize.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/cfreer.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/_Exit.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/ldtoa.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/strtold.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/mstats.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/arc4random_uniform.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/mbrtowc.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/wctob.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/malignr.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/calloc.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/seed48.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/wcstoll_r.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/malign.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/callocr.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/malloptr.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/mbsrtowcs.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/pvallocr.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/mlock.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/gdtoa-ldtoa.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/cxa_atexit.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/__atexit.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/random.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/rpmatch.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/atoi.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/mallstatsr.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/utoa.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/ecvtbuf.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/atol.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/atexit.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/wcsrtombs.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/llabs.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/wcstod.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/mbsinit.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/sb_charsets.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/wcstoull.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/strtoll_r.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/strtol.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/exit.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/itoa.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/realloc.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/mallocr.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/cxa_finalize.c
   # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/eprintf.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/__adjust.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/setenv.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/mbstowcs_r.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/_mallocr.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/mblen.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/abort.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/atof.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/lldiv.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/atoll.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/putenv.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/atoff.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/mbtowc_r.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/wcstoimax.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/envlock.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/wcstoll.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/strtoimax.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/valloc.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/nrand48.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/wctomb.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/reallocarray.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/efgcvt.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/reallocf.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/imaxabs.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/gdtoa-gdtoa.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/getsubopt.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/on_exit_args.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/mprec.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/srand48.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/mbtowc.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/wcstoull_r.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/malloc.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/wcstoumax.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/abs.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/ldiv.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/environ.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/vallocr.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/on_exit.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/strtod.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/rand.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/mbrlen.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/mblen_r.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/gdtoa-gethex.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/wcstol.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/strtoll.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/mallinfor.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/reallocr.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/div.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/putenv_r.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/gdtoa-hexnan.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/lrand48.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/strtoull_r.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/setenv_r.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/rand48.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/getenv.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/rand_r.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/dtoa.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/wctomb_r.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/a64l.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/wcstold.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/mbsnrtowcs.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/strtorx.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/__exp10.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/strtoull.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/__ten_mu.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/getenv_r.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/erand48.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/wcsnrtombs.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/getopt.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/nano-mallocr.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/mrand48.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/drand48.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/gdtoa-gmisc.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/dtoastub.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/aligned_alloc.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/__call_atexit.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/strtoumax.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/msizer.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/assert.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/sys/sysvnecv70/fpx.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/sys/mmixware/fork.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/sys/mmixware/stat.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/sys/mmixware/unlink.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/sys/mmixware/chmod.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/sys/mmixware/link.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/sys/mmixware/creat.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/sys/mmixware/utime.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/sys/mmixware/time.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/sys/mmixware/read.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/sys/mmixware/getpid.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/sys/mmixware/execv.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/sys/mmixware/isatty.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/sys/mmixware/wait.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/sys/mmixware/open.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/sys/mmixware/access.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/sys/mmixware/lseek.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/sys/mmixware/write.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/sys/mmixware/kill.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/sys/mmixware/_exit.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/sys/mmixware/chown.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/sys/mmixware/execve.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/sys/mmixware/fstat.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/sys/mmixware/sbrk.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/sys/mmixware/pipe.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/sys/mmixware/times.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/sys/mmixware/gettime.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/sys/mmixware/crt0.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/sys/mmixware/close.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/sys/m88kbug/syscalls.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/sys/m88kbug/crt0.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/sys/sysvi386/telldir.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/sys/sysvi386/rewinddir.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/sys/sysvi386/readdir.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/sys/sysvi386/tcline.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/sys/sysvi386/tcsetattr.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/sys/sysvi386/sleep.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/sys/sysvi386/closedir.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/sys/sysvi386/seekdir.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/sys/sysvi386/dup.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/sys/sysvi386/exec.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/sys/sysvi386/isatty.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/sys/sysvi386/fpx.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/sys/sysvi386/opendir.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/sys/sysvi386/scandir.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/sys/sysvi386/tcgetattr.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/sys/sysvi386/dup2.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/sys/sysvi386/speed.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/sys/sysvi386/sbrk.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/sys/sysvi386/crt0.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/sys/h8300hms/misc.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/sys/h8300hms/syscalls.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/sys/h8300hms/sbrk.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/sys/h8300hms/crt1.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/sys/amdgcn/lock.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/sys/amdgcn/stat.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/sys/amdgcn/unlink.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/sys/amdgcn/fcntl.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/sys/amdgcn/read.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/sys/amdgcn/getpid.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/sys/amdgcn/isatty.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/sys/amdgcn/raise.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/sys/amdgcn/open.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/sys/amdgcn/lseek.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/sys/amdgcn/write.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/sys/amdgcn/kill.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/sys/amdgcn/fstat.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/sys/amdgcn/close.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/sys/rtems/cpusetfree.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/sys/rtems/cpusetalloc.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/sys/rtems/dummysys.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/sys/rtems/crt0.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/sys/tic80/crt0.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/sys/netware/link.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/sys/netware/getpid.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/sys/netware/crt0.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/sys/or1k/mlock.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/sys/w65/trap.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/sys/w65/syscalls.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/sys/w65/crt0.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/sys/sysnec810/misc.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/sys/sysnec810/write.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/sys/sysnec810/sbrk.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/sys/a29khif/getpid.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/sys/a29khif/kill.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/sys/arm/aeabi_atexit.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/sys/arm/libcfunc.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/sys/arm/syscalls.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/sys/arm/sysconf.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/sys/arm/access.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/sys/h8500hms/misc.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/sys/h8500hms/syscalls.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/sys/h8500hms/crt0.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/sys/rdos/symlink.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/sys/rdos/fork.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/sys/rdos/stat.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/sys/rdos/unlink.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/sys/rdos/link.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/sys/rdos/read.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/sys/rdos/getpid.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/sys/rdos/isatty.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/sys/rdos/readlink.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/sys/rdos/wait.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/sys/rdos/gettod.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/sys/rdos/open.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/sys/rdos/lseek.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/sys/rdos/write.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/sys/rdos/kill.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/sys/rdos/getenv.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/sys/rdos/chown.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/sys/rdos/execve.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/sys/rdos/fstat.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/sys/rdos/sbrk.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/sys/rdos/times.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/sys/rdos/close.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/sys/rdos/rdoshelp.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/sys/sh/truncate.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/sys/sh/creat.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/sys/sh/ftruncate.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/sys/sh/syscalls.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/sys/sysnecv850/rename.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/sys/sysnecv850/fork.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/sys/sysnecv850/stat.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/sys/sysnecv850/unlink.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/sys/sysnecv850/chmod.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/sys/sysnecv850/link.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/sys/sysnecv850/creat.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/sys/sysnecv850/utime.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/sys/sysnecv850/time.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/sys/sysnecv850/read.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/sys/sysnecv850/getpid.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/sys/sysnecv850/execv.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/sys/sysnecv850/isatty.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/sys/sysnecv850/wait.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/sys/sysnecv850/open.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/sys/sysnecv850/access.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/sys/sysnecv850/lseek.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/sys/sysnecv850/write.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/sys/sysnecv850/kill.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/sys/sysnecv850/_exit.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/sys/sysnecv850/chown.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/sys/sysnecv850/execve.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/sys/sysnecv850/fstat.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/sys/sysnecv850/sbrk.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/sys/sysnecv850/pipe.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/sys/sysnecv850/times.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/sys/sysnecv850/gettime.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/sys/sysnecv850/close.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/sys/sysnecv850/crt1.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/sys/sysmec/fork.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/sys/sysmec/stat.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/sys/sysmec/unlink.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/sys/sysmec/chmod.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/sys/sysmec/creat.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/sys/sysmec/utime.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/sys/sysmec/time.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/sys/sysmec/read.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/sys/sysmec/getpid.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/sys/sysmec/execv.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/sys/sysmec/isatty.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/sys/sysmec/wait.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/sys/sysmec/open.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/sys/sysmec/access.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/sys/sysmec/lseek.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/sys/sysmec/write.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/sys/sysmec/kill.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/sys/sysmec/_exit.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/sys/sysmec/chown.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/sys/sysmec/execve.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/sys/sysmec/fstat.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/sys/sysmec/sbrk.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/sys/sysmec/pipe.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/sys/sysmec/times.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/sys/sysmec/gettime.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/sys/sysmec/close.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/sys/sysmec/crt1.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/sys/z8ksim/glue.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/sys/z8ksim/crt0.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/sys/d10v/creat.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/sys/d10v/syscalls.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/sys/epiphany/e_printf.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/sys/tirtos/lock.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/__adjust.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/setenv.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/mbstowcs_r.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/_mallocr.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/mblen.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/abort.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/atof.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/lldiv.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/atoll.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/putenv.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/atoff.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/mbtowc_r.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/wcstoimax.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/envlock.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/wcstoll.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/strtoimax.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/valloc.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/nrand48.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/wctomb.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/reallocarray.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/efgcvt.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/reallocf.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/imaxabs.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/gdtoa-gdtoa.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/getsubopt.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/on_exit_args.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/mprec.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/srand48.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/mbtowc.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/wcstoull_r.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/malloc.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/wcstoumax.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/abs.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/ldiv.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/environ.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/vallocr.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/on_exit.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/strtod.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/rand.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/mbrlen.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/mblen_r.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/gdtoa-gethex.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/wcstol.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/strtoll.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/mallinfor.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/reallocr.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/div.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/putenv_r.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/gdtoa-hexnan.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/lrand48.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/strtoull_r.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/setenv_r.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/rand48.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/getenv.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/rand_r.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/dtoa.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/wctomb_r.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/a64l.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/wcstold.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/mbsnrtowcs.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/strtorx.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/__exp10.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/strtoull.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/__ten_mu.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/getenv_r.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/erand48.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/wcsnrtombs.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/getopt.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/nano-mallocr.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/mrand48.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/drand48.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/gdtoa-gmisc.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/dtoastub.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/aligned_alloc.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/__call_atexit.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/strtoumax.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/msizer.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdlib/assert.c
+
   # ${newlib_sources_SOURCE_DIR}/newlib/libc/iconv/ces/table-pcs.c
   # ${newlib_sources_SOURCE_DIR}/newlib/libc/iconv/ces/table.c
   # ${newlib_sources_SOURCE_DIR}/newlib/libc/iconv/ces/utf-8.c
@@ -490,6 +312,7 @@ add_library(newlib
   # ${newlib_sources_SOURCE_DIR}/newlib/libc/iconv/ccs/iso_8859_15.c
   # ${newlib_sources_SOURCE_DIR}/newlib/libc/iconv/ccs/iso_8859_6.c
   # ${newlib_sources_SOURCE_DIR}/newlib/libc/iconv/ccs/cns11643_plane1.c
+
   # ${newlib_sources_SOURCE_DIR}/newlib/libc/syscalls/sysfork.c
   # ${newlib_sources_SOURCE_DIR}/newlib/libc/syscalls/syswait.c
   # ${newlib_sources_SOURCE_DIR}/newlib/libc/syscalls/sysisatty.c
@@ -510,54 +333,57 @@ add_library(newlib
   # ${newlib_sources_SOURCE_DIR}/newlib/libc/syscalls/sysexecve.c
   # ${newlib_sources_SOURCE_DIR}/newlib/libc/syscalls/sysgettod.c
   # ${newlib_sources_SOURCE_DIR}/newlib/libc/syscalls/syswrite.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/reent/timesr.c
+ 
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/reent/timesr.c
   # ${newlib_sources_SOURCE_DIR}/newlib/libc/reent/open64r.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/reent/isattyr.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/reent/linkr.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/reent/gettimeofdayr.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/reent/isattyr.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/reent/linkr.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/reent/gettimeofdayr.c
   # ${newlib_sources_SOURCE_DIR}/newlib/libc/reent/closer.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/reent/fstatr.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/reent/reent.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/reent/unlinkr.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/reent/sbrkr.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/reent/fstatr.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/reent/reent.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/reent/unlinkr.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/reent/sbrkr.c
   # ${newlib_sources_SOURCE_DIR}/newlib/libc/reent/openr.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/reent/getentropyr.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/reent/mkdirr.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/reent/getentropyr.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/reent/mkdirr.c
   # ${newlib_sources_SOURCE_DIR}/newlib/libc/reent/stat64r.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/reent/fcntlr.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/reent/writer.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/reent/execr.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/reent/impure.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/reent/renamer.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/reent/lseekr.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/reent/fcntlr.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/reent/writer.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/reent/execr.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/reent/impure.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/reent/renamer.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/reent/lseekr.c
   # ${newlib_sources_SOURCE_DIR}/newlib/libc/reent/lseek64r.c
   # ${newlib_sources_SOURCE_DIR}/newlib/libc/reent/fstat64r.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/reent/readr.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/reent/getreent.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/reent/statr.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/reent/signalr.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/time/tzset.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/time/difftime.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/time/mktime.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/time/gmtime_r.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/time/time.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/time/wcsftime.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/time/lcltime.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/time/clock.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/time/asctime.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/time/ctime.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/time/tzset_r.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/time/month_lengths.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/time/ctime_r.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/time/tzlock.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/time/tzvars.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/time/gettzinfo.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/time/strftime.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/time/lcltime_r.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/time/gmtime.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/time/strptime.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/time/tzcalc_limits.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/time/asctime_r.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/reent/readr.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/reent/getreent.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/reent/statr.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/reent/signalr.c
+
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/time/tzset.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/time/difftime.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/time/mktime.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/time/gmtime_r.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/time/time.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/time/wcsftime.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/time/lcltime.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/time/clock.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/time/asctime.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/time/ctime.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/time/tzset_r.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/time/month_lengths.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/time/ctime_r.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/time/tzlock.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/time/tzvars.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/time/gettzinfo.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/time/strftime.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/time/lcltime_r.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/time/gmtime.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/time/strptime.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/time/tzcalc_limits.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/time/asctime_r.c
+
   ${newlib_sources_SOURCE_DIR}/newlib/libc/string/wcslen.c
   ${newlib_sources_SOURCE_DIR}/newlib/libc/string/strcoll_l.c
   ${newlib_sources_SOURCE_DIR}/newlib/libc/string/wcpncpy.c
@@ -733,7 +559,7 @@ add_library(newlib
   # ${newlib_sources_SOURCE_DIR}/newlib/libc/posix/usleep.c
   # ${newlib_sources_SOURCE_DIR}/newlib/libc/posix/wordfree.c
   # ${newlib_sources_SOURCE_DIR}/newlib/libc/posix/execv.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/posix/isatty.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/posix/isatty.c
   # ${newlib_sources_SOURCE_DIR}/newlib/libc/posix/popen.c
   # ${newlib_sources_SOURCE_DIR}/newlib/libc/posix/opendir.c
   # ${newlib_sources_SOURCE_DIR}/newlib/libc/posix/glob.c
@@ -743,7 +569,7 @@ add_library(newlib
   # ${newlib_sources_SOURCE_DIR}/newlib/libc/posix/fnmatch.c
   # ${newlib_sources_SOURCE_DIR}/newlib/libc/posix/execl.c
   # ${newlib_sources_SOURCE_DIR}/newlib/libc/posix/collate.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/posix/_isatty.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/posix/_isatty.c
   # ${newlib_sources_SOURCE_DIR}/newlib/libc/posix/regfree.c
   # ${newlib_sources_SOURCE_DIR}/newlib/libc/posix/engine.c
   # ${newlib_sources_SOURCE_DIR}/newlib/libc/posix/execle.c
@@ -784,180 +610,180 @@ add_library(newlib
   # ${newlib_sources_SOURCE_DIR}/newlib/libc/locale/lmonetary.c
   # ${newlib_sources_SOURCE_DIR}/newlib/libc/locale/getlocalename_l.c
   # ${newlib_sources_SOURCE_DIR}/newlib/libc/locale/lctype.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/sfputws_r.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/clearerr_u.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/svfwscanf.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/sfputws_r.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/clearerr_u.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/svfwscanf.c
   # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/nano-vfprintf_float.c
   # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/vasniprintf.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/fgetpos.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/stdio_ext.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/nano-vfscanf_float.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/vfiscanf.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/rename.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/fvwrite.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/fgetc.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/vsscanf.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/tmpnam.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/putwchar_u.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/fputc.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/ungetwc.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/wscanf.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/feof_u.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/svfiscanf.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/fscanf.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/fgetpos.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/stdio_ext.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/nano-vfscanf_float.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/vfiscanf.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/rename.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/fvwrite.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/fgetc.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/vsscanf.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/tmpnam.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/putwchar_u.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/fputc.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/ungetwc.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/wscanf.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/feof_u.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/svfiscanf.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/fscanf.c
   # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/vasnprintf.c
   # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/vasiprintf.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/iscanf.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/mktemp.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/fgetws_u.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/printf.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/svfiwscanf.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/getwc_u.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/vfiwscanf.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/vscanf.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/setbuffer.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/fputws_u.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/vswscanf.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/vwscanf.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/fread.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/fflush.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/putwc.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/sfputs_r.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/asnprintf.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/funopen.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/svfwprintf.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/putwc_u.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/fsetpos.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/fiprintf.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/fopencookie.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/getwchar_u.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/sscanf.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/fgetwc.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/fileno.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/fileno_u.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/setbuf.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/ferror.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/svfiprintf.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/fopen.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/fgets.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/open_memstream.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/fsetlocking.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/svfprintf.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/vfprintf.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/makebuf.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/nano-vfscanf.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/fmemopen.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/puts.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/fputwc.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/vsiprintf.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/diprintf.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/viscanf.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/fgetwc_u.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/fputs.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/siscanf.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/ftell.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/fprintf.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/viprintf.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/fwscanf.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/nano-svfscanf.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/scanf.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/fwalk.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/freopen.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/putchar_u.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/wbufw.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/fwrite.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/tmpfile.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/sswprint_r.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/siprintf.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/sprint_r.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/gets.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/putc_u.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/stdio.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/iscanf.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/mktemp.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/fgetws_u.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/printf.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/svfiwscanf.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/getwc_u.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/vfiwscanf.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/vscanf.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/setbuffer.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/fputws_u.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/vswscanf.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/vwscanf.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/fread.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/fflush.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/putwc.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/sfputs_r.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/asnprintf.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/funopen.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/svfwprintf.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/putwc_u.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/fsetpos.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/fiprintf.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/fopencookie.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/getwchar_u.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/sscanf.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/fgetwc.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/fileno.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/fileno_u.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/setbuf.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/ferror.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/svfiprintf.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/fopen.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/fgets.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/open_memstream.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/fsetlocking.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/svfprintf.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/vfprintf.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/makebuf.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/nano-vfscanf.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/fmemopen.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/puts.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/fputwc.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/vsiprintf.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/diprintf.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/viscanf.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/fgetwc_u.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/fputs.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/siscanf.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/ftell.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/fprintf.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/viprintf.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/fwscanf.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/nano-svfscanf.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/scanf.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/fwalk.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/freopen.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/putchar_u.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/wbufw.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/fwrite.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/tmpfile.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/sswprint_r.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/siprintf.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/sprint_r.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/gets.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/putc_u.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/stdio.c
   # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/nano-vfprintf.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/getw.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/fseeko.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/fputs_u.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/vdiprintf.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/vsiscanf.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/feof.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/getchar.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/setlinebuf.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/setvbuf.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/fgetc_u.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/nano-svfprintf.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/vfscanf.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/nano-vfprintf_i.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/dprintf.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/vprintf.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/vsprintf.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/fdopen.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/ftello.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/ssputws_r.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/vfwscanf.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/clearerr.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/asniprintf.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/getc_u.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/putw.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/ferror_u.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/iprintf.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/findfp.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/fputws.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/ssprint_r.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/wbuf.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/getline.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/perror.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/fwide.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/sniprintf.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/getdelim.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/flags.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/fputc_u.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/putwchar.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/vsniprintf.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/vfwprintf.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/rget.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/swscanf.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/refill.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/getchar_u.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/vwprintf.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/fseek.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/fgetws.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/sccl.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/getc.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/fcloseall.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/rewind.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/fflush_u.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/fiscanf.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/vswprintf.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/getwc.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/getwchar.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/asprintf.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/nano-vfscanf_i.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/fread_u.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/ungetc.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/svfscanf.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/fwrite_u.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/putchar.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/putc.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/fgets_u.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/vdprintf.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/vasprintf.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/ssputs_r.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/fpurge.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/fwprintf.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/sprintf.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/wsetup.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/vsnprintf.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/fclose.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/fputwc_u.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/snprintf.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/vfiwprintf.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/vfiprintf.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/swprint_r.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/svfiwprintf.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/remove.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/swprintf.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/asiprintf.c
-  # ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/wprintf.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/getw.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/fseeko.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/fputs_u.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/vdiprintf.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/vsiscanf.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/feof.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/getchar.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/setlinebuf.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/setvbuf.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/fgetc_u.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/nano-svfprintf.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/vfscanf.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/nano-vfprintf_i.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/dprintf.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/vprintf.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/vsprintf.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/fdopen.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/ftello.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/ssputws_r.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/vfwscanf.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/clearerr.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/asniprintf.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/getc_u.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/putw.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/ferror_u.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/iprintf.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/findfp.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/fputws.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/ssprint_r.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/wbuf.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/getline.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/perror.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/fwide.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/sniprintf.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/getdelim.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/flags.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/fputc_u.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/putwchar.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/vsniprintf.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/vfwprintf.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/rget.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/swscanf.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/refill.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/getchar_u.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/vwprintf.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/fseek.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/fgetws.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/sccl.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/getc.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/fcloseall.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/rewind.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/fflush_u.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/fiscanf.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/vswprintf.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/getwc.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/getwchar.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/asprintf.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/nano-vfscanf_i.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/fread_u.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/ungetc.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/svfscanf.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/fwrite_u.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/putchar.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/putc.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/fgets_u.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/vdprintf.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/vasprintf.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/ssputs_r.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/fpurge.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/fwprintf.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/sprintf.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/wsetup.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/vsnprintf.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/fclose.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/fputwc_u.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/snprintf.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/vfiwprintf.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/vfiprintf.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/swprint_r.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/svfiwprintf.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/remove.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/swprintf.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/asiprintf.c
+  ${newlib_sources_SOURCE_DIR}/newlib/libc/stdio/wprintf.c
 )
 
 target_include_directories(newlib
