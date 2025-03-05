@@ -1,5 +1,4 @@
 //yosys -m slang -p"read_verilog -sv ecp5pll.sv; read_slang AudioDataTypes.sv Channel.sv Channel_tb.sv; synth_ecp5 -json Ausgabe.json;"
-import audio_data_types::*;
 
 module moduleName (
     input logic clk_25mhz,
@@ -41,64 +40,79 @@ always @(posedge clk_1024khz) begin
     end
 end
 
-ChannelData channelData;
-initial begin
-channelData.startDataAddress = 0;
-channelData.sampleCount = 128000;
-channelData.loopStart = 0; 
-channelData.loopEnd = 127999;
-channelData.currentPosition = 0;
-channelData.lastSample = 0;
-channelData.volume = 8'b11111111;
-channelData.isLooping = 1;
-channelData.isPlaying = 1;
-channelData.isMono = 1;
-channelData.isLeft = 1;
-end
+    logic [11:0] startDataAddress;  
+    logic [23:0] sampleCount;           
+    logic [23:0] loopStart;         
+    logic [23:0] loopEnd;           
+    logic [15:0] loopStartSample;   
 
-ChannelSettings channelSettings = SET_STARTADDRESS;
-logic[23:0] w_ChannelData = channelData.startDataAddress;
+    logic [23:0] currentPosition;   
+    logic [15:0] lastSample;        
+    logic [7:0] volume;             
+
+    logic isLooping;                   
+    logic isPlaying;                
+    logic isMono;                   
+    logic isLeft; 
+
+    typedef enum logic[3:0] {
+        IDLE                = 0,
+        SET_STARTADDRESS    = 1,
+        SET_SAMPLECOUNT     = 2,
+        SET_LOOPSTART       = 3,
+        SET_LOOPEND         = 4,
+        SET_CURRENTPOSITION = 5,
+        SET_LASTSAMPLE      = 6,
+        SET_VOLUME          = 7,
+        SET_ISLOOPING       = 8,
+        SET_ISPLAYING       = 9,
+        SET_ISMONO          = 10,
+        SET_ISLEFT          = 11
+    } ChannelSettings;
+    ChannelSettings channelSettings;
+
+logic[23:0] w_ChannelData = startDataAddress;
 
 always_ff @(posedge clk_25mhz) begin
     case (channelSettings)
         SET_STARTADDRESS: begin
-            w_ChannelData <= channelData.sampleCount;
+            w_ChannelData <= sampleCount;
             channelSettings <= SET_SAMPLECOUNT;
         end
         SET_SAMPLECOUNT: begin
-            w_ChannelData <= channelData.loopStart;
+            w_ChannelData <= loopStart;
             channelSettings <= SET_LOOPSTART;
         end
         SET_LOOPSTART: begin
-            w_ChannelData <= channelData.loopEnd;
+            w_ChannelData <= loopEnd;
             channelSettings <= SET_LOOPEND;
         end
         SET_LOOPEND: begin
-            w_ChannelData <= channelData.currentPosition;
+            w_ChannelData <= currentPosition;
             channelSettings <= SET_CURRENTPOSITION;
         end
         SET_CURRENTPOSITION: begin
-            w_ChannelData <= channelData.lastSample;
+            w_ChannelData <= lastSample;
             channelSettings <= SET_LASTSAMPLE;
         end
         SET_LASTSAMPLE: begin
-            w_ChannelData <= channelData.volume;
+            w_ChannelData <= volume;
             channelSettings <= SET_VOLUME;
         end
         SET_VOLUME: begin
-            w_ChannelData <= channelData.isLooping;
+            w_ChannelData <= isLooping;
             channelSettings <= SET_ISLOOPING;
         end
         SET_ISLOOPING: begin
-            w_ChannelData <= channelData.isMono;
+            w_ChannelData <= isMono;
             channelSettings <= SET_ISMONO;
         end
         SET_ISMONO: begin
-            w_ChannelData <= channelData.isLeft;
+            w_ChannelData <= isLeft;
             channelSettings <= SET_ISLEFT;
         end
         SET_ISLEFT: begin
-            w_ChannelData <= channelData.isPlaying;
+            w_ChannelData <= isPlaying;
             channelSettings <= SET_ISPLAYING;
         end
         SET_ISPLAYING: begin
