@@ -17,20 +17,6 @@ module regs (
     typedef logic [31:0] registers_t [32];
     registers_t registers;
 
-    // NOTE: Debug signals
-    // logic [31:0]         reg0;
-    // logic [31:0]         reg1;
-    // logic [31:0]         reg2;
-    // logic [31:0]         reg3;
-    // logic [31:0]         reg4;
-    // logic [31:0]         reg5;
-    // logic [31:0]         reg6;
-    // logic [31:0]         reg7;
-
-
-    // Make sure x0 is always zero
-    initial registers[0] = 0;
-
     always_ff @(posedge clk) begin
         if (reset) begin
             registers[0] <= 0;
@@ -45,21 +31,9 @@ module regs (
             end
 
             // Perform read
-            rs1 <= registers[rs1adr];
-            rs2 <= registers[rs2adr];
-
-            // NOTE: Remove after debugging
-            // reg0 <= registers[0];
-            // reg1 <= registers[1];
-            // reg2 <= registers[2];
-            // reg3 <= registers[3];
-            // reg4 <= registers[4];
-            // reg5 <= registers[5];
-            // reg6 <= registers[6];
-            // reg7 <= registers[7];
+            rs1 <= (rs1adr == 0) ? 0 : registers[rs1adr];
+            rs2 <= (rs2adr == 0) ? 0 : registers[rs2adr];
         end
     end
 
-`ifdef FORMAL
-`endif
 endmodule  // regs
