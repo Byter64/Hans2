@@ -1,6 +1,6 @@
 `timescale 1ns/1ps
 
-module GPU #
+module gpu #
 (
     parameter FB_WIDTH = 400,
     parameter FB_HEIGHT = 240
