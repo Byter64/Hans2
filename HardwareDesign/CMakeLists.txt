@@ -6,3 +6,4 @@ include(hardware_targets)
 # Adding all subdirectories
 add_subdirectory(cmake_example)
 add_subdirectory(APU)
+add_subdirectory(Controller)
