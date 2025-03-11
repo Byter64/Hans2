@@ -7,7 +7,7 @@ module GraphicSystem_Test (
 );
 
 reg[15:0] memory[18354];
-initial $readmemh("testbild2.txt", memory);
+initial $readmemh("TestBild2.txt", memory);
 
 reg[7:0] state = 0;
 localparam WAIT1 = 0;

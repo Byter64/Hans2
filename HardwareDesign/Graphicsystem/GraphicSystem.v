@@ -1,10 +1,9 @@
 //yosys -p"read_verilog ULX3S_hdmi\TMDS_encoder.v HDMI_Out.v GPU.v BufferController.v Framebuffer.v GraphicSystem.v; synth_ecp5 -json Ausgabe.json"
 
-module GraphicSystem 
+module GraphicSystem
 (
     input clk25Mhz,
-    input gpuClk,
-    input bufferControllerClk,
+    input cpuClk,
     input reset,
     output[3:0] gpdiDp,
     output hdmi_pixClk,
@@ -34,25 +33,14 @@ module GraphicSystem
 localparam SCREEN_WIDTH = 400;
 localparam SCREEN_HEIGHT = 240;
 
-wire[9:0]   gpu_FbX;
-wire[8:0]   gpu_FbY;
-wire[15:0]  gpu_FbColor;
-wire        gpu_FbWrite;
-wire[10:0]  hdmi_nextX;
-wire[10:0]  hdmi_nextY;
-wire        hdmi_hSync;
-wire[15:0]  fb2_dataOutA;
-wire[15:0]  fb2_dataOutB;
-wire bfCont_fbGPU;
-wire bfCont_fbHDMI;
-wire[15:0]  fb1_dataOutA;
-wire[15:0]  fb1_dataOutB;
 wire[16:0] gpu_fbAddress = gpu_FbX + gpu_FbY * SCREEN_WIDTH;
 wire[16:0] hdmi_fbAddress = ((hdmi_nextX >> 1) + (hdmi_nextY >> 1) * SCREEN_WIDTH); //this halves the resoluton from 480x800 to 240x400
 wire[15:0] hdmi_color = bfCont_fbHDMI == 0 ? fb1_dataOutB : fb2_dataOutB;
 
+wire bfCont_fbGPU;
+wire bfCont_fbHDMI;
 BufferController bfCont(
-    .clk(bufferControllerClk),
+    .clk(cpuClk),
     .reset(reset),
     .swapIn(swapBuffers),
     .vSync(hdmi_vSync),
@@ -62,6 +50,8 @@ BufferController bfCont(
     .fbHDMI(bfCont_fbHDMI)
 );
 
+wire[15:0]  fb1_dataOutA;
+wire[15:0]  fb1_dataOutB;
 Framebuffer #(
     .WIDTH(16),
     .DEPTH(SCREEN_HEIGHT * SCREEN_WIDTH)
@@ -70,16 +60,18 @@ Framebuffer #(
     .dataInA(gpu_FbColor),
     .addressA(gpu_fbAddress),
     .writeEnableA(bfCont_fbGPU == 1'b0 ? gpu_FbWrite : 1'b0),
-    
+
     .clkB(hdmi_pixClk),
     .dataInB(16'b0),
     .addressB(hdmi_fbAddress),
     .writeEnableB(1'b0),
-    
+
     .dataOutA(fb1_dataOutA),
     .dataOutB(fb1_dataOutB)
 );
 
+wire[15:0]  fb2_dataOutA;
+wire[15:0]  fb2_dataOutB;
 Framebuffer #(
     .WIDTH(16),
     .DEPTH(SCREEN_HEIGHT * SCREEN_WIDTH)
@@ -100,11 +92,15 @@ Framebuffer #(
 
 
 /*The gpu_mem... and gpu_Ctrl... signals are direct in-/outputs on the GraphicSystem*/
-GPU #(
+wire[9:0]   gpu_FbX;
+wire[8:0]   gpu_FbY;
+wire[15:0]  gpu_FbColor;
+wire        gpu_FbWrite;
+gpu #(
     .FB_WIDTH(SCREEN_WIDTH),
     .FB_HEIGHT(SCREEN_HEIGHT)
 ) gpu (
-    .clk(gpuClk),
+    .clk(hdmi_pixClk),
     .reset(reset),
     //MEM INTERFACE
     .mem_data(gpu_MemData),
@@ -133,7 +129,11 @@ GPU #(
 );
 
 
-HDMI_Out hdmi_Out 
+wire        hdmi_pixClk;
+wire[10:0]  hdmi_nextX;
+wire[10:0]  hdmi_nextY;
+wire        hdmi_hSync;
+HDMI_Out hdmi_Out
 (
     //In
     .clk_25mhz(clk25Mhz),

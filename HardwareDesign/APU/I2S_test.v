@@ -1,5 +1,3 @@
-`include "ecp5pll.sv"
-
 module I2S_Test (
     input[6:0] btn,
     input clk_25mhz,
@@ -10,12 +8,6 @@ module I2S_Test (
     output audio_xsmt
 );
 
-assign audio_sclk = 0; //PCM5102a will generate a sclk itself if sclk is low
-assign lr_clk = lr_clk; //lrclk
-assign audio_din = data_out; //din
-assign audio_bclk = bit_clk; //bclk
-assign audio_xsmt = 1; //XSFMT
-
 //I²S
 wire bit_clk;
 wire lr_clk;
@@ -23,6 +15,13 @@ reg data_out;
 
 wire unused;
 wire unused2;
+
+assign audio_sclk = 0; //PCM5102a will generate a sclk itself if sclk is low
+assign lr_clk = lr_clk; //lrclk
+assign audio_din = data_out; //din
+assign audio_bclk = bit_clk; //bclk
+assign audio_xsmt = 1; //XSFMT
+
 ecp5pll
 #(
     .in_hz(25000000),
