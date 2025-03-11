@@ -1,6 +1,6 @@
 // iverilog -g2012 testbench.sv ../Processor/picorv32.v ../Graphicsystem/BufferController.v ../Graphicsystem/Framebuffer.v ../Graphicsystem/GPU.v ../Graphicsystem/GraphicSystem.v ../Graphicsystem/HDMI_Out.v ../Graphicsystem/ULX3S_hdmi/TMDS_encoder.v ../Controller/controller.sv
 
-module topmodule
+module CPU_with_GPU
     (
         input logic clk_25mhz,
 		input logic [6:0] btn,
