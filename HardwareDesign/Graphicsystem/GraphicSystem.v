@@ -1,6 +1,6 @@
 //yosys -p"read_verilog ULX3S_hdmi\TMDS_encoder.v HDMI_Out.v GPU.v BufferController.v Framebuffer.v GraphicSystem.v; synth_ecp5 -json Ausgabe.json"
 
-module GraphicSystem 
+module GraphicSystem
 (
     input clk25Mhz,
     input cpuClk,
@@ -60,12 +60,12 @@ Framebuffer #(
     .dataInA(gpu_FbColor),
     .addressA(gpu_fbAddress),
     .writeEnableA(bfCont_fbGPU == 1'b0 ? gpu_FbWrite : 1'b0),
-    
+
     .clkB(hdmi_pixClk),
     .dataInB(16'b0),
     .addressB(hdmi_fbAddress),
     .writeEnableB(1'b0),
-    
+
     .dataOutA(fb1_dataOutA),
     .dataOutB(fb1_dataOutB)
 );
@@ -96,7 +96,7 @@ wire[9:0]   gpu_FbX;
 wire[8:0]   gpu_FbY;
 wire[15:0]  gpu_FbColor;
 wire        gpu_FbWrite;
-GPU #(
+gpu #(
     .FB_WIDTH(SCREEN_WIDTH),
     .FB_HEIGHT(SCREEN_HEIGHT)
 ) gpu (
@@ -133,7 +133,7 @@ wire        hdmi_pixClk;
 wire[10:0]  hdmi_nextX;
 wire[10:0]  hdmi_nextY;
 wire        hdmi_hSync;
-HDMI_Out hdmi_Out 
+HDMI_Out hdmi_Out
 (
     //In
     .clk_25mhz(clk25Mhz),

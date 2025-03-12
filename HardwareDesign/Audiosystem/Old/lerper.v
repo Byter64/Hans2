@@ -19,8 +19,8 @@ wire[SIGNAL_WIDTH - 1 : 0] signal_delta = o_signal - i_signal;
 reg[3:0] state = 0;
 
 wire[15:0] slow_speed = -speed;
-wire slow_tick = slower_counter == 0;
 reg[15:0] slower_counter = 0;
+wire slow_tick = slower_counter == 0;
 
 always @(posedge clk) begin
     if(rstn == 0) begin

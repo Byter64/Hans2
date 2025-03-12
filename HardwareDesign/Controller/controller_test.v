@@ -28,12 +28,12 @@ always @(posedge clk_25mhz) begin
         clk_counter <= clk_counter_next;
 end
 
-
-reg[15:0] cont_state = 0;
-reg[10:0] state = START;
 localparam START = 0;
 localparam DATA_START = 3;
 localparam DATA_END = 3 + 2 * 16; //16 states, each 2 fast clock cycles
+
+reg[15:0] cont_state = 0;
+reg[10:0] state = START;
 
 always @(posedge clk) begin
     state <= state + 1;
