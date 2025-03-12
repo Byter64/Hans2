@@ -82,7 +82,7 @@ module Channel (
                                       (nextSampleCalculation < -32768)  ? -32768 :
                                        nextSampleCalculation[15:0];
 
-    assign o_SampleOut              = (nextSample  * (volume<<<4))>>>4;
+    assign o_SampleOut              = (nextSample  * (volume<<4))>>4;
     
 
     logic old_lrclk;
