@@ -23,10 +23,10 @@ ecp5pll_inst
 always #5 clk_100mhz = ~clk_100mhz;
 `endif
 
-logic clk_1024khz; 
-logic clk_64khz; 
+logic clk_1024khz = 0; 
+logic clk_64khz = 0; 
 
-logic[9:0] clk_1024khz_counter;
+logic[9:0] clk_1024khz_counter = 0;
 always_ff @(posedge clk_100mhz) begin
     clk_1024khz_counter <= clk_1024khz_counter + 1;
     if(clk_1024khz_counter + 1 == 49) begin
@@ -35,10 +35,10 @@ always_ff @(posedge clk_100mhz) begin
     end
 end
 
-logic[9:0] clk_64khz_counter;
+logic[9:0] clk_64khz_counter = 0;
 always_ff @(posedge clk_1024khz) begin
     clk_64khz_counter <= clk_64khz_counter + 1;
-    if(clk_64khz_counter + 1 == 16) begin
+    if(clk_64khz_counter + 1 == 8) begin
         clk_64khz_counter <= 0;
         clk_64khz <= ~clk_64khz;
     end
@@ -73,7 +73,7 @@ typedef enum logic[3:0] {
     SET_ISLEFT          = 11,
     IDLE                = 12
 } ChannelSettings;
-ChannelSettings channelSettings;
+ChannelSettings channelSettings = START;
 
 logic[23:0] w_ChannelData = 0;
 
