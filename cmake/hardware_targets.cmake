@@ -50,10 +50,12 @@ function(add_synthesis
 
   # Upload targets
   add_custom_target(${name}_upload
+    DEPENDS ${name}.bit
     COMMAND fujprog ${CMAKE_CURRENT_BINARY_DIR}/${name}.bit
   )
 
   add_custom_target(${name}_flash
+    DEPENDS ${name}.bit
     COMMAND fujprog -j flash ${CMAKE_CURRENT_BINARY_DIR}/${name}.bit
   )
 endfunction()
