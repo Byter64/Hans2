@@ -135,8 +135,7 @@ logic [15:0] o_SampleOut;
 logic [11:0] ram [283989];
 integer n_File_ID;
 initial begin 
-    n_File_ID = $fopen("C:/Users/Yanni/Desktop/Hans2/HardwareDesign/Audiosystem/encoded.bin", "rb");
-    $fread(ram, n_File_ID);
+    $readmemh("C:/Users/Yanni/Desktop/Hans2/HardwareDesign/Audiosystem/encoded.hex", ram);
 end
 logic [11:0] i_sampleDelta;
 
