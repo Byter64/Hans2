@@ -39,7 +39,7 @@ end
 logic[9:0] clk_64khz_counter = 0;
 always_ff @(posedge clk_1024khz) begin
     clk_64khz_counter <= clk_64khz_counter + 1;
-    if(clk_64khz_counter + 1 == 8) begin
+    if(clk_64khz_counter + 1 == 16) begin
         clk_64khz_counter <= 0;
         clk_64khz <= ~clk_64khz;
     end
@@ -49,7 +49,7 @@ logic rst = 1;
 logic [11:0] startDataAddress = 0;  
 logic [23:0] sampleCount = 128000;           
 logic [23:0] loopStart = 0;         
-logic [23:0] loopEnd = 127999;           
+logic [23:0] loopEnd = 16000;           
 
 logic [23:0] currentPosition = 0;   
 logic [15:0] lastSample = 0;        
@@ -164,27 +164,29 @@ end
 
 logic[3:0] bitIndex = 4'b0;
 logic[3:0] nextBit;
+logic[15:0] amplitude;
 assign nextBit = bitIndex + 1;
+assign amplitude = o_SampleOut;
 //MSB first
 always @(posedge clk_1024khz) begin
     bitIndex <= nextBit;
     case (bitIndex)
-        4'b0000: audio_din <= o_SampleOut[15];
-        4'b0001: audio_din <= o_SampleOut[14];
-        4'b0010: audio_din <= o_SampleOut[13];
-        4'b0011: audio_din <= o_SampleOut[12];
-        4'b0100: audio_din <= o_SampleOut[11];
-        4'b0101: audio_din <= o_SampleOut[10];
-        4'b0110: audio_din <= o_SampleOut[9];
-        4'b0111: audio_din <= o_SampleOut[8];
-        4'b1000: audio_din <= o_SampleOut[7];
-        4'b1001: audio_din <= o_SampleOut[6];
-        4'b1010: audio_din <= o_SampleOut[5];
-        4'b1011: audio_din <= o_SampleOut[4];
-        4'b1100: audio_din <= o_SampleOut[3];
-        4'b1101: audio_din <= o_SampleOut[2];
-        4'b1110: audio_din <= o_SampleOut[1];
-        4'b1111: audio_din <= o_SampleOut[0];
+        4'b0000: audio_din <= amplitude[15];
+        4'b0001: audio_din <= amplitude[14];
+        4'b0010: audio_din <= amplitude[13];
+        4'b0011: audio_din <= amplitude[12];
+        4'b0100: audio_din <= amplitude[11];
+        4'b0101: audio_din <= amplitude[10];
+        4'b0110: audio_din <= amplitude[9];
+        4'b0111: audio_din <= amplitude[8];
+        4'b1000: audio_din <= amplitude[7];
+        4'b1001: audio_din <= amplitude[6];
+        4'b1010: audio_din <= amplitude[5];
+        4'b1011: audio_din <= amplitude[4];
+        4'b1100: audio_din <= amplitude[3];
+        4'b1101: audio_din <= amplitude[2];
+        4'b1110: audio_din <= amplitude[1];
+        4'b1111: audio_din <= amplitude[0];
     endcase
 end
 
