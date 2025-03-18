@@ -162,8 +162,33 @@ always_ff @(posedge clk_25mhz) begin : blockName
     i_sampleDelta <= ram[o_nextSampleAddress];
 end
 
+logic[3:0] bitIndex = 4'b0;
+logic[3:0] nextBit;
+assign nextBit = bitIndex + 1;
+//MSB first
+always @(posedge clk_1024khz) begin
+    bitIndex <= nextBit;
+    case (bitIndex)
+        4'b0000: audio_din <= o_SampleOut[15];
+        4'b0001: audio_din <= o_SampleOut[14];
+        4'b0010: audio_din <= o_SampleOut[13];
+        4'b0011: audio_din <= o_SampleOut[12];
+        4'b0100: audio_din <= o_SampleOut[11];
+        4'b0101: audio_din <= o_SampleOut[10];
+        4'b0110: audio_din <= o_SampleOut[9];
+        4'b0111: audio_din <= o_SampleOut[8];
+        4'b1000: audio_din <= o_SampleOut[7];
+        4'b1001: audio_din <= o_SampleOut[6];
+        4'b1010: audio_din <= o_SampleOut[5];
+        4'b1011: audio_din <= o_SampleOut[4];
+        4'b1100: audio_din <= o_SampleOut[3];
+        4'b1101: audio_din <= o_SampleOut[2];
+        4'b1110: audio_din <= o_SampleOut[1];
+        4'b1111: audio_din <= o_SampleOut[0];
+    endcase
+end
+
 assign audio_bclk = clk_1024khz; //bclk
 assign audio_lrclk = clk_64khz; //lrclk
-assign audio_din = o_SampleOut; //din
 
 endmodule
