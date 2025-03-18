@@ -63,7 +63,8 @@ module Channel (
     assign nextDataAddressLeft      = startDataAddress + (currentPosition << 1) + 2;
     assign nextDataAddressRight     = startDataAddress + (currentPosition << 1) + 3;
 
-    assign nextDataAddress          = (isMono) ? nextDataAddressMono : 
+    assign nextDataAddress          = rst ? 32'b0 : 
+                                      (isMono) ? nextDataAddressMono : 
                                       (isLeft) ? nextDataAddressLeft : nextDataAddressRight;
 
     assign positionPlus1            = currentPosition + 1;
@@ -73,17 +74,20 @@ module Channel (
 
     assign sampleDelta              = {{3{i_sampleDelta[11]}},i_sampleDelta,1'b0};
 
-    assign sampleCalculation        = sampleDelta + lastSample;
+    assign sampleCalculation        = $signed(sampleDelta) + $signed(lastSample);
 
-    assign nextSampleCalculation    = (positionPlus1 >= loopEnd && isLooping) ? loopStartSample : sampleCalculation;
+    assign nextSampleCalculation    = rst ? sampleCalculation : 
+                                      (positionPlus1 >= loopEnd && isLooping) ? loopStartSample : 
+                                      sampleCalculation;
 
-    assign nextSample               = (!isPlaying)           ? 0     :
-                                      (nextSampleCalculation > 32767)   ? 32767  :
-                                      (nextSampleCalculation < -32768)  ? -32768 :
+    assign nextSample               = ($signed(nextSampleCalculation) > $signed(32767))   ? 32767  :
+                                      ($signed(nextSampleCalculation) < $signed(-32768))  ? $signed(-32768) :
                                        nextSampleCalculation[15:0];
 
-    assign o_SampleOut              = (nextSample  * (volume<<4))>>4;
+    assign o_SampleOut              = (!isPlaying) ? 0 :
+                                      (lastSample * volume) >> 4;
     
+    assign o_nextSampleAddress = nextDataAddress;
 
     logic old_lrclk;
     always_ff @(posedge clk) begin
@@ -93,6 +97,8 @@ module Channel (
         if(w_selectChannelData == SET_LASTSAMPLE) begin
             lastSample <= w_ChannelData;
         end
+        if(rst)
+            lastSample <= 0;
     end
 
 

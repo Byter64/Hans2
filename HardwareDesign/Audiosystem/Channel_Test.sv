@@ -7,7 +7,7 @@ module Channel_Test (
 );
 
 /* CLOCK GENERATION */
-logic clk_100mhz = 0;
+logic clk_100mhz;
 `ifdef SYNTHESIS
 ecp5pll
 #(
@@ -20,6 +20,7 @@ ecp5pll_inst
     .clk_o({clk_100mhz})
 );
 `else
+initial clk_100mhz = 0;
 always #5 clk_100mhz = ~clk_100mhz;
 `endif
 
@@ -44,6 +45,7 @@ always_ff @(posedge clk_1024khz) begin
     end
 end
 
+logic rst = 1;
 logic [11:0] startDataAddress = 0;  
 logic [23:0] sampleCount = 128000;           
 logic [23:0] loopStart = 0;         
@@ -51,7 +53,7 @@ logic [23:0] loopEnd = 127999;
 
 logic [23:0] currentPosition = 0;   
 logic [15:0] lastSample = 0;        
-logic [7:0] volume = 127;             
+logic [7:0] volume = 16;             
 
 logic isLooping = 1;                   
 logic isPlaying = 1;                
@@ -76,6 +78,10 @@ typedef enum logic[3:0] {
 ChannelSettings channelSettings = START;
 
 logic[23:0] w_ChannelData = 0;
+
+always_ff @( posedge clk_64khz ) begin
+    rst <= 0;
+end
 
 always_ff @(posedge clk_25mhz) begin
     case (channelSettings)
@@ -124,8 +130,8 @@ always_ff @(posedge clk_25mhz) begin
             channelSettings <= SET_ISPLAYING;
         end
         SET_ISPLAYING: begin
-            w_ChannelData <= 24'b0;
-            channelSettings <= IDLE;
+            w_ChannelData <= isPlaying;
+            channelSettings <= SET_ISPLAYING;
         end
     endcase
 end
@@ -140,13 +146,13 @@ end
 logic [11:0] i_sampleDelta;
 
 Channel channel(
-    .clk(clk),
+    .clk(clk_25mhz),
     .rst(rst),
 
     .w_ChannelData(w_ChannelData),
     .w_selectChannelData(channelSettings),
     .i_sampleDelta(i_sampleDelta),
-    .lrclk(lrclk),
+    .lrclk(clk_64khz),
     .o_SampleOut(o_SampleOut),
     .o_nextSampleAddress(o_nextSampleAddress)
 );

@@ -20,7 +20,7 @@ initial begin
     for(i = 0; i < 128; i++) begin
       $dumpvars(0, Channel_Test.ram[i]);
     end
-  #1000000
+  #1000000000
 
     $finish;
 end
