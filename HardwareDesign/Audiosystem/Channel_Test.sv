@@ -43,17 +43,17 @@ always_ff @(posedge clk_1024khz) begin
         clk_64khz_counter <= 0;
         clk_64khz <= ~clk_64khz;
     end
-end
+end 
 
 logic rst = 1;
 logic [11:0] startDataAddress = 0;  
-logic [23:0] sampleCount = 128000;           
+logic [23:0] sampleCount = 319488;           
 logic [23:0] loopStart = 0;         
-logic [23:0] loopEnd = 16000;           
+logic [23:0] loopEnd = 191981;           
 
 logic [23:0] currentPosition = 0;   
 logic [15:0] lastSample = 0;        
-logic [7:0] volume = 16;             
+logic [7:0] volume = 255;             
 
 logic isLooping = 1;                   
 logic isPlaying = 1;                
@@ -138,7 +138,7 @@ end
 
 logic [31:0] o_nextSampleAddress;
 logic [15:0] o_SampleOut;
-logic [11:0] ram [283989];
+logic [11:0] ram [319488];
 integer n_File_ID;
 initial begin 
     $readmemh("C:/Users/Yanni/Desktop/Hans2/HardwareDesign/Audiosystem/encoded.hex", ram);

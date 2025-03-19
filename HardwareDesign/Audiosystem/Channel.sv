@@ -58,6 +58,7 @@ module Channel (
     logic [31:0] nextSampleCalculation;
 
     logic [15:0] nextSample;
+    logic [31:0] amplifiedSample;
 
     assign nextDataAddressMono      = startDataAddress +  currentPosition       + 1;
     assign nextDataAddressLeft      = startDataAddress + (currentPosition << 1) + 2;
@@ -84,8 +85,12 @@ module Channel (
                                       ($signed(nextSampleCalculation) < $signed(-32768))  ? $signed(-32768) :
                                        nextSampleCalculation[15:0];
 
+    assign amplifiedSample = ($signed(lastSample) * $signed({1'b0,volume})) >>> 8;
+
     assign o_SampleOut              = (!isPlaying) ? 0 :
-                                      (lastSample * volume) >> 4;
+                                      $signed(amplifiedSample) > $signed(32767) ? 32767 : 
+                                      $signed(amplifiedSample) < $signed(-32768) ? $signed(-32768) :
+                                      $signed(amplifiedSample);
     
     assign o_nextSampleAddress = nextDataAddress;
 

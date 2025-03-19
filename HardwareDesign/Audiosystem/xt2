@@ -1,6 +1,0 @@
-WARNING: APU_tb.sv:17: $readmemh(program.txt): Not enough words in the file for the requested range [0:1023].
-VCD info: dumpfile dump.vcd opened for output.
-VCD warning: array word APU_tb.APU.regs[0] will conflict with an escaped identifier.
-VCD warning: array word APU_tb.APU.regs[1] will conflict with an escaped identifier.
-VCD warning: array word APU_tb.APU.regs[2] will conflict with an escaped identifier.
-APU_tb.sv:52: $finish called at 999990000 (1ps)
