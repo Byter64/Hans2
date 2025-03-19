@@ -6,8 +6,6 @@ module sd_card_test (
     // SD card interface
     output logic sd_cmd,            // MOSI (CMD pin of SD card)
     output logic sd_clk,            // Clock (SCK pin of SD card)
-    output logic [3:0] audio_l,
-    output logic [3:0] audio_r,
     inout logic [3:0] sd_d          // MISO (D0-D3 pins of SD card)
 );
 // SD card interface signals
