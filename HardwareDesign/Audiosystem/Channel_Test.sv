@@ -78,6 +78,8 @@ typedef enum logic[3:0] {
 ChannelSettings channelSettings = START;
 
 logic[23:0] w_ChannelData = 0;
+logic valid = 1;
+logic i_ready = 1;
 
 always_ff @( posedge clk_64khz ) begin
     rst <= 0;
@@ -151,7 +153,9 @@ Channel channel(
 
     .w_ChannelData(w_ChannelData),
     .w_selectChannelData(channelSettings),
+    .w_valid(valid),
     .i_sampleDelta(i_sampleDelta),
+    .i_ready(i_ready),
     .lrclk(clk_64khz),
     .o_SampleOut(o_SampleOut),
     .o_nextSampleAddress(o_nextSampleAddress)

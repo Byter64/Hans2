@@ -4,7 +4,9 @@ module Channel (
 
     input logic [23:0] w_ChannelData,
     input logic[3:0] w_selectChannelData,
+    input logic w_valid,
 
+    input logic i_ready,
     input logic [11:0] i_sampleDelta,
 
     input logic lrclk,
@@ -38,10 +40,10 @@ module Channel (
     logic [15:0] lastSample;        
     logic [7:0] volume;             
 
-    logic isLooping;                   
-    logic isPlaying;                
-    logic isMono;                   
-    logic isLeft;                   
+    logic isLooping;
+    logic isPlaying;
+    logic isMono;
+    logic isLeft;
 
     logic[31:0] nextDataAddressMono;
     logic[31:0] nextDataAddressLeft;
@@ -69,7 +71,7 @@ module Channel (
                                       (isLeft) ? nextDataAddressLeft : nextDataAddressRight;
 
     assign positionPlus1            = currentPosition + 1;
-    assign nextPosition             = (!isPlaying) ? currentPosition :
+    assign nextPosition             = (!isPlaying || !i_ready) ? currentPosition :
                                       (positionPlus1 >= loopEnd && isLooping) ? loopStart :
                                        positionPlus1;
 
@@ -87,7 +89,7 @@ module Channel (
 
     assign amplifiedSample = ($signed(lastSample) * $signed({1'b0,volume})) >>> 8;
 
-    assign o_SampleOut              = (!isPlaying) ? 0 :
+    assign o_SampleOut              = !isPlaying ? 0 :
                                       $signed(amplifiedSample) > $signed(32767) ? 32767 : 
                                       $signed(amplifiedSample) < $signed(-32768) ? $signed(-32768) :
                                       $signed(amplifiedSample);
@@ -97,9 +99,12 @@ module Channel (
     logic old_lrclk;
     always_ff @(posedge clk) begin
         if(old_lrclk == 0 && lrclk == 1) begin
-            lastSample <= nextSample;
+            if(i_ready)
+                lastSample <= nextSample;
+            else
+                lastSample <= lastSample;
         end
-        if(w_selectChannelData == SET_LASTSAMPLE) begin
+        if(w_selectChannelData == SET_LASTSAMPLE && w_valid) begin
             lastSample <= w_ChannelData;
         end
         if(rst)
@@ -112,7 +117,7 @@ module Channel (
         if(old_lrclk == 0 && lrclk == 1) begin
             currentPosition <= nextPosition;
         end
-        if(w_selectChannelData == SET_CURRENTPOSITION) begin
+        if(w_selectChannelData == SET_CURRENTPOSITION && w_valid) begin
             currentPosition <= w_ChannelData;
         end
         if(rst) begin
@@ -121,17 +126,19 @@ module Channel (
     end
 
     always_ff @(posedge clk) begin
-        case (w_selectChannelData)
-            SET_STARTADDRESS:   startDataAddress    <= w_ChannelData;
-            SET_SAMPLECOUNT:    sampleCount         <= w_ChannelData;
-            SET_LOOPSTART:      loopStart           <= w_ChannelData;
-            SET_LOOPEND:        loopEnd             <= w_ChannelData;
-            SET_VOLUME:         volume              <= w_ChannelData;
-            SET_ISLOOPING:      isLooping           <= w_ChannelData;
-            SET_ISPLAYING:      isPlaying           <= w_ChannelData;
-            SET_ISMONO:         isMono              <= w_ChannelData;
-            SET_ISLEFT:         isLeft              <= w_ChannelData;
-        endcase
+        if(w_valid) begin
+            case (w_selectChannelData)
+                SET_STARTADDRESS:   startDataAddress    <= w_ChannelData;
+                SET_SAMPLECOUNT:    sampleCount         <= w_ChannelData;
+                SET_LOOPSTART:      loopStart           <= w_ChannelData;
+                SET_LOOPEND:        loopEnd             <= w_ChannelData;
+                SET_VOLUME:         volume              <= w_ChannelData;
+                SET_ISLOOPING:      isLooping           <= w_ChannelData;
+                SET_ISPLAYING:      isPlaying           <= w_ChannelData;
+                SET_ISMONO:         isMono              <= w_ChannelData;
+                SET_ISLEFT:         isLeft              <= w_ChannelData;
+            endcase
+        end
         if(currentPosition >= sampleCount) begin
             isPlaying <= 0;
         end
