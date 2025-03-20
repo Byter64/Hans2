@@ -15,15 +15,14 @@ logic SDcs;                      // Chip Select line
 
 // Connect SD data lines
 assign sd_d[0] = SDmiso;          
-assign sd_d[1] = 1'b1;         // Unused data lines pulled high
-assign sd_d[2] = 1'b1;
+assign sd_d[1] = globalReset ? 'b0 : 'b1;         // Unused data lines pulled high
+assign sd_d[2] = globalReset ? 'b0 : 'b1;
 assign sd_d[3] = SDcs;
-assign sd_cmd = SDmosi;
+assign sd_cmd  = SDmosi;
 // SD card control signals
 logic [7:0] data_out;                // Data output from the SD controller
 logic read_data;                     // Signal to trigger SD card read
                                // Every 32kHz trigger a new read
-
 logic clk;
 
 ecp5pll
