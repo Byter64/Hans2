@@ -53,7 +53,7 @@ logic [23:0] loopEnd = 191981;
 
 logic [23:0] currentPosition = 0;   
 logic [15:0] lastSample = 0;        
-logic [7:0] volume = 255;             
+logic [7:0] volume = 128;             
 
 logic isLooping = 1;                   
 logic isPlaying = 1;                
@@ -140,12 +140,12 @@ end
 
 logic [31:0] o_nextSampleAddress;
 logic [15:0] o_SampleOut;
-logic [11:0] ram [319488];
+logic [15:0] ram [239616];
 integer n_File_ID;
 initial begin 
-    $readmemh("C:/Users/Yanni/Desktop/Hans2/HardwareDesign/Audiosystem/encoded.hex", ram);
+    $readmemh("C:/Users/Yanni/Desktop/Hans2/HardwareDesign/Audiosystem/Unbenannt.hex", ram);
 end
-logic [11:0] i_sampleDelta;
+logic [15:0] i_sample;
 
 Channel channel(
     .clk(clk_25mhz),
@@ -154,16 +154,18 @@ Channel channel(
     .w_ChannelData(w_ChannelData),
     .w_selectChannelData(channelSettings),
     .w_valid(valid),
-    .i_sampleDelta(i_sampleDelta),
+    .i_sample(i_sample),
     .i_ready(i_ready),
     .lrclk(clk_64khz),
     .o_SampleOut(o_SampleOut),
     .o_nextSampleAddress(o_nextSampleAddress)
 );
 
+logic[15:0] data;
+assign i_sample = {data[7:0], data[15:8]};
 
 always_ff @(posedge clk_25mhz) begin : blockName
-    i_sampleDelta <= ram[o_nextSampleAddress];
+    data <= ram[o_nextSampleAddress];
 end
 
 logic[3:0] bitIndex = 4'b0;

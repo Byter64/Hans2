@@ -7,7 +7,7 @@ module Channel (
     input logic w_valid,
 
     input logic i_ready,
-    input logic [11:0] i_sampleDelta,
+    input logic [15:0] i_sample,
 
     input logic lrclk,
 
@@ -34,7 +34,6 @@ module Channel (
     logic [23:0] sampleCount;           
     logic [23:0] loopStart;         
     logic [23:0] loopEnd;           
-    logic [15:0] loopStartSample;   
 
     logic [23:0] currentPosition;   
     logic [15:0] lastSample;        
@@ -54,12 +53,6 @@ module Channel (
     logic[23:0] positionPlus1;
     logic[23:0] nextPosition;
 
-    logic[15:0] sampleDelta;
-    logic [31:0] sampleCalculation;
-
-    logic [31:0] nextSampleCalculation;
-
-    logic [15:0] nextSample;
     logic [31:0] amplifiedSample;
 
     assign nextDataAddressMono      = startDataAddress +  currentPosition       + 1;
@@ -75,19 +68,7 @@ module Channel (
                                       (positionPlus1 >= loopEnd && isLooping) ? loopStart :
                                        positionPlus1;
 
-    assign sampleDelta              = {{3{i_sampleDelta[11]}},i_sampleDelta,1'b0};
-
-    assign sampleCalculation        = $signed(sampleDelta) + $signed(lastSample);
-
-    assign nextSampleCalculation    = rst ? sampleCalculation : 
-                                      (positionPlus1 >= loopEnd && isLooping) ? loopStartSample : 
-                                      sampleCalculation;
-
-    assign nextSample               = ($signed(nextSampleCalculation) > $signed(32767))   ? 32767  :
-                                      ($signed(nextSampleCalculation) < $signed(-32768))  ? $signed(-32768) :
-                                       nextSampleCalculation[15:0];
-
-    assign amplifiedSample = ($signed(lastSample) * $signed({1'b0,volume})) >>> 8;
+    assign amplifiedSample = ($signed(lastSample) * $signed({1'b0,volume})) >>> 7;
 
     assign o_SampleOut              = !isPlaying ? 0 :
                                       $signed(amplifiedSample) > $signed(32767) ? 32767 : 
@@ -100,7 +81,7 @@ module Channel (
     always_ff @(posedge clk) begin
         if(old_lrclk == 0 && lrclk == 1) begin
             if(i_ready)
-                lastSample <= nextSample;
+                lastSample <= i_sample;
             else
                 lastSample <= lastSample;
         end
@@ -144,12 +125,6 @@ module Channel (
         end
         if(rst) begin
             isPlaying <= 0;
-        end
-    end
-
-    always_ff @(posedge clk) begin
-        if(currentPosition == loopStart) begin
-            loopStartSample <= lastSample;
         end
     end
 endmodule
