@@ -8,9 +8,10 @@ module Channel (
 
     input logic i_ready,
     input logic [15:0] i_sample,
-
-    input logic lrclk,
-
+    
+    output logic isMono,
+    output logic isRight,
+    output logic isPlaying,
     output logic [15:0] o_SampleOut,
     output logic [31:0] o_nextSampleAddress
 );
@@ -40,9 +41,6 @@ module Channel (
     logic [7:0] volume;             
 
     logic isLooping;
-    logic isPlaying;
-    logic isMono;
-    logic isLeft;
 
     logic[31:0] nextDataAddressMono;
     logic[31:0] nextDataAddressLeft;
@@ -61,7 +59,7 @@ module Channel (
 
     assign nextDataAddress          = rst ? 32'b0 : 
                                       (isMono) ? nextDataAddressMono : 
-                                      (isLeft) ? nextDataAddressLeft : nextDataAddressRight;
+                                      (isRight) ? nextDataAddressRight : nextDataAddressLeft;
 
     assign positionPlus1            = currentPosition + 1;
     assign nextPosition             = (!isPlaying || !i_ready) ? currentPosition :
@@ -77,14 +75,11 @@ module Channel (
     
     assign o_nextSampleAddress = nextDataAddress;
 
-    logic old_lrclk;
     always_ff @(posedge clk) begin
-        if(old_lrclk == 0 && lrclk == 1) begin
-            if(i_ready)
-                lastSample <= i_sample;
-            else
-                lastSample <= lastSample;
-        end
+        if(i_ready)
+            lastSample <= i_sample;
+        else
+            lastSample <= lastSample;
         if(w_selectChannelData == SET_LASTSAMPLE && w_valid) begin
             lastSample <= w_ChannelData;
         end
@@ -94,8 +89,7 @@ module Channel (
 
 
     always_ff @(posedge clk) begin
-        old_lrclk <= lrclk;
-        if(old_lrclk == 0 && lrclk == 1) begin
+        if(i_ready) begin
             currentPosition <= nextPosition;
         end
         if(w_selectChannelData == SET_CURRENTPOSITION && w_valid) begin
@@ -117,7 +111,7 @@ module Channel (
                 SET_ISLOOPING:      isLooping           <= w_ChannelData;
                 SET_ISPLAYING:      isPlaying           <= w_ChannelData;
                 SET_ISMONO:         isMono              <= w_ChannelData;
-                SET_ISLEFT:         isLeft              <= w_ChannelData;
+                SET_ISLEFT:         isRight             <= w_ChannelData;
             endcase
         end
         if(currentPosition >= sampleCount) begin

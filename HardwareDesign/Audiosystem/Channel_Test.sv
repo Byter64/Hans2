@@ -3,7 +3,7 @@ module Channel_Test (
     input logic clk_25mhz,
     output logic audio_bclk,
     output logic audio_lrclk,
-    output logic audio_din
+    output logic audio_dout
 );
 
 /* CLOCK GENERATION */
@@ -25,7 +25,7 @@ always #5 clk_100mhz = ~clk_100mhz;
 `endif
 
 logic clk_1024khz = 0; 
-logic clk_64khz = 0; 
+logic clk_32kHz = 0; 
 
 logic[9:0] clk_1024khz_counter = 0;
 always_ff @(posedge clk_100mhz) begin
@@ -36,12 +36,12 @@ always_ff @(posedge clk_100mhz) begin
     end
 end
 
-logic[9:0] clk_64khz_counter = 0;
+logic[9:0] clk_32khz_counter = 0;
 always_ff @(posedge clk_1024khz) begin
-    clk_64khz_counter <= clk_64khz_counter + 1;
-    if(clk_64khz_counter + 1 == 16) begin
-        clk_64khz_counter <= 0;
-        clk_64khz <= ~clk_64khz;
+    clk_32khz_counter <= clk_32khz_counter + 1;
+    if(clk_32khz_counter + 1 == 16) begin
+        clk_32khz_counter <= 0;
+        clk_32kHz <= ~clk_32kHz;
     end
 end 
 
@@ -58,7 +58,7 @@ logic [7:0] volume = 128;
 logic isLooping = 1;                   
 logic isPlaying = 1;                
 logic isMono = 1;                   
-logic isLeft = 1; 
+logic isRight = 1; 
 
 typedef enum logic[3:0] {
     START               = 0,
@@ -79,9 +79,8 @@ ChannelSettings channelSettings = START;
 
 logic[23:0] w_ChannelData = 0;
 logic valid = 1;
-logic i_ready = 1;
 
-always_ff @( posedge clk_64khz ) begin
+always_ff @( posedge clk_32kHz ) begin
     rst <= 0;
 end
 
@@ -124,7 +123,7 @@ always_ff @(posedge clk_25mhz) begin
             channelSettings <= SET_ISMONO;
         end
         SET_ISMONO: begin
-            w_ChannelData <= isLeft;
+            w_ChannelData <= isRight;
             channelSettings <= SET_ISLEFT;
         end
         SET_ISLEFT: begin
@@ -147,6 +146,16 @@ initial begin
 end
 logic [15:0] i_sample;
 
+logic i_ready;
+logic old_sampleClk;
+always_ff @(posedge clk_25mhz) begin
+    old_sampleClk <= clk_32kHz;
+    i_ready <= old_sampleClk == 0 && clk_32kHz;
+
+end 
+
+logic o_isMono, o_isRight;
+logic o_isPlaying;
 Channel channel(
     .clk(clk_25mhz),
     .rst(rst),
@@ -154,9 +163,11 @@ Channel channel(
     .w_ChannelData(w_ChannelData),
     .w_selectChannelData(channelSettings),
     .w_valid(valid),
-    .i_sample(i_sample),
     .i_ready(i_ready),
-    .lrclk(clk_64khz),
+    .i_sample(i_sample),
+    .isMono(o_isMono),
+    .isRight(o_isRight),
+    .isPlaying(o_isPlaying),
     .o_SampleOut(o_SampleOut),
     .o_nextSampleAddress(o_nextSampleAddress)
 );
@@ -177,26 +188,26 @@ assign amplitude = o_SampleOut;
 always @(posedge clk_1024khz) begin
     bitIndex <= nextBit;
     case (bitIndex)
-        4'b0000: audio_din <= amplitude[15];
-        4'b0001: audio_din <= amplitude[14];
-        4'b0010: audio_din <= amplitude[13];
-        4'b0011: audio_din <= amplitude[12];
-        4'b0100: audio_din <= amplitude[11];
-        4'b0101: audio_din <= amplitude[10];
-        4'b0110: audio_din <= amplitude[9];
-        4'b0111: audio_din <= amplitude[8];
-        4'b1000: audio_din <= amplitude[7];
-        4'b1001: audio_din <= amplitude[6];
-        4'b1010: audio_din <= amplitude[5];
-        4'b1011: audio_din <= amplitude[4];
-        4'b1100: audio_din <= amplitude[3];
-        4'b1101: audio_din <= amplitude[2];
-        4'b1110: audio_din <= amplitude[1];
-        4'b1111: audio_din <= amplitude[0];
+        4'b0000: audio_dout <= amplitude[15];
+        4'b0001: audio_dout <= amplitude[14];
+        4'b0010: audio_dout <= amplitude[13];
+        4'b0011: audio_dout <= amplitude[12];
+        4'b0100: audio_dout <= amplitude[11];
+        4'b0101: audio_dout <= amplitude[10];
+        4'b0110: audio_dout <= amplitude[9];
+        4'b0111: audio_dout <= amplitude[8];
+        4'b1000: audio_dout <= amplitude[7];
+        4'b1001: audio_dout <= amplitude[6];
+        4'b1010: audio_dout <= amplitude[5];
+        4'b1011: audio_dout <= amplitude[4];
+        4'b1100: audio_dout <= amplitude[3];
+        4'b1101: audio_dout <= amplitude[2];
+        4'b1110: audio_dout <= amplitude[1];
+        4'b1111: audio_dout <= amplitude[0];
     endcase
 end
 
 assign audio_bclk = clk_1024khz; //bclk
-assign audio_lrclk = clk_64khz; //lrclk
+assign audio_lrclk = clk_32kHz; //sampleClk
 
 endmodule
