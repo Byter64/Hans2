@@ -34,13 +34,61 @@ logic oldSampleClk;
 logic[3:0] loadingState;
 always_ff @(posedge clk) begin
     oldSampleClk <= sampleClk;
+    i_ready <= 0;
     case (loadingState)
-        4'd0: 
+        4'd0: begin
+            //Hier müssen auch noch die Daten erbittet werden
+            if(dataarrivedFrommemory) begin
+                i_ready[0] <= 1;
+                loadingState <= 1;
+            end
+        end
+        4'd1: begin
+            if(dataarrivedFrommemory) begin
+                i_ready[1] <= 1;
+                loadingState <= 2;
+            end
+        end
+        4'd2: begin
+            if(dataarrivedFrommemory) begin
+                i_ready[2] <= 1;
+                loadingState <= 3;
+            end
+        end
+        4'd3: begin
+            if(dataarrivedFrommemory) begin
+                i_ready[3] <= 1;
+                loadingState <= 4;
+            end
+        end
+        4'd4: begin
+            if(dataarrivedFrommemory) begin
+                i_ready[4] <= 1;
+                loadingState <= 5;
+            end
+        end
+        4'd5: begin
+            if(dataarrivedFrommemory) begin
+                i_ready[5] <= 1;
+                loadingState <= 6;
+            end
+        end
+        4'd6: begin
+            if(dataarrivedFrommemory) begin
+                i_ready[6] <= 1;
+                loadingState <= 7;
+            end
+        end
+        4'd7: begin
+            if(dataarrivedFrommemory) begin
+                i_ready[7] <= 1;
+                loadingState <= 8;
+            end
+        end
         default: 
     endcase
 
     if(oldSampleClk == 0 && oldSampleClk) begin
-        i_ready <= 0;
         loadingState <= 0;
     end
 end
