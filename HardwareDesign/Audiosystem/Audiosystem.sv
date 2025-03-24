@@ -1,3 +1,4 @@
+//Bestpractice is to have clk and aclk be the same clock
 module Audiosystem (
     input clk,
     input clk_25mhz,
@@ -8,13 +9,48 @@ module Audiosystem (
     input[3:0] registerSelect,
     input[7:0] channelSelect,
     
-    //Memory Interface
+    //Memory Interface (AXI Lite Master)
+    input           aclk,
+    input           aresetn,
+    output [31:0]   m_axil_awaddr,
+    output [2:0]    m_axil_awprot,
+    output          m_axil_awvalid,
+    input           m_axil_awready,
+
+    output [15:0]   m_axil_wdata,
+    output [1:0]    m_axil_wstrb,
+    output          m_axil_wvalid,
+    input           m_axil_wready,
+
+    input  [1:0]    m_axil_bresp,
+    input           m_axil_bvalid,
+    output          m_axil_bready,
+
+    output [31:0]   m_axil_araddr,
+    output [2:0]    m_axil_arprot,
+    output          m_axil_arvalid,
+    input           m_axil_arready,
+
+    input  [15:0]   m_axil_rdata,
+    input  [1:0]    m_axil_rresp,
+    input           m_axil_rvalid,
+    output          m_axil_rready,
 
     //I²S Interface
     output audio_bclk,
     output audio_lrclk,
     output audio_dout
 );
+
+assign m_axil_awaddr  = 'b0;
+assign m_axil_awprot  = 'b0;
+assign m_axil_awvalid = 'b0;
+assign m_axil_wdata   = 'b0;
+assign m_axil_wstrb   = 'b0;
+assign m_axil_wvalid  = 'b0;
+assign m_axil_bready  = 'b0;
+
+assign m_axil_arprot = 'b0;
 
 logic sampleClk; //This is also the Word Select for the left/right channel
 logic clk_64khz;
@@ -32,6 +68,48 @@ logic[7:0] i_ready;
 logic[7:0] isPlaying;
 logic oldSampleClk;
 logic[3:0] loadingState;
+
+//AXI ADDRESS READ
+always @(posedge aclk) begin
+	if (!aresetn)
+		m_axil_arvalid <= 0;
+	else if (!m_axil_arvalid || m_axil_arready)
+		m_axil_arvalid <= loadingState < 8;
+end
+
+always @(posedge aclk) begin
+	if (!aresetn)
+		m_axil_araddr <= 0;
+	else if (!m_axil_arvalid || m_axil_arready)
+	begin
+		case (loadingState)
+            0: m_axil_araddr <= o_nextSampleAddress[0];
+            1: m_axil_araddr <= o_nextSampleAddress[1];
+            2: m_axil_araddr <= o_nextSampleAddress[2];
+            3: m_axil_araddr <= o_nextSampleAddress[3];
+            4: m_axil_araddr <= o_nextSampleAddress[4];
+            5: m_axil_araddr <= o_nextSampleAddress[5];
+            6: m_axil_araddr <= o_nextSampleAddress[6];
+            7: m_axil_araddr <= o_nextSampleAddress[7];
+            default: m_axil_araddr <= 0;
+        endcase
+    end
+end
+// AXI ADDRESS READ END
+
+// AXI READ
+always @(posedge aclk) begin
+		m_axil_rready <= loadingState < 8;
+end
+
+always @(posedge aclk) begin
+	if (m_axil_rvalid && m_axil_rready) begin
+        i_sample <= m_axil_rdata;
+    end
+
+end
+//AXI READ END
+
 always_ff @(posedge clk) begin
     oldSampleClk <= sampleClk;
     i_ready <= 0;
