@@ -90,7 +90,7 @@ always @(posedge aclk) begin
 	begin
 		m_axil_Tdata <= next_TData;
 
-		if (!next_valid)
+		if (!next_Tvalid)
 			m_axil_Tdata <= 0;
 	end
 end
