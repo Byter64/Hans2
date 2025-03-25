@@ -1,8 +1,8 @@
 module I2STransmitter (
-    input[15:0] dataIn,
-    input bitclk,
+    input logic[15:0] dataIn,
+    input logic bitclk,
     
-    output dataOut
+    output logic dataOut
 );
 
 logic[3:0] bitIndex = 4'b0;

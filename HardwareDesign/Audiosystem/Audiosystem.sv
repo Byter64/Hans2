@@ -1,46 +1,50 @@
 //Please make clk and aclk be the same clock,
 module Audiosystem (
-    input clk,
-    input clk_25mhz,
-    input rst,
+    input logic  clk,
+    input logic  clk_25mhz,
+    input logic  rst,
 
     //CPU Interface
-    input[23:0] registerData,
-    input[3:0] registerSelect,
-    input[7:0] channelSelect,
+    input logic[23:0] registerData,
+    input logic[3:0] registerSelect,
+    input logic[7:0] channelSelect,
     
     //Memory Interface (AXI Lite Master)
-    input           aclk,
-    input           aresetn,
-    output [31:0]   m_axil_awaddr,
-    output [2:0]    m_axil_awprot,
-    output          m_axil_awvalid,
-    input           m_axil_awready,
+    input logic            aclk,
+    input logic            aresetn,
+    output logic[31:0]     m_axil_awaddr,
+    output logic[2:0]      m_axil_awprot,
+    output logic           m_axil_awvalid,
+    input logic            m_axil_awready,
 
-    output [15:0]   m_axil_wdata,
-    output [1:0]    m_axil_wstrb,
-    output          m_axil_wvalid,
-    input           m_axil_wready,
+    output logic[15:0]     m_axil_wdata,
+    output logic[1:0]      m_axil_wstrb,
+    output logic           m_axil_wvalid,
+    input logic            m_axil_wready,
 
-    input  [1:0]    m_axil_bresp,
-    input           m_axil_bvalid,
-    output          m_axil_bready,
+    input logic[1:0]       m_axil_bresp,
+    input logic            m_axil_bvalid,
+    output logic           m_axil_bready,
 
-    output [31:0]   m_axil_araddr,
-    output [2:0]    m_axil_arprot,
-    output          m_axil_arvalid,
-    input           m_axil_arready,
+    output logic[31:0]     m_axil_araddr,
+    output logic[2:0]      m_axil_arprot,
+    output logic           m_axil_arvalid,
+    input logic            m_axil_arready,
 
-    input  [15:0]   m_axil_rdata,
-    input  [1:0]    m_axil_rresp,
-    input           m_axil_rvalid,
-    output          m_axil_rready,
+    input logic[15:0]      m_axil_rdata,
+    input logic[1:0]       m_axil_rresp,
+    input logic            m_axil_rvalid,
+    output logic           m_axil_rready,
 
     //I²S Interface
-    output audio_bclk,
-    output audio_lrclk,
-    output audio_dout
+    output logic  audio_bclk,
+    output logic  audio_lrclk,
+    output logic  audio_dout
 );
+logic[7:0] isMono;
+logic[7:0] isRight;
+logic[15:0] sample[8];
+logic[31:0] o_nextSampleAddress[8];
 
 assign m_axil_awaddr  = 'b0;
 assign m_axil_awprot  = 'b0;
@@ -67,7 +71,7 @@ logic[15:0] i_sample;
 logic[7:0] i_ready;
 logic[7:0] isPlaying;
 logic oldSampleClk;
-logic[3:0] loadingState;
+logic[3:0] loadingState = 0;
 
 //AXI ADDRESS READ
 always @(posedge aclk) begin
@@ -98,6 +102,8 @@ end
 // AXI ADDRESS READ END
 
 // AXI READ
+logic sampleReceived;
+logic sampleReady;
 always @(posedge aclk) begin
 		m_axil_rready <= loadingState < 8;
 end
@@ -105,15 +111,16 @@ end
 always @(posedge aclk) begin
 	if (m_axil_rvalid && m_axil_rready) begin
         i_sample <= m_axil_rdata;
-        sampleReady <= 1;
+        sampleReceived <= 1;
     end else begin
-        sampleReady <= 0;
+        sampleReceived <= 0;
     end
-
 end
+
+always_ff @(posedge aclk) sampleReady <= sampleReceived;
+
 //AXI READ END
 
-logic sampleReady;
 always_ff @(posedge aclk) begin
     oldSampleClk <= sampleClk;
     i_ready <= 0;
@@ -126,59 +133,58 @@ always_ff @(posedge aclk) begin
         end
         4'd1: begin
             if(sampleReady) begin
-                i_ready[1] <= 1;
+                i_ready[1] <= 2;
                 loadingState <= 2;
             end
         end
         4'd2: begin
             if(sampleReady) begin
-                i_ready[2] <= 1;
+                i_ready[2] <= 4;
                 loadingState <= 3;
             end
         end
         4'd3: begin
             if(sampleReady) begin
-                i_ready[3] <= 1;
+                i_ready[3] <= 8;
                 loadingState <= 4;
             end
         end
         4'd4: begin
             if(sampleReady) begin
-                i_ready[4] <= 1;
+                i_ready[4] <= 16;
                 loadingState <= 5;
             end
         end
         4'd5: begin
             if(sampleReady) begin
-                i_ready[5] <= 1;
+                i_ready[5] <= 32;
                 loadingState <= 6;
             end
         end
         4'd6: begin
             if(sampleReady) begin
-                i_ready[6] <= 1;
+                i_ready[6] <= 64;
                 loadingState <= 7;
             end
         end
         4'd7: begin
             if(sampleReady) begin
-                i_ready[7] <= 1;
+                i_ready[7] <= 128;
                 loadingState <= 8;
             end
         end
-        default: 
     endcase
 
-    if(oldSampleClk == 0 && oldSampleClk && loadingState >= 8) begin
+    if(oldSampleClk == 0 && sampleClk && loadingState >= 8) begin
+        loadingState <= 0;
+    end
+    if (rst) begin
+        i_ready <= 0;
         loadingState <= 0;
     end
 end
 
 
-logic[7:0] isMono;
-logic[7:0] isRight;
-logic[15:0] sample[8];
-logic[31:0] o_nextSampleAddress[8];
 genvar i;
 generate
     for(i = 0; i < 8; i++) begin
@@ -205,7 +211,7 @@ endgenerate
 
 logic[15:0] leftSample[8];
 logic[15:0] rightSample[8];
-integer lrIter;
+genvar lrIter;
 for (lrIter = 0; lrIter < 8; lrIter++) begin
     assign leftSample[lrIter] = (isMono[lrIter] || !isRight[lrIter]) ? sample[lrIter] : 0;
     assign rightSample[lrIter] = (isMono[lrIter] || isRight[lrIter]) ? sample[lrIter] : 0;

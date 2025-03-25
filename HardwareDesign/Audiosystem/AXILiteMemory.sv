@@ -1,8 +1,8 @@
 //This memory does not use s_axil_wstrb!! You can't mask the writing data
 module AXILiteMemory #(
     parameter ADDR_WIDTH = 32,
-    parameter STRB_WIDTH = ADDR_WIDTH / 8,
     parameter DATA_WIDTH = 32,
+    parameter STRB_WIDTH = DATA_WIDTH / 8,
     parameter MEMORY_DEPTH = 119808 //This is the whole available BRAM on the ecp5 85F
 ) (
     input  logic                         aclk,
@@ -33,7 +33,7 @@ module AXILiteMemory #(
 );
 
 logic[ADDR_WIDTH-1:0] memory[MEMORY_DEPTH];
-initial $readmemh("Unbenannt.hex", memory);
+initial $readmemh("C:/Users/Yanni/Desktop/Hans2/HardwareDesign/Audiosystem/Unbenannt.hex", memory);
 //Address Write
 logic[ADDR_WIDTH-1:0] aw_address = 'b0;
 always @(posedge aclk) begin

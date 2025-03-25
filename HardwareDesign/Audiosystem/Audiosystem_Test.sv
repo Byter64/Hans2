@@ -7,14 +7,45 @@ module Audiosystem_Test (
 
 
 logic clk;
-logic clk_25mhz;
 logic rst;
 
 //CPU Interface
-logic[23:0] registerData;
-logic[3:0] registerSelect;
-logic[7:0] channelSelect;
+logic[23:0] registerData = 0;
+logic[3:0] registerSelect = 0;
+logic[7:0] channelSelect = 0;
     
+logic[31:0] initState = 0;
+always_ff @(posedge clk_25mhz) begin
+    if(!rst) begin
+        case (initState)
+            0: begin
+                channelSelect <= 1;
+                registerSelect <= 2;
+                registerData <= 192000;
+                initState <= initState + 1;
+            end
+            1: begin
+                channelSelect <= 1;
+                registerSelect <= 4;
+                registerData <= 192000;
+                initState <= initState + 1;
+            end
+            2: begin
+                channelSelect <= 1;
+                registerSelect <= 8;
+                registerData <= 1;
+                initState <= initState + 1;
+            end
+            3: begin
+                channelSelect <= 1;
+                registerSelect <= 9;
+                registerData <= 1;
+                initState <= initState + 1;
+            end
+        endcase
+    end
+end
+
 //Memory Interface (AXI Lite Master)
 logic           aclk;
 logic           aresetn;
@@ -42,6 +73,17 @@ logic  [1:0]    m_axil_rresp;
 logic           m_axil_rvalid;
 logic           m_axil_rready;
 
+assign clk = clk_25mhz;
+assign aclk = clk;
+assign aresetn = ~rst;
+
+logic[7:0] resetCounter = 0;
+always_ff @(posedge clk) begin
+    if(resetCounter != 255)
+        resetCounter <= resetCounter + 1;
+end
+assign rst = resetCounter != 255;
+
 Audiosystem Audiosystem 
 (
     .*
@@ -53,16 +95,14 @@ AXILiteMemory #(
 ) AXILiteMemory (
     .aclk(aclk),
     .aresetn(aresetn),
-
-    .s_axil_awvalid(m_axil_awaddr),
-    .s_axil_awaddr(m_axil_awprot),
-    .s_axil_awprot(m_axil_awvalid),
+    .s_axil_awvalid(m_axil_awvalid),
+    .s_axil_awaddr(m_axil_awaddr),
+    .s_axil_awprot(m_axil_awprot),
     .s_axil_awready(m_axil_awready),
     .s_axil_wdata(m_axil_wdata),
     .s_axil_wstrb(m_axil_wstrb),
     .s_axil_wvalid(m_axil_wvalid),
     .s_axil_wready(m_axil_wready),
-    .s_axil_bresp(m_axil_bresp),
     .s_axil_bvalid(m_axil_bvalid),
     .s_axil_bready(m_axil_bready),
     .s_axil_araddr(m_axil_araddr),

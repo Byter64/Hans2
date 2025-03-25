@@ -9,9 +9,9 @@ module Channel (
     input logic i_ready,
     input logic [15:0] i_sample,
     
-    output logic isMono,
-    output logic isRight,
-    output logic isPlaying,
+    output logic isMono = 1,
+    output logic isRight = 0,
+    output logic isPlaying = 0,
     output logic [15:0] o_SampleOut,
     output logic [31:0] o_nextSampleAddress
 );
@@ -31,16 +31,16 @@ module Channel (
         SET_ISLEFT          = 11
     } ChannelSettings;
 
-    logic [11:0] startDataAddress;  
-    logic [23:0] sampleCount;           
-    logic [23:0] loopStart;         
-    logic [23:0] loopEnd;           
+    logic [11:0] startDataAddress = 0;  
+    logic [23:0] sampleCount = 0;
+    logic [23:0] loopStart = 0;
+    logic [23:0] loopEnd = 0;
 
-    logic [23:0] currentPosition;   
-    logic [15:0] lastSample;        
-    logic [7:0] volume;             
+    logic [23:0] currentPosition = 0;
+    logic [15:0] lastSample = 0;
+    logic [7:0] volume = 128;
 
-    logic isLooping;
+    logic isLooping = 0;
 
     logic[31:0] nextDataAddressMono;
     logic[31:0] nextDataAddressLeft;

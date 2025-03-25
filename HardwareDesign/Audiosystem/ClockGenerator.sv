@@ -1,9 +1,9 @@
 module ClockGenerator(
-    input clk_25mhz,
+    input logic clk_25mhz,
 
-    output clk_1024khz,
-    output clk_64khz,
-    output clk_32khz
+    output logic clk_1024khz = 0,
+    output logic clk_64khz = 0,
+    output logic clk_32khz = 0
 );
 
 /* CLOCK GENERATION */

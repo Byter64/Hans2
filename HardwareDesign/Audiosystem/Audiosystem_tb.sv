@@ -8,7 +8,7 @@ logic audio_dout;
 
 always # 20 clk_25mhz <= ~clk_25mhz;
 
-Channel_Test Channel_Test 
+Audiosystem_Test Audiosystem_Test
 (
     .*
 );
@@ -17,7 +17,7 @@ integer i;
 
 initial begin
     $dumpvars(0, Test);
-    #500000000
+    #100000000
 
     $finish;
 end
