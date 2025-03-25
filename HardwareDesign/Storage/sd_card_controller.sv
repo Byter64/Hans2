@@ -215,7 +215,7 @@ module sd_controller(
                     bit_counter <= 55;
                     return_state <= WRITE_BLOCK_INIT;
                     state <= SEND_CMD;
-		    ready_for_next_byte <= 1;
+		            ready_for_next_byte <= 1;
                 end
                 WRITE_BLOCK_INIT: begin
                     cmd_mode <= 0;

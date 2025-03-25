@@ -16,14 +16,14 @@ module ecp5pll_tb;
 
 
     ecp5pll #(
-        .out0_hz(25000000),
-        .out1_hz(50000000),
-        .out2_hz(75000000),
-        .out3_hz(100000000),
-        .out0_deg(90),
-        .out1_deg(120),
-        .out2_deg(150),
-        .out3_deg(180)
+        .out0_hz(1000000),
+        .out1_hz(300000000),
+        .out2_hz(24521312),
+        .out3_hz(25000000),
+        .out0_deg(53),
+        .out1_deg(123),
+        .out2_deg(132),
+        .out3_deg(932)
     ) uut (
         .clk_i(clk),
         .clk_o(clk_o)
