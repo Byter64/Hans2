@@ -141,9 +141,7 @@ logic [31:0] o_nextSampleAddress;
 logic [15:0] o_SampleOut;
 logic [15:0] ram [239616];
 integer n_File_ID;
-initial begin 
-    $readmemh("C:/Users/Yanni/Desktop/Hans2/HardwareDesign/Audiosystem/Unbenannt.hex", ram);
-end
+initial $readmemh("Unbenannt.hex", ram);
 logic [15:0] i_sample;
 
 logic i_ready;
