@@ -13,6 +13,10 @@ list(APPEND sources_sim
   ${CMAKE_CURRENT_SOURCE_DIR}/AXILiteMemory.sv
 )
 
+list(APPEND resources
+  Unbenannt.hex
+)
+
 # Define variables for synthesis
 set(top "Audiosystem_Test")
 list(APPEND sources_synth
@@ -26,5 +30,11 @@ list(APPEND sources_synth
 )
 
 # Generate the targets from the variables
-add_simulation(${name}, ${testbench}, "${sources_sim}")
+add_simulation_with_resources(
+  NAME ${name}
+  TESTBENCH ${testbench}
+  SOURCES "${sources_sim}"
+  RESOURCES "${resources}"
+)
+
 add_synthesis(${name}, ${top}, "${sources_synth}")
