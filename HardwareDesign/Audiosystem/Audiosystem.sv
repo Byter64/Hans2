@@ -67,10 +67,26 @@ ClockGenerator ClockGenerator
     .clk_32khz(sampleClk)
 );
 
+logic old_bitclk;
+logic old_clk_64khz;
+logic old_sampleClk;
+always_ff @(posedge clk) begin
+    old_bitclk <= bitclk;
+    old_clk_64khz <= clk_64khz;
+    old_sampleClk <= sampleClk;
+end
+
+logic signal_bitclk;
+logic signal_clk_64khz;
+logic signal_sampleClk;
+assign signal_bitclk =    !old_bitclk && bitclk;
+assign signal_clk_64khz = !old_clk_64khz && clk_64khz;
+assign signal_sampleClk = !old_sampleClk && sampleClk;
+
+
 logic[15:0] i_sample;
 logic[7:0] i_ready;
 logic[7:0] isPlaying;
-logic oldSampleClk;
 logic[3:0] loadingState = 0;
 
 //AXI ADDRESS READ
@@ -122,7 +138,6 @@ always_ff @(posedge aclk) sampleReady <= sampleReceived;
 //AXI READ END
 
 always_ff @(posedge aclk) begin
-    oldSampleClk <= sampleClk;
     i_ready <= 0;
     case (loadingState)
         4'd0: begin
@@ -175,7 +190,7 @@ always_ff @(posedge aclk) begin
         end
     endcase
 
-    if(oldSampleClk == 0 && sampleClk && loadingState >= 8) begin
+    if(signal_sampleClk && loadingState >= 8) begin
         loadingState <= 0;
     end
     if (rst) begin
@@ -241,22 +256,25 @@ logic[15:0] finalSample;
 assign finalSample = sampleClk ? rightFinalMix : leftFinalMix; //sampleClk == 0 <==> left
 
 logic firstCycle = 0;
-always @(posedge bitclk) firstCycle <= 1;
+always @(posedge clk) if(signal_bitclk) firstCycle <= 1;
 logic[15:0] latchedFinalSample;
 logic[3:0] bitIndex = 4'b0;
-always_ff @(posedge bitclk) begin
-    if(firstCycle == 0)
-        bitIndex <= bitIndex + 2;
-    else 
-        bitIndex <= bitIndex + 1;
-    if(bitIndex == 15)
-        latchedFinalSample <= finalSample;
+always_ff @(posedge clk) begin
+    if(signal_bitclk) begin
+        if(firstCycle == 0)
+            bitIndex <= bitIndex + 2;
+        else 
+            bitIndex <= bitIndex + 1;
+        if(bitIndex == 15)
+            latchedFinalSample <= finalSample;
+    end
 end
  
 I2STransmitter I2STransmitter 
 (
+    .clk(clk),
     .dataIn(latchedFinalSample),
-    .bitclk(bitclk),
+    .signal_bitclk(signal_bitclk),
     .dataOut(audio_dout)
 );
 
