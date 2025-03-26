@@ -8,7 +8,7 @@
 
 module AXILiteTemplates (
     input                               aclk,
-    input                               arst,
+    input                               aresetn,
 
     /*
      * AXI lite slave interfaces
