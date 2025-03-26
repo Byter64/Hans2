@@ -209,12 +209,14 @@ generate
     end
 endgenerate
 
-logic[15:0] leftSample[8];
-logic[15:0] rightSample[8];
+logic[31:0] leftSample[8];
+logic[31:0] rightSample[8];
 genvar lrIter;
 for (lrIter = 0; lrIter < 8; lrIter++) begin
-    assign leftSample[lrIter] = (isMono[lrIter] || !isRight[lrIter]) ? sample[lrIter] : 0;
-    assign rightSample[lrIter] = (isMono[lrIter] || isRight[lrIter]) ? sample[lrIter] : 0;
+    assign leftSample[lrIter][15:0] = (isMono[lrIter] || !isRight[lrIter]) ? sample[lrIter] : 0;
+    assign rightSample[lrIter][15:0] = (isMono[lrIter] || isRight[lrIter]) ? sample[lrIter] : 0;
+    assign leftSample[lrIter][31:16] = (isMono[lrIter] || !isRight[lrIter]) ? {16{sample[lrIter][15]}} : 0;
+    assign rightSample[lrIter][31:16] = (isMono[lrIter] || isRight[lrIter]) ? {16{sample[lrIter][15]}} : 0;
 end
 
 logic[31:0] leftMix;
