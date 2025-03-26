@@ -110,7 +110,7 @@ end
 
 always @(posedge aclk) begin
 	if (m_axil_rvalid && m_axil_rready) begin
-        i_sample <= m_axil_rdata;
+        i_sample <= {m_axil_rdata[7:0], m_axil_rdata[15:8]};
         sampleReceived <= 1;
     end else begin
         sampleReceived <= 0;
