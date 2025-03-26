@@ -140,7 +140,6 @@ end
 logic [31:0] o_nextSampleAddress;
 logic [15:0] o_SampleOut;
 logic [15:0] ram [239616];
-integer n_File_ID;
 initial $readmemh("Unbenannt.hex", ram);
 logic [15:0] i_sample;
 
