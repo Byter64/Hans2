@@ -11,7 +11,7 @@ module sd_card_write_test (
     ecp5pll
     #(
         .in_hz(25000000),
-        .out0_hz(80000000)
+        .out0_hz(40000000)
     )
     ecp5pll_inst
     (
@@ -54,8 +54,6 @@ module sd_card_write_test (
         .status(status)
     );
 
-
-
     // Connect SD card signals
     assign sd_cmd = mosi;
     assign sd_clk = sclk;
@@ -65,44 +63,71 @@ module sd_card_write_test (
     assign sd_d[1] = 1'b1; // Hold HIGH for SPI mode
 
     // State machine to control the write operation
-    typedef enum logic [1:0] {IDLE, WRITE, DONE} state_t;
+    typedef enum logic [2:0] {IDLE, INIT_WRITE, WRITE, WAIT_WRITE, NEXT_SECTOR, DONE} state_t;
     state_t state = IDLE;
 
-    logic [9:0] byte_counter = -1; // Counter to track bytes written (0 to 511)
+    logic [8:0] byte_counter = 9'd0;  // Counts bytes per sector
+    logic [7:0] data_in = 8'h00;      // Data to write
+    logic [7:0] sector = 8'h00;       // Sector counter
     logic old_ready_for_next_byte;
-
-    logic [7:0] data_in = -1;
 
     assign din = data_in;
     
     always_ff @(posedge clk) begin
         old_ready_for_next_byte <= ready_for_next_byte;
+
         case (state)
             IDLE: begin
                 if (ready) begin
-                    address <= 32'h00000000; // Start address (first sector)
-                    wr <= 1'b1; // Start write operation
-                    state <= WRITE;
+                    address <= 32'h00000000; // Start writing at sector 0
+                    wr <= 1'b1;              // Begin writing
+                    state <= INIT_WRITE;
                 end
+            end
+
+            INIT_WRITE: begin
+                wr <= 1'b0;  // Lower wr after starting
+                byte_counter <= 0;
+                state <= WRITE;
             end
 
             WRITE: begin
                 if (ready_for_next_byte && ~old_ready_for_next_byte) begin
+                    data_in <= data_in - 8'h01; // Increment data
                     byte_counter <= byte_counter + 1;
-                    data_in <= data_in + 1;
                     wr <= 1'b0;
-                    if (byte_counter == 10'd511) begin // After 512 bytes, stop
-                        state <= DONE;
+
+                    if (byte_counter == 9'd511) begin
+                        state <= WAIT_WRITE;
                     end
                 end
             end
 
+            WAIT_WRITE: begin
+                if (ready) begin
+                    wr <= 1'b1; // Start next sector write
+                    state <= NEXT_SECTOR;
+                end
+            end
+
+            NEXT_SECTOR: begin
+                wr <= 1'b0;  // Lower write signal
+                sector <= sector + 1;
+                address <= address + 32'h200;  // Increment sector
+                data_in <= 8'h00;            // Reset data per sector
+                byte_counter <= 0;
+
+                if (sector >= 10) begin
+                    state <= DONE;
+                end else begin
+                    state <= WRITE;
+                end
+            end
+
             DONE: begin
-                // Write operation complete
-                // Do nothing, or add additional logic if needed
+                wr <= 1'b0; // Stop writing
             end
         endcase
     end
-
 
 endmodule
