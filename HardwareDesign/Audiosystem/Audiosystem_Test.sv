@@ -10,7 +10,7 @@ logic clk;
 logic rst;
 
 //CPU Interface
-logic[23:0] registerData = 0;
+logic[31:0] registerData = 0;
 logic[3:0] registerSelect = 0;
 logic[7:0] channelSelect = 0;
     
@@ -26,17 +26,29 @@ always_ff @(posedge clk_25mhz) begin
             end
             1: begin
                 channelSelect <= 1;
+                registerSelect <= 3;
+                registerData <= 160000;
+                initState <= initState + 1;
+            end
+            2: begin
+                channelSelect <= 1;
                 registerSelect <= 4;
                 registerData <= 192000;
                 initState <= initState + 1;
             end
-            2: begin
+            3: begin
                 channelSelect <= 1;
                 registerSelect <= 8;
                 registerData <= 1;
                 initState <= initState + 1;
             end
-            3: begin
+            4: begin
+                channelSelect <= 1;
+                registerSelect <= 5;
+                registerData <= 160000;
+                initState <= initState + 1;
+            end
+            5: begin
                 channelSelect <= 1;
                 registerSelect <= 9;
                 registerData <= 1;

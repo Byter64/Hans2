@@ -5,7 +5,7 @@ module Audiosystem (
     input logic  rst,
 
     //CPU Interface
-    input logic[23:0] registerData,
+    input logic[31:0] registerData,
     input logic[3:0] registerSelect,
     input logic[7:0] channelSelect,
     

@@ -2,7 +2,7 @@ module Channel (
     input logic clk,
     input logic rst,
 
-    input logic [23:0] w_ChannelData,
+    input logic [31:0] w_ChannelData,
     input logic[3:0] w_selectChannelData,
     input logic w_valid,
 
@@ -31,7 +31,7 @@ module Channel (
         SET_ISLEFT          = 11
     } ChannelSettings;
 
-    logic [11:0] startDataAddress = 0;  
+    logic [31:0] startDataAddress = 0;  
     logic [23:0] sampleCount = 0;
     logic [23:0] loopStart = 0;
     logic [23:0] loopEnd = 0;

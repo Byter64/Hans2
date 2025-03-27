@@ -17,7 +17,7 @@ integer i;
 
 initial begin
     $dumpvars(0, Test);
-    #100000000
+    #1000000000
 
     $finish;
 end
