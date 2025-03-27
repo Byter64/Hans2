@@ -259,7 +259,7 @@ logic firstCycle = 0;
 always @(posedge clk) if(signal_bitclk) firstCycle <= 1;
 logic[15:0] latchedFinalSample;
 logic[3:0] bitIndex = 4'b0;
-always_ff @(posedge clk) begin
+always_ff @(posedge bitclk) begin
     if(signal_bitclk) begin
         if(firstCycle == 0)
             bitIndex <= bitIndex + 2;
