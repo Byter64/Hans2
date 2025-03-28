@@ -34,7 +34,7 @@ add_simulation_with_resources(
   NAME ${name}
   TESTBENCH ${testbench}
   SOURCES "${sources_sim}"
-  RESOURCES "${resources}"
+  RESOURCES ${resources}
 )
 
 add_synthesis(${name}, ${top}, "${sources_synth}")
