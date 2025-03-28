@@ -108,10 +108,10 @@ module Channel (
                 SET_LOOPSTART:      loopStart           <= w_ChannelData;
                 SET_LOOPEND:        loopEnd             <= w_ChannelData;
                 SET_VOLUME:         volume              <= w_ChannelData;
-                SET_ISLOOPING:      isLooping           <= w_ChannelData;
-                SET_ISPLAYING:      isPlaying           <= w_ChannelData;
-                SET_ISMONO:         isMono              <= w_ChannelData;
-                SET_ISLEFT:         isRight             <= w_ChannelData;
+                SET_ISLOOPING:      isLooping           <= w_ChannelData != 0;
+                SET_ISPLAYING:      isPlaying           <= w_ChannelData != 0;
+                SET_ISMONO:         isMono              <= w_ChannelData != 0;
+                SET_ISLEFT:         isRight             <= w_ChannelData != 0;
             endcase
         end
         if(currentPosition >= sampleCount) begin
