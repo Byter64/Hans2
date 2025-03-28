@@ -255,26 +255,20 @@ assign rightFinalMix = $signed(rightMix) > $signed(32767) ? 32767 :
 logic[15:0] finalSample;
 assign finalSample = sampleClk ? rightFinalMix : leftFinalMix; //sampleClk == 0 <==> left
 
-logic firstCycle = 0;
-always @(posedge clk) if(signal_bitclk) firstCycle <= 1;
+
 logic[15:0] latchedFinalSample;
 logic[3:0] bitIndex = 4'b0;
 always_ff @(posedge bitclk) begin
-    if(signal_bitclk) begin
-        if(firstCycle == 0)
-            bitIndex <= bitIndex + 2;
-        else 
-            bitIndex <= bitIndex + 1;
-        if(bitIndex == 15)
-            latchedFinalSample <= finalSample;
-    end
+    bitIndex <= bitIndex + 1;
+    if(bitIndex == 15)
+        latchedFinalSample <= finalSample;
 end
  
 I2STransmitter I2STransmitter 
 (
     .clk(clk),
     .dataIn(latchedFinalSample),
-    .signal_bitclk(signal_bitclk),
+    .bitclk(bitclk),
     .dataOut(audio_dout)
 );
 
