@@ -148,43 +148,43 @@ always_ff @(posedge aclk) begin
         end
         4'd1: begin
             if(sampleReady) begin
-                i_ready[1] <= 2;
+                i_ready[1] <= 1;
                 loadingState <= 2;
             end
         end
         4'd2: begin
             if(sampleReady) begin
-                i_ready[2] <= 4;
+                i_ready[2] <= 1;
                 loadingState <= 3;
             end
         end
         4'd3: begin
             if(sampleReady) begin
-                i_ready[3] <= 8;
+                i_ready[3] <= 1;
                 loadingState <= 4;
             end
         end
         4'd4: begin
             if(sampleReady) begin
-                i_ready[4] <= 16;
+                i_ready[4] <= 1;
                 loadingState <= 5;
             end
         end
         4'd5: begin
             if(sampleReady) begin
-                i_ready[5] <= 32;
+                i_ready[5] <= 1;
                 loadingState <= 6;
             end
         end
         4'd6: begin
             if(sampleReady) begin
-                i_ready[6] <= 64;
+                i_ready[6] <= 1;
                 loadingState <= 7;
             end
         end
         4'd7: begin
             if(sampleReady) begin
-                i_ready[7] <= 128;
+                i_ready[7] <= 1;
                 loadingState <= 8;
             end
         end

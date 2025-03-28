@@ -100,7 +100,7 @@ always_ff @(posedge clk_25mhz) begin
                 registerData <= 27413 * 7;
                 initState <= initState + 1;
             end
-            10: begin
+            11: begin
                 channelSelect <= 255;
                 registerSelect <= SET_ISPLAYING;
                 registerData <= 2;
