@@ -15,6 +15,7 @@ list(APPEND sources_sim
 
 list(APPEND resources
   Unbenannt.hex
+  8channelTest.hex
 )
 
 # Define variables for synthesis

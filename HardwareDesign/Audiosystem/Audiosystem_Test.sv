@@ -13,45 +13,97 @@ logic rst;
 logic[31:0] registerData = 0;
 logic[3:0] registerSelect = 0;
 logic[7:0] channelSelect = 0;
-    
+
+typedef enum logic[3:0] {
+    IDLE                = 0,
+    SET_STARTADDRESS    = 1,
+    SET_SAMPLECOUNT     = 2,
+    SET_LOOPSTART       = 3,
+    SET_LOOPEND         = 4,
+    SET_CURRENTPOSITION = 5,
+    SET_LASTSAMPLE      = 6,
+    SET_VOLUME          = 7,
+    SET_ISLOOPING       = 8,
+    SET_ISPLAYING       = 9,
+    SET_ISMONO          = 10,
+    SET_ISLEFT          = 11
+} ChannelSettings;
+
+
 logic[31:0] initState = 0;
 always_ff @(posedge clk_25mhz) begin
     if(!rst) begin
         case (initState)
             0: begin
-                channelSelect <= 1;
-                registerSelect <= 2;
-                registerData <= 192000;
+                channelSelect <= 255;
+                registerSelect <= SET_SAMPLECOUNT;
+                registerData <= 27413;
                 initState <= initState + 1;
             end
             1: begin
-                channelSelect <= 1;
-                registerSelect <= 3;
-                registerData <= 160000;
+                channelSelect <= 255;
+                registerSelect <= SET_LOOPEND;
+                registerData <= 27413;
                 initState <= initState + 1;
             end
             2: begin
-                channelSelect <= 1;
-                registerSelect <= 4;
-                registerData <= 192000;
+                channelSelect <= 255;
+                registerSelect <= SET_ISLOOPING;
+                registerData <= 1;
                 initState <= initState + 1;
             end
             3: begin
                 channelSelect <= 1;
-                registerSelect <= 8;
-                registerData <= 1;
+                registerSelect <= SET_STARTADDRESS;
+                registerData <= 0;
                 initState <= initState + 1;
             end
             4: begin
-                channelSelect <= 1;
-                registerSelect <= 5;
-                registerData <= 160000;
+                channelSelect <= 2;
+                registerSelect <= SET_STARTADDRESS;
+                registerData <= 27413;
                 initState <= initState + 1;
             end
             5: begin
-                channelSelect <= 1;
-                registerSelect <= 9;
-                registerData <= 1;
+                channelSelect <= 4;
+                registerSelect <= SET_STARTADDRESS;
+                registerData <= 27413 * 2;
+                initState <= initState + 1;
+            end
+            6: begin
+                channelSelect <= 8;
+                registerSelect <= SET_STARTADDRESS;
+                registerData <= 27413 * 3;
+                initState <= initState + 1;
+            end
+            7: begin
+                channelSelect <= 16;
+                registerSelect <= SET_STARTADDRESS;
+                registerData <= 27413 * 4;
+                initState <= initState + 1;
+            end
+            8: begin
+                channelSelect <= 32;
+                registerSelect <= SET_STARTADDRESS;
+                registerData <= 27413 * 5;
+                initState <= initState + 1;
+            end
+            9: begin
+                channelSelect <= 64;
+                registerSelect <= SET_STARTADDRESS;
+                registerData <= 27413 * 6;
+                initState <= initState + 1;
+            end
+            10: begin
+                channelSelect <= 128;
+                registerSelect <= SET_STARTADDRESS;
+                registerData <= 27413 * 7;
+                initState <= initState + 1;
+            end
+            10: begin
+                channelSelect <= 255;
+                registerSelect <= SET_ISPLAYING;
+                registerData <= 2;
                 initState <= initState + 1;
             end
         endcase
