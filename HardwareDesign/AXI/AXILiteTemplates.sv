@@ -60,11 +60,11 @@ module AXILiteTemplates (
 //##############################################
 //####Templates for the receiver of a signal####
 //##############################################
-always @(posedge aclk) begin
+always_ff @(posedge aclk) begin
 		// Logic to determine S_AXIS_TREADY
 end
 
-always @(posedge aclk) begin
+always_ff @(posedge aclk) begin
 	if (s_axil_Tvalid && s_axil_Tready) begin //Never add any other conditions. This is likely to break axi
 		// Do something
     end
@@ -75,7 +75,7 @@ end
 //##############################################
 logic next_Tvalid; //Assign your valid logic to this signal
 logic[DATA_WIDTH-1:0] next_TData; //Assign the data here
-always @(posedge aclk) begin
+always_ff @(posedge aclk) begin
 	if (!aresetn)
 		m_axil_Tvalid <= 0;
 	else if (!m_axil_Tvalid || m_axil_Tready) begin
@@ -83,7 +83,7 @@ always @(posedge aclk) begin
     end
 end
 
-always @(posedge aclk) begin
+always_ff @(posedge aclk) begin
 	if (!aresetn)
 		m_axil_Tdata <= 0;
 	else if (!m_axil_Tvalid || m_axil_Tready)
