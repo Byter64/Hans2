@@ -88,6 +88,16 @@ logic[15:0] i_sample;
 logic[7:0] i_ready;
 logic[7:0] isPlaying;
 logic[3:0] loadingState = 0;
+logic sentFirstAddress;
+
+always_comb begin
+    if(!aresetn)
+        sentFirstAddress = 0;
+    else if(sentFirstAddress == 0 && m_axil_arready && m_axil_arvalid)
+        sentFirstAddress = 1;
+    else if(sentFirstAddress == 1 && loadingState >= 8)
+        sentFirstAddress = 0;
+end
 
 //AXI ADDRESS READ
 always @(posedge aclk) begin
@@ -111,7 +121,7 @@ always @(posedge aclk) begin
             5: m_axil_araddr <= o_nextSampleAddress[5];
             6: m_axil_araddr <= o_nextSampleAddress[6];
             7: m_axil_araddr <= o_nextSampleAddress[7];
-            default: m_axil_araddr <= 0;
+            default: m_axil_araddr <= o_nextSampleAddress[0];
         endcase
     end
 end
@@ -121,7 +131,7 @@ end
 logic sampleReceived;
 logic sampleReady;
 always @(posedge aclk) begin
-		m_axil_rready <= loadingState < 8;
+		m_axil_rready <= loadingState < 8 && sentFirstAddress;
 end
 
 always @(posedge aclk) begin
@@ -141,49 +151,49 @@ always_ff @(posedge aclk) begin
     i_ready <= 0;
     case (loadingState)
         4'd0: begin
-            if(sampleReady) begin
+            if(sampleReceived) begin
                 i_ready[0] <= 1;
                 loadingState <= 1;
             end
         end
         4'd1: begin
-            if(sampleReady) begin
+            if(sampleReceived) begin
                 i_ready[1] <= 1;
                 loadingState <= 2;
             end
         end
         4'd2: begin
-            if(sampleReady) begin
+            if(sampleReceived) begin
                 i_ready[2] <= 1;
                 loadingState <= 3;
             end
         end
         4'd3: begin
-            if(sampleReady) begin
+            if(sampleReceived) begin
                 i_ready[3] <= 1;
                 loadingState <= 4;
             end
         end
         4'd4: begin
-            if(sampleReady) begin
+            if(sampleReceived) begin
                 i_ready[4] <= 1;
                 loadingState <= 5;
             end
         end
         4'd5: begin
-            if(sampleReady) begin
+            if(sampleReceived) begin
                 i_ready[5] <= 1;
                 loadingState <= 6;
             end
         end
         4'd6: begin
-            if(sampleReady) begin
+            if(sampleReceived) begin
                 i_ready[6] <= 1;
                 loadingState <= 7;
             end
         end
         4'd7: begin
-            if(sampleReady) begin
+            if(sampleReceived) begin
                 i_ready[7] <= 1;
                 loadingState <= 8;
             end
@@ -228,9 +238,9 @@ logic[31:0] leftSample[8];
 logic[31:0] rightSample[8];
 genvar lrIter;
 for (lrIter = 0; lrIter < 8; lrIter++) begin
-    assign leftSample[lrIter][15:0] = (isMono[lrIter] || !isRight[lrIter]) ? sample[lrIter] : 0;
-    assign rightSample[lrIter][15:0] = (isMono[lrIter] || isRight[lrIter]) ? sample[lrIter] : 0;
+    assign leftSample[lrIter][15:0]  = (isMono[lrIter] || !isRight[lrIter]) ? sample[lrIter] : 0;
     assign leftSample[lrIter][31:16] = (isMono[lrIter] || !isRight[lrIter]) ? {16{sample[lrIter][15]}} : 0;
+    assign rightSample[lrIter][15:0]  = (isMono[lrIter] || isRight[lrIter]) ? sample[lrIter] : 0;
     assign rightSample[lrIter][31:16] = (isMono[lrIter] || isRight[lrIter]) ? {16{sample[lrIter][15]}} : 0;
 end
 

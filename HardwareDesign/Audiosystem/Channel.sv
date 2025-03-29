@@ -28,7 +28,7 @@ module Channel (
         SET_ISLOOPING       = 8,
         SET_ISPLAYING       = 9,
         SET_ISMONO          = 10,
-        SET_ISLEFT          = 11
+        SET_ISRIGHT          = 11
     } ChannelSettings;
 
     logic [31:0] startDataAddress = 0;  
@@ -111,7 +111,7 @@ module Channel (
                 SET_ISLOOPING:      isLooping           <= w_ChannelData != 0;
                 SET_ISPLAYING:      isPlaying           <= w_ChannelData != 0;
                 SET_ISMONO:         isMono              <= w_ChannelData != 0;
-                SET_ISLEFT:         isRight             <= w_ChannelData != 0;
+                SET_ISRIGHT:        isRight             <= w_ChannelData != 0;
             endcase
         end
         if(currentPosition >= sampleCount) begin

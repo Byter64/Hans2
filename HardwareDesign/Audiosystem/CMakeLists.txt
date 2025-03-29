@@ -15,6 +15,7 @@ list(APPEND sources_sim
 
 list(APPEND resources
   8channelTest.hex
+  StereoTest.hex
 )
 
 # Define variables for synthesis
