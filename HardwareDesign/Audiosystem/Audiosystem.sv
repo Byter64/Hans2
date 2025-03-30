@@ -1,4 +1,6 @@
-//Please make clk and aclk be the same clock,
+//Please make clk and aclk be the same clock, as well as rst == !aresetn
+//Be aware, that unfortunate timing of changing channel settings can lead
+//To channels being of by 1 sample
 module Audiosystem (
     input logic  clk,
     input logic  clk_25mhz,
@@ -88,6 +90,7 @@ logic[15:0] i_sample;
 logic[7:0] i_ready;
 logic[7:0] isPlaying;
 logic[3:0] channelState = 0;
+logic[3:0] nextChannelState;
 logic[1:0] loadingState = 0;
 logic[1:0] nextLoadingState;
 
@@ -95,6 +98,26 @@ localparam SEND_ADDRESS = 0;
 localparam RECEIVE_DATA = 1;
 localparam PASS_DATA    = 2;
 
+always_comb begin
+    nextChannelState = nextChannelState;
+    if(loadingState == PASS_DATA) begin
+        case (channelState)
+            4'd0: nextChannelState = 1;
+            4'd1: nextChannelState = 2;
+            4'd2: nextChannelState = 3;
+            4'd3: nextChannelState = 4;
+            4'd4: nextChannelState = 5;
+            4'd5: nextChannelState = 6;
+            4'd6: nextChannelState = 7;
+            4'd7: nextChannelState = 8;
+        endcase
+    end
+
+    if(signal_sampleClk && channelState >= 8) nextChannelState = 0;
+    if (rst) nextChannelState = 0;
+end
+
+always @(posedge aclk) channelState <= nextChannelState;
 
 always_comb begin
     case (loadingState)
@@ -106,6 +129,7 @@ always_comb begin
     if(!aresetn)
         nextLoadingState = 0;
 end
+
 
 always_ff @(posedge aclk) loadingState <= nextLoadingState;
 
@@ -122,7 +146,7 @@ always @(posedge aclk) begin
 		m_axil_araddr <= 0;
 	else if (!m_axil_arvalid || m_axil_arready)
 	begin
-		case (channelState)
+		case (nextChannelState)
             0: m_axil_araddr <= o_nextSampleAddress[0];
             1: m_axil_araddr <= o_nextSampleAddress[1];
             2: m_axil_araddr <= o_nextSampleAddress[2];
@@ -156,35 +180,35 @@ always_ff @(posedge aclk) begin
         case (channelState)
             4'd0: begin
                 i_ready[0] <= 1;
-                channelState <= 1;
+                nextChannelState <= 1;
             end
             4'd1: begin
                 i_ready[1] <= 1;
-                channelState <= 2;
+                nextChannelState <= 2;
             end
             4'd2: begin
                 i_ready[2] <= 1;
-                channelState <= 3;
+                nextChannelState <= 3;
             end
             4'd3: begin
                 i_ready[3] <= 1;
-                channelState <= 4;
+                nextChannelState <= 4;
             end
             4'd4: begin
                 i_ready[4] <= 1;
-                channelState <= 5;
+                nextChannelState <= 5;
             end
             4'd5: begin
                 i_ready[5] <= 1;
-                channelState <= 6;
+                nextChannelState <= 6;
             end
             4'd6: begin
                 i_ready[6] <= 1;
-                channelState <= 7;
+                nextChannelState <= 7;
             end
             4'd7: begin
                 i_ready[7] <= 1;
-                channelState <= 8;
+                nextChannelState <= 8;
             end
         endcase
     end
@@ -194,7 +218,7 @@ always_ff @(posedge aclk) begin
     end
     if (rst) begin
         i_ready <= 0;
-        channelState <= 0;
+        nextChannelState <= 8;
     end
 end
 

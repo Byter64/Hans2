@@ -111,12 +111,12 @@ assign clk = clk_25mhz;
 assign aclk = clk;
 assign aresetn = ~rst;
 
-logic[7:0] resetCounter = 0;
+logic[15:0] resetCounter = 0;
 always_ff @(posedge clk) begin
-    if(resetCounter != 255)
+    if(resetCounter != 49 * 12)
         resetCounter <= resetCounter + 1;
 end
-assign rst = resetCounter != 255;
+assign rst = resetCounter != 49 * 12;
 
 Audiosystem Audiosystem 
 (
