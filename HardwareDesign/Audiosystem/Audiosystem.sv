@@ -87,24 +87,34 @@ assign signal_sampleClk = !old_sampleClk && sampleClk;
 logic[15:0] i_sample;
 logic[7:0] i_ready;
 logic[7:0] isPlaying;
-logic[3:0] loadingState = 0;
-logic sentFirstAddress;
+logic[3:0] channelState = 0;
+logic[1:0] loadingState = 0;
+logic[1:0] nextLoadingState;
+
+localparam SEND_ADDRESS = 0;
+localparam RECEIVE_DATA = 1;
+localparam PASS_DATA    = 2;
+
 
 always_comb begin
+    case (loadingState)
+        SEND_ADDRESS: if(m_axil_arvalid && m_axil_arready && channelState < 8) nextLoadingState = RECEIVE_DATA;
+        RECEIVE_DATA: if(m_axil_rvalid && m_axil_rready) nextLoadingState = PASS_DATA;
+        PASS_DATA: nextLoadingState = SEND_ADDRESS;
+        default: nextLoadingState = loadingState;
+    endcase
     if(!aresetn)
-        sentFirstAddress = 0;
-    else if(sentFirstAddress == 0 && m_axil_arready && m_axil_arvalid)
-        sentFirstAddress = 1;
-    else if(sentFirstAddress == 1 && loadingState >= 8)
-        sentFirstAddress = 0;
+        nextLoadingState = 0;
 end
+
+always_ff @(posedge aclk) loadingState <= nextLoadingState;
 
 //AXI ADDRESS READ
 always @(posedge aclk) begin
 	if (!aresetn)
 		m_axil_arvalid <= 0;
 	else if (!m_axil_arvalid || m_axil_arready)
-		m_axil_arvalid <= loadingState < 8;
+		m_axil_arvalid <= channelState < 8 && (nextLoadingState == SEND_ADDRESS);
 end
 
 always @(posedge aclk) begin
@@ -112,7 +122,7 @@ always @(posedge aclk) begin
 		m_axil_araddr <= 0;
 	else if (!m_axil_arvalid || m_axil_arready)
 	begin
-		case (loadingState)
+		case (channelState)
             0: m_axil_araddr <= o_nextSampleAddress[0];
             1: m_axil_araddr <= o_nextSampleAddress[1];
             2: m_axil_araddr <= o_nextSampleAddress[2];
@@ -128,84 +138,63 @@ end
 // AXI ADDRESS READ END
 
 // AXI READ
-logic sampleReceived;
-logic sampleReady;
 always @(posedge aclk) begin
-		m_axil_rready <= loadingState < 8 && sentFirstAddress;
+		m_axil_rready <= channelState < 8 && loadingState == RECEIVE_DATA;
 end
 
 always @(posedge aclk) begin
 	if (m_axil_rvalid && m_axil_rready) begin
         i_sample <= {m_axil_rdata[7:0], m_axil_rdata[15:8]};
-        sampleReceived <= 1;
-    end else begin
-        sampleReceived <= 0;
     end
 end
-
-always_ff @(posedge aclk) sampleReady <= sampleReceived;
 
 //AXI READ END
 
 always_ff @(posedge aclk) begin
     i_ready <= 0;
-    case (loadingState)
-        4'd0: begin
-            if(sampleReceived) begin
+    if(loadingState == PASS_DATA) begin
+        case (channelState)
+            4'd0: begin
                 i_ready[0] <= 1;
-                loadingState <= 1;
+                channelState <= 1;
             end
-        end
-        4'd1: begin
-            if(sampleReceived) begin
+            4'd1: begin
                 i_ready[1] <= 1;
-                loadingState <= 2;
+                channelState <= 2;
             end
-        end
-        4'd2: begin
-            if(sampleReceived) begin
+            4'd2: begin
                 i_ready[2] <= 1;
-                loadingState <= 3;
+                channelState <= 3;
             end
-        end
-        4'd3: begin
-            if(sampleReceived) begin
+            4'd3: begin
                 i_ready[3] <= 1;
-                loadingState <= 4;
+                channelState <= 4;
             end
-        end
-        4'd4: begin
-            if(sampleReceived) begin
+            4'd4: begin
                 i_ready[4] <= 1;
-                loadingState <= 5;
+                channelState <= 5;
             end
-        end
-        4'd5: begin
-            if(sampleReceived) begin
+            4'd5: begin
                 i_ready[5] <= 1;
-                loadingState <= 6;
+                channelState <= 6;
             end
-        end
-        4'd6: begin
-            if(sampleReceived) begin
+            4'd6: begin
                 i_ready[6] <= 1;
-                loadingState <= 7;
+                channelState <= 7;
             end
-        end
-        4'd7: begin
-            if(sampleReceived) begin
+            4'd7: begin
                 i_ready[7] <= 1;
-                loadingState <= 8;
+                channelState <= 8;
             end
-        end
-    endcase
+        endcase
+    end
 
-    if(signal_sampleClk && loadingState >= 8) begin
-        loadingState <= 0;
+    if(signal_sampleClk && channelState >= 8) begin
+        channelState <= 0;
     end
     if (rst) begin
         i_ready <= 0;
-        loadingState <= 0;
+        channelState <= 0;
     end
 end
 
