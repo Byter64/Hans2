@@ -97,10 +97,11 @@ logic[1:0] nextLoadingState;
 localparam SEND_ADDRESS = 0;
 localparam RECEIVE_DATA = 1;
 localparam PASS_DATA    = 2;
+localparam SKIP_CHANNEL = 3;
 
 always_comb begin
     nextChannelState = channelState;
-    if(loadingState == PASS_DATA) begin
+    if(loadingState == PASS_DATA || loadingState == SKIP_CHANNEL) begin
         case (channelState)
             4'd0: nextChannelState = 1;
             4'd1: nextChannelState = 2;
@@ -119,12 +120,24 @@ end
 
 always @(posedge aclk) channelState <= nextChannelState;
 
+
+logic nextIsPlaying;
+assign nextIsPlaying = nextChannelState == 0 ? isPlaying[0] : 
+                       nextChannelState == 1 ? isPlaying[1] : 
+                       nextChannelState == 2 ? isPlaying[2] : 
+                       nextChannelState == 3 ? isPlaying[3] : 
+                       nextChannelState == 4 ? isPlaying[4] : 
+                       nextChannelState == 5 ? isPlaying[5] : 
+                       nextChannelState == 6 ? isPlaying[6] : 
+                       nextChannelState == 7 ? isPlaying[7] : isPlaying[0];
+
 always_comb begin
     nextLoadingState = loadingState;
     case (loadingState)
         SEND_ADDRESS: if(m_axil_arvalid && m_axil_arready && channelState < 8) nextLoadingState = RECEIVE_DATA;
         RECEIVE_DATA: if(m_axil_rvalid && m_axil_rready) nextLoadingState = PASS_DATA;
-        PASS_DATA: nextLoadingState = SEND_ADDRESS;
+        PASS_DATA: nextLoadingState = nextIsPlaying ? SEND_ADDRESS : SKIP_CHANNEL;
+        SKIP_CHANNEL: nextLoadingState = nextIsPlaying ? SEND_ADDRESS : SKIP_CHANNEL;
         default: nextLoadingState = loadingState;
     endcase
     if(!aresetn)
