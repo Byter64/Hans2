@@ -99,7 +99,7 @@ localparam RECEIVE_DATA = 1;
 localparam PASS_DATA    = 2;
 
 always_comb begin
-    nextChannelState = nextChannelState;
+    nextChannelState = channelState;
     if(loadingState == PASS_DATA) begin
         case (channelState)
             4'd0: nextChannelState = 1;
@@ -114,12 +114,13 @@ always_comb begin
     end
 
     if(signal_sampleClk && channelState >= 8) nextChannelState = 0;
-    if (rst) nextChannelState = 0;
+    if (rst) nextChannelState = 8;
 end
 
 always @(posedge aclk) channelState <= nextChannelState;
 
 always_comb begin
+    nextLoadingState = loadingState;
     case (loadingState)
         SEND_ADDRESS: if(m_axil_arvalid && m_axil_arready && channelState < 8) nextLoadingState = RECEIVE_DATA;
         RECEIVE_DATA: if(m_axil_rvalid && m_axil_rready) nextLoadingState = PASS_DATA;
@@ -134,14 +135,14 @@ end
 always_ff @(posedge aclk) loadingState <= nextLoadingState;
 
 //AXI ADDRESS READ
-always @(posedge aclk) begin
+always_ff @(posedge aclk) begin
 	if (!aresetn)
 		m_axil_arvalid <= 0;
 	else if (!m_axil_arvalid || m_axil_arready)
 		m_axil_arvalid <= channelState < 8 && (nextLoadingState == SEND_ADDRESS);
 end
 
-always @(posedge aclk) begin
+always_ff @(posedge aclk) begin
 	if (!aresetn)
 		m_axil_araddr <= 0;
 	else if (!m_axil_arvalid || m_axil_arready)
@@ -162,11 +163,11 @@ end
 // AXI ADDRESS READ END
 
 // AXI READ
-always @(posedge aclk) begin
+always_ff @(posedge aclk) begin
 		m_axil_rready <= channelState < 8 && loadingState == RECEIVE_DATA;
 end
 
-always @(posedge aclk) begin
+always_ff @(posedge aclk) begin
 	if (m_axil_rvalid && m_axil_rready) begin
         i_sample <= {m_axil_rdata[7:0], m_axil_rdata[15:8]};
     end
@@ -178,47 +179,19 @@ always_ff @(posedge aclk) begin
     i_ready <= 0;
     if(loadingState == PASS_DATA) begin
         case (channelState)
-            4'd0: begin
-                i_ready[0] <= 1;
-                nextChannelState <= 1;
-            end
-            4'd1: begin
-                i_ready[1] <= 1;
-                nextChannelState <= 2;
-            end
-            4'd2: begin
-                i_ready[2] <= 1;
-                nextChannelState <= 3;
-            end
-            4'd3: begin
-                i_ready[3] <= 1;
-                nextChannelState <= 4;
-            end
-            4'd4: begin
-                i_ready[4] <= 1;
-                nextChannelState <= 5;
-            end
-            4'd5: begin
-                i_ready[5] <= 1;
-                nextChannelState <= 6;
-            end
-            4'd6: begin
-                i_ready[6] <= 1;
-                nextChannelState <= 7;
-            end
-            4'd7: begin
-                i_ready[7] <= 1;
-                nextChannelState <= 8;
-            end
+            4'd0: i_ready[0] <= 1;
+            4'd1: i_ready[1] <= 1;
+            4'd2: i_ready[2] <= 1;
+            4'd3: i_ready[3] <= 1;
+            4'd4: i_ready[4] <= 1;
+            4'd5: i_ready[5] <= 1;
+            4'd6: i_ready[6] <= 1;
+            4'd7: i_ready[7] <= 1;
         endcase
     end
 
-    if(signal_sampleClk && channelState >= 8) begin
-        channelState <= 0;
-    end
     if (rst) begin
         i_ready <= 0;
-        nextChannelState <= 8;
     end
 end
 
@@ -279,18 +252,21 @@ logic[15:0] finalSample;
 assign finalSample = sampleClk ? rightFinalMix : leftFinalMix; //sampleClk == 0 <==> left
 
 
-logic[15:0] latchedFinalSample;
+logic[15:0] latchedFinalSample1;
+logic[15:0] latchedFinalSample2;
 logic[3:0] bitIndex = 4'b0;
 always_ff @(posedge bitclk) begin
     bitIndex <= bitIndex + 1;
-    if(bitIndex == 15)
-        latchedFinalSample <= finalSample;
-end
+    if(bitIndex == 15) begin
+        latchedFinalSample1 <= finalSample;
+        latchedFinalSample2 <= latchedFinalSample1;
+    end
+end 
  
 I2STransmitter I2STransmitter 
 (
     .clk(clk),
-    .dataIn(latchedFinalSample),
+    .dataIn(latchedFinalSample2),
     .bitclk(bitclk),
     .dataOut(audio_dout)
 );
