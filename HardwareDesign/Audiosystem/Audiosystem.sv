@@ -10,6 +10,7 @@ module Audiosystem (
     input logic[31:0] registerData,
     input logic[3:0] registerSelect,
     input logic[7:0] channelSelect,
+    input logic      masterSelect, //If high, master values will be changed
     
     //Memory Interface (AXI Lite Master)
     input logic            aclk,
@@ -43,6 +44,22 @@ module Audiosystem (
     output logic  audio_lrclk,
     output logic  audio_dout
 );
+
+typedef enum logic[3:0] {
+        IDLE                = 0,
+        SET_STARTADDRESS    = 1,
+        SET_SAMPLECOUNT     = 2,
+        SET_LOOPSTART       = 3,
+        SET_LOOPEND         = 4,
+        SET_CURRENTPOSITION = 5,
+        SET_LASTSAMPLE      = 6,
+        SET_VOLUME          = 7,
+        SET_ISLOOPING       = 8,
+        SET_ISPLAYING       = 9,
+        SET_ISMONO          = 10,
+        SET_ISRIGHT          = 11
+    } ChannelSettings;
+
 logic[7:0] isMono;
 logic[7:0] isRight;
 logic[15:0] sample[8];
@@ -243,8 +260,19 @@ for (lrIter = 0; lrIter < 8; lrIter++) begin
     assign rightSample[lrIter][31:16] = (isMono[lrIter] || isRight[lrIter]) ? {16{sample[lrIter][15]}} : 0;
 end
 
+logic[7:0] masterVolume = 128;
+always_ff @(posedge clk) begin
+    if(masterSelect && registerSelect == SET_VOLUME)
+        masterVolume <= registerData;
+    
+    if(rst)
+        masterVolume <= 128;
+end
+
 logic[31:0] leftMix;
 logic[31:0] rightMix;
+logic[31:0] leftAmplifiedMix;
+logic[31:0] rightAmplifiedMix;
 logic[15:0] leftFinalMix;
 logic[15:0] rightFinalMix;
 assign leftMix = leftSample[0] + leftSample[1] + leftSample[2] + leftSample[3] + 
@@ -253,13 +281,16 @@ assign leftMix = leftSample[0] + leftSample[1] + leftSample[2] + leftSample[3] +
 assign rightMix = rightSample[0] + rightSample[1] + rightSample[2] + rightSample[3] + 
                   rightSample[4] + rightSample[5] + rightSample[6] + rightSample[7];
 
-assign leftFinalMix = $signed(leftMix) > $signed(32767) ? 32767 : 
-                      $signed(leftMix) < $signed(-32768) ? $signed(-32768) :
-                      $signed(leftMix);
+assign leftAmplifiedMix = ($signed(leftMix) * $signed({1'b0, masterVolume})) >>> 7;
+assign rightAmplifiedMix = ($signed(rightMix) * $signed({1'b0, masterVolume})) >>> 7;
 
-assign rightFinalMix = $signed(rightMix) > $signed(32767) ? 32767 : 
-                       $signed(rightMix) < $signed(-32768) ? $signed(-32768) :
-                       $signed(rightMix);
+assign leftFinalMix = $signed(leftAmplifiedMix) > $signed(32767) ? 32767 : 
+                      $signed(leftAmplifiedMix) < $signed(-32768) ? $signed(-32768) :
+                      $signed(leftAmplifiedMix);
+
+assign rightFinalMix = $signed(rightAmplifiedMix) > $signed(32767) ? 32767 : 
+                       $signed(rightAmplifiedMix) < $signed(-32768) ? $signed(-32768) :
+                       $signed(rightAmplifiedMix);
 
 logic[15:0] finalSample;
 assign finalSample = sampleClk ? rightFinalMix : leftFinalMix; //sampleClk == 0 <==> left

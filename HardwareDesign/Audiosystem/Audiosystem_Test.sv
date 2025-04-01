@@ -13,6 +13,7 @@ logic rst;
 logic[31:0] registerData = 0;
 logic[3:0] registerSelect = 0;
 logic[7:0] channelSelect = 0;
+logic masterSelect = 0;
 
 typedef enum logic[3:0] {
     IDLE                = 0,
