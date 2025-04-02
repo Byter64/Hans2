@@ -34,6 +34,7 @@ typedef enum logic[3:0] {
 logic[31:0] initState = 0;
 always_ff @(posedge clk_25mhz) begin
     if(!rst) begin
+        masterSelect <= 0;
         case (initState)
             0: begin
                 channelSelect <= 3;
@@ -75,6 +76,13 @@ always_ff @(posedge clk_25mhz) begin
                 channelSelect <= 3;
                 registerSelect <= SET_ISPLAYING;
                 registerData <= 1;
+                initState <= initState + 1;
+            end
+            7: begin
+                masterSelect <= 1;
+                channelSelect <= 0;
+                registerSelect <= SET_VOLUME;
+                registerData <= 255;
                 initState <= initState + 1;
             end
         endcase
