@@ -1,13 +1,16 @@
-//Please make clk and aclk be the same clock,
+//Please make clk and aclk be the same clock, as well as rst == !aresetn
+//Be aware, that unfortunate timing of changing channel settings can lead
+//To channels being of by 1 sample
 module Audiosystem (
     input logic  clk,
     input logic  clk_25mhz,
     input logic  rst,
 
     //CPU Interface
-    input logic[23:0] registerData,
+    input logic[31:0] registerData,
     input logic[3:0] registerSelect,
     input logic[7:0] channelSelect,
+    input logic      masterSelect, //If high, master values will be changed
     
     //Memory Interface (AXI Lite Master)
     input logic            aclk,
@@ -41,6 +44,22 @@ module Audiosystem (
     output logic  audio_lrclk,
     output logic  audio_dout
 );
+
+typedef enum logic[3:0] {
+        IDLE                = 0,
+        SET_STARTADDRESS    = 1,
+        SET_SAMPLECOUNT     = 2,
+        SET_LOOPSTART       = 3,
+        SET_LOOPEND         = 4,
+        SET_CURRENTPOSITION = 5,
+        SET_LASTSAMPLE      = 6,
+        SET_VOLUME          = 7,
+        SET_ISLOOPING       = 8,
+        SET_ISPLAYING       = 9,
+        SET_ISMONO          = 10,
+        SET_ISRIGHT          = 11
+    } ChannelSettings;
+
 logic[7:0] isMono;
 logic[7:0] isRight;
 logic[15:0] sample[8];
@@ -67,26 +86,98 @@ ClockGenerator ClockGenerator
     .clk_32khz(sampleClk)
 );
 
+logic old_bitclk;
+logic old_clk_64khz;
+logic old_sampleClk;
+always_ff @(posedge clk) begin
+    old_bitclk <= bitclk;
+    old_clk_64khz <= clk_64khz;
+    old_sampleClk <= sampleClk;
+end
+
+logic signal_bitclk;
+logic signal_clk_64khz;
+logic signal_sampleClk;
+assign signal_bitclk =    !old_bitclk && bitclk;
+assign signal_clk_64khz = !old_clk_64khz && clk_64khz;
+assign signal_sampleClk = !old_sampleClk && sampleClk;
+
+
 logic[15:0] i_sample;
 logic[7:0] i_ready;
 logic[7:0] isPlaying;
-logic oldSampleClk;
-logic[3:0] loadingState = 0;
+logic[3:0] channelState = 0;
+logic[3:0] nextChannelState;
+logic[1:0] loadingState = 0;
+logic[1:0] nextLoadingState;
+
+localparam SEND_ADDRESS = 0;
+localparam RECEIVE_DATA = 1;
+localparam PASS_DATA    = 2;
+localparam SKIP_CHANNEL = 3;
+
+always_comb begin
+    nextChannelState = channelState;
+    if(loadingState == PASS_DATA || loadingState == SKIP_CHANNEL) begin
+        case (channelState)
+            4'd0: nextChannelState = 1;
+            4'd1: nextChannelState = 2;
+            4'd2: nextChannelState = 3;
+            4'd3: nextChannelState = 4;
+            4'd4: nextChannelState = 5;
+            4'd5: nextChannelState = 6;
+            4'd6: nextChannelState = 7;
+            4'd7: nextChannelState = 8;
+        endcase
+    end
+
+    if(signal_sampleClk && channelState >= 8) nextChannelState = 0;
+    if (rst) nextChannelState = 8;
+end
+
+always @(posedge aclk) channelState <= nextChannelState;
+
+
+logic nextIsPlaying;
+assign nextIsPlaying = nextChannelState == 0 ? isPlaying[0] : 
+                       nextChannelState == 1 ? isPlaying[1] : 
+                       nextChannelState == 2 ? isPlaying[2] : 
+                       nextChannelState == 3 ? isPlaying[3] : 
+                       nextChannelState == 4 ? isPlaying[4] : 
+                       nextChannelState == 5 ? isPlaying[5] : 
+                       nextChannelState == 6 ? isPlaying[6] : 
+                       nextChannelState == 7 ? isPlaying[7] : isPlaying[0];
+
+always_comb begin
+    nextLoadingState = loadingState;
+    case (loadingState)
+        SEND_ADDRESS: if(m_axil_arvalid && m_axil_arready && channelState < 8) nextLoadingState = RECEIVE_DATA;
+        RECEIVE_DATA: if(m_axil_rvalid && m_axil_rready) nextLoadingState = PASS_DATA;
+        PASS_DATA: nextLoadingState = nextIsPlaying ? SEND_ADDRESS : SKIP_CHANNEL;
+        SKIP_CHANNEL: nextLoadingState = nextIsPlaying ? SEND_ADDRESS : SKIP_CHANNEL;
+        default: nextLoadingState = loadingState;
+    endcase
+    if(!aresetn)
+        nextLoadingState = 0;
+end
+
+
+always_ff @(posedge aclk) loadingState <= nextLoadingState;
 
 //AXI ADDRESS READ
-always @(posedge aclk) begin
+always_ff @(posedge aclk) begin
 	if (!aresetn)
 		m_axil_arvalid <= 0;
 	else if (!m_axil_arvalid || m_axil_arready)
-		m_axil_arvalid <= loadingState < 8;
+		m_axil_arvalid <= channelState < 8 && (nextLoadingState == SEND_ADDRESS);
 end
 
-always @(posedge aclk) begin
+always_ff @(posedge aclk) begin
 	if (!aresetn)
 		m_axil_araddr <= 0;
 	else if (!m_axil_arvalid || m_axil_arready)
 	begin
-		case (loadingState)
+		case (nextChannelState)
             0: m_axil_araddr <= o_nextSampleAddress[0];
             1: m_axil_araddr <= o_nextSampleAddress[1];
             2: m_axil_araddr <= o_nextSampleAddress[2];
@@ -95,92 +186,42 @@ always @(posedge aclk) begin
             5: m_axil_araddr <= o_nextSampleAddress[5];
             6: m_axil_araddr <= o_nextSampleAddress[6];
             7: m_axil_araddr <= o_nextSampleAddress[7];
-            default: m_axil_araddr <= 0;
+            default: m_axil_araddr <= o_nextSampleAddress[0];
         endcase
     end
 end
 // AXI ADDRESS READ END
 
 // AXI READ
-logic sampleReceived;
-logic sampleReady;
-always @(posedge aclk) begin
-		m_axil_rready <= loadingState < 8;
+always_ff @(posedge aclk) begin
+		m_axil_rready <= channelState < 8 && loadingState == RECEIVE_DATA;
 end
 
-always @(posedge aclk) begin
+always_ff @(posedge aclk) begin
 	if (m_axil_rvalid && m_axil_rready) begin
         i_sample <= {m_axil_rdata[7:0], m_axil_rdata[15:8]};
-        sampleReceived <= 1;
-    end else begin
-        sampleReceived <= 0;
     end
 end
-
-always_ff @(posedge aclk) sampleReady <= sampleReceived;
 
 //AXI READ END
 
 always_ff @(posedge aclk) begin
-    oldSampleClk <= sampleClk;
     i_ready <= 0;
-    case (loadingState)
-        4'd0: begin
-            if(sampleReady) begin
-                i_ready[0] <= 1;
-                loadingState <= 1;
-            end
-        end
-        4'd1: begin
-            if(sampleReady) begin
-                i_ready[1] <= 2;
-                loadingState <= 2;
-            end
-        end
-        4'd2: begin
-            if(sampleReady) begin
-                i_ready[2] <= 4;
-                loadingState <= 3;
-            end
-        end
-        4'd3: begin
-            if(sampleReady) begin
-                i_ready[3] <= 8;
-                loadingState <= 4;
-            end
-        end
-        4'd4: begin
-            if(sampleReady) begin
-                i_ready[4] <= 16;
-                loadingState <= 5;
-            end
-        end
-        4'd5: begin
-            if(sampleReady) begin
-                i_ready[5] <= 32;
-                loadingState <= 6;
-            end
-        end
-        4'd6: begin
-            if(sampleReady) begin
-                i_ready[6] <= 64;
-                loadingState <= 7;
-            end
-        end
-        4'd7: begin
-            if(sampleReady) begin
-                i_ready[7] <= 128;
-                loadingState <= 8;
-            end
-        end
-    endcase
-
-    if(oldSampleClk == 0 && sampleClk && loadingState >= 8) begin
-        loadingState <= 0;
+    if(loadingState == PASS_DATA) begin
+        case (channelState)
+            4'd0: i_ready[0] <= 1;
+            4'd1: i_ready[1] <= 1;
+            4'd2: i_ready[2] <= 1;
+            4'd3: i_ready[3] <= 1;
+            4'd4: i_ready[4] <= 1;
+            4'd5: i_ready[5] <= 1;
+            4'd6: i_ready[6] <= 1;
+            4'd7: i_ready[7] <= 1;
+        endcase
     end
+
     if (rst) begin
         i_ready <= 0;
-        loadingState <= 0;
     end
 end
 
@@ -213,14 +254,25 @@ logic[31:0] leftSample[8];
 logic[31:0] rightSample[8];
 genvar lrIter;
 for (lrIter = 0; lrIter < 8; lrIter++) begin
-    assign leftSample[lrIter][15:0] = (isMono[lrIter] || !isRight[lrIter]) ? sample[lrIter] : 0;
-    assign rightSample[lrIter][15:0] = (isMono[lrIter] || isRight[lrIter]) ? sample[lrIter] : 0;
+    assign leftSample[lrIter][15:0]  = (isMono[lrIter] || !isRight[lrIter]) ? sample[lrIter] : 0;
     assign leftSample[lrIter][31:16] = (isMono[lrIter] || !isRight[lrIter]) ? {16{sample[lrIter][15]}} : 0;
+    assign rightSample[lrIter][15:0]  = (isMono[lrIter] || isRight[lrIter]) ? sample[lrIter] : 0;
     assign rightSample[lrIter][31:16] = (isMono[lrIter] || isRight[lrIter]) ? {16{sample[lrIter][15]}} : 0;
+end
+
+logic[7:0] masterVolume = 128;
+always_ff @(posedge clk) begin
+    if(masterSelect && registerSelect == SET_VOLUME)
+        masterVolume <= registerData;
+    
+    if(rst)
+        masterVolume <= 128;
 end
 
 logic[31:0] leftMix;
 logic[31:0] rightMix;
+logic[31:0] leftAmplifiedMix;
+logic[31:0] rightAmplifiedMix;
 logic[15:0] leftFinalMix;
 logic[15:0] rightFinalMix;
 assign leftMix = leftSample[0] + leftSample[1] + leftSample[2] + leftSample[3] + 
@@ -229,33 +281,36 @@ assign leftMix = leftSample[0] + leftSample[1] + leftSample[2] + leftSample[3] +
 assign rightMix = rightSample[0] + rightSample[1] + rightSample[2] + rightSample[3] + 
                   rightSample[4] + rightSample[5] + rightSample[6] + rightSample[7];
 
-assign leftFinalMix = $signed(leftMix) > $signed(32767) ? 32767 : 
-                      $signed(leftMix) < $signed(-32768) ? $signed(-32768) :
-                      $signed(leftMix);
+assign leftAmplifiedMix = ($signed(leftMix) * $signed({1'b0, masterVolume})) >>> 7;
+assign rightAmplifiedMix = ($signed(rightMix) * $signed({1'b0, masterVolume})) >>> 7;
 
-assign rightFinalMix = $signed(rightMix) > $signed(32767) ? 32767 : 
-                       $signed(rightMix) < $signed(-32768) ? $signed(-32768) :
-                       $signed(rightMix);
+assign leftFinalMix = $signed(leftAmplifiedMix) > $signed(32767) ? 32767 : 
+                      $signed(leftAmplifiedMix) < $signed(-32768) ? $signed(-32768) :
+                      $signed(leftAmplifiedMix);
+
+assign rightFinalMix = $signed(rightAmplifiedMix) > $signed(32767) ? 32767 : 
+                       $signed(rightAmplifiedMix) < $signed(-32768) ? $signed(-32768) :
+                       $signed(rightAmplifiedMix);
 
 logic[15:0] finalSample;
 assign finalSample = sampleClk ? rightFinalMix : leftFinalMix; //sampleClk == 0 <==> left
 
-logic firstCycle = 0;
-always @(posedge bitclk) firstCycle <= 1;
-logic[15:0] latchedFinalSample;
+
+logic[15:0] latchedFinalSample1;
+logic[15:0] latchedFinalSample2;
 logic[3:0] bitIndex = 4'b0;
 always_ff @(posedge bitclk) begin
-    if(firstCycle == 0)
-        bitIndex <= bitIndex + 2;
-    else 
-        bitIndex <= bitIndex + 1;
-    if(bitIndex == 15)
-        latchedFinalSample <= finalSample;
-end
+    bitIndex <= bitIndex + 1;
+    if(bitIndex == 15) begin
+        latchedFinalSample1 <= finalSample;
+        latchedFinalSample2 <= latchedFinalSample1;
+    end
+end 
  
 I2STransmitter I2STransmitter 
 (
-    .dataIn(latchedFinalSample),
+    .clk(clk),
+    .dataIn(latchedFinalSample2),
     .bitclk(bitclk),
     .dataOut(audio_dout)
 );

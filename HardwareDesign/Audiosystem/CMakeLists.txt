@@ -14,7 +14,8 @@ list(APPEND sources_sim
 )
 
 list(APPEND resources
-  Unbenannt.hex
+  8channelTest.hex
+  StereoTest.hex
 )
 
 # Define variables for synthesis
@@ -34,7 +35,7 @@ add_simulation_with_resources(
   NAME ${name}
   TESTBENCH ${testbench}
   SOURCES "${sources_sim}"
-  RESOURCES "${resources}"
+  RESOURCES ${resources}
 )
 
 add_synthesis(${name}, ${top}, "${sources_synth}")

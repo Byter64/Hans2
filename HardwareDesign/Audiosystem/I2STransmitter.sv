@@ -1,21 +1,17 @@
 module I2STransmitter (
+    input logic clk,
     input logic[15:0] dataIn,
     input logic bitclk,
     
     output logic dataOut
 );
 
-logic firstCycle = 0;
-always @(posedge bitclk) firstCycle <= 1;
-logic[3:0] bitIndex = 4'b1;
+logic[3:0] bitIndex = 4'b0;
 logic[3:0] nextBit;
 assign nextBit = bitIndex + 1;
 //MSB first
 always @(posedge bitclk) begin
-    if(firstCycle == 0)
-        bitIndex <= 2;
-    else
-        bitIndex <= nextBit;
+    bitIndex <= nextBit;
     case (bitIndex)
         4'b0000: dataOut <= dataIn[15];
         4'b0001: dataOut <= dataIn[14];

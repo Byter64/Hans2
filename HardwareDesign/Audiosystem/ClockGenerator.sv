@@ -29,7 +29,11 @@ always_ff @(posedge clk_100mhz) begin
     clk_1024khz_counter <= clk_1024khz_counter + 1;
     if(clk_1024khz_counter + 1 == 49) begin
         clk_1024khz_counter <= 0;
+`ifdef SYNTHESIS
         clk_1024khz <= ~clk_1024khz;
+`else
+        clk_1024khz <= #1 ~clk_1024khz;
+`endif
     end
 end
 
@@ -38,7 +42,11 @@ always_ff @(posedge clk_1024khz) begin
     clk_64khz_counter <= clk_64khz_counter + 1;
     if(clk_64khz_counter + 1 == 8) begin
         clk_64khz_counter <= 0;
+`ifdef SYNTHESIS
         clk_64khz <= ~clk_64khz;
+`else
+        clk_64khz <= #1 ~clk_64khz;
+`endif
     end
 end 
 
@@ -47,7 +55,11 @@ always_ff @(posedge clk_1024khz) begin
     clk_32khz_counter <= clk_32khz_counter + 1;
     if(clk_32khz_counter + 1 == 16) begin
         clk_32khz_counter <= 0;
+`ifdef SYNTHESIS
         clk_32khz <= ~clk_32khz;
+`else
+        clk_32khz <= #1 ~clk_32khz;
+`endif
     end
 end 
 

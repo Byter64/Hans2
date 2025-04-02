@@ -33,7 +33,7 @@ module AXILiteMemory #(
 );
 
 logic[ADDR_WIDTH-1:0] memory[MEMORY_DEPTH];
-initial $readmemh("Unbenannt.hex", memory);
+initial $readmemh("StereoTest.hex", memory);
 //Address Write
 logic[ADDR_WIDTH-1:0] aw_address = 'b0;
 always @(posedge aclk) begin

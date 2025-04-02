@@ -10,36 +10,79 @@ logic clk;
 logic rst;
 
 //CPU Interface
-logic[23:0] registerData = 0;
+logic[31:0] registerData = 0;
 logic[3:0] registerSelect = 0;
 logic[7:0] channelSelect = 0;
-    
+logic masterSelect = 0;
+
+typedef enum logic[3:0] {
+    IDLE                = 0,
+    SET_STARTADDRESS    = 1,
+    SET_SAMPLECOUNT     = 2,
+    SET_LOOPSTART       = 3,
+    SET_LOOPEND         = 4,
+    SET_CURRENTPOSITION = 5,
+    SET_LASTSAMPLE      = 6,
+    SET_VOLUME          = 7,
+    SET_ISLOOPING       = 8,
+    SET_ISPLAYING       = 9,
+    SET_ISMONO          = 10,
+    SET_ISRIGHT          = 11
+} ChannelSettings;
+
+
 logic[31:0] initState = 0;
 always_ff @(posedge clk_25mhz) begin
     if(!rst) begin
+        masterSelect <= 0;
         case (initState)
             0: begin
-                channelSelect <= 1;
-                registerSelect <= 2;
-                registerData <= 192000;
+                channelSelect <= 3;
+                registerSelect <= SET_SAMPLECOUNT;
+                registerData <= 239616;
                 initState <= initState + 1;
             end
             1: begin
-                channelSelect <= 1;
-                registerSelect <= 4;
-                registerData <= 192000;
+                channelSelect <= 3;
+                registerSelect <= SET_LOOPEND;
+                registerData <= 239615;
                 initState <= initState + 1;
             end
             2: begin
-                channelSelect <= 1;
-                registerSelect <= 8;
+                channelSelect <= 3;
+                registerSelect <= SET_ISLOOPING;
                 registerData <= 1;
                 initState <= initState + 1;
             end
             3: begin
+                channelSelect <= 3;
+                registerSelect <= SET_ISMONO;
+                registerData <= 0;
+                initState <= initState + 1;
+            end
+            4: begin
                 channelSelect <= 1;
-                registerSelect <= 9;
+                registerSelect <= SET_ISRIGHT;
+                registerData <= 0;
+                initState <= initState + 1;
+            end
+            5: begin
+                channelSelect <= 2;
+                registerSelect <= SET_ISRIGHT;
                 registerData <= 1;
+                initState <= initState + 1;
+            end
+            6: begin
+                channelSelect <= 3;
+                registerSelect <= SET_ISPLAYING;
+                registerData <= 1;
+                initState <= initState + 1;
+            end
+            7: begin
+                masterSelect <= 1;
+                channelSelect <= 0;
+                registerSelect <= SET_VOLUME;
+                registerData <= 255;
                 initState <= initState + 1;
             end
         endcase
@@ -77,12 +120,12 @@ assign clk = clk_25mhz;
 assign aclk = clk;
 assign aresetn = ~rst;
 
-logic[7:0] resetCounter = 0;
+logic[15:0] resetCounter = 0;
 always_ff @(posedge clk) begin
-    if(resetCounter != 255)
+    if(resetCounter != 49 * 12)
         resetCounter <= resetCounter + 1;
 end
-assign rst = resetCounter != 255;
+assign rst = resetCounter != 49 * 12;
 
 Audiosystem Audiosystem 
 (
