@@ -4,6 +4,7 @@ set(name "v01_CPU_GPU")
 # Defining variables for simulation
 set(testbench "testbench")
 list(APPEND sources_sim
+  ${CMAKE_CURRENT_SOURCE_DIR}/../../ecp5lib/cells_bb.v
   ${CMAKE_CURRENT_SOURCE_DIR}/testbench.sv
   ${CMAKE_CURRENT_SOURCE_DIR}/../../Processor/picorv32.v
   ${CMAKE_CURRENT_SOURCE_DIR}/../../Graphicsystem/BufferController.v
