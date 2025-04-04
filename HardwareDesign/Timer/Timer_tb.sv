@@ -1,101 +1,117 @@
 `timescale 1ns/1ns
 module Timer_tb;
-    //global parameters
+
+    // Global parameters
     localparam HALF_CLOCK_CYCLE = 5;
-    localparam CLOCK_CYCLE = 2*HALF_CLOCK_CYCLE;
-    
-    //global variables
-    integer test = 0;
-    integer sucessfull_tests = 0;
-   
-    //global logic
+    localparam CLOCK_CYCLE = 2 * HALF_CLOCK_CYCLE;
+    localparam TEST_AMOUNT = 10;
+
+    // Global variables
+    int test = 0;
+    int successful_tests = 0;
+
+    // Global logic
     logic clk;
     logic rst;
 
+    // Clock generation
     initial clk = 0;
     always #(HALF_CLOCK_CYCLE) clk = ~clk;
     
+    // Timer-specific logic
+    logic [7:0] write;
+    logic [31:0] data_in[7:0];
+    logic [7:0] timer_interrupt;
+    logic [31:0] data_out[7:0];
 
-    //parameters for test
-    localparam TIMER_ADDITIONAL_BITS = 8;
-    
-    //logic for test
-    logic write;
-    logic [31:0] data_in;
+    // Timer instances
+    genvar i;
+    generate
+        for (i = 0; i < 8; i++) begin : timer_instances
+            Timer #(
+                .TIMER_ADDITIONAL_BITS(i)
+            ) uut (
+                .clk(clk),
+                .rst(rst),
+                .write(write[i]),
+                .data_in(data_in[i]),
+                .timer_interrupt(timer_interrupt[i]),
+                .data_out(data_out[i])
+            );
+        end
+    endgenerate
 
-    logic timer_interrupt;
-    logic [31:0] data_out;
-
-    //module instantiations
-    Timer #(
-        .TIMER_ADDITIONAL_BITS(TIMER_ADDITIONAL_BITS)
-    ) uut (
-        .clk(clk),
-        .rst(rst),
-        .write(write),
-        .data_in(data_in),
-        .timer_interrupt(timer_interrupt),
-        .data_out(data_out)
-    );
-
-    // Main testbench process
+    // Testbench execution
     initial begin
         rst = 1;
         apply_reset();
-        testTimer();
-        apply_reset();
-        repeat(10) testTimer();
-        
-        $display("%d/%d Tests ran successfully!", sucessfull_tests,test);
 
-        // End of simulation
+        fork
+            repeat(TEST_AMOUNT) testTimer(7);
+            repeat(TEST_AMOUNT) testTimer(6);
+            repeat(TEST_AMOUNT) testTimer(5);
+            repeat(TEST_AMOUNT) testTimer(4);
+            repeat(TEST_AMOUNT) testTimer(3);
+            repeat(TEST_AMOUNT) testTimer(2);
+            repeat(TEST_AMOUNT) testTimer(1);
+            repeat(TEST_AMOUNT) testTimer(0);
+        join
+
+        $display("%d/%d Tests ran successfully!", successful_tests, test);
         $finish;
     end
 
-    //Variables for Task
-    integer randomTime;
-    integer counter;
+    // Task: Test Timer module
+    task automatic testTimer(integer idx);
+        int randomTime;
+        int counter;
+        int this_test;
 
-    //task that tests module
-    task testTimer();
         test++;
-        randomTime = $urandom_range(0,2000);
+        this_test = test;
+        randomTime = $urandom_range(0, 2000);
         counter = 0;
-        #(CLOCK_CYCLE)
-        data_in <= randomTime;
-        #(CLOCK_CYCLE)
-        write <= 1;
-        #(CLOCK_CYCLE)
-        write <= 0;
+
+        // Initialize test conditions
         #(CLOCK_CYCLE);
-        while(timer_interrupt == 0) begin
-            @(posedge clk)
+        data_in[idx] <= randomTime;
+        #(CLOCK_CYCLE);
+        write[idx] <= 1'b1;
+        #(CLOCK_CYCLE);
+        write[idx] <= 1'b0;
+        #(CLOCK_CYCLE);
+
+        // Wait for interrupt
+        while (timer_interrupt[idx] == 1'b0) begin
+            @(posedge clk);
             counter = counter + 1;
         end
-        if(counter/2**TIMER_ADDITIONAL_BITS!=randomTime) begin
-            $display("Test %D Fehler: Counter: %D Soll: %D",test,counter/2**TIMER_ADDITIONAL_BITS,randomTime);
-        end
-        else begin
-            sucessfull_tests++;
+
+        // Validate results
+        if (counter / 2**idx != randomTime) begin
+            $display("Test: %d in Timer Module[%d] Error: Counter: %d Should: %d", this_test, idx, counter / 2**idx, randomTime);
+        end else begin
+            successful_tests++;
             `ifdef CONFIRM
-            $display("Test %d bestanden!", test);
+            $display("Test %d successful!", this_test);
             `endif
         end
     endtask
 
-    //Reset task
+    // Task: Apply reset
     task apply_reset();
-        rst <= 1;
-        repeat(2) @(posedge clk) 
-        rst <= 0;
+        rst <= 1'b1;
+        repeat(2) @(posedge clk);
+        rst <= 1'b0;
         #(CLOCK_CYCLE);
     endtask
 
-    //Print VCD if necessary
+    // Generate VCD file if enabled
     `ifdef VCD
         initial begin
             $dumpfile("timer_tb.vcd");
-            $dumpvars(0);
+            $dumpvars(0, Timer_tb);
         end
     `endif
+
 endmodule

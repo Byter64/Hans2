@@ -5,18 +5,19 @@ module BufferController (
     input vSync,
     input isSynchronized,
 
-    output reg fbGPU,
+    output reg fbGPU = 0,
     output fbHDMI
 );
 
-reg[1:0] state;
-reg[1:0] nextState;
 localparam IDLE = 0;
 localparam WAIT = 1;
 localparam SWAP = 2;
 
-reg oldSwapIn;
-reg oldVSync;
+reg[1:0] state = IDLE;
+reg[1:0] nextState = IDLE;
+
+reg oldSwapIn = 0;
+reg oldVSync = 0;
 
 always@(*) begin
     case (state)

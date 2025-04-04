@@ -81,7 +81,7 @@ always @(posedge hdmi_pixClk) begin
 end
 
 always @(posedge hdmi_pixClk) begin
-    gpu_MemData <= memory[gpu_MemAddr];
+    gpu_MemData <= memory[gpu_MemAddr >> 1];
 end
 
 
@@ -108,7 +108,8 @@ wire        hdmi_vSync;
 GraphicSystem graphicSystem 
 (
     .clk25Mhz(clk_25mhz),
-    .cpuClk(hdmi_pixClk),
+    .gpuClk(hdmi_pixClk),
+    .bufferControllerClk(hdmi_pixClk),
     .reset(1'b0),
     .gpdiDp(gpdi_dp),
     .hdmi_pixClk(hdmi_pixClk),
