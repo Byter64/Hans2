@@ -129,7 +129,6 @@ gpu #(
 );
 
 
-wire        hdmi_pixClk;
 wire[10:0]  hdmi_nextX;
 wire[10:0]  hdmi_nextY;
 wire        hdmi_hSync;
