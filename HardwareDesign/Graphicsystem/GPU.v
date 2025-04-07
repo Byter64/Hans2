@@ -40,7 +40,20 @@ module gpu #
     output        fb_write  //Tells the frame buffer to write color to (fb_x, fb_y)
 );
 
+localparam IDLE = 1;
+localparam DRAW = 2;
+localparam CLEAR = 4;
+
+localparam I_IDLE = 0;
+localparam I_DRAW = 1;
+localparam I_CLEAR = 2;
+
+reg drawing = 0;
+wire next_drawing;
+reg[2:0] next_state;
+reg[2:0] state = IDLE; //Don't remove initial value. Else yosys will make this an fsm, which for some reason breaks the functionality
 assign crtl_busy = !state[I_IDLE] || !next_state[I_IDLE];
+
 
 reg old_ctrl_draw;
 reg old_ctrl_clear;
@@ -56,17 +69,6 @@ always @(posedge clk) begin
         old_ctrl_draw <= 0;
     end
 end
-
-localparam IDLE = 1;
-localparam DRAW = 2;
-localparam CLEAR = 4;
-
-localparam I_IDLE = 0;
-localparam I_DRAW = 1;
-localparam I_CLEAR = 2;
-
-reg[2:0] next_state;
-reg[2:0] state = IDLE; //Don't remove initial value. Else yosys will make this an fsm, which for some reason breaks the functionality
 
 always @(*) begin
     if(state[I_DRAW])
@@ -128,8 +130,7 @@ always @(posedge clk) begin
         clear_color <= clear_color;
 end
 
-reg drawing = 0;
-wire next_drawing = pos_y < max_y;
+
 wire[$clog2(FB_WIDTH)+1:0] max_x = draw_width;
 wire[$clog2(FB_HEIGHT)+1:0] max_y = draw_height;
 reg[$clog2(FB_WIDTH)+1:0] pos_x = 0;
@@ -138,6 +139,7 @@ wire[$clog2(FB_WIDTH)+1:0] pos_x_1 = pos_x + 1;
 wire[$clog2(FB_HEIGHT)+1:0] pos_y_1 = pos_y + 1;
 wire[$clog2(FB_WIDTH)+1:0] next_pos_x = drawing ? (pos_x_1 == max_x ? 0 : pos_x_1) : 0;
 wire[$clog2(FB_HEIGHT)+1:0] next_pos_y = drawing ? (pos_x_1 == max_x ? pos_y_1 : pos_y) : 0;
+assign next_drawing = pos_y < max_y;
 
 always @(posedge clk) begin
     if(!next_state[I_IDLE] && state[I_IDLE]) begin

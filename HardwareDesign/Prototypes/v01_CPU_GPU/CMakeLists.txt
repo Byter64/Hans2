@@ -3,8 +3,10 @@ set(name "v01_CPU_GPU")
 
 # Defining variables for simulation
 set(testbench "testbench")
+
 list(APPEND sources_sim
-  ${CMAKE_CURRENT_SOURCE_DIR}/../../ecp5lib/cells_bb.v
+  "C:/Users/Yanni/Desktop/ecp5u/EHXPLLL.v"
+  "C:/Users/Yanni/Desktop/ecp5u/ODDRX1F.v"
   ${CMAKE_CURRENT_SOURCE_DIR}/testbench.sv
   ${CMAKE_CURRENT_SOURCE_DIR}/../../Processor/picorv32.v
   ${CMAKE_CURRENT_SOURCE_DIR}/../../Graphicsystem/BufferController.v
@@ -19,7 +21,7 @@ list(APPEND sources_sim
 # Defining variables for synthesis
 set(top "CPU_with_GPU")
 list(APPEND sources_synth
-  ${CMAKE_CURRENT_SOURCE_DIR}/CPU_with_GPU.sv
+  ${CMAKE_CURRENT_SOURCE_DIR}/v01_CPU_GPU.sv
   ${CMAKE_CURRENT_SOURCE_DIR}/../../Processor/picorv32.v
   ${CMAKE_CURRENT_SOURCE_DIR}/../../Graphicsystem/BufferController.v
   ${CMAKE_CURRENT_SOURCE_DIR}/../../Graphicsystem/Framebuffer.v

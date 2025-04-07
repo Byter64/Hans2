@@ -61,7 +61,7 @@ module CPU_with_GPU
 	localparam MEM_SIZE = 24576;
 	
 	logic [31:0] memory [0:MEM_SIZE/4-1];
-	initial $readmemh("Software/firmware32.hex", memory);
+	initial $readmemh("C:/Users/Yanni/Desktop/Test/main.hex", memory);
 
 
 	picorv32 #(

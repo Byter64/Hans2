@@ -8,10 +8,6 @@ module testbench;
 
 	always #5 clk = ~clk;
 
-	initial begin
-		repeat (100) @(posedge hdmi_pixClk);
-		resetn <= 1;
-	end
 
 	logic mem_valid;
 	logic mem_instr;
@@ -43,10 +39,15 @@ module testbench;
     logic         hdmi_pixClk;
     logic         hdmi_vSync;
 
+	initial begin
+		repeat (100) @(posedge hdmi_pixClk);
+		resetn <= 1;
+	end
+	
 	localparam MEM_SIZE = 24576;
 	
 	logic [31:0] memory [0:MEM_SIZE/4-1];
-	initial $readmemh("Software/firmware32.hex", memory);
+	initial $readmemh("C:/Users/Yanni/Desktop/Test/main.hex", memory);
 
 
 	picorv32 #(
@@ -69,8 +70,7 @@ module testbench;
 	GraphicSystem graphicSystem 
 	(
 		.clk25Mhz(clk),
-		.gpuClk(hdmi_pixClk),
-		.bufferControllerClk(hdmi_pixClk),
+		.cpuClk(hdmi_pixClk),
 		.reset(~resetn),
 		.gpdiDp(gpdi_dp),
 		.hdmi_pixClk(hdmi_pixClk),
@@ -155,10 +155,10 @@ module testbench;
 	initial begin
 		$dumpfile("testbench.vcd");
 		$dumpvars(0, testbench);
-		for (idx = 1582; idx < 1710; idx = idx + 1) begin
+		for (idx = 0; idx < 512; idx = idx + 1) begin
 			$dumpvars(0,memory[idx]);
 		end
-		repeat(1000000) @(posedge clk);
+		repeat(50000) @(posedge clk);
 		$finish;
 	end
 
