@@ -47,7 +47,12 @@ module testbench;
 	localparam MEM_SIZE = 24576;
 	
 	logic [31:0] memory [0:MEM_SIZE/4-1];
-	initial $readmemh("C:/Users/Yanni/Desktop/Test/main.hex", memory);
+	integer inter;
+	initial begin 
+		for (inter = 0; inter < MEM_SIZE/4-1; inter++)
+			memory[inter] = 0;
+		$readmemh("C:/Users/Yanni/Desktop/Test/main.hex", memory);
+	end
 
 
 	picorv32 #(
