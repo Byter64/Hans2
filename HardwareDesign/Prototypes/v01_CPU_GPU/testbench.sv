@@ -1,6 +1,6 @@
 `timescale 1 ns / 1 ps
 // iverilog -g2012 testbench.sv ../../Processor/picorv32.v ../../Graphicsystem/BufferController.v ../../Graphicsystem/Framebuffer.v ../../Graphicsystem/GPU.v ../../Graphicsystem/GraphicSystem.v ../../Graphicsystem/HDMI_Out.v ../../Graphicsystem/ULX3S_hdmi/TMDS_encoder.v 
-
+`define DEBUGREGS
 module testbench;
 	logic clk = 1;
 	logic resetn = 0;
