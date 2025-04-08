@@ -15,10 +15,48 @@ volatile int* GPU_SWAP_BUFFERS		= (int*)(GPU_BLOCK + 256);
 volatile int* GPU_IS_V_SYNCED		= (int*)(GPU_BLOCK + 260);
 
 */
+#include <stdint.h>
+extern "C" 
+{
+	extern uint32_t _etext;
+	extern uint32_t _sbss;
+	extern uint32_t _ebss;
+	extern uint32_t _sdata;
+	extern uint32_t _edata;
+}
+
 volatile char* GPU_BLOCK 			= (char*)32768;
 volatile int* GPU_IS_BUSY			= (int*)(GPU_BLOCK + 44);
 volatile int* GPU_COMMAND_CLEAR		= (int*)(GPU_BLOCK + 40);
 volatile int* GPU_CLEAR_COLOR		= (int*)(GPU_BLOCK + 36);
+
+int main();
+
+extern "C"
+{
+void _start(void)
+	{
+	    /* Copy init values from text to data */
+	    uint32_t *init_values_ptr = &_etext;
+	    uint32_t *data_ptr = &_sdata;
+	
+	    if (init_values_ptr != data_ptr) 
+		{
+	        for (; data_ptr < &_edata;) 
+	            *data_ptr++ = *init_values_ptr++;
+	    }
+	
+	    /* Clear the zero segment */
+	    for (uint32_t *bss_ptr = &_sbss; bss_ptr < &_ebss;)
+	        *bss_ptr++ = 0;
+	
+	    /* Branch to main function */
+	    main();
+	
+	    /* Infinite loop */
+	    while (1);
+	}
+}
 
 int main()
 {
@@ -26,7 +64,10 @@ int main()
 	*GPU_CLEAR_COLOR = 0b0000011111111111;
 	*GPU_COMMAND_CLEAR = true;
 	volatile int* isGPUBusy = (int*)(GPU_IS_BUSY);
-	while (*isGPUBusy);
-	*GPU_COMMAND_CLEAR = true;
+	while (true)
+	{
+		while (*isGPUBusy);
+		*GPU_COMMAND_CLEAR = true;
+	}
     return 0;
 }

@@ -1,5 +1,5 @@
 # Define the name for the targets (must be unambiguous)
-set(name "v01_CPU_GPU")
+set(name "prot1")
 
 # Defining variables for simulation
 set(testbench "testbench")
