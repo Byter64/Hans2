@@ -51,7 +51,7 @@ module testbench;
 	initial begin 
 		for (inter = 0; inter < MEM_SIZE/4-1; inter++)
 			memory[inter] = 0;
-		$readmemh("C:/Users/Yanni/Desktop/Hans2/HardwareDesign/Prototypes/v01_CPU_GPU/Software/firmware32.hex", memory);
+		$readmemh("C:/Users/Yannik Stamm/Desktop/Hans2/HardwareDesign/Prototypes/v01_CPU_GPU/Software/firmware32.hex", memory);
 	end
 
 
@@ -163,7 +163,7 @@ module testbench;
 		for (idx = 0; idx < 512; idx = idx + 1) begin
 			$dumpvars(0,memory[idx]);
 		end
-		repeat(50000) @(posedge clk);
+		repeat(10000) @(posedge clk);
 		$finish;
 	end
 

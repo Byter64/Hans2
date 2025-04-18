@@ -5,8 +5,8 @@ set(name "prot1")
 set(testbench "testbench")
 
 list(APPEND sources_sim
-  "C:/Users/Yanni/Desktop/ecp5u/EHXPLLL.v"
-  "C:/Users/Yanni/Desktop/ecp5u/ODDRX1F.v"
+  "C:/Users/Yannik Stamm/Desktop/ecp5u/EHXPLLL.v"
+  "C:/Users/Yannik Stamm/Desktop/ecp5u/ODDRX1F.v"
   ${CMAKE_CURRENT_SOURCE_DIR}/testbench.sv
   ${CMAKE_CURRENT_SOURCE_DIR}/../../Processor/picorv32.v
   ${CMAKE_CURRENT_SOURCE_DIR}/../../Graphicsystem/BufferController.v

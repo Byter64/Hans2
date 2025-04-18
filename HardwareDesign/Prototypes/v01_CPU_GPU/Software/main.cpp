@@ -1,73 +1,129 @@
-﻿// MinigameCollection.cpp: Definiert den Einstiegspunkt für die Anwendung.
-//
-/*
-volatile int* GPU_IMAGE_START		= (int*)(GPU_BLOCK + 0);
-volatile int* GPU_IMAGE_X			= (int*)(GPU_BLOCK + 4);
-volatile int* GPU_IMAGE_Y			= (int*)(GPU_BLOCK + 8);
-volatile int* GPU_IMAGE_WIDTH		= (int*)(GPU_BLOCK + 12);
-volatile int* GPU_EXCERPT_WIDTH		= (int*)(GPU_BLOCK + 16);
-volatile int* GPU_EXCERPT_HEIGHT	= (int*)(GPU_BLOCK + 20);
-volatile int* GPU_SCREEN_X			= (int*)(GPU_BLOCK + 24);
-volatile int* GPU_SCREEN_Y			= (int*)(GPU_BLOCK + 28);
-volatile int* GPU_COMMAND_DRAW		= (int*)(GPU_BLOCK + 32);
+﻿#include "Assets/include/sprites/SproutLands/Tilesets/ground_tiles/water_frames/Water.h"
+#include "Assets/include/sprites/SproutLands/Objects/Piknik basket.h"
+#include "Hapi.h"
+#include "Assets/include/sprites/SproutLands/Objects/Boats.h"
 
-volatile int* GPU_SWAP_BUFFERS		= (int*)(GPU_BLOCK + 256);
-volatile int* GPU_IS_V_SYNCED		= (int*)(GPU_BLOCK + 260);
+#ifndef _DEBUG
+#pragma comment(linker, "/SUBSYSTEM:windows /ENTRY:mainCRTStartup")
+#endif
 
-*/
-#include <stdint.h>
-extern "C" 
-{
-	extern uint32_t _etext;
-	extern uint32_t _sbss;
-	extern uint32_t _ebss;
-	extern uint32_t _sdata;
-	extern uint32_t _edata;
-}
 
-volatile char* GPU_BLOCK 			= (char*)32768;
-volatile int* GPU_IS_BUSY			= (int*)(GPU_BLOCK + 44);
-volatile int* GPU_COMMAND_CLEAR		= (int*)(GPU_BLOCK + 40);
-volatile int* GPU_CLEAR_COLOR		= (int*)(GPU_BLOCK + 36);
+volatile char* MEMORY_ADDRESS 		= (char*)24576;
 
-int main();
+volatile int* GET_BUTTON_F1			= (int*)(MEMORY_ADDRESS + 512);
+volatile int* GET_BUTTON_F2			= (int*)(MEMORY_ADDRESS + 512 + 4);
+volatile int* GET_BUTTON_UP			= (int*)(MEMORY_ADDRESS + 512 + 8);
+volatile int* GET_BUTTON_DOWN		= (int*)(MEMORY_ADDRESS + 512 + 12);
+volatile int* GET_BUTTON_LEFT		= (int*)(MEMORY_ADDRESS + 512 + 16);
+volatile int* GET_BUTTON_RIGHT		= (int*)(MEMORY_ADDRESS + 512 + 20);
 
-extern "C"
-{
-void _start(void)
-	{
-	    /* Copy init values from text to data */
-	    uint32_t *init_values_ptr = &_etext;
-	    uint32_t *data_ptr = &_sdata;
-	
-	    if (init_values_ptr != data_ptr) 
-		{
-	        for (; data_ptr < &_edata;) 
-	            *data_ptr++ = *init_values_ptr++;
-	    }
-	
-	    /* Clear the zero segment */
-	    for (uint32_t *bss_ptr = &_sbss; bss_ptr < &_ebss;)
-	        *bss_ptr++ = 0;
-	
-	    /* Branch to main function */
-	    main();
-	
-	    /* Infinite loop */
-	    while (1);
-	}
-}
+volatile int* GET_NES_B				= (int*)(MEMORY_ADDRESS + 1024);
+volatile int* GET_NES_Y				= (int*)(MEMORY_ADDRESS + 1024 + 4);	
+volatile int* GET_NES_SELECT		= (int*)(MEMORY_ADDRESS + 1024 + 8);
+volatile int* GET_NES_START			= (int*)(MEMORY_ADDRESS + 1024 + 12);
+volatile int* GET_NES_UP			= (int*)(MEMORY_ADDRESS + 1024 + 16);
+volatile int* GET_NES_DOWN			= (int*)(MEMORY_ADDRESS + 1024 + 20);
+volatile int* GET_NES_LEFT			= (int*)(MEMORY_ADDRESS + 1024 + 24);
+volatile int* GET_NES_RIGHT			= (int*)(MEMORY_ADDRESS + 1024 + 28);
+volatile int* GET_NES_A				= (int*)(MEMORY_ADDRESS + 1024 + 32);
+volatile int* GET_NES_X				= (int*)(MEMORY_ADDRESS + 1024 + 36);
+volatile int* GET_NES_L				= (int*)(MEMORY_ADDRESS + 1024 + 40);
+volatile int* GET_NES_R				= (int*)(MEMORY_ADDRESS + 1024 + 44);
 
-int main()
-{
-	
-	*GPU_CLEAR_COLOR = 0b0000011111111111;
-	*GPU_COMMAND_CLEAR = true;
-	volatile int* isGPUBusy = (int*)(GPU_IS_BUSY);
-	while (true)
-	{
-		while (*isGPUBusy);
-		*GPU_COMMAND_CLEAR = true;
-	}
+
+struct Basket {
+    int x, y, vx;
+    bool active;
+};
+
+Basket baskets[2];
+
+void updateAnimation(int& ticks, int& frame_x, int frame_width, int max_frame);
+void moveBoat(int& x, int& y, int speed, bool up, bool down, bool left, bool right);
+void fireBasket(int x, int y, int direction);
+void updateBaskets();
+
+int main() {
+    int water_ticks = 20, water_frame_x = 0;
+    int left_boat_x = 10, left_boat_y = 100;
+    int right_boat_x = 350, right_boat_y = 100;
+    int boat_speed = 2;
+    bool paused = false;
+
+    Hapi::Init();
+    Hapi::SetTargetFPS(60);
+    Hapi::Image water = Hapi::LoadImage((char*)SproutLands::Water, 16, 16);
+    Hapi::Image basket_img = Hapi::LoadImage((char*)SproutLands::Piknikbasket, 16, 16);
+    Hapi::Image boat = Hapi::LoadImage((char*)SproutLands::Boats, 48, 32);
+
+    while (true) {
+
+        Hapi::StartDrawing();
+        Hapi::Clear(Hapi::Color(255, 127, 127, 1));
+
+        for (int y = 0; y < 240; y += 16) {
+            for (int x = 0; x < 400; x += 16) {
+                Hapi::Draw(water, water_frame_x, 0, x, y, 16, 16, 48);
+            }
+        }
+        updateAnimation(water_ticks, water_frame_x, 16, 48);
+
+        Hapi::Draw(boat, 0, 0, left_boat_x, left_boat_y, 48, 32, 144);
+        Hapi::Draw(boat, 0, 0, right_boat_x, right_boat_y, 48, 32, 144);
+
+        for (auto& b : baskets) {
+            if (b.active) {
+                Hapi::Draw(basket_img, 0, 0, b.x, b.y, 16, 16, 16);
+            }
+        }
+        Hapi::EndDrawing();
+        if (!(*GET_NES_START || *GET_NES_SELECT)) {
+            updateBaskets();
+            moveBoat(left_boat_x, left_boat_y, boat_speed, *GET_NES_X, *GET_NES_B, *GET_NES_Y, *GET_NES_A);
+            moveBoat(right_boat_x, right_boat_y, boat_speed, *GET_NES_UP, *GET_NES_DOWN, *GET_NES_LEFT, *GET_NES_RIGHT);
+
+            if (*GET_BUTTON_F1) fireBasket(left_boat_x + 48, left_boat_y + 16, 1);
+            if (*GET_BUTTON_F2) fireBasket(left_boat_x, left_boat_y + 16, -1);
+            if (*GET_NES_R) fireBasket(right_boat_x + 48, right_boat_y + 16, 1);
+            if (*GET_NES_L) fireBasket(right_boat_x, right_boat_y + 16, -1);
+        }
+    }
+    Hapi::Terminate();
     return 0;
+}
+
+void updateAnimation(int& ticks, int& frame_x, int frame_width, int max_frame) {
+    if (--ticks == 0) {
+        frame_x = (frame_x + frame_width) % max_frame;
+        ticks = 20;
+    }
+}
+
+void moveBoat(int& x, int& y, int speed, bool up, bool down, bool left, bool right) {
+    if (up) y -= speed;
+    if (down) y += speed;
+    if (left) x -= speed;
+    if (right) x += speed;
+    if (y < 0) y = 0;
+    if (y > 200) y = 200;
+    if (x < 0) x = 0;
+    if (x > 352) x = 352;
+}
+
+void fireBasket(int x, int y, int direction) {
+    for (auto& b : baskets) {
+        if (!b.active) {
+            b = { x, y, direction, true };
+            break;
+        }
+    }
+}
+
+void updateBaskets() {
+    for (auto& b : baskets) {
+        if (b.active) {
+            b.x += b.vx;
+            if (b.x < 0 || b.x > 400) b.active = false;
+        }
+    }
 }
