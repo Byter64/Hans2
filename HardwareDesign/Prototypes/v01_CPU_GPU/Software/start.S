@@ -1,4 +1,4 @@
-.section .text
+.section .text.startSection
 .global _Z4mainv
 .global _start
 
@@ -37,8 +37,9 @@ addi x30, zero, 0
 addi x31, zero, 0
 
 /* set stack pointer */
-lui sp, %hi(24576)
-addi sp, sp, %lo(24576)
+.equ STACK_SIZE, 24576
+lui sp, %hi(STACK_SIZE)
+addi sp, sp, %lo(STACK_SIZE)
 
 /* push zeros on the stack for argc and argv */
 /* (stack is aligned to 16 bytes in riscv calling convention) */
