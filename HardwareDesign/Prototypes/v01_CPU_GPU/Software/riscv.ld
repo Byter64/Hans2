@@ -10,12 +10,10 @@ OUTPUT_ARCH(riscv)
 ENTRY(_start)
 SECTIONS
 {
-  
+  . = 0x00000000;
   .text           :
   {
-    . = 0x00000000;
-    . = 0x00001000;
-    start.s(.text.startSection)
+    *(.text.startSection)
     *(.text)
     *(.text.unlikely .text.*_unlikely .text.unlikely.*)
     *(.text.exit .text.exit.*)

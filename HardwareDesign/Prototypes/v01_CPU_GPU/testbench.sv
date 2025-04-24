@@ -51,7 +51,7 @@ module testbench;
 	initial begin 
 		for (inter = 0; inter < MEM_SIZE/4-1; inter++)
 			memory[inter] = 0;
-		$readmemh("C:/Users/Yannik/Documents/Hans2/HardwareDesign/Prototypes/v01_CPU_GPU/Software/firmware32.hex", memory);
+		$readmemh("C:/Users/Yanni/Documents/Hans2/HardwareDesign/Prototypes/v01_CPU_GPU/Software/firmware32.hex", memory);
 	end
 
 
