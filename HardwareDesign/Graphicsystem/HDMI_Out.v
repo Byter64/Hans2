@@ -148,7 +148,7 @@ wire half_clk_TMDS; // TMDS clock at half freq (5*pixclk)
 localparam GFX_line_width = GFX_width  + GFX_h_front_porch + GFX_h_sync_width + GFX_h_back_porch;
 localparam GFX_lines      = GFX_height + GFX_v_front_porch + GFX_v_sync_width + GFX_v_back_porch;
 
-reg [10:0] GFX_X, GFX_Y;
+reg [10:0] GFX_X = 0, GFX_Y = 0;
 wire[10:0] GFX_X_NEXT = (GFX_X==GFX_line_width-1) ? 0 : GFX_X+1;
 wire[10:0] GFX_Y_NEXT = (GFX_Y==GFX_lines-1) ? 0 : GFX_Y+1;
 reg DrawArea;
