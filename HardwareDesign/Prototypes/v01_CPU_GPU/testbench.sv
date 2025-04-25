@@ -6,7 +6,7 @@ module testbench;
 	logic resetn = 0;
 	logic trap;
 
-	always #5 clk = ~clk;
+	always #20 clk = ~clk;
 
 
 	logic mem_valid;
