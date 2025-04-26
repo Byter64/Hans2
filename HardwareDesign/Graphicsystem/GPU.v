@@ -90,49 +90,17 @@ end
 
 //Don't give these initial values because they will become latches and yosys dies and what not
 //Does apply for any reg that is set in a combinational always
-reg[31:0] draw_address;
-reg[15:0] draw_address_x;
-reg[15:0] draw_address_y;
-reg[15:0] draw_image_width;
-reg[$clog2(FB_WIDTH)+1:0] draw_width;
-reg[$clog2(FB_HEIGHT)+1:0] draw_height;
-reg[$clog2(FB_WIDTH)+1:0] draw_x;
-reg[$clog2(FB_HEIGHT)+1:0] draw_y;
+reg[31:0] ctrl_address;
+reg[15:0] ctrl_address_x;
+reg[15:0] ctrl_address_y;
+reg[15:0] ctrl_image_width;
+reg[$clog2(FB_WIDTH)+1:0] ctrl_width;
+reg[$clog2(FB_HEIGHT)+1:0] ctrl_height;
+reg[$clog2(FB_WIDTH)+1:0] ctrl_x;
+reg[$clog2(FB_HEIGHT)+1:0] ctrl_y;
 
-always @(posedge clk) begin
-    if(next_state[I_IDLE]) begin
-        draw_address <= ctrl_address;
-        draw_address_x <= ctrl_address_x;
-        draw_address_y <= ctrl_address_y;
-        draw_image_width <= ctrl_image_width;
-        draw_width <= ctrl_width;
-        draw_height <= ctrl_height;
-        draw_x <= ctrl_x;
-        draw_y <= ctrl_y;
-    end else if (next_state[I_DRAW]) begin
-        //Don't read from ctrl anymore so that the controller can already
-        //prepare data for the next call
-    end else if (next_state[I_CLEAR]) begin
-        draw_width <= FB_WIDTH;
-        draw_height <= FB_HEIGHT;
-        draw_x <= 0;
-        draw_y <= 0;
-    end
-end
-
-
-reg[15:0] clear_color;
-
-always @(posedge clk) begin
-    if(!state[I_CLEAR])
-        clear_color <= ctrl_clear_color;
-    else
-        clear_color <= clear_color;
-end
-
-
-wire[$clog2(FB_WIDTH)+1:0] max_x = draw_width;
-wire[$clog2(FB_HEIGHT)+1:0] max_y = draw_height;
+wire[$clog2(FB_WIDTH)+1:0] max_x = state[I_CLEAR] ? FB_WIDTH : ctrl_width;
+wire[$clog2(FB_HEIGHT)+1:0] max_y = state[I_CLEAR] ? FB_HEIGHT : ctrl_height;
 reg[$clog2(FB_WIDTH)+1:0] pos_x = 0;
 reg[$clog2(FB_HEIGHT)+1:0] pos_y = 0;
 wire[$clog2(FB_WIDTH)+1:0] pos_x_1 = pos_x + 1;
@@ -162,14 +130,14 @@ always @(posedge clk) begin
 end
 
 assign mem_read = next_state[I_DRAW];
-assign mem_addr = draw_address + draw_address_x + next_pos_x + ((draw_address_y + next_pos_y) * draw_image_width);
+assign mem_addr = ctrl_address + ctrl_address_x + next_pos_x + ((ctrl_address_y + next_pos_y) * ctrl_image_width);
 reg[15:0] draw_color;
 
 always @(*) begin
     if(!state[I_CLEAR])
         draw_color <= mem_data;
     else
-        draw_color <= clear_color;
+        draw_color <= ctrl_clear_color;
 end
 
 //Because bounds start at 0 and the comparison is unsigned, we only need one comparison
@@ -177,8 +145,8 @@ wire x_in_bounds = fb_x < FB_WIDTH;
 wire y_in_bounds = fb_y < FB_HEIGHT;
 //draw_color[0] is the transparency bit
 assign fb_write = next_drawing && draw_color[0] && x_in_bounds && y_in_bounds;
-assign fb_x = draw_x + pos_x;
-assign fb_y = draw_y + pos_y;
+assign fb_x = state[I_CLEAR] ? (0 + pos_x) : (ctrl_x + pos_x);
+assign fb_y = state[I_CLEAR] ? (0 + pos_y) : (ctrl_y + pos_y);
 assign fb_color = draw_color;
 
 endmodule
