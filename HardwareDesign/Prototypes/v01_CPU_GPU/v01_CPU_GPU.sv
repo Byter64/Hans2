@@ -1,4 +1,4 @@
-// iverilog -g2012 testbench.sv ../Processor/picorv32.v ../Graphicsystem/BufferController.v ../Graphicsystem/Framebuffer.v ../Graphicsystem/GPU.v ../Graphicsystem/GraphicSystem.v ../Graphicsystem/HDMI_Out.v ../Graphicsystem/ULX3S_hdmi/TMDS_encoder.v ../Controller/controller.sv
+// iverilog -g2012 testbench.sv ../Processor/picorv32.v ../Graphicsystem/BufferController.v ../Graphicsystem/Framebuffer.v ../Graphicsystem/GPU.v ../Graphicsystem/GraphicSystem.v ../Graphicsystem/HDMI_Out.v ../Graphicsystem/ULX3S_hdmi/TMDS_encoder.v
 
 module CPU_with_GPU
 (
@@ -10,22 +10,17 @@ module CPU_with_GPU
 	output logic cont_clk,
 	output logic cont_activate
 );
-logic clk;
-assign clk = clk_25mhz;
-logic controller_clk = 0;
+
 logic resetn = 0;
 logic trap;
-logic [7:0] reset_counter = 100;
-always_ff @(posedge hdmi_pixClk ) begin
-    if(reset_counter>0) begin
-        reset_counter <= reset_counter - 1;
-    end
-    else begin
-        resetn <= 1;
-    end
+logic [7:0] reset_counter = 0;
+always_ff @(posedge hdmi_pixClk) begin
+    if(reset_counter != 255)
+        reset_counter <= reset_counter + 1;
+
+	resetn <= reset_counter == 255;
 end
-logic [6:0] 	btn_reg;
-logic[11:0]   	controller_btns;
+
 localparam MEM_SIZE = 24576;
 logic [31:0] memory [0:MEM_SIZE/4-1];
 initial $readmemh("C:/Users/Yanni/Documents/Hans2/HardwareDesign/Prototypes/v01_CPU_GPU/Software/firmware32.hex", memory);
@@ -69,8 +64,8 @@ picorv32_axi #(
 ) processor 
 (
 	.clk(),
-	.resetn(),
-	.trap(),
+	.resetn(resetn),
+	.trap(trap),
 
 	//AXI-L MASTER
 	.mem_axi_awvalid(CPU_mem_axi_awvalid),
@@ -188,14 +183,98 @@ GraphicSystem graphicSystem
 	.m_axil_rvalid(GS_m_axil_rvalid),
 	.m_axil_rread(GS_m_axil_rready)
 );
-	
-Controller controller
+
+logic[x:0] AXI_s_axil_awaddr;
+logic[x:0] AXI_s_axil_awprot;
+logic[x:0] AXI_s_axil_awvalid;
+logic[x:0] AXI_s_axil_awready;
+logic[x:0] AXI_s_axil_wdata;
+logic[x:0] AXI_s_axil_wstrb;
+logic[x:0] AXI_s_axil_wvalid;
+logic[x:0] AXI_s_axil_wready;
+logic[x:0] AXI_s_axil_bresp;
+logic[x:0] AXI_s_axil_bvalid;
+logic[x:0] AXI_s_axil_bready;
+logic[x:0] AXI_s_axil_araddr;
+logic[x:0] AXI_s_axil_arprot;
+logic[x:0] AXI_s_axil_arvalid;
+logic[x:0] AXI_s_axil_arready;
+logic[x:0] AXI_s_axil_rdata;
+logic[x:0] AXI_s_axil_rresp;
+logic[x:0] AXI_s_axil_rvalid;
+logic[x:0] AXI_s_axil_rready;
+logic[x:0] AXI_m_axil_awaddr;
+logic[x:0] AXI_m_axil_awprot;
+logic[x:0] AXI_m_axil_awvalid;
+logic[x:0] AXI_m_axil_awready;
+logic[x:0] AXI_m_axil_wdata;
+logic[x:0] AXI_m_axil_wstrb;
+logic[x:0] AXI_m_axil_wvalid;
+logic[x:0] AXI_m_axil_wready;
+logic[x:0] AXI_m_axil_bresp;
+logic[x:0] AXI_m_axil_bvalid;
+logic[x:0] AXI_m_axil_bready;
+logic[x:0] AXI_m_axil_araddr;
+logic[x:0] AXI_m_axil_arprot;
+logic[x:0] AXI_m_axil_arvalid;
+logic[x:0] AXI_m_axil_arready;
+logic[x:0] AXI_m_axil_rdata;
+logic[x:0] AXI_m_axil_rresp;
+logic[x:0] AXI_m_axil_rvalid;
+logic[x:0] AXI_m_axil_rread;
+
+axil_interconnect #(
+	.S_COUNT(2),
+	.M_COUNT(2),
+	.DATA_WIDTH(DATA_WIDTH),
+	.ADDR_WIDTH(ADDR_WIDTH),
+	.STRB_WIDTH(STRB_WIDTH),
+	.M_BASE_ADDR(??),
+	.M_ADDR_WIDTH(??)
+)
+AxiInterconnect 
 (
-	.clk(controller_clk),
-	.controller_btns(controller_btns),
-	.cont_data(cont_data),
-	.cont_clk(cont_clk),
-	.cont_activate(cont_activate)
+	.clk(),
+	.rst(),
+
+	.s_axil_awaddr(AXI_s_axil_awaddr),
+	.s_axil_awprot(AXI_s_axil_awprot),
+	.s_axil_awvalid(AXI_s_axil_awvalid),
+	.s_axil_awready(AXI_s_axil_awready),
+	.s_axil_wdata(AXI_s_axil_wdata),
+	.s_axil_wstrb(AXI_s_axil_wstrb),
+	.s_axil_wvalid(AXI_s_axil_wvalid),
+	.s_axil_wready(AXI_s_axil_wready),
+	.s_axil_bresp(AXI_s_axil_bresp),
+	.s_axil_bvalid(AXI_s_axil_bvalid),
+	.s_axil_bready(AXI_s_axil_bready),
+	.s_axil_araddr(AXI_s_axil_araddr),
+	.s_axil_arprot(AXI_s_axil_arprot),
+	.s_axil_arvalid(AXI_s_axil_arvalid),
+	.s_axil_arready(AXI_s_axil_arready),
+	.s_axil_rdata(AXI_s_axil_rdata),
+	.s_axil_rresp(AXI_s_axil_rresp),
+	.s_axil_rvalid(AXI_s_axil_rvalid),
+	.s_axil_rready(AXI_s_axil_rready),
+	.m_axil_awaddr(AXI_m_axil_awaddr),
+	.m_axil_awprot(AXI_m_axil_awprot),
+	.m_axil_awvalid(AXI_m_axil_awvalid),
+	.m_axil_awready(AXI_m_axil_awready),
+	.m_axil_wdata(AXI_m_axil_wdata),
+	.m_axil_wstrb(AXI_m_axil_wstrb),
+	.m_axil_wvalid(AXI_m_axil_wvalid),
+	.m_axil_wready(AXI_m_axil_wready),
+	.m_axil_bresp(AXI_m_axil_bresp),
+	.m_axil_bvalid(AXI_m_axil_bvalid),
+	.m_axil_bready(AXI_m_axil_bready),
+	.m_axil_araddr(AXI_m_axil_araddr),
+	.m_axil_arprot(AXI_m_axil_arprot),
+	.m_axil_arvalid(AXI_m_axil_arvalid),
+	.m_axil_arready(AXI_m_axil_arready),
+	.m_axil_rdata(AXI_m_axil_rdata),
+	.m_axil_rresp(AXI_m_axil_rresp),
+	.m_axil_rvalid(AXI_m_axil_rvalid),
+	.m_axil_rready(AXI_m_axil_rread)
 );
 
 logic [31:0] tmp_gpu_MemData;
@@ -241,59 +320,8 @@ always_ff @(posedge hdmi_pixClk) begin
             (mem_addr == MEM_SIZE+32'h010C): if (&mem_wstrb) isVSynced 			<= mem_wdata;
 			(mem_addr == MEM_SIZE+32'h002C): if (~|mem_wstrb) mem_rdata 		<= {31'b0,gpu_CtrlBusy};
 			(mem_addr == MEM_SIZE+32'h0108): if (~|mem_wstrb) mem_rdata 		<= {31'b0,hdmi_vSync};
-			//BTNS
-			(mem_addr == MEM_SIZE+32'h0200): if (~|mem_wstrb) mem_rdata 		<= {31'b0,btn_reg[1]};
-			(mem_addr == MEM_SIZE+32'h0204): if (~|mem_wstrb) mem_rdata 		<= {31'b0,btn_reg[2]};
-			(mem_addr == MEM_SIZE+32'h0208): if (~|mem_wstrb) mem_rdata 		<= {31'b0,btn_reg[3]};
-			(mem_addr == MEM_SIZE+32'h020C): if (~|mem_wstrb) mem_rdata 		<= {31'b0,btn_reg[4]};
-			(mem_addr == MEM_SIZE+32'h0210): if (~|mem_wstrb) mem_rdata 		<= {31'b0,btn_reg[5]};
-			(mem_addr == MEM_SIZE+32'h0214): if (~|mem_wstrb) mem_rdata 		<= {31'b0,btn_reg[6]};
-			//Controller
-			(mem_addr == MEM_SIZE+32'h0400): if (~|mem_wstrb) mem_rdata 		<= {31'b0,controller_btns[0]};
-			(mem_addr == MEM_SIZE+32'h0404): if (~|mem_wstrb) mem_rdata 		<= {31'b0,controller_btns[1]};
-			(mem_addr == MEM_SIZE+32'h0408): if (~|mem_wstrb) mem_rdata 		<= {31'b0,controller_btns[2]};
-			(mem_addr == MEM_SIZE+32'h040C): if (~|mem_wstrb) mem_rdata 		<= {31'b0,controller_btns[3]};
-			(mem_addr == MEM_SIZE+32'h0410): if (~|mem_wstrb) mem_rdata 		<= {31'b0,controller_btns[4]};
-			(mem_addr == MEM_SIZE+32'h0414): if (~|mem_wstrb) mem_rdata 		<= {31'b0,controller_btns[5]};
-			(mem_addr == MEM_SIZE+32'h0418): if (~|mem_wstrb) mem_rdata 		<= {31'b0,controller_btns[6]};
-			(mem_addr == MEM_SIZE+32'h041C): if (~|mem_wstrb) mem_rdata 		<= {31'b0,controller_btns[7]};
-			(mem_addr == MEM_SIZE+32'h0420): if (~|mem_wstrb) mem_rdata 		<= {31'b0,controller_btns[8]};
-			(mem_addr == MEM_SIZE+32'h0424): if (~|mem_wstrb) mem_rdata 		<= {31'b0,controller_btns[9]};
-			(mem_addr == MEM_SIZE+32'h0428): if (~|mem_wstrb) mem_rdata 		<= {31'b0,controller_btns[10]};
-			(mem_addr == MEM_SIZE+32'h042C): if (~|mem_wstrb) mem_rdata 		<= {31'b0,controller_btns[11]};
 		endcase
 	end
 end
-
-logic[7:0] controller_clk_counter = 0;
-logic[7:0] controller_clk_counter_next;
-
-assign controller_clk_counter_next = controller_clk_counter + 1;
-
-always_ff @(posedge clk_25mhz) begin
-	if(controller_clk_counter_next == 10) begin
-		controller_clk_counter <= 0;
-		controller_clk <= ~controller_clk;
-	end else begin
-		controller_clk_counter <= controller_clk_counter_next;
-	end
-end
-
-logic [11:0] btn_timer [0:6];  
-
-always_ff @(posedge hdmi_pixClk) begin
-	for (int i = 0; i < 7; i++) begin
-		if (btn_timer[i] == 12'h0000)  begin
-			btn_reg[i] <= btn[i]; 
-			if(btn[i]) begin
-				btn_timer[i] <= 12'h0001;
-			end 
-		end
-		else begin
-				btn_timer[i] <= btn_timer[i] + 1;
-		end
-	end  
-end
-
 
 endmodule
