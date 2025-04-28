@@ -7,14 +7,6 @@ module GraphicSystem
     input reset,
     output[3:0] gpdiDp,
     output hdmi_pixClk,
-    output hdmi_vSync,
-
-    input[15:0]  gpu_MemData,
-    input        gpu_MemValid,
-    output[31:0] gpu_MemAddr,
-    output       gpu_MemRead,
-
-    output       gpu_CtrlBusy,
 
     input logic                              aclk,
     input logic                              aresetn,
@@ -40,17 +32,17 @@ module GraphicSystem
     input logic                              s_axil_rready,
 
     //AXI-L MASTER
-    output logic[ADDR_WIDTH-1:0]             m_axil_awaddr,
-    output logic[2:0]                        m_axil_awprot,
-    output logic                             m_axil_awvalid,
+    output logic[ADDR_WIDTH-1:0]             m_axil_awaddr = 0,
+    output logic[2:0]                        m_axil_awprot = 0,
+    output logic                             m_axil_awvalid = 0,
     input logic                              m_axil_awready,
-    output logic[DATA_WIDTH-1:0]             m_axil_wdata,
-    output logic[STRB_WIDTH-1:0]             m_axil_wstrb,
-    output logic                             m_axil_wvalid,
+    output logic[DATA_WIDTH-1:0]             m_axil_wdata = 0,
+    output logic[STRB_WIDTH-1:0]             m_axil_wstrb = 0,
+    output logic                             m_axil_wvalid = 0,
     input logic                              m_axil_wready,
     input logic [1:0]                        m_axil_bresp,
     input logic                              m_axil_bvalid,
-    output logic                             m_axil_bready,
+    output logic                             m_axil_bready = 0,
     output logic[ADDR_WIDTH-1:0]             m_axil_araddr,
     output logic[2:0]                        m_axil_arprot,
     output logic                             m_axil_arvalid,
@@ -61,9 +53,9 @@ module GraphicSystem
     output logic                             m_axil_rready
 );
 
-parameter DATA_WIDTH = 32;
-parameter ADDR_WIDTH = 32;
-parameter STRB_WIDTH = 4;
+localparam DATA_WIDTH = 32;
+localparam ADDR_WIDTH = 32;
+localparam STRB_WIDTH = 4;
 
 DataIndex activeWriteDataIndex;
 DataIndex activeReadDataIndex;
@@ -85,6 +77,12 @@ logic        vSync;
 logic        hSync;
 logic        swapBuffers;
 logic        vSyncBufferSwap;
+
+logic[15:0]  gpu_MemData;
+logic        gpu_MemValid;
+logic[31:0]  gpu_MemAddr;
+logic        gpu_MemRead;
+
 //START - AXI SLAVE IMPLEMENTATION
 enum logic[31:0] {
     ADDRESS,
@@ -143,9 +141,9 @@ end
 assign s_axil_bresp <= 0;
 always_ff @(posedge aclk) begin
 	if (!aresetn)
-		m_axil_bvalid <= 0;
-	else if (!m_axil_bvalid || m_axil_bready) begin
-		m_axil_bvalid <= 1;
+		s_axil_bvalid <= 0;
+	else if (!s_axil_bvalid || s_axil_bready) begin
+		s_axil_bvalid <= 1;
     end
 end
 
@@ -159,7 +157,7 @@ end
 
 //Read
 logic[DATA_WIDTH-1:0] next_rdata;
-assign m_axil_rresp <= 1;
+assign s_axil_rresp <= 1;
 
 always_comb begin
     case (activeReadDataIndex)
@@ -183,22 +181,65 @@ end
 
 always_ff @(posedge aclk) begin
 	if (!aresetn)
-		m_axil_rvalid <= 0;
-	else if (!m_axil_rvalid || m_axil_rready) begin
-		m_axil_rvalid <= 1;
+		s_axil_rvalid <= 0;
+	else if (!s_axil_rvalid || s_axil_rready) begin
+		s_axil_rvalid <= 1;
     end
 end
 
 always_ff @(posedge aclk) begin
 	if (!aresetn)
-		m_axil_rdata <= 0;
-	else if (!m_axil_rvalid || m_axil_rready)
+		s_axil_rdata <= 0;
+	else if (!s_axil_rvalid || s_axil_rready)
 	begin
-		m_axil_rdata <= next_rdata;
+		s_axil_rdata <= next_rdata;
 	end
 end
 endmodule
 //END - AXI SLAVE IMPLEMENTATION
+
+//START - AXI MASTER 
+
+//Address read
+logic next_arvalid;
+logic[DATA_WIDTH-1:0] next_ardata;
+assign next_arvalid = gpu_MemRead;
+assign next_ardata = gpu_MemAddr;
+
+always_ff @(posedge aclk) begin
+	if (!aresetn)
+		m_axil_arvalid <= 0;
+	else if (!m_axil_arvalid || m_axil_arready) begin
+		m_axil_arvalid <= next_arvalid;
+    end
+end
+
+always_ff @(posedge aclk) begin
+	if (!aresetn)
+		m_axil_ardata <= 0;
+	else if (!m_axil_arvalid || m_axil_arready)
+	begin
+		m_axil_ardata <= next_ardata;
+
+		if (!next_arvalid)
+			m_axil_ardata <= 0;
+	end
+end
+
+//Read
+always_ff @(posedge aclk) begin
+	m_axil_rready <= 1;
+end
+
+always_ff @(posedge aclk) begin
+	gpu_MemValid <= 0;
+    if (m_axil_rvalid && m_axil_rready) begin
+		gpu_MemData <= m_axil_rdata;
+        gpu_MemValid <= 1;
+    end
+end
+
+//END - AXI MASTER IMPLEMENTATION
 
 localparam SCREEN_WIDTH = 400;
 localparam SCREEN_HEIGHT = 240;
