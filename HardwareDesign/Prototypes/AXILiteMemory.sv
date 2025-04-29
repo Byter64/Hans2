@@ -1,4 +1,5 @@
 //This memory does not use s_axil_wstrb!! You can't mask the writing data
+//EDIT: uses s_axil_wstrb now :)
 module AXILiteMemory #(
     parameter ADDR_WIDTH = 32,
     parameter DATA_WIDTH = 32,
@@ -51,10 +52,12 @@ always @(posedge aclk) begin
 		s_axil_wready <= 1;
 end
 
+integer i;
 always @(posedge aclk) begin
 	if (s_axil_wvalid && s_axil_wready) begin //Never add any other conditions. This is likely to break axi
-		memory[aw_address] <= s_axil_wdata;
-    end
+    for(i = 0; i < 4; i++)
+      if(m_axil_wstrb[i]) memory[aw_address][(i * 8 + 7) -: 8] <= s_axil_wdata;
+  end
 end
 
 //Write response
