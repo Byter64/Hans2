@@ -44,7 +44,7 @@ logic         CPU_mem_axi_rvalid;
 logic         CPU_mem_axi_rready;
 logic [ 1:0]  CPU_mem_axi_rresp;
 logic [31:0]  CPU_mem_axi_rdata;
-logic [31:0]  CPU_irq;
+logic [31:0]  CPU_irq = 'b0;
 logic [31:0]  CPU_eoi;
 logic 		  CPU_trace_valid;
 logic [35:0]  CPU_trace_data;
