@@ -61,7 +61,7 @@ picorv32_axi #(
 
 ) processor 
 (
-	.clk(),
+	.clk(hdmi_pixClk),
 	.resetn(resetn),
 	.trap(trap),
 
@@ -92,8 +92,6 @@ picorv32_axi #(
 );
 
 //Graphicsystem
-logic                  GS_aclk;
-logic                  GS_aresetn;
 logic [ADDR_WIDTH-1:0] GS_s_axil_awaddr;
 logic [2:0]            GS_s_axil_awprot;
 logic                  GS_s_axil_awvalid;
@@ -140,8 +138,8 @@ GraphicSystem graphicSystem
 	.reset(~resetn),
 	.gpdiDp(gpdi_dp),
 	.hdmi_pixClk(hdmi_pixClk),
-	.aclk(GS_aclk),
-	.aresetn(GS_aresetn),
+	.aclk(hdmi_pixClk),
+	.aresetn(resetn),
 	.s_axil_awaddr(GS_s_axil_awaddr),
 	.s_axil_awprot(GS_s_axil_awprot),
 	.s_axil_awvalid(GS_s_axil_awvalid),
@@ -183,8 +181,6 @@ GraphicSystem graphicSystem
 );
 
 
-logic                  MEM_aclk;
-logic                  MEM_aresetn;
 logic[ADDR_WIDTH-1:0]  MEM_s_axil_awaddr;
 logic[2:0]             MEM_s_axil_awprot;
 logic                  MEM_s_axil_awvalid;
@@ -210,8 +206,8 @@ AXILiteMemory #(
     .STRB_WIDTH(STRB_WIDTH),
     .MEMORY_DEPTH(10240) //MAKE THIS AS HIGH AS POSSIBLE
 ) Memory (
-    .aclk(MEM_aclk),
-    .aresetn(MEM_aresetn),
+    .aclk(hdmi_pixClk),
+    .aresetn(resetn),
     .s_axil_awaddr(MEM_s_axil_awaddr >> 2),
     .s_axil_awprot(MEM_s_axil_awprot),
     .s_axil_awvalid(MEM_s_axil_awvalid),
@@ -327,8 +323,8 @@ axil_interconnect #(
 )
 AxiInterconnect 
 (
-	.clk(),
-	.rst(),
+	.clk(hdmi_pixClk),
+	.rst(~resetn),
 
 	.s_axil_awaddr(AXI_s_axil_awaddr),
 	.s_axil_awprot(AXI_s_axil_awprot),

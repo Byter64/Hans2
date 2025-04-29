@@ -15,7 +15,7 @@ CPU_with_GPU Top
 
 initial begin
 	$dumpvars(0, testbench);
-	#0_050_000_000
+	#1000000
 	$finish;
 end
 
