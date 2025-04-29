@@ -52,11 +52,12 @@ always @(posedge aclk) begin
 		s_axil_wready <= 1;
 end
 
-integer i;
 always @(posedge aclk) begin
 	if (s_axil_wvalid && s_axil_wready) begin //Never add any other conditions. This is likely to break axi
-    for(i = 0; i < 4; i++)
-      if(m_axil_wstrb[i]) memory[aw_address][(i * 8 + 7) -: 8] <= s_axil_wdata;
+    if(s_axil_wstrb[0]) memory[aw_address][7 -: 8] <= s_axil_wdata[7 -: 8];
+    if(s_axil_wstrb[1]) memory[aw_address][15 -: 8] <= s_axil_wdata[15 -: 8];
+    if(s_axil_wstrb[2]) memory[aw_address][23 -: 8] <= s_axil_wdata[23 -: 8];
+    if(s_axil_wstrb[3]) memory[aw_address][31 -: 8] <= s_axil_wdata[31 -: 8];
   end
 end
 

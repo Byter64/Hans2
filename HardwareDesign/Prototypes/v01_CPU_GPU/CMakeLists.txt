@@ -5,9 +5,8 @@ set(name "prot1")
 set(testbench "testbench")
 
 list(APPEND sources_sim
-  "C:/Users/Yanni/Desktop/ecp5u/EHXPLLL.v"
-  "C:/Users/Yanni/Desktop/ecp5u/ODDRX1F.v"
   ${CMAKE_CURRENT_SOURCE_DIR}/testbench.sv
+  ${CMAKE_CURRENT_SOURCE_DIR}/v01_CPU_GPU.sv
   ${CMAKE_CURRENT_SOURCE_DIR}/../../Processor/picorv32.v
   ${CMAKE_CURRENT_SOURCE_DIR}/../../Graphicsystem/BufferController.v
   ${CMAKE_CURRENT_SOURCE_DIR}/../../Graphicsystem/Framebuffer.v
@@ -20,6 +19,8 @@ list(APPEND sources_sim
   ${CMAKE_CURRENT_SOURCE_DIR}/../../AXI/arbiter.v
   ${CMAKE_CURRENT_SOURCE_DIR}/../../AXI/priority_encoder.v
   ${CMAKE_CURRENT_SOURCE_DIR}/../AxiLiteMemory.sv
+  ${CMAKE_CURRENT_SOURCE_DIR}/../../ecp5u/EHXPLLL.v
+  ${CMAKE_CURRENT_SOURCE_DIR}/../../ecp5u/ODDRX1F.v
 )
 
 # Defining variables for synthesis

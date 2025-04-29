@@ -1,5 +1,9 @@
 //yosys -p"read_verilog ULX3S_hdmi\TMDS_encoder.v HDMI_Out.v GPU.v BufferController.v Framebuffer.v GraphicSystem.v; synth_ecp5 -json Ausgabe.json"
 
+localparam DATA_WIDTH = 32;
+localparam ADDR_WIDTH = 32;
+localparam STRB_WIDTH = 4;
+
 module GraphicSystem
 (
     input clk25Mhz,
@@ -53,10 +57,6 @@ module GraphicSystem
     output logic                             m_axil_rready
 );
 
-localparam DATA_WIDTH = 32;
-localparam ADDR_WIDTH = 32;
-localparam STRB_WIDTH = 4;
-
 typedef enum logic[31:0] {
     ADDRESS,
     ADDRESS_X,
@@ -80,8 +80,6 @@ typedef enum logic[31:0] {
 
 DataIndex activeWriteDataIndex;
 DataIndex activeReadDataIndex;
-logic        swapBuffers;
-logic        isVSynced;
 logic[31:0]  gpu_Address;
 logic[15:0]  gpu_AddressX;
 logic[15:0]  gpu_AddressY;
@@ -110,7 +108,7 @@ logic        gpu_MemRead;
 always_ff @(posedge aclk) s_axil_awready <= 1;
 always_ff @(posedge aclk) begin
 	if (s_axil_awvalid && s_axil_awready) begin 
-		activeWriteDataIndex <= s_axil_awaddr;
+		activeWriteDataIndex <= DataIndex'(s_axil_awaddr);
     end
 end
 
@@ -150,7 +148,7 @@ end
 always_ff @(posedge aclk) s_axil_arready <= 1;
 always_ff @(posedge aclk) begin
 	if (s_axil_arvalid && s_axil_arready) begin
-		activeReadDataIndex <= s_axil_araddr;
+		activeReadDataIndex <= DataIndex'(s_axil_araddr);
     end
 end
 
@@ -214,13 +212,13 @@ end
 
 always_ff @(posedge aclk) begin
 	if (!aresetn)
-		m_axil_ardata <= 0;
+		m_axil_araddr <= 0;
 	else if (!m_axil_arvalid || m_axil_arready)
 	begin
-		m_axil_ardata <= next_ardata;
+		m_axil_araddr <= next_ardata;
 
 		if (!next_arvalid)
-			m_axil_ardata <= 0;
+			m_axil_araddr <= 0;
 	end
 end
 
@@ -264,7 +262,7 @@ BufferController bfCont(
     .reset(reset),
     .swapIn(swapBuffers),
     .vSync(hdmi_vSync),
-    .isSynchronized(isVSynced),
+    .isSynchronized(vSyncBufferSwap),
 
     .fbGPU(bfCont_fbGPU),
     .fbHDMI(bfCont_fbHDMI)
