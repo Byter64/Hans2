@@ -35,12 +35,14 @@ logic [31:0]  CPU_mem_axi_wdata;
 logic [ 3:0]  CPU_mem_axi_wstrb;
 logic         CPU_mem_axi_bvalid;
 logic         CPU_mem_axi_bready;
+logic [ 1:0]  CPU_mem_axi_bresp;
 logic         CPU_mem_axi_arvalid;
 logic         CPU_mem_axi_arready;
 logic [31:0]  CPU_mem_axi_araddr;
 logic [ 2:0]  CPU_mem_axi_arprot;
 logic         CPU_mem_axi_rvalid;
 logic         CPU_mem_axi_rready;
+logic [ 1:0]  CPU_mem_axi_rresp;
 logic [31:0]  CPU_mem_axi_rdata;
 logic [31:0]  CPU_irq;
 logic [31:0]  CPU_eoi;
@@ -178,7 +180,7 @@ GraphicSystem graphicSystem
 	.m_axil_rdata(GS_m_axil_rdata),
 	.m_axil_rresp(GS_m_axil_rresp),
 	.m_axil_rvalid(GS_m_axil_rvalid),
-	.m_axil_rread(GS_m_axil_rready)
+	.m_axil_rready(GS_m_axil_rready)
 );
 
 
@@ -281,7 +283,7 @@ assign AXI_s_axil_wdata 	= {CPU_mem_axi_wdata, GS_m_axil_wdata};
 assign AXI_s_axil_wstrb 	= {CPU_mem_axi_wstrb, GS_m_axil_wstrb};
 assign AXI_s_axil_wvalid 	= {CPU_mem_axi_wvalid, GS_m_axil_wvalid};
 assign AXI_s_axil_wready 	= {CPU_mem_axi_wready, GS_m_axil_wready};
-assign AXI_s_axil_bresp 	= {2'b0, GS_m_axil_bresp};
+assign AXI_s_axil_bresp 	= {CPU_mem_axi_bresp, GS_m_axil_bresp};
 assign AXI_s_axil_bvalid 	= {CPU_mem_axi_bvalid, GS_m_axil_bvalid};
 assign AXI_s_axil_bready 	= {CPU_mem_axi_bready, GS_m_axil_bready};
 assign AXI_s_axil_araddr 	= {CPU_mem_axi_araddr, GS_m_axil_araddr};
@@ -289,7 +291,7 @@ assign AXI_s_axil_arprot 	= {CPU_mem_axi_arprot, GS_m_axil_arprot};
 assign AXI_s_axil_arvalid 	= {CPU_mem_axi_arvalid, GS_m_axil_arvalid};
 assign AXI_s_axil_arready 	= {CPU_mem_axi_arready, GS_m_axil_arready};
 assign AXI_s_axil_rdata 	= {CPU_mem_axi_rdata, GS_m_axil_rdata};
-assign AXI_s_axil_rresp 	= {2'b0, GS_m_axil_rresp};
+assign AXI_s_axil_rresp 	= {CPU_mem_axi_rresp, GS_m_axil_rresp};
 assign AXI_s_axil_rvalid 	= {CPU_mem_axi_rvalid, GS_m_axil_rvalid};
 assign AXI_s_axil_rready 	= {CPU_mem_axi_rready, GS_m_axil_rready};
 

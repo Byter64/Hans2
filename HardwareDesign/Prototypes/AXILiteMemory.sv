@@ -34,7 +34,7 @@ module AXILiteMemory #(
 );
 
 logic[ADDR_WIDTH-1:0] memory[MEMORY_DEPTH];
-initial $readmemh("StereoTest.hex", memory);
+//initial $readmemh("StereoTest.hex", memory); Wie kann ich außerhalb dieser Datei memory bespielen
 //Address Write
 logic[ADDR_WIDTH-1:0] aw_address = 'b0;
 always @(posedge aclk) begin

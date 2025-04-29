@@ -17,6 +17,9 @@ list(APPEND sources_sim
   ${CMAKE_CURRENT_SOURCE_DIR}/../../Graphicsystem/ULX3S_hdmi/TMDS_encoder.v
   ${CMAKE_CURRENT_SOURCE_DIR}/../../Controller/controller.sv
   ${CMAKE_CURRENT_SOURCE_DIR}/../../AXI/AxiLiteInterconnect.v
+  ${CMAKE_CURRENT_SOURCE_DIR}/../../AXI/arbiter.v
+  ${CMAKE_CURRENT_SOURCE_DIR}/../../AXI/priority_encoder.v
+  ${CMAKE_CURRENT_SOURCE_DIR}/../AxiLiteMemory.sv
 )
 
 # Defining variables for synthesis
@@ -32,6 +35,9 @@ list(APPEND sources_synth
   ${CMAKE_CURRENT_SOURCE_DIR}/../../Graphicsystem/ULX3S_hdmi/TMDS_encoder.v
   ${CMAKE_CURRENT_SOURCE_DIR}/../../Controller/controller.sv
   ${CMAKE_CURRENT_SOURCE_DIR}/../../AXI/AxiLiteInterconnect.v
+  ${CMAKE_CURRENT_SOURCE_DIR}/../../AXI/arbiter.v
+  ${CMAKE_CURRENT_SOURCE_DIR}/../../AXI/priority_encoder.v
+  ${CMAKE_CURRENT_SOURCE_DIR}/../AxiLiteMemory.sv
 )
 
 # Generating the targets

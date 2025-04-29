@@ -87,18 +87,6 @@ always @(posedge clk) begin
     end
 end
 
-
-//Don't give these initial values because they will become latches and yosys dies and what not
-//Does apply for any reg that is set in a combinational always
-reg[31:0] ctrl_address;
-reg[15:0] ctrl_address_x;
-reg[15:0] ctrl_address_y;
-reg[15:0] ctrl_image_width;
-reg[$clog2(FB_WIDTH)+1:0] ctrl_width;
-reg[$clog2(FB_HEIGHT)+1:0] ctrl_height;
-reg[$clog2(FB_WIDTH)+1:0] ctrl_x;
-reg[$clog2(FB_HEIGHT)+1:0] ctrl_y;
-
 wire[$clog2(FB_WIDTH)+1:0] max_x = state[I_CLEAR] ? FB_WIDTH : ctrl_width;
 wire[$clog2(FB_HEIGHT)+1:0] max_y = state[I_CLEAR] ? FB_HEIGHT : ctrl_height;
 reg[$clog2(FB_WIDTH)+1:0] pos_x = 0;
