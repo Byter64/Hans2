@@ -25,9 +25,6 @@ localparam STRB_WIDTH = 4;
 localparam M_BASE_ADDR = {32'h0, 32'h1_0000};
 localparam M_ADDR_WIDTH = {32'd16, 32'd16};
 
-//localparam MEM_SIZE = 24576;
-//initial $readmemh("C:/Users/Yanni/Documents/Hans2/HardwareDesign/Prototypes/v01_CPU_GPU/Software/firmware32.hex", memory);
-
 logic         CPU_mem_axi_awvalid;
 logic         CPU_mem_axi_awready;
 logic [31:0]  CPU_mem_axi_awaddr;
@@ -372,52 +369,4 @@ AxiInterconnect
 	.m_axil_rvalid(AXI_m_axil_rvalid),
 	.m_axil_rready(AXI_m_axil_rready)
 );
-/*
-logic [31:0] tmp_gpu_MemData;
-logic [31:0] tmp_gpu_addr;
-assign gpu_MemData = tmp_gpu_addr[1] ? tmp_gpu_MemData[31:16] : tmp_gpu_MemData[15:0];
-
-always_ff @(posedge hdmi_pixClk) begin
-	mem_ready <= 0;
-	gpu_CtrlDraw <= 0;
-    gpu_CtrlClear <= 0;
-    swapBuffers <= 0;
-	gpu_MemValid <= 0;
-	if(gpu_MemRead) begin
-		tmp_gpu_addr <= gpu_MemAddr;
-		tmp_gpu_MemData <= memory[gpu_MemAddr >> 2];
-		gpu_MemValid <= 1;
-	end else if (mem_valid && !mem_ready) begin
-		mem_ready <= 1;
-		case (1)
-			mem_addr < MEM_SIZE: begin
-				if (|mem_wstrb) begin
-					if (mem_wstrb[0]) memory[mem_addr >> 2][ 7: 0] <= mem_wdata[ 7: 0];
-					if (mem_wstrb[1]) memory[mem_addr >> 2][15: 8] <= mem_wdata[15: 8];
-					if (mem_wstrb[2]) memory[mem_addr >> 2][23:16] <= mem_wdata[23:16];
-					if (mem_wstrb[3]) memory[mem_addr >> 2][31:24] <= mem_wdata[31:24];
-				end else begin
-					mem_rdata <= memory[mem_addr >> 2];
-				end
-			end
-			//GPU
-			(mem_addr == MEM_SIZE+32'h0000): if (&mem_wstrb) gpu_CtrlAddress 	<= mem_wdata;
-            (mem_addr == MEM_SIZE+32'h0004): if (&mem_wstrb) gpu_CtrlAddressX 	<= mem_wdata;
-            (mem_addr == MEM_SIZE+32'h0008): if (&mem_wstrb) gpu_CtrlAddressY 	<= mem_wdata;
-            (mem_addr == MEM_SIZE+32'h000C): if (&mem_wstrb) gpu_CtrlImageWidth <= mem_wdata;
-            (mem_addr == MEM_SIZE+32'h0010): if (&mem_wstrb) gpu_CtrlWidth 		<= mem_wdata;
-            (mem_addr == MEM_SIZE+32'h0014): if (&mem_wstrb) gpu_CtrlHeight 	<= mem_wdata;
-            (mem_addr == MEM_SIZE+32'h0018): if (&mem_wstrb) gpu_CtrlX 			<= mem_wdata;
-            (mem_addr == MEM_SIZE+32'h001C): if (&mem_wstrb) gpu_CtrlY 			<= mem_wdata;
-            (mem_addr == MEM_SIZE+32'h0020): if (&mem_wstrb) gpu_CtrlDraw 		<= mem_wdata;
-            (mem_addr == MEM_SIZE+32'h0024): if (&mem_wstrb) gpu_CtrlClearColor <= mem_wdata;
-            (mem_addr == MEM_SIZE+32'h0028): if (&mem_wstrb) gpu_CtrlClear 		<= mem_wdata;
-            (mem_addr == MEM_SIZE+32'h0100): if (&mem_wstrb) swapBuffers  		<= swapBuffers ? 0 : mem_wdata;
-            (mem_addr == MEM_SIZE+32'h010C): if (&mem_wstrb) isVSynced 			<= mem_wdata;
-			(mem_addr == MEM_SIZE+32'h002C): if (~|mem_wstrb) mem_rdata 		<= {31'b0,gpu_CtrlBusy};
-			(mem_addr == MEM_SIZE+32'h0108): if (~|mem_wstrb) mem_rdata 		<= {31'b0,hdmi_vSync};
-		endcase
-	end
-end
-*/
 endmodule
