@@ -133,7 +133,7 @@ logic                  GS_m_axil_arready;
 logic [DATA_WIDTH-1:0] GS_m_axil_rdata;
 logic [1:0]            GS_m_axil_rresp;
 logic                  GS_m_axil_rvalid;
-logic                  GS_m_axil_rread;
+logic                  GS_m_axil_rready;
 
 GraphicSystem graphicSystem 
 (
@@ -183,6 +183,57 @@ GraphicSystem graphicSystem
 	.m_axil_rvalid(GS_m_axil_rvalid),
 	.m_axil_rread(GS_m_axil_rready)
 );
+
+
+logic                  MEM_aclk;
+logic                  MEM_aresetn;
+logic[ADDR_WIDTH-1:0]  MEM_s_axil_awaddr;
+logic[2:0]             MEM_s_axil_awprot;
+logic                  MEM_s_axil_awvalid;
+logic                  MEM_s_axil_awready;
+logic[DATA_WIDTH-1:0]  MEM_s_axil_wdata;
+logic[STRB_WIDTH-1:0]  MEM_s_axil_wstrb;
+logic                  MEM_s_axil_wvalid;
+logic                  MEM_s_axil_wready;
+logic                  MEM_s_axil_bvalid;
+logic                  MEM_s_axil_bready;
+logic[ADDR_WIDTH-1:0]  MEM_s_axil_araddr;
+logic[2:0]             MEM_s_axil_arprot;
+logic                  MEM_s_axil_arvalid;
+logic                  MEM_s_axil_arready;
+logic[DATA_WIDTH-1:0]  MEM_s_axil_rdata;
+logic[1:0]             MEM_s_axil_rresp;
+logic                  MEM_s_axil_rvalid;
+logic                  MEM_s_axil_rready;
+
+AXILiteMemory #(
+    .ADDR_WIDTH(ADDR_WIDTH),
+    .DATA_WIDTH(DATA_WIDTH),
+    .STRB_WIDTH(STRB_WIDTH),
+    .MEMORY_DEPTH(0) //MAKE THIS AS HIGH AS POSSIBLE
+) Memory (
+    .aclk(MEM_aclk),
+    .aresetn(MEM_aresetn),
+    .s_axil_awaddr(MEM_s_axil_awaddr),
+    .s_axil_awprot(MEM_s_axil_awprot),
+    .s_axil_awvalid(MEM_s_axil_awvalid),
+    .s_axil_awready(MEM_s_axil_awready),
+    .s_axil_wdata(MEM_s_axil_wdata),
+    .s_axil_wstrb(MEM_s_axil_wstrb),
+    .s_axil_wvalid(MEM_s_axil_wvalid),
+    .s_axil_wready(MEM_s_axil_wready),
+    .s_axil_bvalid(MEM_s_axil_bvalid),
+    .s_axil_bready(MEM_s_axil_bready),
+    .s_axil_araddr(MEM_s_axil_araddr),
+    .s_axil_arprot(MEM_s_axil_arprot),
+    .s_axil_arvalid(MEM_s_axil_arvalid),
+    .s_axil_arready(MEM_s_axil_arready),
+    .s_axil_rdata(MEM_s_axil_rdata),
+    .s_axil_rresp(MEM_s_axil_rresp),
+    .s_axil_rvalid(MEM_s_axil_rvalid),
+    .s_axil_rready(MEM_s_axil_rready)
+);
+
 
 logic[x:0] AXI_s_axil_awaddr;
 logic[x:0] AXI_s_axil_awprot;
