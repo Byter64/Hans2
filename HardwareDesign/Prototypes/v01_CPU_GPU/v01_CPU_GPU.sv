@@ -268,7 +268,7 @@ logic[M_COUNT-1:0]            AXI_m_axil_arready;
 logic[M_COUNT*DATA_WIDTH-1:0] AXI_m_axil_rdata;
 logic[M_COUNT*2-1:0]          AXI_m_axil_rresp;
 logic[M_COUNT-1:0]            AXI_m_axil_rvalid;
-logic[M_COUNT-1:0]            AXI_m_axil_rread;
+logic[M_COUNT-1:0]            AXI_m_axil_rready;
 
 //MASTER MAP
 //{CPU, Graphicsystem}
@@ -373,7 +373,7 @@ AxiInterconnect
 	.m_axil_rdata(AXI_m_axil_rdata),
 	.m_axil_rresp(AXI_m_axil_rresp),
 	.m_axil_rvalid(AXI_m_axil_rvalid),
-	.m_axil_rready(AXI_m_axil_rread)
+	.m_axil_rready(AXI_m_axil_rready)
 );
 
 logic [31:0] tmp_gpu_MemData;
