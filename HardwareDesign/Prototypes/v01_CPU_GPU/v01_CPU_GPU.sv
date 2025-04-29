@@ -90,6 +90,7 @@ picorv32_axi #(
 );
 
 //Graphicsystem
+logic				   hdmi_pixClk;
 logic                  GS_aclk;
 logic                  GS_aresetn;
 logic [ADDR_WIDTH-1:0] GS_s_axil_awaddr;
@@ -233,7 +234,7 @@ AXILiteMemory #(
 
 logic[S_COUNT*ADDR_WIDTH-1:0] AXI_s_axil_awaddr;
 logic[S_COUNT*3-1:0]          AXI_s_axil_awprot;
-logic[S_COUNT-1:0]            n;
+logic[S_COUNT-1:0]            AXI_s_axil_awvalid;
 logic[S_COUNT-1:0]            AXI_s_axil_awready;
 logic[S_COUNT*DATA_WIDTH-1:0] AXI_s_axil_wdata;
 logic[S_COUNT*STRB_WIDTH-1:0] AXI_s_axil_wstrb;
@@ -272,25 +273,25 @@ logic[M_COUNT-1:0]            AXI_m_axil_rready;
 
 //MASTER MAP
 //{CPU, Graphicsystem}
-assign AXI_s_axil_awaddr 	= {CPU_m_axil_awaddr, GS_m_axil_awaddr};
-assign AXI_s_axil_awprot 	= {CPU_m_axil_awprot, GS_m_axil_awprot};
-assign AXI_s_axil_awvalid 	= {CPU_m_axil_awvalid, GS_m_axil_awvalid};
-assign AXI_s_axil_awready 	= {CPU_m_axil_awready, GS_m_axil_awready};
-assign AXI_s_axil_wdata 	= {CPU_m_axil_wdata, GS_m_axil_wdata};
-assign AXI_s_axil_wstrb 	= {CPU_m_axil_wstrb, GS_m_axil_wstrb};
-assign AXI_s_axil_wvalid 	= {CPU_m_axil_wvalid, GS_m_axil_wvalid};
-assign AXI_s_axil_wready 	= {CPU_m_axil_wready, GS_m_axil_wready};
+assign AXI_s_axil_awaddr 	= {CPU_mem_axi_awaddr, GS_m_axil_awaddr};
+assign AXI_s_axil_awprot 	= {CPU_mem_axi_awprot, GS_m_axil_awprot};
+assign AXI_s_axil_awvalid 	= {CPU_mem_axi_awvalid, GS_m_axil_awvalid};
+assign AXI_s_axil_awready 	= {CPU_mem_axi_awready, GS_m_axil_awready};
+assign AXI_s_axil_wdata 	= {CPU_mem_axi_wdata, GS_m_axil_wdata};
+assign AXI_s_axil_wstrb 	= {CPU_mem_axi_wstrb, GS_m_axil_wstrb};
+assign AXI_s_axil_wvalid 	= {CPU_mem_axi_wvalid, GS_m_axil_wvalid};
+assign AXI_s_axil_wready 	= {CPU_mem_axi_wready, GS_m_axil_wready};
 assign AXI_s_axil_bresp 	= {2'b0, GS_m_axil_bresp};
-assign AXI_s_axil_bvalid 	= {CPU_m_axil_bvalid, GS_m_axil_bvalid};
-assign AXI_s_axil_bready 	= {CPU_m_axil_bready, GS_m_axil_bready};
-assign AXI_s_axil_araddr 	= {CPU_m_axil_araddr, GS_m_axil_araddr};
-assign AXI_s_axil_arprot 	= {CPU_m_axil_arprot, GS_m_axil_arprot};
-assign AXI_s_axil_arvalid 	= {CPU_m_axil_arvalid, GS_m_axil_arvalid};
-assign AXI_s_axil_arready 	= {CPU_m_axil_arready, GS_m_axil_arready};
-assign AXI_s_axil_rdata 	= {CPU_m_axil_rdata, GS_m_axil_rdata};
-assign AXI_s_axil_rresp 	= {CPU_m_axil_rresp, GS_m_axil_rresp};
-assign AXI_s_axil_rvalid 	= {CPU_m_axil_rvalid, GS_m_axil_rvalid};
-assign AXI_s_axil_rready 	= {CPU_m_axil_rready, GS_m_axil_rready};
+assign AXI_s_axil_bvalid 	= {CPU_mem_axi_bvalid, GS_m_axil_bvalid};
+assign AXI_s_axil_bready 	= {CPU_mem_axi_bready, GS_m_axil_bready};
+assign AXI_s_axil_araddr 	= {CPU_mem_axi_araddr, GS_m_axil_araddr};
+assign AXI_s_axil_arprot 	= {CPU_mem_axi_arprot, GS_m_axil_arprot};
+assign AXI_s_axil_arvalid 	= {CPU_mem_axi_arvalid, GS_m_axil_arvalid};
+assign AXI_s_axil_arready 	= {CPU_mem_axi_arready, GS_m_axil_arready};
+assign AXI_s_axil_rdata 	= {CPU_mem_axi_rdata, GS_m_axil_rdata};
+assign AXI_s_axil_rresp 	= {2'b0, GS_m_axil_rresp};
+assign AXI_s_axil_rvalid 	= {CPU_mem_axi_rvalid, GS_m_axil_rvalid};
+assign AXI_s_axil_rready 	= {CPU_mem_axi_rready, GS_m_axil_rready};
 
 //SLAVE MAP
 //{Memory, Graphicsystem}
@@ -375,7 +376,7 @@ AxiInterconnect
 	.m_axil_rvalid(AXI_m_axil_rvalid),
 	.m_axil_rready(AXI_m_axil_rready)
 );
-
+/*
 logic [31:0] tmp_gpu_MemData;
 logic [31:0] tmp_gpu_addr;
 assign gpu_MemData = tmp_gpu_addr[1] ? tmp_gpu_MemData[31:16] : tmp_gpu_MemData[15:0];
@@ -422,5 +423,5 @@ always_ff @(posedge hdmi_pixClk) begin
 		endcase
 	end
 end
-
+*/
 endmodule

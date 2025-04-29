@@ -16,6 +16,7 @@ list(APPEND sources_sim
   ${CMAKE_CURRENT_SOURCE_DIR}/../../Graphicsystem/HDMI_Out.v
   ${CMAKE_CURRENT_SOURCE_DIR}/../../Graphicsystem/ULX3S_hdmi/TMDS_encoder.v
   ${CMAKE_CURRENT_SOURCE_DIR}/../../Controller/controller.sv
+  ${CMAKE_CURRENT_SOURCE_DIR}/../../AXI/AxiLiteInterconnect.v
 )
 
 # Defining variables for synthesis
@@ -30,6 +31,7 @@ list(APPEND sources_synth
   ${CMAKE_CURRENT_SOURCE_DIR}/../../Graphicsystem/HDMI_Out.v
   ${CMAKE_CURRENT_SOURCE_DIR}/../../Graphicsystem/ULX3S_hdmi/TMDS_encoder.v
   ${CMAKE_CURRENT_SOURCE_DIR}/../../Controller/controller.sv
+  ${CMAKE_CURRENT_SOURCE_DIR}/../../AXI/AxiLiteInterconnect.v
 )
 
 # Generating the targets

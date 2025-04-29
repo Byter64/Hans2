@@ -113,8 +113,6 @@ module axil_interconnect #
     output wire [M_COUNT-1:0]             m_axil_rready
 );
 
-initial $display("M_ADDR_WIDTH IS SET TO 24. YOU SHOULD PROBABLY SET IT TO 32!!!")
-
 parameter CL_S_COUNT = $clog2(S_COUNT);
 parameter CL_M_COUNT = $clog2(M_COUNT);
 
@@ -148,6 +146,7 @@ parameter M_BASE_ADDR_INT = M_BASE_ADDR ? M_BASE_ADDR : calcBaseAddrs(0);
 integer i, j;
 
 // check configuration
+`ifndef SYNTHESIS
 initial begin
     for (i = 0; i < M_COUNT*M_REGIONS; i = i + 1) begin
         if (M_ADDR_WIDTH[i*32 +: 32] && (M_ADDR_WIDTH[i*32 +: 32] < $clog2(STRB_WIDTH) || M_ADDR_WIDTH[i*32 +: 32] > ADDR_WIDTH)) begin
@@ -211,6 +210,7 @@ initial begin
         end
     end
 end
+`endif
 
 localparam [2:0]
     STATE_IDLE = 3'd0,
