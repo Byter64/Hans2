@@ -25,10 +25,6 @@ localparam MEM_SIZE = 24576;
 logic [31:0] memory [0:MEM_SIZE/4-1];
 initial $readmemh("C:/Users/Yanni/Documents/Hans2/HardwareDesign/Prototypes/v01_CPU_GPU/Software/firmware32.hex", memory);
 
-localparam ADDR_WIDTH = 32;
-localparam DATA_WIDTH = 32;
-localparam STRB_WIDTH = 4;
-
 logic         CPU_mem_axi_awvalid;
 logic         CPU_mem_axi_awready;
 logic [31:0]  CPU_mem_axi_awaddr;
@@ -235,53 +231,105 @@ AXILiteMemory #(
 );
 
 
-logic[x:0] AXI_s_axil_awaddr;
-logic[x:0] AXI_s_axil_awprot;
-logic[x:0] AXI_s_axil_awvalid;
-logic[x:0] AXI_s_axil_awready;
-logic[x:0] AXI_s_axil_wdata;
-logic[x:0] AXI_s_axil_wstrb;
-logic[x:0] AXI_s_axil_wvalid;
-logic[x:0] AXI_s_axil_wready;
-logic[x:0] AXI_s_axil_bresp;
-logic[x:0] AXI_s_axil_bvalid;
-logic[x:0] AXI_s_axil_bready;
-logic[x:0] AXI_s_axil_araddr;
-logic[x:0] AXI_s_axil_arprot;
-logic[x:0] AXI_s_axil_arvalid;
-logic[x:0] AXI_s_axil_arready;
-logic[x:0] AXI_s_axil_rdata;
-logic[x:0] AXI_s_axil_rresp;
-logic[x:0] AXI_s_axil_rvalid;
-logic[x:0] AXI_s_axil_rready;
-logic[x:0] AXI_m_axil_awaddr;
-logic[x:0] AXI_m_axil_awprot;
-logic[x:0] AXI_m_axil_awvalid;
-logic[x:0] AXI_m_axil_awready;
-logic[x:0] AXI_m_axil_wdata;
-logic[x:0] AXI_m_axil_wstrb;
-logic[x:0] AXI_m_axil_wvalid;
-logic[x:0] AXI_m_axil_wready;
-logic[x:0] AXI_m_axil_bresp;
-logic[x:0] AXI_m_axil_bvalid;
-logic[x:0] AXI_m_axil_bready;
-logic[x:0] AXI_m_axil_araddr;
-logic[x:0] AXI_m_axil_arprot;
-logic[x:0] AXI_m_axil_arvalid;
-logic[x:0] AXI_m_axil_arready;
-logic[x:0] AXI_m_axil_rdata;
-logic[x:0] AXI_m_axil_rresp;
-logic[x:0] AXI_m_axil_rvalid;
-logic[x:0] AXI_m_axil_rread;
+logic[S_COUNT*ADDR_WIDTH-1:0] AXI_s_axil_awaddr;
+logic[S_COUNT*3-1:0]          AXI_s_axil_awprot;
+logic[S_COUNT-1:0]            n;
+logic[S_COUNT-1:0]            AXI_s_axil_awready;
+logic[S_COUNT*DATA_WIDTH-1:0] AXI_s_axil_wdata;
+logic[S_COUNT*STRB_WIDTH-1:0] AXI_s_axil_wstrb;
+logic[S_COUNT-1:0]            AXI_s_axil_wvalid;
+logic[S_COUNT-1:0]            AXI_s_axil_wready;
+logic[S_COUNT*2-1:0]          AXI_s_axil_bresp;
+logic[S_COUNT-1:0]            AXI_s_axil_bvalid;
+logic[S_COUNT-1:0]            AXI_s_axil_bready;
+logic[S_COUNT*ADDR_WIDTH-1:0] AXI_s_axil_araddr;
+logic[S_COUNT*3-1:0]          AXI_s_axil_arprot;
+logic[S_COUNT-1:0]            AXI_s_axil_arvalid;
+logic[S_COUNT-1:0]            AXI_s_axil_arready;
+logic[S_COUNT*DATA_WIDTH-1:0] AXI_s_axil_rdata;
+logic[S_COUNT*2-1:0]          AXI_s_axil_rresp;
+logic[S_COUNT-1:0]            AXI_s_axil_rvalid;
+logic[S_COUNT-1:0]            AXI_s_axil_rready;
+logic[M_COUNT*ADDR_WIDTH-1:0] AXI_m_axil_awaddr;
+logic[M_COUNT*3-1:0]          AXI_m_axil_awprot;
+logic[M_COUNT-1:0]            AXI_m_axil_awvalid;
+logic[M_COUNT-1:0]            AXI_m_axil_awready;
+logic[M_COUNT*DATA_WIDTH-1:0] AXI_m_axil_wdata;
+logic[M_COUNT*STRB_WIDTH-1:0] AXI_m_axil_wstrb;
+logic[M_COUNT-1:0]            AXI_m_axil_wvalid;
+logic[M_COUNT-1:0]            AXI_m_axil_wready;
+logic[M_COUNT*2-1:0]          AXI_m_axil_bresp;
+logic[M_COUNT-1:0]            AXI_m_axil_bvalid;
+logic[M_COUNT-1:0]            AXI_m_axil_bready;
+logic[M_COUNT*ADDR_WIDTH-1:0] AXI_m_axil_araddr;
+logic[M_COUNT*3-1:0]          AXI_m_axil_arprot;
+logic[M_COUNT-1:0]            AXI_m_axil_arvalid;
+logic[M_COUNT-1:0]            AXI_m_axil_arready;
+logic[M_COUNT*DATA_WIDTH-1:0] AXI_m_axil_rdata;
+logic[M_COUNT*2-1:0]          AXI_m_axil_rresp;
+logic[M_COUNT-1:0]            AXI_m_axil_rvalid;
+logic[M_COUNT-1:0]            AXI_m_axil_rread;
+
+//MASTER MAP
+//{CPU, Graphicsystem}
+assign AXI_s_axil_awaddr 	= {CPU_m_axil_awaddr, GS_m_axil_awaddr};
+assign AXI_s_axil_awprot 	= {CPU_m_axil_awprot, GS_m_axil_awprot};
+assign AXI_s_axil_awvalid 	= {CPU_m_axil_awvalid, GS_m_axil_awvalid};
+assign AXI_s_axil_awready 	= {CPU_m_axil_awready, GS_m_axil_awready};
+assign AXI_s_axil_wdata 	= {CPU_m_axil_wdata, GS_m_axil_wdata};
+assign AXI_s_axil_wstrb 	= {CPU_m_axil_wstrb, GS_m_axil_wstrb};
+assign AXI_s_axil_wvalid 	= {CPU_m_axil_wvalid, GS_m_axil_wvalid};
+assign AXI_s_axil_wready 	= {CPU_m_axil_wready, GS_m_axil_wready};
+assign AXI_s_axil_bresp 	= {2'b0, GS_m_axil_bresp};
+assign AXI_s_axil_bvalid 	= {CPU_m_axil_bvalid, GS_m_axil_bvalid};
+assign AXI_s_axil_bready 	= {CPU_m_axil_bready, GS_m_axil_bready};
+assign AXI_s_axil_araddr 	= {CPU_m_axil_araddr, GS_m_axil_araddr};
+assign AXI_s_axil_arprot 	= {CPU_m_axil_arprot, GS_m_axil_arprot};
+assign AXI_s_axil_arvalid 	= {CPU_m_axil_arvalid, GS_m_axil_arvalid};
+assign AXI_s_axil_arready 	= {CPU_m_axil_arready, GS_m_axil_arready};
+assign AXI_s_axil_rdata 	= {CPU_m_axil_rdata, GS_m_axil_rdata};
+assign AXI_s_axil_rresp 	= {CPU_m_axil_rresp, GS_m_axil_rresp};
+assign AXI_s_axil_rvalid 	= {CPU_m_axil_rvalid, GS_m_axil_rvalid};
+assign AXI_s_axil_rready 	= {CPU_m_axil_rready, GS_m_axil_rready};
+
+//SLAVE MAP
+//{Memory, Graphicsystem}
+assign AXI_m_axil_awaddr 	= {MEM_s_axil_awaddr, GS_s_axil_awaddr};
+assign AXI_m_axil_awprot 	= {MEM_s_axil_awprot, GS_s_axil_awprot};
+assign AXI_m_axil_awvalid 	= {MEM_s_axil_awvalid, GS_s_axil_awvalid};
+assign AXI_m_axil_awready 	= {MEM_s_axil_awready, GS_s_axil_awready};
+assign AXI_m_axil_wdata 	= {MEM_s_axil_wdata, GS_s_axil_wdata};
+assign AXI_m_axil_wstrb 	= {MEM_s_axil_wstrb, GS_s_axil_wstrb};
+assign AXI_m_axil_wvalid 	= {MEM_s_axil_wvalid, GS_s_axil_wvalid};
+assign AXI_m_axil_wready 	= {MEM_s_axil_wready, GS_s_axil_wready};
+assign AXI_m_axil_bresp	 	= {2'b0, GS_s_axil_bresp};
+assign AXI_m_axil_bvalid 	= {MEM_s_axil_bvalid, GS_s_axil_bvalid};
+assign AXI_m_axil_bready 	= {MEM_s_axil_bready, GS_s_axil_bready};
+assign AXI_m_axil_araddr 	= {MEM_s_axil_araddr, GS_s_axil_araddr};
+assign AXI_m_axil_arprot 	= {MEM_s_axil_arprot, GS_s_axil_arprot};
+assign AXI_m_axil_arvalid 	= {MEM_s_axil_arvalid, GS_s_axil_arvalid};
+assign AXI_m_axil_arready 	= {MEM_s_axil_arready, GS_s_axil_arready};
+assign AXI_m_axil_rdata 	= {MEM_s_axil_rdata, GS_s_axil_rdata};
+assign AXI_m_axil_rresp 	= {MEM_s_axil_rresp, GS_s_axil_rresp};
+assign AXI_m_axil_rvalid 	= {MEM_s_axil_rvalid, GS_s_axil_rvalid};
+assign AXI_m_axil_rready 	= {MEM_s_axil_rready, GS_s_axil_rready};
+
+localparam S_COUNT = 2;
+localparam M_COUNT = 2;
+localparam ADDR_WIDTH = 32;
+localparam DATA_WIDTH = 32;
+localparam STRB_WIDTH = 4;
+localparam M_BASE_ADDR = {32'h0, 32'h1_0000};
+localparam M_ADDR_WIDTH = {32'd32, 32'd32};
 
 axil_interconnect #(
-	.S_COUNT(2),
-	.M_COUNT(2),
+	.S_COUNT(S_COUNT),
+	.M_COUNT(M_COUNT),
 	.DATA_WIDTH(DATA_WIDTH),
 	.ADDR_WIDTH(ADDR_WIDTH),
 	.STRB_WIDTH(STRB_WIDTH),
-	.M_BASE_ADDR(??),
-	.M_ADDR_WIDTH(??)
+	.M_BASE_ADDR(M_BASE_ADDR),
+	.M_ADDR_WIDTH(M_ADDR_WIDTH)
 )
 AxiInterconnect 
 (
