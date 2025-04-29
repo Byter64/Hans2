@@ -57,6 +57,27 @@ localparam DATA_WIDTH = 32;
 localparam ADDR_WIDTH = 32;
 localparam STRB_WIDTH = 4;
 
+typedef enum logic[31:0] {
+    ADDRESS,
+    ADDRESS_X,
+    ADDRESS_Y,
+    IMAGE_WIDTH,
+    WIDTH,
+    HEIGHT,
+    X,
+    Y,
+    CLEAR_COLOR,
+    COMMAND_DRAW,
+    COMMAND_CLEAR,
+    IS_BUSY,
+
+    VSYNC,
+    HSYNC,
+
+    COMMAND_SWAP_BUFFERS,
+    VSYNC_BUFFER_SWAP
+} DataIndex;
+
 DataIndex activeWriteDataIndex;
 DataIndex activeReadDataIndex;
 logic        swapBuffers;
@@ -84,27 +105,6 @@ logic[31:0]  gpu_MemAddr;
 logic        gpu_MemRead;
 
 //START - AXI SLAVE IMPLEMENTATION
-enum logic[31:0] {
-    ADDRESS,
-    ADDRESS_X,
-    ADDRESS_Y,
-    IMAGE_WIDTH,
-    WIDTH,
-    HEIGHT,
-    X,
-    Y,
-    CLEAR_COLOR,
-    COMMAND_DRAW,
-    COMMAND_CLEAR,
-    IS_BUSY,
-
-    VSYNC,
-    HSYNC,
-
-    COMMAND_SWAP_BUFFERS,
-    VSYNC_BUFFER_SWAP
-} DataIndex;
-
 
 //Address write
 always_ff @(posedge aclk) s_axil_awready <= 1;
@@ -132,13 +132,12 @@ always_ff @(posedge aclk) begin
             COMMAND_CLEAR: gpu_Clear <= s_axil_wdata;
             COMMAND_SWAP_BUFFERS: swapBuffers <= s_axil_wdata;
             VSYNC_BUFFER_SWAP: vSyncBufferSwap <= s_axil_wdata;
-            default: 
         endcase
     end
 end
 
 //Write response
-assign s_axil_bresp <= 0;
+assign s_axil_bresp = 0;
 always_ff @(posedge aclk) begin
 	if (!aresetn)
 		s_axil_bvalid <= 0;
@@ -157,7 +156,7 @@ end
 
 //Read
 logic[DATA_WIDTH-1:0] next_rdata;
-assign s_axil_rresp <= 1;
+assign s_axil_rresp = 1;
 
 always_comb begin
     case (activeReadDataIndex)
@@ -195,7 +194,6 @@ always_ff @(posedge aclk) begin
 		s_axil_rdata <= next_rdata;
 	end
 end
-endmodule
 //END - AXI SLAVE IMPLEMENTATION
 
 //START - AXI MASTER 

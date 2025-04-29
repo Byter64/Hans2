@@ -21,9 +21,9 @@ always_ff @(posedge hdmi_pixClk) begin
 	resetn <= reset_counter == 255;
 end
 
-localparam MEM_SIZE = 24576;
-logic [31:0] memory [0:MEM_SIZE/4-1];
-initial $readmemh("C:/Users/Yanni/Documents/Hans2/HardwareDesign/Prototypes/v01_CPU_GPU/Software/firmware32.hex", memory);
+//localparam MEM_SIZE = 24576;
+logic [31:0] memory [0:0];
+//initial $readmemh("C:/Users/Yanni/Documents/Hans2/HardwareDesign/Prototypes/v01_CPU_GPU/Software/firmware32.hex", memory);
 
 logic         CPU_mem_axi_awvalid;
 logic         CPU_mem_axi_awready;

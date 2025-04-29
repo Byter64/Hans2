@@ -12,7 +12,7 @@ list(APPEND sources_sim
   ${CMAKE_CURRENT_SOURCE_DIR}/../../Graphicsystem/BufferController.v
   ${CMAKE_CURRENT_SOURCE_DIR}/../../Graphicsystem/Framebuffer.v
   ${CMAKE_CURRENT_SOURCE_DIR}/../../Graphicsystem/GPU.v
-  ${CMAKE_CURRENT_SOURCE_DIR}/../../Graphicsystem/GraphicSystem.v
+  ${CMAKE_CURRENT_SOURCE_DIR}/../../Graphicsystem/GraphicSystem.sv
   ${CMAKE_CURRENT_SOURCE_DIR}/../../Graphicsystem/HDMI_Out.v
   ${CMAKE_CURRENT_SOURCE_DIR}/../../Graphicsystem/ULX3S_hdmi/TMDS_encoder.v
   ${CMAKE_CURRENT_SOURCE_DIR}/../../Controller/controller.sv
@@ -26,7 +26,7 @@ list(APPEND sources_synth
   ${CMAKE_CURRENT_SOURCE_DIR}/../../Graphicsystem/BufferController.v
   ${CMAKE_CURRENT_SOURCE_DIR}/../../Graphicsystem/Framebuffer.v
   ${CMAKE_CURRENT_SOURCE_DIR}/../../Graphicsystem/GPU.v
-  ${CMAKE_CURRENT_SOURCE_DIR}/../../Graphicsystem/GraphicSystem.v
+  ${CMAKE_CURRENT_SOURCE_DIR}/../../Graphicsystem/GraphicSystem.sv
   ${CMAKE_CURRENT_SOURCE_DIR}/../../Graphicsystem/HDMI_Out.v
   ${CMAKE_CURRENT_SOURCE_DIR}/../../Graphicsystem/ULX3S_hdmi/TMDS_encoder.v
   ${CMAKE_CURRENT_SOURCE_DIR}/../../Controller/controller.sv
