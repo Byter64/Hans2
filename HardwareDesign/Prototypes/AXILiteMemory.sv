@@ -37,6 +37,8 @@ logic[ADDR_WIDTH-1:0] memory[MEMORY_DEPTH];
 //initial $readmemh("StereoTest.hex", memory); Wie kann ich außerhalb dieser Datei memory bespielen
 //Address Write
 logic[ADDR_WIDTH-1:0] aw_address = 'b0;
+logic[31:0] aw_address_real;
+assign aw_address_real = s_axil_awvalid && s_axil_awready ? s_axil_awaddr : aw_address;
 always @(posedge aclk) begin
 		s_axil_awready <= 1;
 end
@@ -52,12 +54,13 @@ always @(posedge aclk) begin
 		s_axil_wready <= 1;
 end
 
+
 always @(posedge aclk) begin
 	if (s_axil_wvalid && s_axil_wready) begin //Never add any other conditions. This is likely to break axi
-    if(s_axil_wstrb[0]) memory[aw_address][7 -: 8] <= s_axil_wdata[7 -: 8];
-    if(s_axil_wstrb[1]) memory[aw_address][15 -: 8] <= s_axil_wdata[15 -: 8];
-    if(s_axil_wstrb[2]) memory[aw_address][23 -: 8] <= s_axil_wdata[23 -: 8];
-    if(s_axil_wstrb[3]) memory[aw_address][31 -: 8] <= s_axil_wdata[31 -: 8];
+    if(s_axil_wstrb[0]) memory[aw_address_real][7 -: 8] <= s_axil_wdata[7 -: 8];
+    if(s_axil_wstrb[1]) memory[aw_address_real][15 -: 8] <= s_axil_wdata[15 -: 8];
+    if(s_axil_wstrb[2]) memory[aw_address_real][23 -: 8] <= s_axil_wdata[23 -: 8];
+    if(s_axil_wstrb[3]) memory[aw_address_real][31 -: 8] <= s_axil_wdata[31 -: 8];
   end
 end
 
@@ -74,6 +77,8 @@ end
 
 //Address Read
 logic[ADDR_WIDTH-1:0] ar_address = 'b0;
+logic[31:0] ar_address_real;
+assign ar_address_real = s_axil_arvalid && s_axil_arready ? s_axil_araddr : ar_address;
 always @(posedge aclk) begin
 		s_axil_arready <= 1;
 end
@@ -100,7 +105,7 @@ always @(posedge aclk) begin
 		s_axil_rdata <= 0;
 	else if (!s_axil_rvalid || s_axil_rready)
 	begin
-		s_axil_rdata <= memory[ar_address];
+		s_axil_rdata <= memory[ar_address_real];
 
 		if (!next_rvalid)
 			s_axil_rdata <= 0;
