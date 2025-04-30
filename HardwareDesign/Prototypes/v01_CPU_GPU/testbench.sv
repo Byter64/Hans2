@@ -13,6 +13,8 @@ CPU_with_GPU Top
 	.gpdi_dp(gpdi_dp)
 );
 
+initial $readmemh("C:/Users/Yanni/Desktop/Hans2/HardwareDesign/Prototypes/v01_CPU_GPU/Software/firmware32.hex", Top.Memory.memory);
+
 initial begin
 	$dumpvars(0, testbench);
 	#1000000
