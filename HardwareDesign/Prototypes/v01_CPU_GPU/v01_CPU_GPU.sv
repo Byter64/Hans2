@@ -49,6 +49,7 @@ logic [31:0]  CPU_eoi;
 logic 		  CPU_trace_valid;
 logic [35:0]  CPU_trace_data;
 
+`define DEBUGREGS
 picorv32_axi #(
 	.COMPRESSED_ISA(1),
 	.BARREL_SHIFTER(1),
