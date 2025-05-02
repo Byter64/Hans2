@@ -4,20 +4,10 @@
  *           target if inbyte() and outbyte() exist.
  */
 
-#include <errno.h>
-#include <sys/stat.h>
-#include <sys/types.h>
-#ifndef NULL
-#define NULL 0
-#endif
-
-/* FIXME: this is a hack till libc builds */
-void __main() { return; }
-
 #undef errno
 int errno;
 
-extern caddr_t _end; /* _end is set in the linker command file */
+// extern caddr_t _end; /* _end is set in the linker command file */
 // TODO: Mit Memorymapbeauftragtem reden. Einfach sw/lw an Adresse???
 // extern int outbyte();
 int outbyte() { return 0; }
