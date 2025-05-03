@@ -65,13 +65,11 @@ always @(posedge aclk) begin
 end
 
 //Write response
-logic next_bvalid; //Assign your valid logic to this signal
-assign next_bvalid = 1;
 always @(posedge aclk) begin
 	if (!aresetn)
 		s_axil_bvalid <= 0;
 	else if (!s_axil_bvalid || s_axil_bready) begin
-		s_axil_bvalid <= next_bvalid;
+		s_axil_bvalid <= s_axil_bready ? 0 : 1;
     end
 end
 
@@ -90,13 +88,11 @@ always @(posedge aclk) begin
 end
 
 //Read
-logic next_rvalid;
-assign next_rvalid = 1;
 always @(posedge aclk) begin
 	if (!aresetn)
 		s_axil_rvalid <= 0;
 	else if (!s_axil_rvalid || s_axil_rready) begin
-		s_axil_rvalid <= next_rvalid;
+		s_axil_rvalid <= s_axil_rready ? 0 : 1;
     end
 end
 
@@ -106,9 +102,6 @@ always @(posedge aclk) begin
 	else if (!s_axil_rvalid || s_axil_rready)
 	begin
 		s_axil_rdata <= memory[ar_address_real];
-
-		if (!next_rvalid)
-			s_axil_rdata <= 0;
 	end
 end
 endmodule
