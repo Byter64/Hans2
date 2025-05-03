@@ -17,9 +17,13 @@ list(APPEND sources_sim
   ${CMAKE_CURRENT_SOURCE_DIR}/../../Controller/controller.sv
   ${CMAKE_CURRENT_SOURCE_DIR}/../AxiLiteMemory.sv
   ${CMAKE_CURRENT_SOURCE_DIR}/../../AXI/verilog-axi-master/rtl/axil_crossbar.v
-  ${CMAKE_CURRENT_SOURCE_DIR}/../../AXI/verilog-axi-master/rtl/axil_crossbar_addr
-  ${CMAKE_CURRENT_SOURCE_DIR}/../../AXI/verilog-axi-master/rtl/axil_crossbar_rd
-  ${CMAKE_CURRENT_SOURCE_DIR}/../../AXI/verilog-axi-master/rtl/axil_crossbar_wr
+  ${CMAKE_CURRENT_SOURCE_DIR}/../../AXI/verilog-axi-master/rtl/axil_crossbar_addr.v
+  ${CMAKE_CURRENT_SOURCE_DIR}/../../AXI/verilog-axi-master/rtl/axil_crossbar_rd.v
+  ${CMAKE_CURRENT_SOURCE_DIR}/../../AXI/verilog-axi-master/rtl/axil_crossbar_wr.v
+  ${CMAKE_CURRENT_SOURCE_DIR}/../../AXI/verilog-axi-master/rtl/arbiter.v
+  ${CMAKE_CURRENT_SOURCE_DIR}/../../AXI/verilog-axi-master/rtl/axil_register_rd.v
+  ${CMAKE_CURRENT_SOURCE_DIR}/../../AXI/verilog-axi-master/rtl/axil_register_wr.v
+  ${CMAKE_CURRENT_SOURCE_DIR}/../../AXI/verilog-axi-master/rtl/priority_encoder.v
   ${CMAKE_CURRENT_SOURCE_DIR}/../../ecp5u/EHXPLLL.v
   ${CMAKE_CURRENT_SOURCE_DIR}/../../ecp5u/ODDRX1F.v
 )
