@@ -1,35 +1,28 @@
 cmake_minimum_required(VERSION 3.24.0)
+enable_language(C ASM)
 project("Hans2_Software")
 
-set(CMAKE_CXX_COMPILER "clang")
-set(CMAKE_C_COMPILER ${CMAKE_CXX_COMPILER})
-set(CMAKE_LINKER "ld.lld")
-set(CMAKE_OBJDUMP "/usr/bin/llvm-objdump")
-set(CMAKE_OBJCOPY "/usr/bin/riscv64-linux-gnu-objcopy")
-
-add_compile_options(-target riscv32 -march=rv32im -mabi=ilp32 -W -Os -Bstatic
-                    -ffreestanding -nostdlib
+add_compile_options(-nostdlib
                     -DHAVE_MMAP=0 # don't compile MMAP
                     -D_LDBL_EQ_DBL=0 # no long double support
+                    -fno-exceptions
+)
+add_link_options(-nostdlib -fno-exceptions
+  -T${CMAKE_CURRENT_SOURCE_DIR}/riscv.ld
 )
 
-add_link_options(-target riscv32 -march=rv32im -mabi=ilp32 -W -Os -Bstatic
-                 -T${CMAKE_CURRENT_SOURCE_DIR}/riscv.ld -nostdlib
-                 -ffreestanding
-)
-
-include(newlib) # Loading cmake/newlib.cmake
+add_subdirectory(fatfs)
 
 add_executable(test.elf
+  start.S
   test.cpp
+  syscall.cpp
 )
 
 target_link_libraries(test.elf
-  newlib
-)
-
-target_include_directories(test.elf
-  PRIVATE ${newlib_sources_SOURCE_DIR}/newlib/libc/include/
+  fatfs
+  m
+  c
 )
 
 add_custom_command(OUTPUT test.tmp

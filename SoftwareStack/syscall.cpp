@@ -1,3 +1,4 @@
+#include "fatfs/ff.h"
 #include <cerrno>
 #include <cstdio>
 #include <sys/stat.h>
@@ -6,7 +7,7 @@ extern "C" {
 
 void *__dso_handle = 0;
 
-int _write(int fd, char *ptr, int len) {
+int _write(int fd, [[maybe_unused]] char *ptr, int len) {
   int written = 0;
 
   if ((fd != 1) && (fd != 2) && (fd != 3)) {
@@ -15,12 +16,16 @@ int _write(int fd, char *ptr, int len) {
 
   for (; len != 0; --len) {
     // uart_putchar((uint8_t)*ptr++);
+    f_write(NULL, NULL, 1, NULL);
     ++written;
   }
   return written;
 }
 
-int _read(int fd, char *ptr, int len) { return 0; }
+int _read([[maybe_unused]] int fd, [[maybe_unused]] char *ptr,
+          [[maybe_unused]] int len) {
+  return 0;
+}
 
 void *_sbrk(int incr) {
   extern int _bss_end;
@@ -37,28 +42,32 @@ void *_sbrk(int incr) {
   return prev_heap;
 }
 
-int _fstat(int fd, struct stat *st) {
+int _fstat([[maybe_unused]] int fd, struct stat *st) {
   st->st_mode = S_IFCHR;
   return 0;
 }
 
-int _lseek(int fd, int offset, int whence) { return 0; }
+int _lseek([[maybe_unused]] int fd, [[maybe_unused]] int offset,
+           [[maybe_unused]] int whence) {
+  return 0;
+}
 
-int _open(const char *name, int flags, int mode) {
+int _open([[maybe_unused]] const char *name, [[maybe_unused]] int flags,
+          [[maybe_unused]] int mode) {
   errno = ENOSYS;
   return -1;
 }
 
-int _close(int fd) { return -1; }
+int _close([[maybe_unused]] int fd) { return -1; }
 
-int _isatty(int fd) { return 1; }
+int _isatty([[maybe_unused]] int fd) { return 1; }
 
-void _exit(int status) {
+void _exit([[maybe_unused]] int status) {
   while (1) {
   }
 }
 
-int _kill(int pid, int sig) {
+int _kill([[maybe_unused]] int pid, [[maybe_unused]] int sig) {
   errno = EINVAL;
   return -1;
 }
