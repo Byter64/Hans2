@@ -314,7 +314,7 @@ assign AXI_m_axil_rresp 	= {MEM_s_axil_rresp, GS_s_axil_rresp};
 assign AXI_m_axil_rvalid 	= {MEM_s_axil_rvalid, GS_s_axil_rvalid};
 assign {MEM_s_axil_rready, GS_s_axil_rready} = AXI_m_axil_rready;
 
-axil_interconnect #(
+axil_crossbar #(
 	.S_COUNT(S_COUNT),
 	.M_COUNT(M_COUNT),
 	.DATA_WIDTH(DATA_WIDTH),
@@ -323,7 +323,7 @@ axil_interconnect #(
 	.M_BASE_ADDR(M_BASE_ADDR),
 	.M_ADDR_WIDTH(M_ADDR_WIDTH)
 )
-AxiInterconnect 
+AxiCrossbar 
 (
 	.clk(hdmi_pixClk),
 	.rst(~resetn),
