@@ -229,8 +229,6 @@ AXILiteMemory #(
     .s_axil_rready(MEM_s_axil_rready)
 );
 
-initial $readmemh("C:/Users/Yanni/Documents/Hans2/HardwareDesign/Prototypes/v01_CPU_GPU/Software/firmware32.hex", Memory.memory);
-
 logic[S_COUNT*ADDR_WIDTH-1:0] AXI_s_axil_awaddr;
 logic[S_COUNT*3-1:0]          AXI_s_axil_awprot;
 logic[S_COUNT-1:0]            AXI_s_axil_awvalid;
