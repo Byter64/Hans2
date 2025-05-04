@@ -111,7 +111,7 @@ void Hapi::Clear(Color color)
 
 void Hapi::SetTargetFPS(int fps)
 {
-	targetTicks = *CLOCK_FREQ / fps;
+	//targetTicks = *CLOCK_FREQ / fps;
 }
 
 void Hapi::SetVSync(bool vSync)

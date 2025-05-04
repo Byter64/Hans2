@@ -167,9 +167,6 @@ _ZN4Hapi5ClearENS_5ColorE:              # @_ZN4Hapi5ClearENS_5ColorE
 	.type	_ZN4Hapi12SetTargetFPSEi,@function
 _ZN4Hapi12SetTargetFPSEi:               # @_ZN4Hapi12SetTargetFPSEi
 # %bb.0:
-	lui	a0, %hi(CLOCK_FREQ)
-	lw	a0, %lo(CLOCK_FREQ)(a0)
-	lw	zero, 0(a0)
 	ret
 .Lfunc_end10:
 	.size	_ZN4Hapi12SetTargetFPSEi, .Lfunc_end10-_ZN4Hapi12SetTargetFPSEi
