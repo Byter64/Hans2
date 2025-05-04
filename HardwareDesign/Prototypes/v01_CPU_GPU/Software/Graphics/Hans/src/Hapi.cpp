@@ -10,33 +10,25 @@ struct ImageData
 
 
 
-volatile char* GPU_BLOCK 			= (char*)24576;
+volatile char* GPU_BLOCK 			= (char*)65536;
 volatile int* GPU_IMAGE_START		= (int*)(GPU_BLOCK + 0);
-volatile int* GPU_IMAGE_X			= (int*)(GPU_BLOCK + 4);
-volatile int* GPU_IMAGE_Y			= (int*)(GPU_BLOCK + 8);
-volatile int* GPU_IMAGE_WIDTH		= (int*)(GPU_BLOCK + 12);
-volatile int* GPU_EXCERPT_WIDTH		= (int*)(GPU_BLOCK + 16);
-volatile int* GPU_EXCERPT_HEIGHT	= (int*)(GPU_BLOCK + 20);
-volatile int* GPU_SCREEN_X			= (int*)(GPU_BLOCK + 24);
-volatile int* GPU_SCREEN_Y			= (int*)(GPU_BLOCK + 28);
-volatile int* GPU_COMMAND_DRAW		= (int*)(GPU_BLOCK + 32);
-volatile int* GPU_CLEAR_COLOR		= (int*)(GPU_BLOCK + 36);
-volatile int* GPU_COMMAND_CLEAR		= (int*)(GPU_BLOCK + 40);
-volatile int* GPU_IS_BUSY			= (int*)(GPU_BLOCK + 44);
+volatile int* GPU_IMAGE_X			= (int*)(GPU_BLOCK + 1);
+volatile int* GPU_IMAGE_Y			= (int*)(GPU_BLOCK + 2);
+volatile int* GPU_IMAGE_WIDTH		= (int*)(GPU_BLOCK + 3);
+volatile int* GPU_EXCERPT_WIDTH		= (int*)(GPU_BLOCK + 4);
+volatile int* GPU_EXCERPT_HEIGHT	= (int*)(GPU_BLOCK + 5);
+volatile int* GPU_SCREEN_X			= (int*)(GPU_BLOCK + 6);
+volatile int* GPU_SCREEN_Y			= (int*)(GPU_BLOCK + 7);
+volatile int* GPU_CLEAR_COLOR		= (int*)(GPU_BLOCK + 8);
+volatile int* GPU_COMMAND_DRAW		= (int*)(GPU_BLOCK + 9);
+volatile int* GPU_COMMAND_CLEAR		= (int*)(GPU_BLOCK + 10);
+volatile int* GPU_IS_BUSY			= (int*)(GPU_BLOCK + 11);
 
-volatile int* GPU_SWAP_BUFFERS		= (int*)(GPU_BLOCK + 256);
-volatile int* GPU_IS_V_SYNCED		= (int*)(GPU_BLOCK + 260);
-volatile int* GPU_VSYNC				= (int*)(GPU_BLOCK + 264);
+volatile int* GPU_VSYNC				= (int*)(GPU_BLOCK + 12);
+volatile int* GPU_HSYNC				= (int*)(GPU_BLOCK + 13);
 
-volatile char* CLOCK 				= nullptr;
-volatile int* CLOCK_FREQ 			= (int*)CLOCK;
-volatile int* CLOCK_LOW 			= (int*)(CLOCK + 4);
-volatile int* CLOCK_HIGH 			= (int*)(CLOCK + 8);
-
-volatile char* INPUT_ADDRESS 		= (char*) - 1;
-
-static int lastTime = 0;
-static int targetTicks = 0;
+volatile int* GPU_COMMAND_SWAP_BUFFERS= (int*)(GPU_BLOCK + 14);
+volatile int* VSYNC_BUFFER_SWAP		= (int*)(GPU_BLOCK + 15);
 
 int Hapi::Init()
 {
@@ -76,7 +68,7 @@ void Hapi::StartDrawing()
 
 void Hapi::EndDrawing()
 {
-	*GPU_SWAP_BUFFERS = true;
+	*GPU_COMMAND_SWAP_BUFFERS = true;
 	while (!*GPU_VSYNC);
 }
 
@@ -111,7 +103,7 @@ void Hapi::Clear(Color color)
 
 void Hapi::SetTargetFPS(int fps)
 {
-	//targetTicks = *CLOCK_FREQ / fps;
+	
 }
 
 void Hapi::SetVSync(bool vSync)
