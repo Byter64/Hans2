@@ -1,9 +1,9 @@
 cmake_minimum_required(VERSION 3.24.0)
 
 set(COMPILER_PATH "/home/jonathan/.opt/riscv/bin/")
-set(CMAKE_CXX_COMPILER "${COMPILER_PATH}riscv32-unknown-elf-g++")
-set(CMAKE_C_COMPILER "${COMPILER_PATH}riscv32-unknown-elf-gcc")
-set(CMAKE_LINKER "${COMPILER_PATH}riscv32-unknown-elf-ld")
+set(CMAKE_CXX_COMPILER "${COMPILER_PATH}clang")
+set(CMAKE_C_COMPILER "${COMPILER_PATH}clang")
+set(CMAKE_LINKER "${COMPILER_PATH}lld")
 set(CMAKE_OBJDUMP "${COMPILER_PATH}riscv32-unknown-elf-objdump")
 set(CMAKE_OBJCOPY "${COMPILER_PATH}riscv32-unknown-elf-objcopy")
 

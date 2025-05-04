@@ -1,24 +1,31 @@
 #include "fatfs/ff.h"
-#include <cerrno>
-#include <cstdio>
+#include <errno.h>
+#include <stdio.h>
 #include <sys/stat.h>
-
-extern "C" {
 
 void *__dso_handle = 0;
 
-int _write(int fd, [[maybe_unused]] char *ptr, int len) {
-  int written = 0;
+const TCHAR path[30] = "stdout.log";
+FIL fp;
+FATFS FatFs;
 
-  if ((fd != 1) && (fd != 2) && (fd != 3)) {
+int _write([[maybe_unused]] int fd, char *ptr, int len) {
+  f_mount(&FatFs, "", 0);
+
+  FRESULT fr = f_open(&fp, path, FA_WRITE);
+  if (fr != 0) {
+    return fr;
+  }
+
+  UINT written = 0;
+
+  fr = f_write(&fp, ptr, len, &written);
+  if (fr != 0) {
+    // TODO: Set errno
     return -1;
   }
 
-  for (; len != 0; --len) {
-    // uart_putchar((uint8_t)*ptr++);
-    f_write(NULL, NULL, 1, NULL);
-    ++written;
-  }
+  f_close(&fp);
   return written;
 }
 
@@ -28,12 +35,12 @@ int _read([[maybe_unused]] int fd, [[maybe_unused]] char *ptr,
 }
 
 void *_sbrk(int incr) {
-  extern int _bss_end;
+  extern int heap_begin;
   static unsigned char *heap = NULL;
   unsigned char *prev_heap;
 
   if (heap == NULL) {
-    heap = (unsigned char *)&_bss_end;
+    heap = (unsigned char *)&heap_begin;
   }
   prev_heap = heap;
 
@@ -73,4 +80,3 @@ int _kill([[maybe_unused]] int pid, [[maybe_unused]] int sig) {
 }
 
 int _getpid() { return -1; }
-}

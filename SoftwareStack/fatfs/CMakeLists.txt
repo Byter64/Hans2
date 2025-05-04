@@ -1,4 +1,5 @@
 project("fatfs")
+enable_language(C)
 
 add_compile_options(-nostdlib
                     -DHAVE_MMAP=0 # don't compile MMAP

@@ -1,13 +1,16 @@
 cmake_minimum_required(VERSION 3.24.0)
-enable_language(C ASM)
+enable_language(C CXX ASM)
 project("Hans2_Software")
 
-add_compile_options(-nostdlib
+add_compile_options(
                     -DHAVE_MMAP=0 # don't compile MMAP
                     -D_LDBL_EQ_DBL=0 # no long double support
                     -fno-exceptions
+                    -nostartfiles
+                    -nostdlib
+                    -fno-unwind-tables
 )
-add_link_options(-nostdlib -fno-exceptions
+add_link_options(-nostdlib -nostartfiles
   -T${CMAKE_CURRENT_SOURCE_DIR}/riscv.ld
 )
 
@@ -16,25 +19,15 @@ add_subdirectory(fatfs)
 add_executable(test.elf
   start.S
   test.cpp
-  syscall.cpp
+  syscall.c
 )
 
 target_link_libraries(test.elf
   fatfs
-  m
+  stdc++
   c
-)
-
-add_custom_command(OUTPUT test.tmp
-  DEPENDS test.elf
-  COMMAND ${CMAKE_OBJCOPY} -O verilog test.elf test.tmp
-  COMMENT "Generating verilog binary"
-)
-
-add_custom_command(OUTPUT start.elf
-  DEPENDS start.S
-  COMMAND ${CMAKE_C_COMPILER} -target riscv32 -march=rv32im -mabi=ilp32 -W -Os -Bstatic -ffreestanding -nostdlib -o start.elf -T${CMAKE_CURRENT_SOURCE_DIR}/start.ld ${CMAKE_CURRENT_SOURCE_DIR}/start.S
-  COMMENT "Generating start.elf from start.S"
+  gcc
+  m
 )
 
 add_custom_command(OUTPUT start.tmp
