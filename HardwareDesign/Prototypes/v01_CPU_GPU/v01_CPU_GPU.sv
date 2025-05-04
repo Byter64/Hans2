@@ -205,7 +205,7 @@ AXILiteMemory #(
     .ADDR_WIDTH(ADDR_WIDTH),
     .DATA_WIDTH(DATA_WIDTH),
     .STRB_WIDTH(STRB_WIDTH),
-    .MEMORY_DEPTH(10240) //MAKE THIS AS HIGH AS POSSIBLE
+    .MEMORY_DEPTH(16384) //In 32-Bit words. MAKE THIS AS HIGH AS POSSIBLE
 ) Memory (
     .aclk(hdmi_pixClk),
     .aresetn(resetn),

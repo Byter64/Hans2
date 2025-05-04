@@ -37,9 +37,9 @@ addi x30, zero, 0
 addi x31, zero, 0
 
 /* set stack pointer */
-.equ STACK_SIZE, 24576
-lui sp, %hi(STACK_SIZE)
-addi sp, sp, %lo(STACK_SIZE)
+.equ STACK_START, 65536
+lui sp, %hi(STACK_START)
+addi sp, sp, %lo(STACK_START)
 
 /* push zeros on the stack for argc and argv */
 /* (stack is aligned to 16 bytes in riscv calling convention) */
