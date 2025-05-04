@@ -48,12 +48,12 @@ int main() {
     int left_boat_x = 10, left_boat_y = 100;
     int right_boat_x = 350, right_boat_y = 100;
     int boat_speed = 2;
+	int boat_pos = 0;
     bool paused = false;
 
     Hapi::Init();
     Hapi::SetTargetFPS(60);
     Hapi::Image water = Hapi::LoadImage((char*)SproutLands::Water, 16, 16);
-    Hapi::Image basket_img = Hapi::LoadImage((char*)SproutLands::Piknikbasket, 16, 16);
     Hapi::Image boat = Hapi::LoadImage((char*)SproutLands::Boats, 48, 32);
 
     while (true) {
@@ -66,27 +66,12 @@ int main() {
                 Hapi::Draw(water, water_frame_x, 0, x, y, 16, 16, 48);
             }
         }
-        updateAnimation(water_ticks, water_frame_x, 16, 48);
-
         Hapi::Draw(boat, 0, 0, left_boat_x, left_boat_y, 48, 32, 144);
-        Hapi::Draw(boat, 0, 0, right_boat_x, right_boat_y, 48, 32, 144);
+		boat_pos += boat_speed;
+		left_boat_x = 10 + (boat_pos % 200);
 
-        for (auto& b : baskets) {
-            if (b.active) {
-                Hapi::Draw(basket_img, 0, 0, b.x, b.y, 16, 16, 16);
-            }
-        }
+        updateAnimation(water_ticks, water_frame_x, 16, 48);
         Hapi::EndDrawing();
-        if (!(*GET_NES_START || *GET_NES_SELECT)) {
-            updateBaskets();
-            moveBoat(left_boat_x, left_boat_y, boat_speed, *GET_NES_X, *GET_NES_B, *GET_NES_Y, *GET_NES_A);
-            moveBoat(right_boat_x, right_boat_y, boat_speed, *GET_NES_UP, *GET_NES_DOWN, *GET_NES_LEFT, *GET_NES_RIGHT);
-
-            if (*GET_BUTTON_F1) fireBasket(left_boat_x + 48, left_boat_y + 16, 1);
-            if (*GET_BUTTON_F2) fireBasket(left_boat_x, left_boat_y + 16, -1);
-            if (*GET_NES_R) fireBasket(right_boat_x + 48, right_boat_y + 16, 1);
-            if (*GET_NES_L) fireBasket(right_boat_x, right_boat_y + 16, -1);
-        }
     }
     Hapi::Terminate();
     return 0;
