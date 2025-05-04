@@ -8,21 +8,21 @@
 _Z4mainv:                               # @_Z4mainv
 	.cfi_startproc
 # %bb.0:
-	addi	sp, sp, -80
-	.cfi_def_cfa_offset 80
-	sw	ra, 76(sp)                      # 4-byte Folded Spill
-	sw	s0, 72(sp)                      # 4-byte Folded Spill
-	sw	s1, 68(sp)                      # 4-byte Folded Spill
-	sw	s2, 64(sp)                      # 4-byte Folded Spill
-	sw	s3, 60(sp)                      # 4-byte Folded Spill
-	sw	s4, 56(sp)                      # 4-byte Folded Spill
-	sw	s5, 52(sp)                      # 4-byte Folded Spill
-	sw	s6, 48(sp)                      # 4-byte Folded Spill
-	sw	s7, 44(sp)                      # 4-byte Folded Spill
-	sw	s8, 40(sp)                      # 4-byte Folded Spill
-	sw	s9, 36(sp)                      # 4-byte Folded Spill
-	sw	s10, 32(sp)                     # 4-byte Folded Spill
-	sw	s11, 28(sp)                     # 4-byte Folded Spill
+	addi	sp, sp, -64
+	.cfi_def_cfa_offset 64
+	sw	ra, 60(sp)                      # 4-byte Folded Spill
+	sw	s0, 56(sp)                      # 4-byte Folded Spill
+	sw	s1, 52(sp)                      # 4-byte Folded Spill
+	sw	s2, 48(sp)                      # 4-byte Folded Spill
+	sw	s3, 44(sp)                      # 4-byte Folded Spill
+	sw	s4, 40(sp)                      # 4-byte Folded Spill
+	sw	s5, 36(sp)                      # 4-byte Folded Spill
+	sw	s6, 32(sp)                      # 4-byte Folded Spill
+	sw	s7, 28(sp)                      # 4-byte Folded Spill
+	sw	s8, 24(sp)                      # 4-byte Folded Spill
+	sw	s9, 20(sp)                      # 4-byte Folded Spill
+	sw	s10, 16(sp)                     # 4-byte Folded Spill
+	sw	s11, 12(sp)                     # 4-byte Folded Spill
 	.cfi_offset ra, -4
 	.cfi_offset s0, -8
 	.cfi_offset s1, -12
@@ -45,339 +45,97 @@ _Z4mainv:                               # @_Z4mainv
 	li	a2, 16
 	call	_ZN4Hapi9LoadImageEPcii
 	mv	s0, a0
-	lui	a0, %hi(_ZN11SproutLandsL12PiknikbasketE)
-	addi	a0, a0, %lo(_ZN11SproutLandsL12PiknikbasketE)
-	li	a1, 16
-	li	a2, 16
-	call	_ZN4Hapi9LoadImageEPcii
-	mv	s1, a0
 	lui	a0, %hi(_ZN11SproutLandsL5BoatsE)
 	addi	a0, a0, %lo(_ZN11SproutLandsL5BoatsE)
 	li	a1, 48
 	li	a2, 32
 	call	_ZN4Hapi9LoadImageEPcii
-	mv	s2, a0
-	li	s3, 0
-	li	a0, 350
-	sw	a0, 12(sp)                      # 4-byte Folded Spill
-	li	a0, 100
-	sw	a0, 8(sp)                       # 4-byte Folded Spill
-	li	a0, 10
-	sw	a0, 16(sp)                      # 4-byte Folded Spill
-	li	s7, 20
-	li	s11, 384
-	li	s5, 224
-	lui	a0, 174763
-	lui	s6, %hi(baskets)
-	addi	s6, s6, %lo(baskets)
-	addi	a0, a0, -1365
-	sw	a0, 4(sp)                       # 4-byte Folded Spill
-	li	s8, 100
-                                        # implicit-def: $x20
+	mv	s1, a0
+	li	s2, 0
+	li	s7, 0
+	li	s4, 10
+	li	s11, 20
+	li	s9, 384
+	li	s10, 224
+	lui	a0, 335544
+	lui	a1, 174763
+	addi	s8, a0, 1311
+	addi	a0, a1, -1365
+	sw	a0, 0(sp)                       # 4-byte Folded Spill
+                                        # implicit-def: $x19
 .LBB0_1:                                # =>This Loop Header: Depth=1
                                         #     Child Loop BB0_2 Depth 2
                                         #       Child Loop BB0_3 Depth 3
-                                        #     Child Loop BB0_8 Depth 2
-                                        #     Child Loop BB0_14 Depth 2
 	call	_ZN4Hapi12StartDrawingEv
-	addi	a0, sp, 20
+	addi	a0, sp, 4
 	li	a1, 255
 	li	a2, 127
 	li	a3, 127
 	li	a4, 1
 	call	_ZN4Hapi5ColorC1Ehhhb
-	lhu	a1, 24(sp)
-	lw	a0, 20(sp)
+	lhu	a1, 8(sp)
+	lw	a0, 4(sp)
 	lui	a2, 1048560
-	and	a2, s4, a2
-	or	s4, a2, a1
-	mv	a1, s4
+	and	a2, s3, a2
+	or	s3, a2, a1
+	mv	a1, s3
 	call	_ZN4Hapi5ClearENS_5ColorE
 	li	a0, 0
 .LBB0_2:                                #   Parent Loop BB0_1 Depth=1
                                         # =>  This Loop Header: Depth=2
                                         #       Child Loop BB0_3 Depth 3
-	mv	s9, a0
-	li	s10, -16
+	mv	s5, a0
+	li	s6, -16
 .LBB0_3:                                #   Parent Loop BB0_1 Depth=1
                                         #     Parent Loop BB0_2 Depth=2
                                         # =>    This Inner Loop Header: Depth=3
-	addi	s10, s10, 16
+	addi	s6, s6, 16
 	li	a5, 16
 	li	a6, 16
 	li	a7, 48
 	mv	a0, s0
-	mv	a1, s3
+	mv	a1, s2
 	li	a2, 0
-	mv	a3, s10
-	mv	a4, s9
+	mv	a3, s6
+	mv	a4, s5
 	call	_ZN4Hapi4DrawEjiiiiiii
-	bltu	s10, s11, .LBB0_3
+	bltu	s6, s9, .LBB0_3
 # %bb.4:                                #   in Loop: Header=BB0_2 Depth=2
-	addi	a0, s9, 16
-	bltu	s9, s5, .LBB0_2
+	addi	a0, s5, 16
+	bltu	s5, s10, .LBB0_2
 # %bb.5:                                #   in Loop: Header=BB0_1 Depth=1
-	addi	s7, s7, -1
-	bnez	s7, .LBB0_7
+	li	a4, 100
+	li	a5, 48
+	li	a6, 32
+	li	a7, 144
+	mv	a0, s1
+	li	a1, 0
+	li	a2, 0
+	mv	a3, s4
+	call	_ZN4Hapi4DrawEjiiiiiii
+	addi	s11, s11, -1
+	bnez	s11, .LBB0_7
 # %bb.6:                                #   in Loop: Header=BB0_1 Depth=1
-	addi	s3, s3, 16
-	lw	a0, 4(sp)                       # 4-byte Folded Reload
-	mulh	a0, s3, a0
+	addi	s2, s2, 16
+	lw	a0, 0(sp)                       # 4-byte Folded Reload
+	mulh	a0, s2, a0
 	srli	a1, a0, 31
 	srli	a0, a0, 3
 	add	a0, a0, a1
 	slli	a1, a0, 6
 	slli	a0, a0, 4
 	sub	a0, a0, a1
-	add	s3, s3, a0
-	li	s7, 20
+	add	s2, s2, a0
+	li	s11, 20
 .LBB0_7:                                #   in Loop: Header=BB0_1 Depth=1
-	li	a5, 48
-	li	a6, 32
-	li	a7, 144
-	mv	a0, s2
-	li	a1, 0
-	li	a2, 0
-	lw	a3, 16(sp)                      # 4-byte Folded Reload
-	lw	a4, 8(sp)                       # 4-byte Folded Reload
-	call	_ZN4Hapi4DrawEjiiiiiii
-	li	a5, 48
-	li	a6, 32
-	li	a7, 144
-	mv	a0, s2
-	li	a1, 0
-	li	a2, 0
-	lw	a3, 12(sp)                      # 4-byte Folded Reload
-	mv	a4, s8
-	call	_ZN4Hapi4DrawEjiiiiiii
-	mv	s9, s6
-.LBB0_8:                                #   Parent Loop BB0_1 Depth=1
-                                        # =>  This Inner Loop Header: Depth=2
-	lbu	a0, 12(s9)
-	beqz	a0, .LBB0_10
-# %bb.9:                                #   in Loop: Header=BB0_8 Depth=2
-	lw	a3, 0(s9)
-	lw	a4, 4(s9)
-	li	a5, 16
-	li	a6, 16
-	li	a7, 16
-	mv	a0, s1
-	li	a1, 0
-	li	a2, 0
-	call	_ZN4Hapi4DrawEjiiiiiii
-.LBB0_10:                               #   in Loop: Header=BB0_8 Depth=2
-	addi	s9, s9, 16
-	addi	a0, s6, 32
-	bne	s9, a0, .LBB0_8
-# %bb.11:                               #   in Loop: Header=BB0_1 Depth=1
-	call	_ZN4Hapi10EndDrawingEv
-	lui	a0, %hi(.L_MergedGlobals)
-	addi	a0, a0, %lo(.L_MergedGlobals)
-	lw	a0, 20(a0)
-	lw	a0, 0(a0)
-	bnez	a0, .LBB0_1
-# %bb.12:                               #   in Loop: Header=BB0_1 Depth=1
-	lui	a0, %hi(.L_MergedGlobals)
-	addi	a0, a0, %lo(.L_MergedGlobals)
-	lw	a0, 16(a0)
-	lw	a0, 0(a0)
-	bnez	a0, .LBB0_1
-# %bb.13:                               #   in Loop: Header=BB0_1 Depth=1
-	addi	a0, s6, 12
-	li	a3, 401
-	lui	t3, %hi(.L_MergedGlobals)
-.LBB0_14:                               #   Parent Loop BB0_1 Depth=1
-                                        # =>  This Inner Loop Header: Depth=2
-	lbu	a1, 0(a0)
-	beqz	a1, .LBB0_17
-# %bb.15:                               #   in Loop: Header=BB0_14 Depth=2
-	lw	a1, -12(a0)
-	lw	a2, -4(a0)
-	add	a1, a1, a2
-	sw	a1, -12(a0)
-	bltu	a1, a3, .LBB0_17
-# %bb.16:                               #   in Loop: Header=BB0_14 Depth=2
-	sb	zero, 0(a0)
-.LBB0_17:                               #   in Loop: Header=BB0_14 Depth=2
-	addi	a0, a0, 16
-	addi	a1, s6, 44
-	bne	a0, a1, .LBB0_14
-# %bb.18:                               #   in Loop: Header=BB0_1 Depth=1
-	addi	a0, t3, %lo(.L_MergedGlobals)
-	lw	a1, 44(a0)
-	lw	a1, 0(a1)
-	lw	a2, 8(a0)
-	seqz	a1, a1
-	lw	a2, 0(a2)
-	lw	a3, 12(a0)
-	addi	a4, a1, -1
-	lw	a1, 0(a3)
-	lw	a3, 40(a0)
-	andi	a4, a4, -2
-	snez	a2, a2
-	slli	a2, a2, 1
-	lw	a3, 0(a3)
-	lw	a5, 8(sp)                       # 4-byte Folded Reload
-	add	a2, a5, a2
-	add	a4, a2, a4
-	li	a2, 200
-	mv	a5, a4
-	bltu	a4, a2, .LBB0_20
-# %bb.19:                               #   in Loop: Header=BB0_1 Depth=1
-	li	a5, 200
-.LBB0_20:                               #   in Loop: Header=BB0_1 Depth=1
-	seqz	a1, a1
-	snez	a3, a3
-	addi	a1, a1, -1
-	slli	a3, a3, 1
-	andi	a1, a1, -2
-	lw	a6, 16(sp)                      # 4-byte Folded Reload
-	add	a3, a6, a3
-	add	a6, a3, a1
-	li	t0, 352
-	mv	a7, a6
-	bltu	a6, t0, .LBB0_22
-# %bb.21:                               #   in Loop: Header=BB0_1 Depth=1
-	li	a7, 352
-.LBB0_22:                               #   in Loop: Header=BB0_1 Depth=1
-	lw	a1, 24(a0)
-	lw	a1, 0(a1)
-	lw	a3, 28(a0)
-	seqz	a1, a1
-	lw	t1, 0(a3)
-	lw	a3, 32(a0)
-	lw	a3, 0(a3)
-	lw	a0, 36(a0)
-	addi	a1, a1, -1
-	andi	a1, a1, -2
-	snez	t2, t1
-	lw	t1, 0(a0)
-	slli	t2, t2, 1
-	add	a0, s8, t2
-	add	a0, a0, a1
-	mv	a1, a0
-	bltu	a0, a2, .LBB0_24
-# %bb.23:                               #   in Loop: Header=BB0_1 Depth=1
+	addi	s7, s7, 2
+	mulhu	a0, s7, s8
+	srli	a0, a0, 6
 	li	a1, 200
-.LBB0_24:                               #   in Loop: Header=BB0_1 Depth=1
-	seqz	a2, a3
-	snez	a3, t1
-	addi	a2, a2, -1
-	slli	a3, a3, 1
-	andi	a2, a2, -2
-	lw	t1, 12(sp)                      # 4-byte Folded Reload
-	add	a3, t1, a3
-	add	a2, a3, a2
-	mv	a3, a2
-	bltu	a2, t0, .LBB0_26
-# %bb.25:                               #   in Loop: Header=BB0_1 Depth=1
-	li	a3, 352
-.LBB0_26:                               #   in Loop: Header=BB0_1 Depth=1
-	lw	t0, %lo(.L_MergedGlobals)(t3)
-	slti	a4, a4, 0
-	addi	a4, a4, -1
-	and	t1, a4, a5
-	lw	a5, 0(t0)
-	slti	a4, a6, 0
-	addi	a4, a4, -1
-	and	a4, a4, a7
-	sw	a4, 16(sp)                      # 4-byte Folded Spill
-	sw	t1, 8(sp)                       # 4-byte Folded Spill
-	addi	a4, t1, 16
-	beqz	a5, .LBB0_31
-# %bb.27:                               #   in Loop: Header=BB0_1 Depth=1
-	lbu	a6, 12(s6)
-	mv	a5, s6
-	beqz	a6, .LBB0_30
-# %bb.28:                               #   in Loop: Header=BB0_1 Depth=1
-	lbu	a5, 28(s6)
-	bnez	a5, .LBB0_31
-# %bb.29:                               #   in Loop: Header=BB0_1 Depth=1
-	addi	a5, s6, 16
-.LBB0_30:                               #   in Loop: Header=BB0_1 Depth=1
-	lw	a6, 16(sp)                      # 4-byte Folded Reload
-	addi	a6, a6, 48
-	sw	a6, 0(a5)
-	sw	a4, 4(a5)
-	li	a6, 1
-	sw	a6, 8(a5)
-	sb	a6, 12(a5)
-.LBB0_31:                               #   in Loop: Header=BB0_1 Depth=1
-	lui	a5, %hi(.L_MergedGlobals)
-	addi	a5, a5, %lo(.L_MergedGlobals)
-	lw	a5, 4(a5)
-	lw	a5, 0(a5)
-	beqz	a5, .LBB0_36
-# %bb.32:                               #   in Loop: Header=BB0_1 Depth=1
-	lbu	a6, 12(s6)
-	mv	a5, s6
-	beqz	a6, .LBB0_35
-# %bb.33:                               #   in Loop: Header=BB0_1 Depth=1
-	lbu	a5, 28(s6)
-	bnez	a5, .LBB0_36
-# %bb.34:                               #   in Loop: Header=BB0_1 Depth=1
-	addi	a5, s6, 16
-.LBB0_35:                               #   in Loop: Header=BB0_1 Depth=1
-	lw	a6, 16(sp)                      # 4-byte Folded Reload
-	sw	a6, 0(a5)
-	sw	a4, 4(a5)
-	li	a4, -1
-	sw	a4, 8(a5)
-	li	a4, 1
-	sb	a4, 12(a5)
-.LBB0_36:                               #   in Loop: Header=BB0_1 Depth=1
-	lui	a4, %hi(.L_MergedGlobals)
-	addi	a4, a4, %lo(.L_MergedGlobals)
-	lw	a4, 52(a4)
-	slti	a0, a0, 0
-	addi	a0, a0, -1
-	and	s8, a0, a1
-	lw	a1, 0(a4)
-	slti	a0, a2, 0
-	addi	a0, a0, -1
-	and	a0, a0, a3
-	sw	a0, 12(sp)                      # 4-byte Folded Spill
-	addi	a0, s8, 16
-	beqz	a1, .LBB0_41
-# %bb.37:                               #   in Loop: Header=BB0_1 Depth=1
-	lbu	a2, 12(s6)
-	mv	a1, s6
-	beqz	a2, .LBB0_40
-# %bb.38:                               #   in Loop: Header=BB0_1 Depth=1
-	lbu	a1, 28(s6)
-	bnez	a1, .LBB0_41
-# %bb.39:                               #   in Loop: Header=BB0_1 Depth=1
-	addi	a1, s6, 16
-.LBB0_40:                               #   in Loop: Header=BB0_1 Depth=1
-	lw	a2, 12(sp)                      # 4-byte Folded Reload
-	addi	a2, a2, 48
-	sw	a2, 0(a1)
-	sw	a0, 4(a1)
-	li	a2, 1
-	sw	a2, 8(a1)
-	sb	a2, 12(a1)
-.LBB0_41:                               #   in Loop: Header=BB0_1 Depth=1
-	lui	a1, %hi(.L_MergedGlobals)
-	addi	a1, a1, %lo(.L_MergedGlobals)
-	lw	a1, 48(a1)
-	lw	a1, 0(a1)
-	beqz	a1, .LBB0_1
-# %bb.42:                               #   in Loop: Header=BB0_1 Depth=1
-	lbu	a2, 12(s6)
-	mv	a1, s6
-	beqz	a2, .LBB0_44
-# %bb.43:                               #   in Loop: Header=BB0_1 Depth=1
-	lbu	a2, 28(s6)
-	addi	a1, s6, 16
-	bnez	a2, .LBB0_1
-.LBB0_44:                               #   in Loop: Header=BB0_1 Depth=1
-	lw	a2, 12(sp)                      # 4-byte Folded Reload
-	sw	a2, 0(a1)
-	sw	a0, 4(a1)
-	li	a0, -1
-	sw	a0, 8(a1)
-	li	a0, 1
-	sb	a0, 12(a1)
+	mul	a0, a0, a1
+	sub	s4, s7, a0
+	addi	s4, s4, 10
+	call	_ZN4Hapi10EndDrawingEv
 	j	.LBB0_1
 .Lfunc_end0:
 	.size	_Z4mainv, .Lfunc_end0-_Z4mainv
@@ -405,6 +163,94 @@ _Z15updateAnimationRiS_ii:              # @_Z15updateAnimationRiS_ii
 .Lfunc_end1:
 	.size	_Z15updateAnimationRiS_ii, .Lfunc_end1-_Z15updateAnimationRiS_ii
                                         # -- End function
+	.globl	_Z8moveBoatRiS_ibbbb            # -- Begin function _Z8moveBoatRiS_ibbbb
+	.p2align	2
+	.type	_Z8moveBoatRiS_ibbbb,@function
+_Z8moveBoatRiS_ibbbb:                   # @_Z8moveBoatRiS_ibbbb
+# %bb.0:
+	bnez	a3, .LBB2_8
+# %bb.1:
+	bnez	a4, .LBB2_9
+.LBB2_2:
+	bnez	a5, .LBB2_10
+.LBB2_3:
+	beqz	a6, .LBB2_5
+.LBB2_4:
+	lw	a3, 0(a0)
+	add	a2, a3, a2
+	sw	a2, 0(a0)
+.LBB2_5:
+	lw	a2, 0(a1)
+	bltz	a2, .LBB2_11
+# %bb.6:
+	li	a3, 201
+	bltu	a2, a3, .LBB2_13
+# %bb.7:
+	li	a2, 200
+	j	.LBB2_12
+.LBB2_8:
+	lw	a3, 0(a1)
+	sub	a3, a3, a2
+	sw	a3, 0(a1)
+	beqz	a4, .LBB2_2
+.LBB2_9:
+	lw	a3, 0(a1)
+	add	a3, a3, a2
+	sw	a3, 0(a1)
+	beqz	a5, .LBB2_3
+.LBB2_10:
+	lw	a3, 0(a0)
+	sub	a3, a3, a2
+	sw	a3, 0(a0)
+	bnez	a6, .LBB2_4
+	j	.LBB2_5
+.LBB2_11:
+	li	a2, 0
+.LBB2_12:
+	sw	a2, 0(a1)
+.LBB2_13:
+	lw	a1, 0(a0)
+	bltz	a1, .LBB2_16
+# %bb.14:
+	li	a2, 353
+	bltu	a1, a2, .LBB2_18
+# %bb.15:
+	li	a1, 352
+	j	.LBB2_17
+.LBB2_16:
+	li	a1, 0
+.LBB2_17:
+	sw	a1, 0(a0)
+.LBB2_18:
+	ret
+.Lfunc_end2:
+	.size	_Z8moveBoatRiS_ibbbb, .Lfunc_end2-_Z8moveBoatRiS_ibbbb
+                                        # -- End function
+	.globl	_Z10fireBasketiii               # -- Begin function _Z10fireBasketiii
+	.p2align	2
+	.type	_Z10fireBasketiii,@function
+_Z10fireBasketiii:                      # @_Z10fireBasketiii
+# %bb.0:
+	lui	a3, %hi(baskets)
+	addi	a3, a3, %lo(baskets)
+	lbu	a4, 12(a3)
+	beqz	a4, .LBB3_3
+# %bb.1:
+	lbu	a4, 28(a3)
+	bnez	a4, .LBB3_4
+# %bb.2:
+	addi	a3, a3, 16
+.LBB3_3:
+	li	a4, 1
+	sw	a0, 0(a3)
+	sw	a1, 4(a3)
+	sw	a2, 8(a3)
+	sb	a4, 12(a3)
+.LBB3_4:
+	ret
+.Lfunc_end3:
+	.size	_Z10fireBasketiii, .Lfunc_end3-_Z10fireBasketiii
+                                        # -- End function
 	.globl	_Z13updateBasketsv              # -- Begin function _Z13updateBasketsv
 	.p2align	2
 	.type	_Z13updateBasketsv,@function
@@ -415,112 +261,24 @@ _Z13updateBasketsv:                     # @_Z13updateBasketsv
 	li	a0, 401
 	addi	a1, a2, 12
 	addi	a2, a2, 44
-.LBB2_1:                                # =>This Inner Loop Header: Depth=1
+.LBB4_1:                                # =>This Inner Loop Header: Depth=1
 	lbu	a3, 0(a1)
-	beqz	a3, .LBB2_4
-# %bb.2:                                #   in Loop: Header=BB2_1 Depth=1
+	beqz	a3, .LBB4_4
+# %bb.2:                                #   in Loop: Header=BB4_1 Depth=1
 	lw	a3, -12(a1)
 	lw	a4, -4(a1)
 	add	a3, a3, a4
 	sw	a3, -12(a1)
-	bltu	a3, a0, .LBB2_4
-# %bb.3:                                #   in Loop: Header=BB2_1 Depth=1
+	bltu	a3, a0, .LBB4_4
+# %bb.3:                                #   in Loop: Header=BB4_1 Depth=1
 	sb	zero, 0(a1)
-.LBB2_4:                                #   in Loop: Header=BB2_1 Depth=1
+.LBB4_4:                                #   in Loop: Header=BB4_1 Depth=1
 	addi	a1, a1, 16
-	bne	a1, a2, .LBB2_1
+	bne	a1, a2, .LBB4_1
 # %bb.5:
 	ret
-.Lfunc_end2:
-	.size	_Z13updateBasketsv, .Lfunc_end2-_Z13updateBasketsv
-                                        # -- End function
-	.globl	_Z8moveBoatRiS_ibbbb            # -- Begin function _Z8moveBoatRiS_ibbbb
-	.p2align	2
-	.type	_Z8moveBoatRiS_ibbbb,@function
-_Z8moveBoatRiS_ibbbb:                   # @_Z8moveBoatRiS_ibbbb
-# %bb.0:
-	bnez	a3, .LBB3_8
-# %bb.1:
-	bnez	a4, .LBB3_9
-.LBB3_2:
-	bnez	a5, .LBB3_10
-.LBB3_3:
-	beqz	a6, .LBB3_5
-.LBB3_4:
-	lw	a3, 0(a0)
-	add	a2, a3, a2
-	sw	a2, 0(a0)
-.LBB3_5:
-	lw	a2, 0(a1)
-	bltz	a2, .LBB3_11
-# %bb.6:
-	li	a3, 201
-	bltu	a2, a3, .LBB3_13
-# %bb.7:
-	li	a2, 200
-	j	.LBB3_12
-.LBB3_8:
-	lw	a3, 0(a1)
-	sub	a3, a3, a2
-	sw	a3, 0(a1)
-	beqz	a4, .LBB3_2
-.LBB3_9:
-	lw	a3, 0(a1)
-	add	a3, a3, a2
-	sw	a3, 0(a1)
-	beqz	a5, .LBB3_3
-.LBB3_10:
-	lw	a3, 0(a0)
-	sub	a3, a3, a2
-	sw	a3, 0(a0)
-	bnez	a6, .LBB3_4
-	j	.LBB3_5
-.LBB3_11:
-	li	a2, 0
-.LBB3_12:
-	sw	a2, 0(a1)
-.LBB3_13:
-	lw	a1, 0(a0)
-	bltz	a1, .LBB3_16
-# %bb.14:
-	li	a2, 353
-	bltu	a1, a2, .LBB3_18
-# %bb.15:
-	li	a1, 352
-	j	.LBB3_17
-.LBB3_16:
-	li	a1, 0
-.LBB3_17:
-	sw	a1, 0(a0)
-.LBB3_18:
-	ret
-.Lfunc_end3:
-	.size	_Z8moveBoatRiS_ibbbb, .Lfunc_end3-_Z8moveBoatRiS_ibbbb
-                                        # -- End function
-	.globl	_Z10fireBasketiii               # -- Begin function _Z10fireBasketiii
-	.p2align	2
-	.type	_Z10fireBasketiii,@function
-_Z10fireBasketiii:                      # @_Z10fireBasketiii
-# %bb.0:
-	lui	a3, %hi(baskets)
-	addi	a3, a3, %lo(baskets)
-	lbu	a4, 12(a3)
-	beqz	a4, .LBB4_3
-# %bb.1:
-	lbu	a4, 28(a3)
-	bnez	a4, .LBB4_4
-# %bb.2:
-	addi	a3, a3, 16
-.LBB4_3:
-	li	a4, 1
-	sw	a0, 0(a3)
-	sw	a1, 4(a3)
-	sw	a2, 8(a3)
-	sb	a4, 12(a3)
-.LBB4_4:
-	ret
 .Lfunc_end4:
-	.size	_Z10fireBasketiii, .Lfunc_end4-_Z10fireBasketiii
+	.size	_Z13updateBasketsv, .Lfunc_end4-_Z13updateBasketsv
                                         # -- End function
 	.type	MEMORY_ADDRESS,@object          # @MEMORY_ADDRESS
 	.data
@@ -529,6 +287,20 @@ _Z10fireBasketiii:                      # @_Z10fireBasketiii
 MEMORY_ADDRESS:
 	.word	24576
 	.size	MEMORY_ADDRESS, 4
+
+	.type	GET_BUTTON_F1,@object           # @GET_BUTTON_F1
+	.globl	GET_BUTTON_F1
+	.p2align	2, 0x0
+GET_BUTTON_F1:
+	.word	25088
+	.size	GET_BUTTON_F1, 4
+
+	.type	GET_BUTTON_F2,@object           # @GET_BUTTON_F2
+	.globl	GET_BUTTON_F2
+	.p2align	2, 0x0
+GET_BUTTON_F2:
+	.word	25092
+	.size	GET_BUTTON_F2, 4
 
 	.type	GET_BUTTON_UP,@object           # @GET_BUTTON_UP
 	.globl	GET_BUTTON_UP
@@ -557,6 +329,90 @@ GET_BUTTON_LEFT:
 GET_BUTTON_RIGHT:
 	.word	25108
 	.size	GET_BUTTON_RIGHT, 4
+
+	.type	GET_NES_B,@object               # @GET_NES_B
+	.globl	GET_NES_B
+	.p2align	2, 0x0
+GET_NES_B:
+	.word	25600
+	.size	GET_NES_B, 4
+
+	.type	GET_NES_Y,@object               # @GET_NES_Y
+	.globl	GET_NES_Y
+	.p2align	2, 0x0
+GET_NES_Y:
+	.word	25604
+	.size	GET_NES_Y, 4
+
+	.type	GET_NES_SELECT,@object          # @GET_NES_SELECT
+	.globl	GET_NES_SELECT
+	.p2align	2, 0x0
+GET_NES_SELECT:
+	.word	25608
+	.size	GET_NES_SELECT, 4
+
+	.type	GET_NES_START,@object           # @GET_NES_START
+	.globl	GET_NES_START
+	.p2align	2, 0x0
+GET_NES_START:
+	.word	25612
+	.size	GET_NES_START, 4
+
+	.type	GET_NES_UP,@object              # @GET_NES_UP
+	.globl	GET_NES_UP
+	.p2align	2, 0x0
+GET_NES_UP:
+	.word	25616
+	.size	GET_NES_UP, 4
+
+	.type	GET_NES_DOWN,@object            # @GET_NES_DOWN
+	.globl	GET_NES_DOWN
+	.p2align	2, 0x0
+GET_NES_DOWN:
+	.word	25620
+	.size	GET_NES_DOWN, 4
+
+	.type	GET_NES_LEFT,@object            # @GET_NES_LEFT
+	.globl	GET_NES_LEFT
+	.p2align	2, 0x0
+GET_NES_LEFT:
+	.word	25624
+	.size	GET_NES_LEFT, 4
+
+	.type	GET_NES_RIGHT,@object           # @GET_NES_RIGHT
+	.globl	GET_NES_RIGHT
+	.p2align	2, 0x0
+GET_NES_RIGHT:
+	.word	25628
+	.size	GET_NES_RIGHT, 4
+
+	.type	GET_NES_A,@object               # @GET_NES_A
+	.globl	GET_NES_A
+	.p2align	2, 0x0
+GET_NES_A:
+	.word	25632
+	.size	GET_NES_A, 4
+
+	.type	GET_NES_X,@object               # @GET_NES_X
+	.globl	GET_NES_X
+	.p2align	2, 0x0
+GET_NES_X:
+	.word	25636
+	.size	GET_NES_X, 4
+
+	.type	GET_NES_L,@object               # @GET_NES_L
+	.globl	GET_NES_L
+	.p2align	2, 0x0
+GET_NES_L:
+	.word	25640
+	.size	GET_NES_L, 4
+
+	.type	GET_NES_R,@object               # @GET_NES_R
+	.globl	GET_NES_R
+	.p2align	2, 0x0
+GET_NES_R:
+	.word	25644
+	.size	GET_NES_R, 4
 
 	.type	baskets,@object                 # @baskets
 	.bss
@@ -1595,267 +1451,6 @@ _ZN11SproutLandsL5WaterE:
 	.half	40625                           # 0x9eb1
 	.half	40625                           # 0x9eb1
 	.size	_ZN11SproutLandsL5WaterE, 2048
-
-	.type	_ZN11SproutLandsL12PiknikbasketE,@object # @_ZN11SproutLandsL12PiknikbasketE
-	.p2align	1, 0x0
-_ZN11SproutLandsL12PiknikbasketE:
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	43991                           # 0xabd7
-	.half	50395                           # 0xc4db
-	.half	50395                           # 0xc4db
-	.half	50395                           # 0xc4db
-	.half	43991                           # 0xabd7
-	.half	50395                           # 0xc4db
-	.half	50395                           # 0xc4db
-	.half	50395                           # 0xc4db
-	.half	50395                           # 0xc4db
-	.half	50395                           # 0xc4db
-	.half	50395                           # 0xc4db
-	.half	43991                           # 0xabd7
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	43991                           # 0xabd7
-	.half	50395                           # 0xc4db
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
-	.half	50395                           # 0xc4db
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
-	.half	50395                           # 0xc4db
-	.half	43991                           # 0xabd7
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	43991                           # 0xabd7
-	.half	50395                           # 0xc4db
-	.half	43991                           # 0xabd7
-	.half	0                               # 0x0
-	.half	43991                           # 0xabd7
-	.half	50395                           # 0xc4db
-	.half	43991                           # 0xabd7
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	43991                           # 0xabd7
-	.half	50395                           # 0xc4db
-	.half	43991                           # 0xabd7
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
-	.half	0                               # 0x0
-	.half	43991                           # 0xabd7
-	.half	56803                           # 0xdde3
-	.half	56803                           # 0xdde3
-	.half	56803                           # 0xdde3
-	.half	56803                           # 0xdde3
-	.half	50395                           # 0xc4db
-	.half	56803                           # 0xdde3
-	.half	56803                           # 0xdde3
-	.half	56803                           # 0xdde3
-	.half	56803                           # 0xdde3
-	.half	56803                           # 0xdde3
-	.half	56803                           # 0xdde3
-	.half	56803                           # 0xdde3
-	.half	56803                           # 0xdde3
-	.half	56803                           # 0xdde3
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
-	.half	56803                           # 0xdde3
-	.half	56803                           # 0xdde3
-	.half	56803                           # 0xdde3
-	.half	56803                           # 0xdde3
-	.half	50395                           # 0xc4db
-	.half	56803                           # 0xdde3
-	.half	56803                           # 0xdde3
-	.half	56803                           # 0xdde3
-	.half	56803                           # 0xdde3
-	.half	56803                           # 0xdde3
-	.half	56803                           # 0xdde3
-	.half	56803                           # 0xdde3
-	.half	56803                           # 0xdde3
-	.half	56803                           # 0xdde3
-	.half	43991                           # 0xabd7
-	.half	0                               # 0x0
-	.half	37655                           # 0x9317
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
-	.half	37655                           # 0x9317
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	37655                           # 0x9317
-	.half	61033                           # 0xee69
-	.half	50395                           # 0xc4db
-	.half	61033                           # 0xee69
-	.half	43991                           # 0xabd7
-	.half	50395                           # 0xc4db
-	.half	61033                           # 0xee69
-	.half	50395                           # 0xc4db
-	.half	61033                           # 0xee69
-	.half	50395                           # 0xc4db
-	.half	61033                           # 0xee69
-	.half	50395                           # 0xc4db
-	.half	61033                           # 0xee69
-	.half	37655                           # 0x9317
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	37655                           # 0x9317
-	.half	50395                           # 0xc4db
-	.half	61033                           # 0xee69
-	.half	50395                           # 0xc4db
-	.half	43991                           # 0xabd7
-	.half	61033                           # 0xee69
-	.half	50395                           # 0xc4db
-	.half	61033                           # 0xee69
-	.half	50395                           # 0xc4db
-	.half	61033                           # 0xee69
-	.half	50395                           # 0xc4db
-	.half	61033                           # 0xee69
-	.half	50395                           # 0xc4db
-	.half	37655                           # 0x9317
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	37655                           # 0x9317
-	.half	61033                           # 0xee69
-	.half	50395                           # 0xc4db
-	.half	61033                           # 0xee69
-	.half	43991                           # 0xabd7
-	.half	50395                           # 0xc4db
-	.half	61033                           # 0xee69
-	.half	50395                           # 0xc4db
-	.half	61033                           # 0xee69
-	.half	50395                           # 0xc4db
-	.half	61033                           # 0xee69
-	.half	50395                           # 0xc4db
-	.half	61033                           # 0xee69
-	.half	37655                           # 0x9317
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	37655                           # 0x9317
-	.half	50395                           # 0xc4db
-	.half	61033                           # 0xee69
-	.half	50395                           # 0xc4db
-	.half	43991                           # 0xabd7
-	.half	61033                           # 0xee69
-	.half	50395                           # 0xc4db
-	.half	61033                           # 0xee69
-	.half	50395                           # 0xc4db
-	.half	61033                           # 0xee69
-	.half	50395                           # 0xc4db
-	.half	61033                           # 0xee69
-	.half	50395                           # 0xc4db
-	.half	37655                           # 0x9317
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	18978                           # 0x4a22
-	.half	37655                           # 0x9317
-	.half	37655                           # 0x9317
-	.half	37655                           # 0x9317
-	.half	37655                           # 0x9317
-	.half	37655                           # 0x9317
-	.half	37655                           # 0x9317
-	.half	37655                           # 0x9317
-	.half	37655                           # 0x9317
-	.half	37655                           # 0x9317
-	.half	37655                           # 0x9317
-	.half	37655                           # 0x9317
-	.half	37655                           # 0x9317
-	.half	18978                           # 0x4a22
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	18978                           # 0x4a22
-	.half	18978                           # 0x4a22
-	.half	18978                           # 0x4a22
-	.half	18978                           # 0x4a22
-	.half	18978                           # 0x4a22
-	.half	18978                           # 0x4a22
-	.half	18978                           # 0x4a22
-	.half	18978                           # 0x4a22
-	.half	18978                           # 0x4a22
-	.half	18978                           # 0x4a22
-	.half	18978                           # 0x4a22
-	.half	18978                           # 0x4a22
-	.half	18978                           # 0x4a22
-	.half	18978                           # 0x4a22
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	18978                           # 0x4a22
-	.half	18978                           # 0x4a22
-	.half	18978                           # 0x4a22
-	.half	18978                           # 0x4a22
-	.half	18978                           # 0x4a22
-	.half	18978                           # 0x4a22
-	.half	18978                           # 0x4a22
-	.half	18978                           # 0x4a22
-	.half	18978                           # 0x4a22
-	.half	18978                           # 0x4a22
-	.half	18978                           # 0x4a22
-	.half	18978                           # 0x4a22
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.size	_ZN11SproutLandsL12PiknikbasketE, 512
 
 	.type	_ZN11SproutLandsL5BoatsE,@object # @_ZN11SproutLandsL5BoatsE
 	.p2align	1, 0x0
@@ -5736,72 +5331,8 @@ _ZN11SproutLandsL5BoatsE:
 	.zero	1470
 	.size	_ZN11SproutLandsL5BoatsE, 9216
 
-	.type	.L_MergedGlobals,@object        # @_MergedGlobals
-	.data
-	.p2align	2, 0x0
-.L_MergedGlobals:
-	.word	25088
-	.word	25092
-	.word	25600
-	.word	25604
-	.word	25608
-	.word	25612
-	.word	25616
-	.word	25620
-	.word	25624
-	.word	25628
-	.word	25632
-	.word	25636
-	.word	25640
-	.word	25644
-	.size	.L_MergedGlobals, 56
-
-	.globl	GET_BUTTON_F1
-.set GET_BUTTON_F1, .L_MergedGlobals
-	.size	GET_BUTTON_F1, 4
-	.globl	GET_BUTTON_F2
-.set GET_BUTTON_F2, .L_MergedGlobals+4
-	.size	GET_BUTTON_F2, 4
-	.globl	GET_NES_B
-.set GET_NES_B, .L_MergedGlobals+8
-	.size	GET_NES_B, 4
-	.globl	GET_NES_Y
-.set GET_NES_Y, .L_MergedGlobals+12
-	.size	GET_NES_Y, 4
-	.globl	GET_NES_SELECT
-.set GET_NES_SELECT, .L_MergedGlobals+16
-	.size	GET_NES_SELECT, 4
-	.globl	GET_NES_START
-.set GET_NES_START, .L_MergedGlobals+20
-	.size	GET_NES_START, 4
-	.globl	GET_NES_UP
-.set GET_NES_UP, .L_MergedGlobals+24
-	.size	GET_NES_UP, 4
-	.globl	GET_NES_DOWN
-.set GET_NES_DOWN, .L_MergedGlobals+28
-	.size	GET_NES_DOWN, 4
-	.globl	GET_NES_LEFT
-.set GET_NES_LEFT, .L_MergedGlobals+32
-	.size	GET_NES_LEFT, 4
-	.globl	GET_NES_RIGHT
-.set GET_NES_RIGHT, .L_MergedGlobals+36
-	.size	GET_NES_RIGHT, 4
-	.globl	GET_NES_A
-.set GET_NES_A, .L_MergedGlobals+40
-	.size	GET_NES_A, 4
-	.globl	GET_NES_X
-.set GET_NES_X, .L_MergedGlobals+44
-	.size	GET_NES_X, 4
-	.globl	GET_NES_L
-.set GET_NES_L, .L_MergedGlobals+48
-	.size	GET_NES_L, 4
-	.globl	GET_NES_R
-.set GET_NES_R, .L_MergedGlobals+52
-	.size	GET_NES_R, 4
 	.ident	"clang version 21.0.0git (https://github.com/llvm/llvm-project 179d30f8c3fddd3c85056fd2b8e877a4a8513158)"
 	.section	".note.GNU-stack","",@progbits
 	.addrsig
 	.addrsig_sym _ZN11SproutLandsL5WaterE
-	.addrsig_sym _ZN11SproutLandsL12PiknikbasketE
 	.addrsig_sym _ZN11SproutLandsL5BoatsE
-	.addrsig_sym .L_MergedGlobals

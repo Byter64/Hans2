@@ -75,10 +75,10 @@ _ZN4Hapi10EndDrawingEv:                 # @_ZN4Hapi10EndDrawingEv
 # %bb.0:
 	lui	a0, %hi(.L_MergedGlobals)
 	addi	a0, a0, %lo(.L_MergedGlobals)
-	lw	a1, 48(a0)
+	lw	a1, 52(a0)
 	li	a2, 1
 	sw	a2, 0(a1)
-	lw	a0, 52(a0)
+	lw	a0, 48(a0)
 .LBB7_1:                                # =>This Inner Loop Header: Depth=1
 	lw	a1, 0(a0)
 	beqz	a1, .LBB7_1
@@ -116,7 +116,7 @@ _ZN4Hapi4DrawEjiiiiiii:                 # @_ZN4Hapi4DrawEjiiiiiii
 	sw	a3, 0(a0)
 	lw	a0, 28(t0)
 	sw	a4, 0(a0)
-	lw	a0, 32(t0)
+	lw	a0, 36(t0)
 	li	a1, 1
 	sw	a1, 0(a0)
 	ret
@@ -146,7 +146,7 @@ _ZN4Hapi5ClearENS_5ColorE:              # @_ZN4Hapi5ClearENS_5ColorE
 # %bb.2:
 	mv	a0, sp
 	call	_ZN4Hapi5Color8GetColorEv
-	lw	a1, 36(s0)
+	lw	a1, 32(s0)
 	sw	a0, 0(a1)
 	lw	a0, 40(s0)
 	li	a1, 1
@@ -176,8 +176,8 @@ _ZN4Hapi12SetTargetFPSEi:               # @_ZN4Hapi12SetTargetFPSEi
 	.type	_ZN4Hapi8SetVSyncEb,@function
 _ZN4Hapi8SetVSyncEb:                    # @_ZN4Hapi8SetVSyncEb
 # %bb.0:
-	lui	a1, %hi(GPU_IS_V_SYNCED)
-	lw	a1, %lo(GPU_IS_V_SYNCED)(a1)
+	lui	a1, %hi(VSYNC_BUFFER_SWAP)
+	lw	a1, %lo(VSYNC_BUFFER_SWAP)(a1)
 	sw	a0, 0(a1)
 	ret
 .Lfunc_end11:
@@ -188,70 +188,40 @@ _ZN4Hapi8SetVSyncEb:                    # @_ZN4Hapi8SetVSyncEb
 	.globl	GPU_BLOCK
 	.p2align	2, 0x0
 GPU_BLOCK:
-	.word	24576
+	.word	65536
 	.size	GPU_BLOCK, 4
 
-	.type	GPU_IS_V_SYNCED,@object         # @GPU_IS_V_SYNCED
-	.globl	GPU_IS_V_SYNCED
+	.type	GPU_HSYNC,@object               # @GPU_HSYNC
+	.globl	GPU_HSYNC
 	.p2align	2, 0x0
-GPU_IS_V_SYNCED:
-	.word	24836
-	.size	GPU_IS_V_SYNCED, 4
+GPU_HSYNC:
+	.word	65588
+	.size	GPU_HSYNC, 4
 
-	.type	CLOCK,@object                   # @CLOCK
-	.bss
-	.globl	CLOCK
+	.type	VSYNC_BUFFER_SWAP,@object       # @VSYNC_BUFFER_SWAP
+	.globl	VSYNC_BUFFER_SWAP
 	.p2align	2, 0x0
-CLOCK:
-	.word	0
-	.size	CLOCK, 4
-
-	.type	CLOCK_FREQ,@object              # @CLOCK_FREQ
-	.globl	CLOCK_FREQ
-	.p2align	2, 0x0
-CLOCK_FREQ:
-	.word	0
-	.size	CLOCK_FREQ, 4
-
-	.type	CLOCK_LOW,@object               # @CLOCK_LOW
-	.data
-	.globl	CLOCK_LOW
-	.p2align	2, 0x0
-CLOCK_LOW:
-	.word	4
-	.size	CLOCK_LOW, 4
-
-	.type	CLOCK_HIGH,@object              # @CLOCK_HIGH
-	.globl	CLOCK_HIGH
-	.p2align	2, 0x0
-CLOCK_HIGH:
-	.word	8
-	.size	CLOCK_HIGH, 4
-
-	.type	INPUT_ADDRESS,@object           # @INPUT_ADDRESS
-	.globl	INPUT_ADDRESS
-	.p2align	2, 0x0
-INPUT_ADDRESS:
-	.word	4294967295
-	.size	INPUT_ADDRESS, 4
+VSYNC_BUFFER_SWAP:
+	.word	65596
+	.size	VSYNC_BUFFER_SWAP, 4
 
 	.type	.L_MergedGlobals,@object        # @_MergedGlobals
 	.p2align	2, 0x0
 .L_MergedGlobals:
-	.word	24576
-	.word	24580
-	.word	24584
-	.word	24588
-	.word	24592
-	.word	24596
-	.word	24600
-	.word	24604
-	.word	24608
-	.word	24612
-	.word	24616
-	.word	24620
-	.word	24832
-	.word	24840
+	.word	65536
+	.word	65540
+	.word	65544
+	.word	65548
+	.word	65552
+	.word	65556
+	.word	65560
+	.word	65564
+	.word	65568
+	.word	65572
+	.word	65576
+	.word	65580
+	.word	65584
+	.word	65592
 	.size	.L_MergedGlobals, 56
 
 	.globl	GPU_IMAGE_START
@@ -278,24 +248,24 @@ INPUT_ADDRESS:
 	.globl	GPU_SCREEN_Y
 .set GPU_SCREEN_Y, .L_MergedGlobals+28
 	.size	GPU_SCREEN_Y, 4
-	.globl	GPU_COMMAND_DRAW
-.set GPU_COMMAND_DRAW, .L_MergedGlobals+32
-	.size	GPU_COMMAND_DRAW, 4
 	.globl	GPU_CLEAR_COLOR
-.set GPU_CLEAR_COLOR, .L_MergedGlobals+36
+.set GPU_CLEAR_COLOR, .L_MergedGlobals+32
 	.size	GPU_CLEAR_COLOR, 4
+	.globl	GPU_COMMAND_DRAW
+.set GPU_COMMAND_DRAW, .L_MergedGlobals+36
+	.size	GPU_COMMAND_DRAW, 4
 	.globl	GPU_COMMAND_CLEAR
 .set GPU_COMMAND_CLEAR, .L_MergedGlobals+40
 	.size	GPU_COMMAND_CLEAR, 4
 	.globl	GPU_IS_BUSY
 .set GPU_IS_BUSY, .L_MergedGlobals+44
 	.size	GPU_IS_BUSY, 4
-	.globl	GPU_SWAP_BUFFERS
-.set GPU_SWAP_BUFFERS, .L_MergedGlobals+48
-	.size	GPU_SWAP_BUFFERS, 4
 	.globl	GPU_VSYNC
-.set GPU_VSYNC, .L_MergedGlobals+52
+.set GPU_VSYNC, .L_MergedGlobals+48
 	.size	GPU_VSYNC, 4
+	.globl	GPU_COMMAND_SWAP_BUFFERS
+.set GPU_COMMAND_SWAP_BUFFERS, .L_MergedGlobals+52
+	.size	GPU_COMMAND_SWAP_BUFFERS, 4
 	.ident	"clang version 21.0.0git (https://github.com/llvm/llvm-project 179d30f8c3fddd3c85056fd2b8e877a4a8513158)"
 	.section	".note.GNU-stack","",@progbits
 	.addrsig

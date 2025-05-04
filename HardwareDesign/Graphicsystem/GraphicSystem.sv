@@ -57,25 +57,25 @@ module GraphicSystem
     output logic                             m_axil_rready
 );
 
-typedef enum logic[31:0] {
-    ADDRESS,
-    ADDRESS_X,
-    ADDRESS_Y,
-    IMAGE_WIDTH,
-    WIDTH,
-    HEIGHT,
-    X,
-    Y,
-    CLEAR_COLOR,
-    COMMAND_DRAW,
-    COMMAND_CLEAR,
-    IS_BUSY,
+typedef enum logic[15:0] {
+    ADDRESS                 = 0,
+    ADDRESS_X               = 4,
+    ADDRESS_Y               = 8,
+    IMAGE_WIDTH             = 12,
+    WIDTH                   = 16,
+    HEIGHT                  = 20,
+    X                       = 24,
+    Y                       = 28,
+    CLEAR_COLOR             = 32,
+    COMMAND_DRAW            = 36,
+    COMMAND_CLEAR           = 40,
+    IS_BUSY                 = 44,
 
-    VSYNC,
-    HSYNC,
+    VSYNC                   = 48,
+    HSYNC                   = 52,
 
-    COMMAND_SWAP_BUFFERS,
-    VSYNC_BUFFER_SWAP
+    COMMAND_SWAP_BUFFERS    = 56,
+    VSYNC_BUFFER_SWAP       = 60
 } DataIndex;
 
 DataIndex activeWriteDataIndex;
