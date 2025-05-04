@@ -69,8 +69,8 @@ always @(posedge aclk) begin
 	if (!aresetn)
 		s_axil_bvalid <= 0;
 	else if (!s_axil_bvalid || s_axil_bready) begin
-		s_axil_bvalid <= s_axil_bready ? 0 : 1;
-    end
+		s_axil_bvalid <= 1;
+  end
 end
 
 //Address Read
