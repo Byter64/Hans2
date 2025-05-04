@@ -108,5 +108,5 @@ void Hapi::SetTargetFPS(int fps)
 
 void Hapi::SetVSync(bool vSync)
 {
-	*GPU_IS_V_SYNCED = vSync;
+	*VSYNC_BUFFER_SWAP = vSync;
 }
