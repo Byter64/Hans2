@@ -22,8 +22,9 @@ localparam M_COUNT = 2;
 localparam ADDR_WIDTH = 32;
 localparam DATA_WIDTH = 32;
 localparam STRB_WIDTH = 4;
-localparam M_BASE_ADDR = {32'h0, 32'h1_0000};
-localparam M_ADDR_WIDTH = {32'd16, 32'd16};
+//{SDRAM, Graphicsystem}
+localparam M_BASE_ADDR = {32'h0, 32'h200_0000};
+localparam M_ADDR_WIDTH = {32'd25, 32'd8};
 
 logic         CPU_mem_axi_awvalid;
 logic         CPU_mem_axi_awready;
@@ -205,7 +206,7 @@ AXILiteMemory #(
     .ADDR_WIDTH(ADDR_WIDTH),
     .DATA_WIDTH(DATA_WIDTH),
     .STRB_WIDTH(STRB_WIDTH),
-    .MEMORY_DEPTH(16384) //In 32-Bit words. MAKE THIS AS HIGH AS POSSIBLE
+    .MEMORY_DEPTH(14336) //In 32-Bit words. MAKE THIS AS HIGH AS POSSIBLE
 ) Memory (
     .aclk(hdmi_pixClk),
     .aresetn(resetn),

@@ -37,7 +37,7 @@ addi x30, zero, 0
 addi x31, zero, 0
 
 /* set stack pointer */
-.equ STACK_START, 65536
+.equ STACK_START, 57344
 lui sp, %hi(STACK_START)
 addi sp, sp, %lo(STACK_START)
 
