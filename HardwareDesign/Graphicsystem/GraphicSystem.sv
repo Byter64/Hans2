@@ -161,6 +161,9 @@ end
 logic[DATA_WIDTH-1:0] next_rdata;
 assign s_axil_rresp = 1;
 
+//This is not AXI compliant, but I could not think of a better way to invalidate s_axil_rdata if address is written at the sime time as data is read
+assign s_axil_rvalid = !aresetn ? 0 : !(s_axil_arvalid && s_axil_arready);
+
 always_comb begin
     case (activeReadDataIndex)
         ADDRESS: next_rdata = gpu_Address;
@@ -179,14 +182,6 @@ always_comb begin
         VSYNC_BUFFER_SWAP: next_rdata = vSyncBufferSwap;
         default: next_rdata = 0;
     endcase
-end
-
-always_ff @(posedge aclk) begin
-	if (!aresetn)
-		s_axil_rvalid <= 0;
-	else if (!s_axil_rvalid || s_axil_rready) begin
-		s_axil_rvalid <= 1;
-    end
 end
 
 always_ff @(posedge aclk) begin
