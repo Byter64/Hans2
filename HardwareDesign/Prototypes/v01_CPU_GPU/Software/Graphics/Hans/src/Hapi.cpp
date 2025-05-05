@@ -10,7 +10,7 @@ struct ImageData
 
 
 
-volatile char* GPU_BLOCK 			= (char*)65536;
+volatile char* GPU_BLOCK 			= (char*)0x02000000;
 volatile int* GPU_IMAGE_START		= (int*)(GPU_BLOCK + 0);
 volatile int* GPU_IMAGE_X			= (int*)(GPU_BLOCK + 4);
 volatile int* GPU_IMAGE_Y			= (int*)(GPU_BLOCK + 8);
