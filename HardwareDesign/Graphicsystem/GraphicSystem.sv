@@ -94,7 +94,7 @@ logic        gpu_Clear = 0;
 logic        gpu_IsBusy;
 logic        vSync;
 logic        hSync;
-logic        swapBuffers;
+logic        swapBuffers = 0;
 logic        vSyncBufferSwap;
 
 logic[15:0]  gpu_MemData;
@@ -114,7 +114,12 @@ end
 
 //Write
 always_ff @(posedge aclk) s_axil_wready <= 1;
+
 always_ff @(posedge aclk) begin
+    gpu_Draw <= 0;
+    gpu_Clear <= 0;
+    swapBuffers <= 0;
+
 	if (s_axil_wvalid && s_axil_wready) begin
 		case (activeWriteDataIndex)
             ADDRESS: gpu_Address <= s_axil_wdata;
