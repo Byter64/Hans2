@@ -34,10 +34,10 @@ module gpu #
     output        crtl_busy,     //Tells the controller that the gpu is busy and not open for new commands
 
     //FRAMEBUFFER INTERFACE
-    output[$clog2(FB_WIDTH):0]    fb_x,     //The x coordinate
-    output[$clog2(FB_HEIGHT):0]   fb_y,     //The y coordinate
-    output[15:0]  fb_color, //The color
-    output        fb_write  //Tells the frame buffer to write color to (fb_x, fb_y)
+    output reg[$clog2(FB_WIDTH):0]    fb_x,     //The x coordinate
+    output reg[$clog2(FB_HEIGHT):0]   fb_y,     //The y coordinate
+    output reg[15:0]  fb_color, //The color
+    output reg    fb_write  //Tells the frame buffer to write color to (fb_x, fb_y)
 );
 
 localparam IDLE = 1;
@@ -132,9 +132,10 @@ end
 wire x_in_bounds = fb_x < FB_WIDTH;
 wire y_in_bounds = fb_y < FB_HEIGHT;
 //draw_color[0] is the transparency bit
-assign fb_write = next_drawing && draw_color[0] && x_in_bounds && y_in_bounds;
-assign fb_x = state[I_CLEAR] ? (0 + pos_x) : (ctrl_x + pos_x);
-assign fb_y = state[I_CLEAR] ? (0 + pos_y) : (ctrl_y + pos_y);
-assign fb_color = draw_color;
-
+always @(posedge clk) begin
+    fb_write <= next_drawing && draw_color[0] && mem_valid && x_in_bounds && y_in_bounds;
+    fb_x <= state[I_CLEAR] ? (0 + pos_x) : (ctrl_x + pos_x);
+    fb_y <= state[I_CLEAR] ? (0 + pos_y) : (ctrl_y + pos_y);
+    fb_color <= draw_color;
+end
 endmodule

@@ -59,13 +59,14 @@ int main() {
     while (true) {
 
         Hapi::StartDrawing();
-        Hapi::Clear(Hapi::Color(255, 127, 127, 1));
+        //Hapi::Clear(Hapi::Color(255, 127, 127, 1));
 
-        for (int y = 0; y < 240; y += 16) {
+        /*for (int y = 0; y < 240; y += 16) {
             for (int x = 0; x < 400; x += 16) {
                 Hapi::Draw(water, water_frame_x, 0, x, y, 16, 16, 48);
             }
         }
+            */
         Hapi::Draw(boat, 0, 0, left_boat_x, left_boat_y, 48, 32, 144);
 		//boat_pos += boat_speed;
 		left_boat_x = 50 + (boat_pos % 200);

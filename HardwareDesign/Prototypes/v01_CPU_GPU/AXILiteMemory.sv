@@ -34,7 +34,7 @@ module AXILiteMemory #(
 );
 
 logic[ADDR_WIDTH-1:0] memory[MEMORY_DEPTH];
-initial $readmemh("C:/Users/Yanni/Desktop/Hans2/HardwareDesign/Prototypes/v01_CPU_GPU/Software/firmware32.hex", memory);
+initial $readmemh("C:/Users/Yanni/Documents/Hans2/HardwareDesign/Prototypes/v01_CPU_GPU/Software/firmware32.hex", memory);
 
 //Address Write
 logic[ADDR_WIDTH-1:0] aw_address = 'b0;
@@ -93,12 +93,12 @@ end
 assign s_axil_rvalid = !aresetn ? 0 : !(s_axil_arvalid && s_axil_arready);
 
 logic[31:0] read_data;
-always_comb begin
+always @(*) begin
     case (ar_address_real[1:0])
-      2'b00: s_axil_rdata = (read_data <<  0) & 'hFFFFFFFF;
-      2'b01: s_axil_rdata = (read_data <<  8) & 'hFF000000;
-      2'b10: s_axil_rdata = (read_data << 16) & 'hFFFF0000;
-      2'b11: s_axil_rdata = (read_data << 24) & 'hFF000000;
+      2'b00: s_axil_rdata = (read_data >>  0) & 'hFFFFFFFF;
+      2'b01: s_axil_rdata = (read_data >>  8) & 'hFF;
+      2'b10: s_axil_rdata = (read_data >> 16) & 'hFFFF;
+      2'b11: s_axil_rdata = (read_data >> 24) & 'hFF;
     endcase
 end
 
