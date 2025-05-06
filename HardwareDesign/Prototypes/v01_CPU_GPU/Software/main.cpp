@@ -67,7 +67,7 @@ int main() {
             }
         }
         Hapi::Draw(boat, 0, 0, left_boat_x, left_boat_y, 48, 32, 144);
-		boat_pos += boat_speed;
+		//boat_pos += boat_speed;
 		left_boat_x = 50 + (boat_pos % 200);
 
         updateAnimation(water_ticks, water_frame_x, 16, 48);

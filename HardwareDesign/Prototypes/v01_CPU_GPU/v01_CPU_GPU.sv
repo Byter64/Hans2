@@ -6,6 +6,9 @@ module CPU_with_GPU
     output logic [3:0] gpdi_dp
 );
 
+logic canBeDeleted;
+logic canBeDeleted2;
+
 logic hdmi_pixClk;
 logic resetn = 0;
 logic trap;
@@ -61,7 +64,7 @@ picorv32_axi #(
 	.LATCHED_IRQ(32'hFFFF_FFFF), //1 == interrupt is edge triggered, 0 == interrupt is level triggered
 	.PROGADDR_IRQ(32'h0000_0010) //Start address of the interrupt handler
 
-) Processor 
+) Processor  
 (
 	.clk(hdmi_pixClk),
 	.resetn(resetn),
