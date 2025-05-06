@@ -61,7 +61,7 @@ picorv32_axi #(
 	.LATCHED_IRQ(32'hFFFF_FFFF), //1 == interrupt is edge triggered, 0 == interrupt is level triggered
 	.PROGADDR_IRQ(32'h0000_0010) //Start address of the interrupt handler
 
-) processor 
+) Processor 
 (
 	.clk(hdmi_pixClk),
 	.resetn(resetn),
@@ -133,7 +133,7 @@ logic [1:0]            GS_m_axil_rresp;
 logic                  GS_m_axil_rvalid;
 logic                  GS_m_axil_rready;
 
-GraphicSystem graphicSystem 
+GraphicSystem GraphicSystem 
 (
 	.clk25Mhz(clk_25mhz),
 	.cpuClk(hdmi_pixClk),

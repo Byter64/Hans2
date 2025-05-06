@@ -17,8 +17,8 @@ module gpu #
 
     //CONTROL INTERFACE: Draw
     input  [31:0] ctrl_address,  //The base address to take the pixel data for the excerpt from
-    input  [15:0] ctrl_address_x,//The x axis offset to the base address
-    input  [15:0] ctrl_address_y,//The y axis offset to the base address
+    input  [15:0] ctrl_address_x,//The x axis offset to the base address in Bytes
+    input  [15:0] ctrl_address_y,//The y axis offset to the base address in Bytes
     input  [15:0] ctrl_image_width,//The width of the image
     input  [$clog2(FB_WIDTH)+1:0]  ctrl_width,    //The width of the excerpt to be drawn
     input  [$clog2(FB_HEIGHT)+1:0] ctrl_height,   //The height of the excerpt to be drawn
@@ -118,7 +118,7 @@ always @(posedge clk) begin
 end
 
 assign mem_read = next_state[I_DRAW];
-assign mem_addr = ctrl_address + ctrl_address_x + next_pos_x + ((ctrl_address_y + next_pos_y) * ctrl_image_width);
+assign mem_addr = ctrl_address + (ctrl_address_x + next_pos_x + ((ctrl_address_y + next_pos_y) * ctrl_image_width)) * 2;
 reg[15:0] draw_color;
 
 always @(*) begin
