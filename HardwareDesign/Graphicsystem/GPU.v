@@ -95,7 +95,7 @@ wire[$clog2(FB_WIDTH)+1:0] pos_x_1 = pos_x + 1;
 wire[$clog2(FB_HEIGHT)+1:0] pos_y_1 = pos_y + 1;
 wire[$clog2(FB_WIDTH)+1:0] next_pos_x = drawing ? (pos_x_1 == max_x ? 0 : pos_x_1) : 0;
 wire[$clog2(FB_HEIGHT)+1:0] next_pos_y = drawing ? (pos_x_1 == max_x ? pos_y_1 : pos_y) : 0;
-assign next_drawing = $signed(pos_y) < $signed(max_y);
+assign next_drawing = pos_y < max_y;
 
 always @(posedge clk) begin
     if(!next_state[I_IDLE] && state[I_IDLE]) begin
@@ -108,8 +108,8 @@ always @(posedge clk) begin
         drawing <= next_drawing;
     end
     else if (!drawing) begin
-        pos_x <= -1;
-        pos_y <= -1;
+        pos_x <= 0;
+        pos_y <= 0;
     end
 
     if(reset) begin
@@ -118,7 +118,7 @@ always @(posedge clk) begin
 end
 
 assign mem_read = next_state[I_DRAW];
-assign mem_addr = ctrl_address + (ctrl_address_x + next_pos_x + ((ctrl_address_y + next_pos_y) * ctrl_image_width)) * 2;
+assign mem_addr = ctrl_address + 2 * (ctrl_address_x + next_pos_x + ((ctrl_address_y + next_pos_y) * ctrl_image_width));
 reg[15:0] draw_color;
 
 always @(*) begin

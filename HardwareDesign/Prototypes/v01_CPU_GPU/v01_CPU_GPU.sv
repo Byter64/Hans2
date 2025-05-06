@@ -7,7 +7,7 @@ module CPU_with_GPU
 );
 
 logic canBeDeleted;
-logic canBeDeleted2;
+logic canBeDeleted2; 
 
 logic hdmi_pixClk;
 logic resetn = 0;
@@ -213,7 +213,7 @@ AXILiteMemory #(
 ) Memory (
     .aclk(hdmi_pixClk),
     .aresetn(resetn),
-    .s_axil_awaddr(MEM_s_axil_awaddr >> 2),
+    .s_axil_awaddr(MEM_s_axil_awaddr),
     .s_axil_awprot(MEM_s_axil_awprot),
     .s_axil_awvalid(MEM_s_axil_awvalid),
     .s_axil_awready(MEM_s_axil_awready),
@@ -223,7 +223,7 @@ AXILiteMemory #(
     .s_axil_wready(MEM_s_axil_wready),
     .s_axil_bvalid(MEM_s_axil_bvalid),
     .s_axil_bready(MEM_s_axil_bready),
-    .s_axil_araddr(MEM_s_axil_araddr >> 2),
+    .s_axil_araddr(MEM_s_axil_araddr),
     .s_axil_arprot(MEM_s_axil_arprot),
     .s_axil_arvalid(MEM_s_axil_arvalid),
     .s_axil_arready(MEM_s_axil_arready),

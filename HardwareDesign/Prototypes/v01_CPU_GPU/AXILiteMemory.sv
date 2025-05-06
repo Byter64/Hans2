@@ -58,10 +58,10 @@ end
 
 always @(posedge aclk) begin
 	if (s_axil_wvalid && s_axil_wready) begin //Never add any other conditions. This is likely to break axi
-    if(s_axil_wstrb[0]) memory[aw_address_real][7 -: 8] <= s_axil_wdata[7 -: 8];
-    if(s_axil_wstrb[1]) memory[aw_address_real][15 -: 8] <= s_axil_wdata[15 -: 8];
-    if(s_axil_wstrb[2]) memory[aw_address_real][23 -: 8] <= s_axil_wdata[23 -: 8];
-    if(s_axil_wstrb[3]) memory[aw_address_real][31 -: 8] <= s_axil_wdata[31 -: 8];
+    if(s_axil_wstrb[0]) memory[aw_address_real[31:2]][7 -: 8] <= s_axil_wdata[7 -: 8];
+    if(s_axil_wstrb[1]) memory[aw_address_real[31:2]][15 -: 8] <= s_axil_wdata[15 -: 8];
+    if(s_axil_wstrb[2]) memory[aw_address_real[31:2]][23 -: 8] <= s_axil_wdata[23 -: 8];
+    if(s_axil_wstrb[3]) memory[aw_address_real[31:2]][31 -: 8] <= s_axil_wdata[31 -: 8];
   end
 end
 
@@ -92,12 +92,23 @@ end
 //This is not AXI compliant, but I could not think of a better way to invalidate s_axil_rdata if address is written at the sime time as data is read
 assign s_axil_rvalid = !aresetn ? 0 : !(s_axil_arvalid && s_axil_arready);
 
+logic[31:0] read_data;
+always_comb begin
+    case (ar_address_real[1:0])
+      2'b00: s_axil_rdata = (read_data <<  0) & 'hFFFFFFFF;
+      2'b01: s_axil_rdata = (read_data <<  8) & 'hFF000000;
+      2'b10: s_axil_rdata = (read_data << 16) & 'hFFFF0000;
+      2'b11: s_axil_rdata = (read_data << 24) & 'hFF000000;
+    endcase
+end
+
+
 always @(posedge aclk) begin
 	if (!aresetn)
-		s_axil_rdata <= 0;
+		read_data <= 0;
 	else if (!s_axil_rvalid || s_axil_rready)
 	begin
-		s_axil_rdata <= memory[ar_address_real];
+    read_data <= memory[ar_address_real[31:2]];
 	end
 end
 endmodule
