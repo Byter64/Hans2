@@ -66,17 +66,17 @@ void Hapi::StartDrawing()
 
 }
 
-void Hapi::EndDrawing()
-{
-	*GPU_COMMAND_SWAP_BUFFERS = true;
-	while (!*GPU_VSYNC);
-}
-
-
 static void WaitForGPU()
 {
 	volatile int* isGPUBusy = (int*)(GPU_IS_BUSY);
 	while (*isGPUBusy);
+}
+
+void Hapi::EndDrawing()
+{
+	WaitForGPU();
+	*GPU_COMMAND_SWAP_BUFFERS = true;
+	while (!*GPU_VSYNC);
 }
 
 void Hapi::Draw(Image image, int ssX, int ssY, int x, int y, int width, int height, int image_width)

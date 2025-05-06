@@ -57,15 +57,12 @@ assign crtl_busy = !state[I_IDLE] || !next_state[I_IDLE];
 
 reg old_ctrl_draw;
 reg old_ctrl_clear;
-reg old_mem_valid;
 wire command_draw = old_ctrl_draw == 0 && ctrl_draw == 1;
 wire command_clear = old_ctrl_clear == 0 && ctrl_clear == 1;
-wire data_arrived = old_mem_valid == 0 && mem_valid == 1;
 
 always @(posedge clk) begin
     old_ctrl_clear <= ctrl_clear;
     old_ctrl_draw <= ctrl_draw;
-    old_mem_valid <= mem_valid;
 
     if(reset) begin
         old_ctrl_clear <= 0;
@@ -105,12 +102,12 @@ always @(posedge clk) begin
         drawing <= 1;
     end
 
-    if(drawing && (data_arrived || !state[I_DRAW])) begin
+    if(drawing && (mem_valid || !state[I_DRAW])) begin
         pos_x <= next_pos_x;
         pos_y <= next_pos_y;
         drawing <= next_drawing;
     end
-    else begin
+    else if (!drawing) begin
         pos_x <= 0;
         pos_y <= 0;
     end

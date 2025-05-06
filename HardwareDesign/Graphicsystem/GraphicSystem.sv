@@ -261,7 +261,7 @@ BufferController bfCont(
     .clk(cpuClk),
     .reset(reset),
     .swapIn(swapBuffers),
-    .vSync(hdmi_vSync),
+    .vSync(vSync),
     .isSynchronized(vSyncBufferSwap),
 
     .fbGPU(bfCont_fbGPU),
@@ -351,8 +351,8 @@ HDMI_Out hdmi_Out
     .pixclk(hdmi_pixClk),
     .nextX(hdmi_nextX),
     .nextY(hdmi_nextY),
-    .hSync(hdmi_hSync),
-    .vSync(hdmi_vSync),
+    .hSync(hSync),
+    .vSync(vSync),
     .gpdi_dp(gpdiDp)
 
 );
