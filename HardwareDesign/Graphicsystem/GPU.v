@@ -119,7 +119,7 @@ end
 
 reg[31:0] base_address = 0;
 assign mem_read = next_state[I_DRAW];
-assign mem_addr = base_address + 2 * (next_pos_x + ctrl_image_width * next_pos_y);
+assign mem_addr = base_address + ((next_pos_x) << 1) + ((ctrl_image_width * next_pos_y) << 1);
 
 always @(posedge clk) begin
     base_address <= ctrl_address + 2 * (ctrl_address_x + ctrl_image_width * ctrl_address_y);
