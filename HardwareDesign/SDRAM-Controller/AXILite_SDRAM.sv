@@ -45,7 +45,6 @@ logic[23:0] read_address;
 logic[15:0] read_data;
 logic       read_ready;
 logic       is_busy;
-
 sdram_controller AXILiteSDRAM 
 (
     //Host Interface
@@ -100,22 +99,21 @@ always_comb begin
 end
 
 //Address Write
-logic[ADDR_WIDTH-1:0] aw_address = 'b0;
 logic[31:0] aw_address_real;
-assign aw_address_real = s_axil_awvalid && s_axil_awready ? s_axil_awaddr : aw_address;
+assign aw_address_real = s_axil_awvalid && s_axil_awready ? s_axil_awaddr : write_address;
 always @(posedge aclk) begin
 		s_axil_awready <= 1;
 end
 
 always @(posedge aclk) begin
 	if (s_axil_awvalid && s_axil_awready) begin //Never add any other conditions. This is likely to break axi
-		aw_address <= s_axil_awaddr;
+		write_address <= s_axil_awaddr;
     end
 end
 
 //Write
 always @(posedge aclk) begin
-		s_axil_wready <= 1;
+		s_axil_wready <= !is_busy;
 end
 
 
@@ -138,22 +136,21 @@ always @(posedge aclk) begin
 end
 
 //Address Read
-logic[ADDR_WIDTH-1:0] ar_address = 'b0;
 logic[31:0] ar_address_real;
-assign ar_address_real = s_axil_arvalid && s_axil_arready ? s_axil_araddr : ar_address;
+assign ar_address_real = s_axil_arvalid && s_axil_arready ? s_axil_araddr : read_address;
 always @(posedge aclk) begin
 		s_axil_arready <= 1;
 end
 
 always @(posedge aclk) begin
 	if (s_axil_arvalid && s_axil_arready) begin //Never add any other conditions. This is likely to break axi
-		ar_address <= s_axil_araddr;
+		read_address <= s_axil_araddr;
     end
 end
 
 //Read
 //This is not AXI compliant, but I could not think of a better way to invalidate s_axil_rdata if address is written at the sime time as data is read
-assign s_axil_rvalid = !aresetn ? 0 : !(s_axil_arvalid && s_axil_arready);
+assign s_axil_rvalid = !aresetn ? 0 : !(s_axil_arvalid && s_axil_arready) && !is_busy;
 
 logic[31:0] read_data;
 always @(*) begin
