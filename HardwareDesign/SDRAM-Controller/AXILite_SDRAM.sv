@@ -38,9 +38,10 @@ module AXILite_SDRAM (
     input logic                              s_axil_rready,
 );
 
-logic[23:0] address;
+logic[23:0] write_address;
 logic[15:0] write_data;
 logic       write_enable;
+logic[23:0] read_address;
 logic[15:0] read_data;
 logic       read_ready;
 logic       is_busy;
@@ -48,10 +49,10 @@ logic       is_busy;
 sdram_controller AXILiteSDRAM 
 (
     //Host Interface
-    .wr_addr(address),
+    .wr_addr(write_address),
     .wr_data(write_data),
     .wr_enable(write_enable),
-    .rd_addr(address),
+    .rd_addr(read_address),
     .rd_data(read_data),
     .rd_ready(read_ready),
     .rd_enable(read_enable),
@@ -85,7 +86,12 @@ State next_state;
 
 always_comb begin
     case (state)
-        : 
+        IDLE: begin
+            if (!is_busy)
+            begin
+                
+            end
+        end
         default: next_state = IDLE; 
     endcase
 
