@@ -1,0 +1,7 @@
+{
+    "C_Cpp.default.configurationProvider": "ms-vscode.cmake-tools",
+    "files.associations": {
+        "wayland-client-protocol.h": "c",
+        "iostream": "cpp"
+    }
+}

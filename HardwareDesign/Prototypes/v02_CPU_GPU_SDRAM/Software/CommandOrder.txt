@@ -1,0 +1,16 @@
+# Windows + clang
+clang++ --target=riscv32-none-elf -march=rv32im -Os -Wl,--gc-sections -ffreestanding -Bstatic -T riscv.ld -nostdlib -nostartfiles -IHalib/include -IGraphics/include Halib/src/Veci2.cpp Halib/src/Image.cpp Graphics/Hans/src/Hapi.cpp Graphics/src/Color.cpp main.cpp start.s -o firmware.elf
+
+objcopy -O verilog firmware.elf firmware.hex
+
+python hex8tohex32.py firmware.hex > firmware32.hex
+
+# Linux + gcc (gcc is deprecated)
+riscv64-unknown-elf-g++ -mabi=ilp32 -march=rv32im -W -Os -Bstatic,-T,riscv.ld,--strip-debug --freestanding -nostdlib -IHalib/include -IGraphics/include -c Halib/src/Veci2.cpp Halib/src/Image.cpp Graphics/Hans/src/Hapi.cpp Graphics/src/Color.cpp main.cpp
+(riscv64-unknown-elf-g++ -mabi=ilp32 -march=rv32im -W -Os -Bstatic,-T,riscv.ld,--strip-debug --freestanding -nostdlib -IHalib/include -IGraphics/include -o main.elf Halib/src/Veci2.cpp Halib/src/Image.cpp Graphics/Hans/src/Hapi.cpp Graphics/src/Color.cpp main.cpp --entry main)
+riscv64-unknown-elf-g++ -Wl,--gc-sections -o firmware.elf main.o Color.o Hapi.o Image.o Veci2.o -W -Os -Bstatic,-T,riscv.ld,--strip-debug --freestanding -nostdlib -mabi=ilp32 -march=rv32im --entry main
+riscv64-unknown-elf-gcc -nostdlib -o start.elf start.S -Wl,-Bstatic,-T,start.ld,--strip-debug -ffreestanding -mabi=ilp32 -march=rv32im
+riscv64-unknown-elf-objcopy -O verilog firmware.elf firmware.tmp
+riscv64-unknown-elf-objcopy -O verilog start.elf start.tmp
+cat start.tmp firmware.tmp > firmware.hex
+python3 hex8tohex32.py firmware.hex > firmware32.hex
