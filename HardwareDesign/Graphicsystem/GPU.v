@@ -117,10 +117,15 @@ always @(posedge clk) begin
     end
 end
 
+reg[31:0] base_address = 0;
 assign mem_read = next_state[I_DRAW];
-assign mem_addr = ctrl_address + 2 * (ctrl_address_x + next_pos_x + ((ctrl_address_y + next_pos_y) * ctrl_image_width));
-reg[15:0] draw_color;
+assign mem_addr = base_address + 2 * (next_pos_x + ctrl_image_width * next_pos_y);
 
+always @(posedge clk) begin
+    base_address <= ctrl_address + 2 * (ctrl_address_x + ctrl_image_width * ctrl_address_y);
+end
+
+reg[15:0] draw_color;
 always @(*) begin
     if(!state[I_CLEAR])
         draw_color <= mem_data;

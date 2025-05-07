@@ -7,7 +7,6 @@ module CPU_with_GPU
 );
 
 logic canBeDeleted;
-logic canBeDeleted2; 
 
 logic hdmi_pixClk;
 logic resetn = 0;
@@ -19,6 +18,27 @@ always_ff @(posedge hdmi_pixClk) begin
 
 	resetn <= reset_counter == 255;
 end
+
+wire clk_110mhz;
+wire clk_55mhz;
+ecp5pll #(
+  .in_hz       (25000000),
+  .out0_hz     (55000000),
+  .out0_deg    (       0), // keep 0
+  .out0_tol_hz (       0), // tolerance: if freq differs more, then error
+  .out1_hz    (110000000),
+  .out1_deg    (       0),
+  .out1_tol_hz (       0),
+  .out2_hz     (       0),
+  .out2_deg    (       0),
+  .out2_tol_hz (       0),
+  .out3_hz     (       0),
+  .out3_deg    (       0),
+  .out3_tol_hz (       0),
+) TopLevelPLL (
+  .clk_i(clk_25mhz),
+  .clk_o({clk_110mhz, clk_55mhz})
+);
 
 localparam S_COUNT = 2;
 localparam M_COUNT = 2;
@@ -66,7 +86,7 @@ picorv32_axi #(
 
 ) Processor  
 (
-	.clk(hdmi_pixClk),
+	.clk(clk_55mhz),
 	.resetn(resetn),
 	.trap(trap),
 
@@ -139,11 +159,11 @@ logic                  GS_m_axil_rready;
 GraphicSystem GraphicSystem 
 (
 	.clk25Mhz(clk_25mhz),
-	.cpuClk(hdmi_pixClk),
+	.cpuClk(clk_55mhz),
 	.reset(~resetn),
 	.gpdiDp(gpdi_dp),
 	.hdmi_pixClk(hdmi_pixClk),
-	.aclk(hdmi_pixClk),
+	.aclk(clk_55mhz),
 	.aresetn(resetn),
 	.s_axil_awaddr(GS_s_axil_awaddr),
 	.s_axil_awprot(GS_s_axil_awprot),
@@ -211,7 +231,7 @@ AXILiteMemory #(
     .STRB_WIDTH(STRB_WIDTH),
     .MEMORY_DEPTH(14336) //In 32-Bit words. MAKE THIS AS HIGH AS POSSIBLE
 ) Memory (
-    .aclk(hdmi_pixClk),
+    .aclk(clk_55mhz),
     .aresetn(resetn),
     .s_axil_awaddr(MEM_s_axil_awaddr),
     .s_axil_awprot(MEM_s_axil_awprot),
@@ -327,7 +347,7 @@ axil_crossbar #(
 )
 AxiCrossbar 
 (
-	.clk(hdmi_pixClk),
+	.clk(clk_55mhz),
 	.rst(~resetn),
 
 	.s_axil_awaddr(AXI_s_axil_awaddr),

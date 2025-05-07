@@ -14,9 +14,9 @@ CPU_with_GPU Top
 );
 
 initial begin
-	$dumpvars(0, Top.GraphicSystem, Top.Memory);
+	$dumpvars(0, Top);
 	for(integer i = 0; i < 1000; i++) $dumpvars(0, Top.Memory.memory[i]);
-	#5000000
+	#10000000
 	$finish;
 end
 

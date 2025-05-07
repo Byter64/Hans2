@@ -272,7 +272,7 @@ Framebuffer #(
     .WIDTH(16),
     .DEPTH(SCREEN_HEIGHT * SCREEN_WIDTH)
 ) fb1 (
-    .clkA(hdmi_pixClk),
+    .clkA(cpuClk),
     .dataInA(gpu_FbColor),
     .addressA(gpu_fbAddress),
     .writeEnableA(bfCont_fbGPU == 1'b0 ? gpu_FbWrite : 1'b0),
@@ -290,7 +290,7 @@ Framebuffer #(
     .WIDTH(16),
     .DEPTH(SCREEN_HEIGHT * SCREEN_WIDTH)
 ) fb2 (
-    .clkA(hdmi_pixClk),
+    .clkA(cpuClk),
     .dataInA(gpu_FbColor),
     .addressA(gpu_fbAddress),
     .writeEnableA(bfCont_fbGPU == 1'b1 ? gpu_FbWrite : 1'b0),
@@ -310,7 +310,7 @@ gpu #(
     .FB_WIDTH(SCREEN_WIDTH),
     .FB_HEIGHT(SCREEN_HEIGHT)
 ) gpu (
-    .clk(hdmi_pixClk),
+    .clk(cpuClk),
     .reset(reset),
     //MEM INTERFACE
     .mem_data(gpu_MemData),
