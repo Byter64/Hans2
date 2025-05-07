@@ -59,7 +59,7 @@ int main() {
     while (true) {
 
         Hapi::StartDrawing();
-        //Hapi::Clear(Hapi::Color(255, 127, 127, 1));
+        Hapi::Clear(Hapi::Color(255, 127, 127, 1));
 
         /*for (int y = 0; y < 240; y += 16) {
             for (int x = 0; x < 400; x += 16) {

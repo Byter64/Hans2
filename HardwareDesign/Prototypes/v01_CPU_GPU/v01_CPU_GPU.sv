@@ -204,7 +204,7 @@ logic[DATA_WIDTH-1:0]  MEM_s_axil_rdata;
 logic[1:0]             MEM_s_axil_rresp;
 logic                  MEM_s_axil_rvalid;
 logic                  MEM_s_axil_rready;
-
+ 
 AXILiteMemory #(
     .ADDR_WIDTH(ADDR_WIDTH),
     .DATA_WIDTH(DATA_WIDTH),

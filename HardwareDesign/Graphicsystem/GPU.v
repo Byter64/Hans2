@@ -133,7 +133,7 @@ wire x_in_bounds = fb_x < FB_WIDTH;
 wire y_in_bounds = fb_y < FB_HEIGHT;
 //draw_color[0] is the transparency bit
 always @(posedge clk) begin
-    fb_write <= next_drawing && draw_color[0] && mem_valid && x_in_bounds && y_in_bounds;
+    fb_write <= next_drawing && draw_color[0] && (mem_valid | state[I_CLEAR]) && x_in_bounds && y_in_bounds;
     fb_x <= state[I_CLEAR] ? (0 + pos_x) : (ctrl_x + pos_x);
     fb_y <= state[I_CLEAR] ? (0 + pos_y) : (ctrl_y + pos_y);
     fb_color <= draw_color;
