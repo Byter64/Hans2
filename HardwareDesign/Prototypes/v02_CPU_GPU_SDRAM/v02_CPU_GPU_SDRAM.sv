@@ -19,7 +19,6 @@ module CPU_with_GPU_SDRAM
 
 logic canBeDeleted;
 logic canBeDeleted2;
-logic canBeDeleted3;
 
 logic hdmi_pixClk;
 logic resetn = 0;
