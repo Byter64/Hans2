@@ -59,8 +59,9 @@ localparam M_COUNT = 3;
 localparam ADDR_WIDTH = 32;
 localparam DATA_WIDTH = 32;
 localparam STRB_WIDTH = 4;
+localparam BOOTLOADER_START = 32'h0201_0000;
 //						  {SDRAM, Graphicsystem, Bootloader}
-localparam M_BASE_ADDR  = {32'h0, 32'h200_0000, 32'h0200_8000};
+localparam M_BASE_ADDR  = {32'h0, 32'h200_0000, BOOTLOADER_START};
 localparam M_ADDR_WIDTH = {32'd25, 32'd8,		32'd15};
 
 logic         CPU_mem_axi_awvalid;
@@ -96,7 +97,7 @@ picorv32_axi #(
 	.ENABLE_IRQ(1),
 	.MASKED_IRQ(32'h0000_0000), //1 == disable this IRQ
 	.LATCHED_IRQ(32'hFFFF_FFFF), //1 == interrupt is edge triggered, 0 == interrupt is level triggered
-	.PROGADDR_RESET(32'h0200_8000), //Start address of the bootloader
+	.PROGADDR_RESET(BOOTLOADER_START), //Start address of the bootloader
 	.PROGADDR_IRQ(32'h0000_0010) //Start address of the interrupt handler
 
 ) Processor  
@@ -298,6 +299,7 @@ logic[1:0]             BOOT_s_axil_rresp;
 logic                  BOOT_s_axil_rvalid;
 logic                  BOOT_s_axil_rready;
 AXILiteMemory #(
+	.OFFSET(BOOTLOADER_START),
     .ADDR_WIDTH(ADDR_WIDTH),
     .DATA_WIDTH(DATA_WIDTH),
     .STRB_WIDTH(STRB_WIDTH),

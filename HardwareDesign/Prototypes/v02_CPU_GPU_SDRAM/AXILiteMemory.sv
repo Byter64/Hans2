@@ -1,6 +1,7 @@
 //This memory does not use s_axil_wstrb!! You can't mask the writing data
 //EDIT: uses s_axil_wstrb now :)
 module AXILiteMemory #(
+    parameter OFFSET = 0, //The address of the first byte in the bootloader
     parameter ADDR_WIDTH = 32,
     parameter DATA_WIDTH = 32,
     parameter STRB_WIDTH = DATA_WIDTH / 8,
@@ -39,7 +40,7 @@ initial $readmemh("C:/Users/Yanni/Desktop/Hans2/HardwareDesign/Prototypes/v02_CP
 //Address Write
 logic[ADDR_WIDTH-1:0] aw_address = 'b0;
 logic[31:0] aw_address_real;
-assign aw_address_real = s_axil_awvalid && s_axil_awready ? s_axil_awaddr : aw_address;
+assign aw_address_real = (s_axil_awvalid && s_axil_awready ? s_axil_awaddr : aw_address) - OFFSET;
 always @(posedge aclk) begin
 		s_axil_awready <= 1;
 end
@@ -77,7 +78,7 @@ end
 //Address Read
 logic[ADDR_WIDTH-1:0] ar_address = 'b0;
 logic[31:0] ar_address_real;
-assign ar_address_real = s_axil_arvalid && s_axil_arready ? s_axil_araddr : ar_address;
+assign ar_address_real = (s_axil_arvalid && s_axil_arready ? s_axil_araddr : ar_address) - OFFSET;
 always @(posedge aclk) begin
 		s_axil_arready <= 1;
 end
