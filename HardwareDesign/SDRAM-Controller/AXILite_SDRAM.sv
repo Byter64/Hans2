@@ -38,21 +38,45 @@ module AXILite_SDRAM (
     input logic                              s_axil_rready,
 );
 
-logic[23:0] write_address;
+logic[31:0] axi_write_data;
+logic[31:0] axi_read_data;
+
+typedef enum logic[1:0] 
+{ 
+    IDLE            = 2'b00,
+    READ            = 2'b01,
+    WRITE           = 2'b10,
+    WAIT_ACKNOWLEDGE= 2'b11
+} Action;
+
+typedef enum logic[1:0] 
+{ 
+    NONE            = 2'b00,
+    HALF_WORD       = 2'b01,
+    WORD_0          = 2'b10,
+    WORD_1          = 2'b11,
+} Type;
+
+Action action = IDLE;
+Action next_action;
+
+Type type = NONE;
+Type next_type;
+
+logic[24:0] address;
 logic[15:0] write_data;
 logic       write_enable;
-logic[23:0] read_address;
 logic[15:0] read_data;
 logic       read_ready;
 logic       is_busy;
-sdram_controller AXILiteSDRAM 
+sdram_controller SDRAM_Controller 
 (
     //Host Interface
-    .wr_addr(write_address),
+    .wr_addr(address[24:1]),
     .wr_data(write_data),
     .wr_enable(write_enable),
-    .rd_addr(read_address),
-    .rd_data(read_data),
+    .rd_addr(address[24:1]),
+    .rd_data(next_type == WORD_1 ? read_data[31:16] : read_data[15:0]),
     .rd_ready(read_ready),
     .rd_enable(read_enable),
     .busy(is_busy),
@@ -71,59 +95,113 @@ sdram_controller AXILiteSDRAM
     .data_mask_high(sdram_dqm[1])
 );
 
-
-typedef enum logic[7:0] 
-{ 
-    IDLE,
-    READ_2B,
-    WRITE_2B,
-    WAIT_ACKNOWLEDGE
-} State;
-
-State state = IDLE;
-State next_state;
+assign write_data = next_type == WORD_1 ? axi_write_data[31:16] : axi_write_data[15:0];
 
 always_comb begin
-    case (state)
+    next_action = action;
+    case (action)
         IDLE: begin
-            if (!is_busy)
-            begin
-                
+            if (!is_busy && ((s_axil_wvalid && s_axil_wready) || (s_axil_rvalid && s_axil_rready))) begin
+                if(s_axil_wvalid && s_axil_wready) begin
+                next_action = WRITE;
+                end else if (s_axil_rready) begin
+                next_action = READ;
+                end
             end
         end
-        default: next_state = IDLE; 
+        WRITE: begin
+            if(type == HALF_WORD || type == WORD_1) begin
+                next_action = IDLE;
+            end
+        end
+        READ: begin
+        end
     endcase
 
-    if(!resetn)
-        next_state = IDLE;
+    if(!resetn) next_action = IDLE;
+end
+
+always_comb begin
+    next_type = type;
+    case (type)
+        NONE: begin
+            if(next_action != IDLE) begin
+                case (address[1:0])
+                    2'b00 : next_type = WORD_0;
+                    //2'b00 : next_action = ??;
+                    2'b10 : next_type = HALF_WORD;
+                    //2'b00 : next_action = ??;
+                endcase
+            end
+        end
+        HALF_WORD: begin
+            if(!state == READ || read_ready)
+                next_type = NONE;
+        end
+        WORD_0: begin
+            if(!is_busy && (!state == READ || read_ready)) begin
+                next_type = WORD_1;
+            end
+        end
+        WORD_1: begin
+            if(!state == READ || read_ready) begin
+                next_type = NONE;
+            end
+        end
+    endcase
+
+    if(!resetn) begin 
+        next_type = NONE;
+    end
+end
+
+always_ff @(posedge aclk) begin
+    action <= next_action;
+end
+
+always_ff @(posedge aclk) begin
+    write_enable <= 0;
+    read_enable <= 0;
+
+    //control signals for the SDRAM-Controller
+    if(action == IDLE && next_action == WRITE) begin
+        write_enable <= 1;
+    end else if (action == WRITE && next_type == WORD_1) begin
+        write_enable <= 1;
+    end
+
+        //control signals for the SDRAM-Controller
+    if(action == IDLE && next_action == READ) begin
+        read_enable <= 1;
+    end else if (action == READ && next_type == WORD_1) begin
+        read_enable <= 1;
+    end
 end
 
 //Address Write
-logic[31:0] aw_address_real;
-assign aw_address_real = s_axil_awvalid && s_axil_awready ? s_axil_awaddr : write_address;
+logic[24:0] write_address;
+logic[24:0] read_address;
+assign address = s_axil_awvalid && s_axil_awready ? s_axil_awaddr : write_address;
 always @(posedge aclk) begin
 		s_axil_awready <= 1;
 end
 
 always @(posedge aclk) begin
 	if (s_axil_awvalid && s_axil_awready) begin //Never add any other conditions. This is likely to break axi
-		write_address <= s_axil_awaddr;
+		write_address <= s_axil_awaddr[24:0];
     end
 end
 
 //Write
 always @(posedge aclk) begin
-		s_axil_wready <= !is_busy;
+		s_axil_wready <= action == IDLE;
 end
 
 
 always @(posedge aclk) begin
-	if (s_axil_wvalid && s_axil_wready) begin //Never add any other conditions. This is likely to break axi
-    if(s_axil_wstrb[0]) memory[aw_address_real[31:2]][7 -: 8] <= s_axil_wdata[7 -: 8];
-    if(s_axil_wstrb[1]) memory[aw_address_real[31:2]][15 -: 8] <= s_axil_wdata[15 -: 8];
-    if(s_axil_wstrb[2]) memory[aw_address_real[31:2]][23 -: 8] <= s_axil_wdata[23 -: 8];
-    if(s_axil_wstrb[3]) memory[aw_address_real[31:2]][31 -: 8] <= s_axil_wdata[31 -: 8];
-  end
+    if (s_axil_wvalid && s_axil_wready) begin //Never add any other conditions. This is likely to break axi
+        axi_write_data <= s_axil_wdata;
+    end
 end
 
 //Write response
@@ -136,15 +214,14 @@ always @(posedge aclk) begin
 end
 
 //Address Read
-logic[31:0] ar_address_real;
-assign ar_address_real = s_axil_arvalid && s_axil_arready ? s_axil_araddr : read_address;
+assign address = s_axil_arvalid && s_axil_arready ? s_axil_araddr : read_address;
 always @(posedge aclk) begin
 		s_axil_arready <= 1;
 end
 
 always @(posedge aclk) begin
 	if (s_axil_arvalid && s_axil_arready) begin //Never add any other conditions. This is likely to break axi
-		read_address <= s_axil_araddr;
+		read_address <= s_axil_araddr[24:0];
     end
 end
 
@@ -154,7 +231,7 @@ assign s_axil_rvalid = !aresetn ? 0 : !(s_axil_arvalid && s_axil_arready) && !is
 
 logic[31:0] read_data;
 always @(*) begin
-    case (ar_address_real[1:0])
+    case (address[1:0])
       2'b00: s_axil_rdata = (read_data >>  0) & 'hFFFFFFFF;
       2'b01: s_axil_rdata = (read_data >>  8) & 'hFF;
       2'b10: s_axil_rdata = (read_data >> 16) & 'hFFFF;
@@ -168,7 +245,7 @@ always @(posedge aclk) begin
 		read_data <= 0;
 	else if (!s_axil_rvalid || s_axil_rready)
 	begin
-    read_data <= memory[ar_address_real[31:2]];
+    read_data <= memory[address[31:2]];
 	end
 end
     
