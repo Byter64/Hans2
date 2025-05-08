@@ -135,7 +135,7 @@ module ecp5pll
   localparam params_fout             = in_hz * params_feedback_div / params_refclk_div;
   localparam params_fvco             = params_fout * params_output_div;
 
-  localparam params_primary_phase_x8 = F_ecp5pll(3);
+  //ocalparam params_primary_phase_x8 = F_ecp5pll(3);
   localparam params_primary_cphase   = F_primary_phase(params_output_div, out0_deg) / 8;
   localparam params_primary_fphase   = F_primary_phase(params_output_div, out0_deg) % 8;
 

@@ -1,8 +1,9 @@
-localparam ADDR_WIDTH = 32;
-localparam DATA_WIDTH = 32;
-localparam STRB_WIDTH = DATA_WIDTH / 8;
-
-module AXILite_SDRAM (
+module AXILite_SDRAM #(
+    parameter ADDR_WIDTH = 32,
+    parameter DATA_WIDTH = 32,
+    parameter STRB_WIDTH = DATA_WIDTH / 8
+)
+(
     //SDRAM
 
     input logic clk_130mhz,
@@ -58,14 +59,14 @@ typedef enum logic[1:0]
     NONE            = 2'b00,
     HALF_WORD       = 2'b01,
     WORD_0          = 2'b10,
-    WORD_1          = 2'b11,
+    WORD_1          = 2'b11
 } Type;
 
 Action action = IDLE;
 Action next_action;
 
-Type type = NONE;
-Type next_type;
+Type address_type = NONE;
+Type address_next_type;
 
 logic[24:0] address;
 logic[15:0] write_data;
@@ -80,7 +81,7 @@ sdram_controller SDRAM_Controller
     .wr_data(write_data),
     .wr_enable(write_enable),
     .rd_addr(address[24:1]),
-    .rd_data(next_type == WORD_1 ? read_data[31:16] : read_data[15:0]),
+    .rd_data(address_next_type == WORD_1 ? read_data[31:16] : read_data[15:0]),
     .rd_ready(read_ready),
     .rd_enable(read_enable),
     .busy(is_busy),
@@ -99,7 +100,7 @@ sdram_controller SDRAM_Controller
     .data_mask_high(sdram_dqm[1])
 );
 
-assign write_data = next_type == WORD_1 ? axi_write_data[31:16] : axi_write_data[15:0];
+assign write_data = address_next_type == WORD_1 ? axi_write_data[31:16] : axi_write_data[15:0];
 
 always_comb begin
     next_action = action;
@@ -114,7 +115,7 @@ always_comb begin
             end
         end
         WRITE: begin
-            if(type == HALF_WORD || type == WORD_1) begin
+            if(address_type == HALF_WORD || address_type == WORD_1) begin
                 next_action = IDLE;
             end
         end
@@ -126,36 +127,36 @@ always_comb begin
 end
 
 always_comb begin
-    next_type = type;
-    case (type)
+    address_next_type = address_type;
+    case (address_type)
         NONE: begin
             if(next_action != IDLE) begin
                 case (address[1:0])
-                    2'b00 : next_type = WORD_0;
+                    2'b00 : address_next_type = WORD_0;
                     //2'b00 : next_action = ??;
-                    2'b10 : next_type = HALF_WORD;
+                    2'b10 : address_next_type = HALF_WORD;
                     //2'b00 : next_action = ??;
                 endcase
             end
         end
         HALF_WORD: begin
             if(!state == READ || read_ready)
-                next_type = NONE;
+                address_next_type = NONE;
         end
         WORD_0: begin
             if(!is_busy && (!state == READ || read_ready)) begin
-                next_type = WORD_1;
+                address_next_type = WORD_1;
             end
         end
         WORD_1: begin
             if(!state == READ || read_ready) begin
-                next_type = NONE;
+                address_next_type = NONE;
             end
         end
     endcase
 
     if(!resetn) begin 
-        next_type = NONE;
+        address_next_type = NONE;
     end
 end
 
@@ -170,14 +171,14 @@ always_ff @(posedge aclk) begin
     //control signals for the SDRAM-Controller
     if(action == IDLE && next_action == WRITE) begin
         write_enable <= 1;
-    end else if (action == WRITE && next_type == WORD_1) begin
+    end else if (action == WRITE && address_next_type == WORD_1) begin
         write_enable <= 1;
     end
 
     //control signals for the SDRAM-Controller
     if(action == IDLE && next_action == READ) begin
         read_enable <= 1;
-    end else if (action == READ && next_type == WORD_1) begin
+    end else if (action == READ && address_next_type == WORD_1) begin
         read_enable <= 1;
     end
 end

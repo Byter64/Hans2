@@ -34,7 +34,7 @@ ecp5pll #(
   .out2_tol_hz (       0),
   .out3_hz     (       0),
   .out3_deg    (       0),
-  .out3_tol_hz (       0),
+  .out3_tol_hz (       0)
 ) TopLevelPLL (
   .clk_i(clk_25mhz),
   .clk_o({clk_110mhz, clk_55mhz})

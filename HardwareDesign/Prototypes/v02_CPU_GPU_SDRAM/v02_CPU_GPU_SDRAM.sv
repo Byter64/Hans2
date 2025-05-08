@@ -48,7 +48,7 @@ ecp5pll #(
   .out2_tol_hz (       0),
   .out3_hz     (       0),
   .out3_deg    (       0),
-  .out3_tol_hz (       0),
+  .out3_tol_hz (       0)
 ) TopLevelPLL (
   .clk_i(clk_25mhz),
   .clk_o({clk_55mhz, clk_130mhz})
@@ -150,6 +150,7 @@ logic[DATA_WIDTH-1:0]  SDRAM_s_axil_rdata;
 logic[1:0]             SDRAM_s_axil_rresp;
 logic                  SDRAM_s_axil_rvalid;
 logic                  SDRAM_s_axil_rready;
+/*
 AXILite_SDRAM SDRAM
 (
 	.clk_130mhz(clk_130mhz),
@@ -186,7 +187,7 @@ AXILite_SDRAM SDRAM
     .s_axil_rvalid(SDRAM_s_axil_rvalid),
     .s_axil_rready(SDRAM_s_axil_rready)
 );
-
+*/
 
 //Graphicsystem
 logic [ADDR_WIDTH-1:0] GS_s_axil_awaddr;
