@@ -10,6 +10,8 @@ list(APPEND sources_sim
   ${CMAKE_CURRENT_SOURCE_DIR}/../../ecp5u/ODDRX1F.v
   ${CMAKE_CURRENT_SOURCE_DIR}/v02_CPU_GPU_SDRAM.sv
   ${CMAKE_CURRENT_SOURCE_DIR}/AxiLiteMemory.sv
+  ${CMAKE_CURRENT_SOURCE_DIR}/../../SDRAM-Controller/sdram_controller.v
+  ${CMAKE_CURRENT_SOURCE_DIR}/../../SDRAM-Controller/AXILite_SDRAM.sv
   ${CMAKE_CURRENT_SOURCE_DIR}/../../pll/ecp5pll.sv
   ${CMAKE_CURRENT_SOURCE_DIR}/../../Processor/picorv32.v
   ${CMAKE_CURRENT_SOURCE_DIR}/../../Graphicsystem/BufferController.v
@@ -34,6 +36,8 @@ set(top "CPU_with_GPU_SDRAM")
 list(APPEND sources_synth
 ${CMAKE_CURRENT_SOURCE_DIR}/v02_CPU_GPU_SDRAM.sv
 ${CMAKE_CURRENT_SOURCE_DIR}/AxiLiteMemory.sv
+${CMAKE_CURRENT_SOURCE_DIR}/../../SDRAM-Controller/sdram_controller.v
+${CMAKE_CURRENT_SOURCE_DIR}/../../SDRAM-Controller/AXILite_SDRAM.sv
 ${CMAKE_CURRENT_SOURCE_DIR}/../../pll/ecp5pll.sv
 ${CMAKE_CURRENT_SOURCE_DIR}/../../Processor/picorv32.v
 ${CMAKE_CURRENT_SOURCE_DIR}/../../Graphicsystem/BufferController.v

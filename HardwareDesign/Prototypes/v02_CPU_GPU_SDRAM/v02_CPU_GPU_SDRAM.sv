@@ -3,10 +3,23 @@
 module CPU_with_GPU_SDRAM
 (
     input logic  clk_25mhz,
-    output logic [3:0] gpdi_dp
+    output logic [3:0] gpdi_dp,
+
+	output logic        sdram_clk,
+	output logic        sdram_cke,
+	output logic        sdram_csn,
+	output logic        sdram_wen,
+	output logic        sdram_rasn,
+	output logic        sdram_casn,
+	output logic[12:0]  sdram_a,
+	output logic[1:0]   sdram_ba,
+	output logic[1:0]   sdram_dqm,
+	inout  logic[15:0]  sdram_d
 );
 
 logic canBeDeleted;
+logic canBeDeleted2;
+logic canBeDeleted3;
 
 logic hdmi_pixClk;
 logic resetn = 0;
@@ -19,16 +32,17 @@ always_ff @(posedge hdmi_pixClk) begin
 	resetn <= reset_counter == 255;
 end
 
-wire clk_110mhz;
+wire clk_7mhz;
 wire clk_55mhz;
+wire clk_130mhz;
 ecp5pll #(
   .in_hz       (25000000),
-  .out0_hz     (55000000),
-  .out0_deg    (       0), // keep 0
-  .out0_tol_hz (       0), // tolerance: if freq differs more, then error
-  .out1_hz    (110000000),
+  .out0_hz    (130000000),
+  .out0_deg    (       0),
+  .out0_tol_hz (       0),
+  .out1_hz     (55000000),
   .out1_deg    (       0),
-  .out1_tol_hz (       0),
+  .out1_tol_hz ( 1000000),
   .out2_hz     (       0),
   .out2_deg    (       0),
   .out2_tol_hz (       0),
@@ -37,17 +51,17 @@ ecp5pll #(
   .out3_tol_hz (       0),
 ) TopLevelPLL (
   .clk_i(clk_25mhz),
-  .clk_o({clk_110mhz, clk_55mhz})
+  .clk_o({clk_55mhz, clk_130mhz})
 );
 
 localparam S_COUNT = 2;
-localparam M_COUNT = 2;
+localparam M_COUNT = 3;
 localparam ADDR_WIDTH = 32;
 localparam DATA_WIDTH = 32;
 localparam STRB_WIDTH = 4;
-//{SDRAM, Graphicsystem}
-localparam M_BASE_ADDR = {32'h0, 32'h200_0000};
-localparam M_ADDR_WIDTH = {32'd25, 32'd8};
+//						  {SDRAM, Graphicsystem, Bootloader}
+localparam M_BASE_ADDR  = {32'h0, 32'h200_0000, 32'h0200_8000};
+localparam M_ADDR_WIDTH = {32'd25, 32'd8,		32'd15};
 
 logic         CPU_mem_axi_awvalid;
 logic         CPU_mem_axi_awready;
@@ -82,6 +96,7 @@ picorv32_axi #(
 	.ENABLE_IRQ(1),
 	.MASKED_IRQ(32'h0000_0000), //1 == disable this IRQ
 	.LATCHED_IRQ(32'hFFFF_FFFF), //1 == interrupt is edge triggered, 0 == interrupt is level triggered
+	.PROGADDR_RESET(32'h0200_8000), //Start address of the bootloader
 	.PROGADDR_IRQ(32'h0000_0010) //Start address of the interrupt handler
 
 ) Processor  
@@ -115,6 +130,63 @@ picorv32_axi #(
 	.trace_valid(CPU_trace_valid),
 	.trace_data(CPU_trace_data)
 );
+
+
+logic[ADDR_WIDTH-1:0]  SDRAM_s_axil_awaddr;
+logic[2:0]             SDRAM_s_axil_awprot;
+logic                  SDRAM_s_axil_awvalid;
+logic                  SDRAM_s_axil_awready;
+logic[DATA_WIDTH-1:0]  SDRAM_s_axil_wdata;
+logic[STRB_WIDTH-1:0]  SDRAM_s_axil_wstrb;
+logic                  SDRAM_s_axil_wvalid;
+logic                  SDRAM_s_axil_wready;
+logic                  SDRAM_s_axil_bvalid;
+logic                  SDRAM_s_axil_bready;
+logic[ADDR_WIDTH-1:0]  SDRAM_s_axil_araddr;
+logic[2:0]             SDRAM_s_axil_arprot;
+logic                  SDRAM_s_axil_arvalid;
+logic                  SDRAM_s_axil_arready;
+logic[DATA_WIDTH-1:0]  SDRAM_s_axil_rdata;
+logic[1:0]             SDRAM_s_axil_rresp;
+logic                  SDRAM_s_axil_rvalid;
+logic                  SDRAM_s_axil_rready;
+AXILite_SDRAM SDRAM
+(
+	.clk_130mhz(clk_130mhz),
+	.resetn(resetn),
+	.sdram_clk(sdram_clk),
+	.sdram_cke(sdram_cke),
+	.sdram_csn(sdram_csn),
+	.sdram_wen(sdram_wen),
+	.sdram_rasn(sdram_rasn),
+	.sdram_casn(sdram_casn),
+	.sdram_a(sdram_a),
+	.sdram_ba(sdram_ba),
+	.sdram_dqm(sdram_dqm),
+	.sdram_d(sdram_d),
+
+    .aclk(clk_55mhz),
+    .aresetn(resetn),
+    .s_axil_awaddr(SDRAM_s_axil_awaddr),
+    .s_axil_awprot(SDRAM_s_axil_awprot),
+    .s_axil_awvalid(SDRAM_s_axil_awvalid),
+    .s_axil_awready(SDRAM_s_axil_awready),
+    .s_axil_wdata(SDRAM_s_axil_wdata),
+    .s_axil_wstrb(SDRAM_s_axil_wstrb),
+    .s_axil_wvalid(SDRAM_s_axil_wvalid),
+    .s_axil_wready(SDRAM_s_axil_wready),
+    .s_axil_bvalid(SDRAM_s_axil_bvalid),
+    .s_axil_bready(SDRAM_s_axil_bready),
+    .s_axil_araddr(SDRAM_s_axil_araddr),
+    .s_axil_arprot(SDRAM_s_axil_arprot),
+    .s_axil_arvalid(SDRAM_s_axil_arvalid),
+    .s_axil_arready(SDRAM_s_axil_arready),
+    .s_axil_rdata(SDRAM_s_axil_rdata),
+    .s_axil_rresp(SDRAM_s_axil_rresp),
+    .s_axil_rvalid(SDRAM_s_axil_rvalid),
+    .s_axil_rready(SDRAM_s_axil_rready)
+);
+
 
 //Graphicsystem
 logic [ADDR_WIDTH-1:0] GS_s_axil_awaddr;
@@ -206,51 +278,50 @@ GraphicSystem GraphicSystem
 );
 
 
-logic[ADDR_WIDTH-1:0]  MEM_s_axil_awaddr;
-logic[2:0]             MEM_s_axil_awprot;
-logic                  MEM_s_axil_awvalid;
-logic                  MEM_s_axil_awready;
-logic[DATA_WIDTH-1:0]  MEM_s_axil_wdata;
-logic[STRB_WIDTH-1:0]  MEM_s_axil_wstrb;
-logic                  MEM_s_axil_wvalid;
-logic                  MEM_s_axil_wready;
-logic                  MEM_s_axil_bvalid;
-logic                  MEM_s_axil_bready;
-logic[ADDR_WIDTH-1:0]  MEM_s_axil_araddr;
-logic[2:0]             MEM_s_axil_arprot;
-logic                  MEM_s_axil_arvalid;
-logic                  MEM_s_axil_arready;
-logic[DATA_WIDTH-1:0]  MEM_s_axil_rdata;
-logic[1:0]             MEM_s_axil_rresp;
-logic                  MEM_s_axil_rvalid;
-logic                  MEM_s_axil_rready;
-  
+logic[ADDR_WIDTH-1:0]  BOOT_s_axil_awaddr;
+logic[2:0]             BOOT_s_axil_awprot;
+logic                  BOOT_s_axil_awvalid;
+logic                  BOOT_s_axil_awready;
+logic[DATA_WIDTH-1:0]  BOOT_s_axil_wdata;
+logic[STRB_WIDTH-1:0]  BOOT_s_axil_wstrb;
+logic                  BOOT_s_axil_wvalid;
+logic                  BOOT_s_axil_wready;
+logic                  BOOT_s_axil_bvalid;
+logic                  BOOT_s_axil_bready;
+logic[ADDR_WIDTH-1:0]  BOOT_s_axil_araddr;
+logic[2:0]             BOOT_s_axil_arprot;
+logic                  BOOT_s_axil_arvalid;
+logic                  BOOT_s_axil_arready;
+logic[DATA_WIDTH-1:0]  BOOT_s_axil_rdata;
+logic[1:0]             BOOT_s_axil_rresp;
+logic                  BOOT_s_axil_rvalid;
+logic                  BOOT_s_axil_rready;
 AXILiteMemory #(
     .ADDR_WIDTH(ADDR_WIDTH),
     .DATA_WIDTH(DATA_WIDTH),
     .STRB_WIDTH(STRB_WIDTH),
-    .MEMORY_DEPTH(14336) //In 32-Bit words. MAKE THIS AS HIGH AS POSSIBLE
-) Memory (
+    .MEMORY_DEPTH(8192) //In 32-Bit words
+) Bootloader (
     .aclk(clk_55mhz),
     .aresetn(resetn),
-    .s_axil_awaddr(MEM_s_axil_awaddr),
-    .s_axil_awprot(MEM_s_axil_awprot),
-    .s_axil_awvalid(MEM_s_axil_awvalid),
-    .s_axil_awready(MEM_s_axil_awready),
-    .s_axil_wdata(MEM_s_axil_wdata),
-    .s_axil_wstrb(MEM_s_axil_wstrb),
-    .s_axil_wvalid(MEM_s_axil_wvalid),
-    .s_axil_wready(MEM_s_axil_wready),
-    .s_axil_bvalid(MEM_s_axil_bvalid),
-    .s_axil_bready(MEM_s_axil_bready),
-    .s_axil_araddr(MEM_s_axil_araddr),
-    .s_axil_arprot(MEM_s_axil_arprot),
-    .s_axil_arvalid(MEM_s_axil_arvalid),
-    .s_axil_arready(MEM_s_axil_arready),
-    .s_axil_rdata(MEM_s_axil_rdata),
-    .s_axil_rresp(MEM_s_axil_rresp),
-    .s_axil_rvalid(MEM_s_axil_rvalid),
-    .s_axil_rready(MEM_s_axil_rready)
+    .s_axil_awaddr(BOOT_s_axil_awaddr),
+    .s_axil_awprot(BOOT_s_axil_awprot),
+    .s_axil_awvalid(BOOT_s_axil_awvalid),
+    .s_axil_awready(BOOT_s_axil_awready),
+    .s_axil_wdata(BOOT_s_axil_wdata),
+    .s_axil_wstrb(BOOT_s_axil_wstrb),
+    .s_axil_wvalid(BOOT_s_axil_wvalid),
+    .s_axil_wready(BOOT_s_axil_wready),
+    .s_axil_bvalid(BOOT_s_axil_bvalid),
+    .s_axil_bready(BOOT_s_axil_bready),
+    .s_axil_araddr(BOOT_s_axil_araddr),
+    .s_axil_arprot(BOOT_s_axil_arprot),
+    .s_axil_arvalid(BOOT_s_axil_arvalid),
+    .s_axil_arready(BOOT_s_axil_arready),
+    .s_axil_rdata(BOOT_s_axil_rdata),
+    .s_axil_rresp(BOOT_s_axil_rresp),
+    .s_axil_rvalid(BOOT_s_axil_rvalid),
+    .s_axil_rready(BOOT_s_axil_rready)
 );
 
 logic[S_COUNT*ADDR_WIDTH-1:0] AXI_s_axil_awaddr;
@@ -315,26 +386,26 @@ assign {CPU_mem_axi_rvalid, GS_m_axil_rvalid} = AXI_s_axil_rvalid;
 assign AXI_s_axil_rready 	= {CPU_mem_axi_rready, GS_m_axil_rready};
 
 //SLAVE MAP
-//{Memory, Graphicsystem}
-assign {MEM_s_axil_awaddr, GS_s_axil_awaddr} = AXI_m_axil_awaddr;
-assign {MEM_s_axil_awprot, GS_s_axil_awprot} = AXI_m_axil_awprot;
-assign {MEM_s_axil_awvalid, GS_s_axil_awvalid} = AXI_m_axil_awvalid;
-assign AXI_m_axil_awready 	= {MEM_s_axil_awready, GS_s_axil_awready};
-assign {MEM_s_axil_wdata, GS_s_axil_wdata} = AXI_m_axil_wdata;
-assign {MEM_s_axil_wstrb, GS_s_axil_wstrb} = AXI_m_axil_wstrb;
-assign {MEM_s_axil_wvalid, GS_s_axil_wvalid} = AXI_m_axil_wvalid;
-assign AXI_m_axil_wready 	= {MEM_s_axil_wready, GS_s_axil_wready};
-assign AXI_m_axil_bresp	 	= {2'b0, GS_s_axil_bresp};
-assign AXI_m_axil_bvalid 	= {MEM_s_axil_bvalid, GS_s_axil_bvalid};
-assign {MEM_s_axil_bready, GS_s_axil_bready} = AXI_m_axil_bready;
-assign {MEM_s_axil_araddr, GS_s_axil_araddr} = AXI_m_axil_araddr;
-assign {MEM_s_axil_arprot, GS_s_axil_arprot} = AXI_m_axil_arprot;
-assign {MEM_s_axil_arvalid, GS_s_axil_arvalid} = AXI_m_axil_arvalid;
-assign AXI_m_axil_arready 	= {MEM_s_axil_arready, GS_s_axil_arready};
-assign AXI_m_axil_rdata 	= {MEM_s_axil_rdata, GS_s_axil_rdata};
-assign AXI_m_axil_rresp 	= {MEM_s_axil_rresp, GS_s_axil_rresp};
-assign AXI_m_axil_rvalid 	= {MEM_s_axil_rvalid, GS_s_axil_rvalid};
-assign {MEM_s_axil_rready, GS_s_axil_rready} = AXI_m_axil_rready;
+//{SDRAM, Graphicsystem, Bootloader}
+assign {SDRAM_s_axil_awaddr, GS_s_axil_awaddr, BOOT_s_axil_awaddr} = AXI_m_axil_awaddr;
+assign {SDRAM_s_axil_awprot, GS_s_axil_awprot, BOOT_s_axil_awprot} = AXI_m_axil_awprot;
+assign {SDRAM_s_axil_awvalid, GS_s_axil_awvalid, BOOT_s_axil_awvalid} = AXI_m_axil_awvalid;
+assign AXI_m_axil_awready 	= {SDRAM_s_axil_awready, GS_s_axil_awready, BOOT_s_axil_awready};
+assign {SDRAM_s_axil_wdata, GS_s_axil_wdata, BOOT_s_axil_wdata} = AXI_m_axil_wdata;
+assign {SDRAM_s_axil_wstrb, GS_s_axil_wstrb, BOOT_s_axil_wstrb} = AXI_m_axil_wstrb;
+assign {SDRAM_s_axil_wvalid, GS_s_axil_wvalid, BOOT_s_axil_wvalid} = AXI_m_axil_wvalid;
+assign AXI_m_axil_wready 	= {SDRAM_s_axil_wready, GS_s_axil_wready, BOOT_s_axil_wready};
+assign AXI_m_axil_bresp	 	= {2'b0, GS_s_axil_bresp, 2'b0};
+assign AXI_m_axil_bvalid 	= {SDRAM_s_axil_bvalid, GS_s_axil_bvalid, BOOT_s_axil_bvalid};
+assign {SDRAM_s_axil_bready, GS_s_axil_bready, BOOT_s_axil_bready} = AXI_m_axil_bready;
+assign {SDRAM_s_axil_araddr, GS_s_axil_araddr, BOOT_s_axil_araddr} = AXI_m_axil_araddr;
+assign {SDRAM_s_axil_arprot, GS_s_axil_arprot, BOOT_s_axil_arprot} = AXI_m_axil_arprot;
+assign {SDRAM_s_axil_arvalid, GS_s_axil_arvalid, BOOT_s_axil_arvalid} = AXI_m_axil_arvalid;
+assign AXI_m_axil_arready 	= {SDRAM_s_axil_arready, GS_s_axil_arready, BOOT_s_axil_arready};
+assign AXI_m_axil_rdata 	= {SDRAM_s_axil_rdata, GS_s_axil_rdata, BOOT_s_axil_rdata};
+assign AXI_m_axil_rresp 	= {SDRAM_s_axil_rresp, GS_s_axil_rresp, BOOT_s_axil_rresp};
+assign AXI_m_axil_rvalid 	= {SDRAM_s_axil_rvalid, GS_s_axil_rvalid, BOOT_s_axil_rvalid};
+assign {SDRAM_s_axil_rready, GS_s_axil_rready, BOOT_s_axil_rready} = AXI_m_axil_rready;
 
 axil_crossbar #(
 	.S_COUNT(S_COUNT),

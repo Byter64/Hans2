@@ -1,7 +1,11 @@
+localparam ADDR_WIDTH = 32;
+localparam DATA_WIDTH = 32;
+localparam STRB_WIDTH = DATA_WIDTH / 8;
+
 module AXILite_SDRAM (
     //SDRAM
 
-    input logic clk_133mhz,
+    input logic clk_130mhz,
     input logic resetn,
     output logic        sdram_clk,
     output logic        sdram_cke,
@@ -25,7 +29,7 @@ module AXILite_SDRAM (
     input logic [STRB_WIDTH-1:0]             s_axil_wstrb,
     input logic                              s_axil_wvalid,
     output logic                             s_axil_wready,
-    output logic [1:0]                       s_axil_bresp,
+    output logic [1:0]                       s_axil_bresp = 0,
     output logic                             s_axil_bvalid,
     input logic                              s_axil_bready,
     input logic [ADDR_WIDTH-1:0]             s_axil_araddr,
@@ -35,7 +39,7 @@ module AXILite_SDRAM (
     output logic[DATA_WIDTH-1:0]             s_axil_rdata,
     output logic[1:0]                        s_axil_rresp,
     output logic                             s_axil_rvalid,
-    input logic                              s_axil_rready,
+    input logic                              s_axil_rready
 );
 
 logic[31:0] axi_write_data;
@@ -81,7 +85,7 @@ sdram_controller SDRAM_Controller
     .rd_enable(read_enable),
     .busy(is_busy),
     .rst_n(resetn),
-    .clk(clk_133mhz), //Expects 133 MHz
+    .clk(clk_130mhz), //Expects 133 MHz
     // SDRAM Interface
     .addr(sdram_a),
     .bank_addr(sdram_ba),
@@ -170,7 +174,7 @@ always_ff @(posedge aclk) begin
         write_enable <= 1;
     end
 
-        //control signals for the SDRAM-Controller
+    //control signals for the SDRAM-Controller
     if(action == IDLE && next_action == READ) begin
         read_enable <= 1;
     end else if (action == READ && next_type == WORD_1) begin
@@ -181,9 +185,11 @@ end
 //Address Write
 logic[24:0] write_address;
 logic[24:0] read_address;
-assign address = s_axil_awvalid && s_axil_awready ? s_axil_awaddr : write_address;
+logic[24:0] write_address_real;
+logic[24:0] read_address_real;
+assign write_address_real = s_axil_awvalid && s_axil_awready ? s_axil_awaddr : write_address;
 always @(posedge aclk) begin
-		s_axil_awready <= 1;
+	s_axil_awready <= 1;
 end
 
 always @(posedge aclk) begin
@@ -214,7 +220,7 @@ always @(posedge aclk) begin
 end
 
 //Address Read
-assign address = s_axil_arvalid && s_axil_arready ? s_axil_araddr : read_address;
+assign read_address_real = s_axil_arvalid && s_axil_arready ? s_axil_araddr : read_address;
 always @(posedge aclk) begin
 		s_axil_arready <= 1;
 end
@@ -229,24 +235,16 @@ end
 //This is not AXI compliant, but I could not think of a better way to invalidate s_axil_rdata if address is written at the sime time as data is read
 assign s_axil_rvalid = !aresetn ? 0 : !(s_axil_arvalid && s_axil_arready) && !is_busy;
 
-logic[31:0] read_data;
-always @(*) begin
-    case (address[1:0])
-      2'b00: s_axil_rdata = (read_data >>  0) & 'hFFFFFFFF;
-      2'b01: s_axil_rdata = (read_data >>  8) & 'hFF;
-      2'b10: s_axil_rdata = (read_data >> 16) & 'hFFFF;
-      2'b11: s_axil_rdata = (read_data >> 24) & 'hFF;
-    endcase
-end
-
 
 always @(posedge aclk) begin
 	if (!aresetn)
-		read_data <= 0;
+		s_axil_rdata <= 0;
 	else if (!s_axil_rvalid || s_axil_rready)
 	begin
-    read_data <= memory[address[31:2]];
+    s_axil_rdata <= read_data;
 	end
 end
     
+assign address = action == WRITE ? write_address_real : read_address_real;
+
 endmodule
