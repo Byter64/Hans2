@@ -17,6 +17,7 @@ def write_data():
 for line in fileinput.input():
     if line.startswith("@"):
         addr = int(line[1:], 16)
+        addr -= 0x2010000
         if addr > ptr+4:
             write_data()
             ptr = addr
