@@ -1,13 +1,12 @@
 #pragma once
-#include <map>
-#include <string>
 #include "Rectangle.h"
+#include <stdint.h>
 
 namespace Hapi
 {
 	struct FontAtlas
 	{
-		std::map<char, Rectangle> atlas;
+		Rectangle atlas[256];
 
 		/// <summary>
 		/// Add an entry to the font atlas
