@@ -85,7 +85,6 @@ module sd_card_reader (
   ///////////////////   AW   /////////////////////
   always_ff @(posedge aclk) begin
       // Logic to determine S_AXIS_AWREADY
-      // TODO logik einbauen die stalled wenn nicht in State idle
       s_axil_awready <= (state == Idle);
   end
 
@@ -236,7 +235,6 @@ module sd_card_reader (
         if((tag == data_addr_read[31:9] && read_data) || (tag == data_addr_write[31:9] && write_data)) begin
           // Read data from RAM
           if(read_data) begin
-            // TODO Little endian or big endian
             data_out[31:24] <= ram[data_addr_read[8:0] + 3];
             data_out[23:16] <= ram[data_addr_read[8:0] + 2];
             data_out[15:8]  <= ram[data_addr_read[8:0] + 1];
@@ -245,7 +243,6 @@ module sd_card_reader (
           end
           //Write data to RAM, set dirty bit
           else if(write_data) begin
-            // TODO Little endian or big endian
             ram_dirty <= 1;
             if(write_mask[3]) ram[data_addr_write[8:0] + 3] <= data_in[31:24];
             if(write_mask[2]) ram[data_addr_write[8:0] + 2] <= data_in[23:16];
@@ -309,7 +306,6 @@ module sd_card_reader (
       end
       PerformOperation: begin
           if(store_read_write_operation) begin
-            // TODO Little endian or big endian
             data_out[31:24] <= ram[data_addr[8:0] + 3];
             data_out[23:16] <= ram[data_addr[8:0] + 2];
             data_out[15:8]  <= ram[data_addr[8:0] + 1];
@@ -318,7 +314,6 @@ module sd_card_reader (
           end
           //Write data to RAM, set dirty bit
           else begin
-            // TODO Little endian or big endian
             ram_dirty <= 1;
             if(write_mask[3]) ram[data_addr[8:0] + 3] <= data_in[31:24];
             if(write_mask[2]) ram[data_addr[8:0] + 2] <= data_in[23:16];
