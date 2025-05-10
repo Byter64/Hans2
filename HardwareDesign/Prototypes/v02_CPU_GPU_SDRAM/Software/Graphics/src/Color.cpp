@@ -1,4 +1,4 @@
-#include "../../Graphics/include/Color.h"
+#include "Color.h"
 
 Hapi::Color::Color(unsigned char red, unsigned char green, unsigned char blue, bool alpha)
 {
@@ -79,9 +79,9 @@ uint16_t Hapi::Color::GetColor()
 	return color;
 }
 
-//#ifdef DESKTOP
-//::Color Hapi::Color::ToRaylib()
-//{
-//	return {red, green, blue, (unsigned char)(alpha ? 255 : 0 )};
-//}
-//#endif // DESKTOP
+#ifdef DESKTOP
+::Color Hapi::Color::ToRaylib()
+{
+	return {red, green, blue, (unsigned char)(alpha ? 255 : 0 )};
+}
+#endif // DESKTOP

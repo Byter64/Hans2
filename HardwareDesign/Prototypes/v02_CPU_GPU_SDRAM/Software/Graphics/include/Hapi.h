@@ -1,11 +1,13 @@
 #pragma once
 #include <stdint.h>
 #include "Color.h"
-
+#include "ControllerInput.h"
+#include "FontAtlas.h"
 
 namespace Hapi
 {
-	typedef uint32_t Image;
+	typedef int Image;
+	typedef int Font;
 
 	const int SCREEN_WIDTH = 400;
 	const int SCREEN_HEIGHT = 240;
@@ -43,12 +45,46 @@ namespace Hapi
 	/// <param name="image"></param>
 	void UnloadImage(Image image);
 
+	/// <summary>
+	/// Loads the given font and returns an ID that is unique to this font
+	/// </summary>
+	/// <param name="start">The start of the font sheet</param>
+	/// <param name="width">The width in pixels of the font</param>
+	/// <param name="height">The height in pixels of the font</param>
+	/// <returns>An ID for this image</returns>
+	Font LoadFont(char* start, int width, int height, FontAtlas fontatlas);
+
+	/// <summary>
+	/// Unloads the given font
+	/// </summary>
+	/// <param name="font"></param>
+	void UnloadFont(Font font);
+
 	void StartDrawing();
 
 	void EndDrawing();
 
-	void Draw(Image image, int ssX, int ssY, int x, int y, int width, int height, int image_width);
+	/// <summary>
+	/// Draws an excerpt from a image onto the screen
+	/// </summary>
+	/// <param name="image">The image from which to draw</param>
+	/// <param name="imageX">The left x coordinate of the excerpt within the image</param>
+	/// <param name="imageY">The top y coordinate of the excerpt within the image</param>
+	/// <param name="x">The left x coordinate on the screen to where the excerpt is drawn</param>
+	/// <param name="y">The top y coordanitate on the screen to where the excerpt is drawn</param>
+	/// <param name="width">The width of the excerpt</param>
+	/// <param name="height">The height of the excerpt</param>
+	void Draw(Image image, int imageX, int imageY, int x, int y, int width, int height);
 	
+	/// <summary>
+	/// Draw text. The text is always left aligned
+	/// </summary>
+	/// <param name="text">The text to be drawn</param>
+	/// <param name="font">The font in which the text will be drawn</param>
+	/// <param name="posX">The left border</param>
+	/// <param name="posY">The top border of the text</param>
+	/// <param name="maxWidth">The maximum text box width. If text exceeds this width, it will wrap into a new line.</param>
+	void DrawText(const char* text, Font font, int posX, int posY, unsigned int maxWidth);
 
 	/// <summary>
 	/// Clears the whole screen with the given color
@@ -63,4 +99,6 @@ namespace Hapi
 	/// </summary>
 	/// <param name="vSync"></param>
 	void SetVSync(bool vSync);
+
+	ControllerInput GetControllerInput();
 }

@@ -1,12 +1,12 @@
 #pragma once
 #include <stdint.h>
 
-//#ifdef DESKTOP
-//extern "C"
-//{
-	//#include "raylib.h"
-//}
-//#endif // Desktop
+#ifdef DESKTOP
+extern "C"
+{
+	#include "raylib.h"
+}
+#endif // Desktop
 
 namespace Hapi
 {
@@ -38,8 +38,8 @@ namespace Hapi
 		bool GetAlpha();
 		uint16_t GetColor();
 
-//#ifdef DESKTOP
-		//::Color ToRaylib();
-//#endif // DESKTOP
+#ifdef DESKTOP
+		::Color ToRaylib();
+#endif // DESKTOP
 	};
 }
