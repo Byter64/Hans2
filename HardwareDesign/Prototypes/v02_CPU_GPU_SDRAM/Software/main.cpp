@@ -2,6 +2,7 @@
 #include "Assets/include/sprites/SproutLands/Objects/Piknik basket.h"
 #include "Hapi.h"
 #include "Assets/include/sprites/SproutLands/Objects/Boats.h"
+#include "../printf/printf.h"
 
 #ifndef _DEBUG
 #pragma comment(linker, "/SUBSYSTEM:windows /ENTRY:mainCRTStartup")
@@ -36,6 +37,11 @@ int main() {
         Hapi::Draw(boat, 0, 0, left_boat_x, left_boat_y, 48, 32, 48);
 		boat_pos += boat_speed;
 		left_boat_x = 50 + (boat_pos % 200);
+
+		char text[128];
+		//This is from ../printf
+		sprintf_(text, "Boat x pos: %i", left_boat_x);
+		Hapi::DrawText(text, 0, 0, INT32_MAX);
 
         updateAnimation(water_ticks, water_frame_x, 16, 48);
         Hapi::EndDrawing();

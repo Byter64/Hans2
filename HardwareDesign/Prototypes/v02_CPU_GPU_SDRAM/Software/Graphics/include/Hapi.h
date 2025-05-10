@@ -6,8 +6,11 @@
 
 namespace Hapi
 {
+
 	typedef int Image;
 	typedef int Font;
+
+	Font defaultFont;
 
 	const int SCREEN_WIDTH = 400;
 	const int SCREEN_HEIGHT = 240;
@@ -85,6 +88,16 @@ namespace Hapi
 	/// <param name="posY">The top border of the text</param>
 	/// <param name="maxWidth">The maximum text box width. If text exceeds this width, it will wrap into a new line.</param>
 	void DrawText(const char* text, Font font, int posX, int posY, unsigned int maxWidth);
+
+	/// <summary>
+	/// Draw text. The text is always left aligned
+	/// </summary>
+	/// <param name="text">The text to be drawn</param>
+	/// <param name="posX">The left border</param>
+	/// <param name="posY">The top border of the text</param>
+	/// <param name="maxWidth">The maximum text box width. If text exceeds this width, it will wrap into a new line.</param>
+	void DrawText(const char* text, int posX, int posY, unsigned int maxWidth);
+
 
 	/// <summary>
 	/// Clears the whole screen with the given color

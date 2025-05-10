@@ -1,6 +1,6 @@
 #include "Hapi.h"
 #include "FontAtlas.h"
-#include <iostream>
+#include "../Assets/include/fonts/minifont5x3.h"
 
 struct ImageData
 {
@@ -48,8 +48,51 @@ volatile char* INPUT_ADDRESS = (char*) - 1;
 static int lastTime = 0;
 static int targetTicks = 0;
 
+static Hapi::Font LoadMiniFont()
+{
+	Hapi::FontAtlas atlas{};
+	for (char i = 0; i < 26; i++) atlas.Add('A' + i, { i * 4, 0, 3, 5 });
+	atlas.Add('[', { 26 * 4, 0, 3, 5 });
+	atlas.Add(']', { 27 * 4, 0, 3, 5 });
+	atlas.Add('{', { 28 * 4, 0, 3, 5 });
+	atlas.Add('}', { 29 * 4, 0, 3, 5 });
+
+	for (char i = 0; i < 26; i++) atlas.Add('a' + i, { i * 4, 5, 3, 5 });
+	atlas.Add('\\', { 26 * 4, 5, 3, 5 });
+	atlas.Add('/', { 27 * 4, 5, 3, 5 });
+	atlas.Add('<', { 28 * 4, 5, 3, 5 });
+	atlas.Add('>', { 29 * 4, 5, 3, 5 });
+
+	for (char i = 1; i < 10; i++) atlas.Add('0' + i, { (i - 1) * 4, 10, 3, 5 });
+	atlas.Add('0', { 9 * 4, 10, 3, 5 });
+	atlas.Add('!', { 10 * 4, 10, 3, 5 });
+	atlas.Add('"', { 11 * 4, 10, 3, 5 });
+	atlas.Add('$', { 12 * 4, 10, 3, 5 });
+	atlas.Add('%', { 13 * 4, 10, 3, 5 });
+	atlas.Add('^', { 14 * 4, 10, 3, 5 });
+	atlas.Add('*', { 15 * 4, 10, 3, 5 });
+	atlas.Add('(', { 16 * 4, 10, 3, 5 });
+	atlas.Add(')', { 17 * 4, 10, 3, 5 });
+	atlas.Add('`', { 18 * 4, 10, 3, 5 });
+	atlas.Add('\'', { 19 * 4, 10, 3, 5 });
+	atlas.Add('-', { 20 * 4, 10, 3, 5 });
+	atlas.Add('=', { 21 * 4, 10, 3, 5 });
+	atlas.Add('_', { 22 * 4, 10, 3, 5 });
+	atlas.Add('+', { 23 * 4, 10, 3, 5 });
+	atlas.Add('?', { 24 * 4, 10, 3, 5 });
+	atlas.Add('|', { 25 * 4, 10, 3, 5 });
+	atlas.Add('.', { 26 * 4, 10, 3, 5 });
+	atlas.Add(',', { 27 * 4, 10, 3, 5 });
+	atlas.Add(':', { 28 * 4, 10, 3, 5 });
+	atlas.Add(';', { 29 * 4, 10, 3, 5 });
+
+
+	return Hapi::LoadFont((char*)Assets::minifont5x3, 120, 15, atlas);
+}
+
 int Hapi::Init()
 {
+	defaultFont = LoadMiniFont();
 	return 0;
 }
 
@@ -136,6 +179,11 @@ void Hapi::DrawText(const char* text, Font font, int posX, int posY, unsigned in
 		Draw(font, rect.x, rect.y, posX, posY, rect.width, rect.height);
 		posX += charSize;
 	}
+}
+
+void Hapi::DrawText(const char* text, int posX, int posY, unsigned int maxWidth)
+{
+	DrawText(text, defaultFont, posX, posY, maxWidth);
 }
 
 void Hapi::Draw(Image image, int imageX, int imageY, int x, int y, int width, int height)
