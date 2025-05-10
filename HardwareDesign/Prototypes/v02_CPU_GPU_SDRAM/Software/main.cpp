@@ -2,7 +2,7 @@
 #include "Assets/include/sprites/SproutLands/Objects/Piknik basket.h"
 #include "Hapi.h"
 #include "Assets/include/sprites/SproutLands/Objects/Boats.h"
-#include "../printf/printf.h"
+#include "printf/printf.h"
 
 #ifndef _DEBUG
 #pragma comment(linker, "/SUBSYSTEM:windows /ENTRY:mainCRTStartup")

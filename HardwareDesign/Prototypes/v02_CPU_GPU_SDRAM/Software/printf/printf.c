@@ -61,31 +61,31 @@
 // support for the floating point type (%f)
 // default: activated
 #ifndef PRINTF_DISABLE_SUPPORT_FLOAT
-#define PRINTF_SUPPORT_FLOAT
+//#define PRINTF_SUPPORT_FLOAT
 #endif
 
 // support for exponential floating point notation (%e/%g)
 // default: activated
 #ifndef PRINTF_DISABLE_SUPPORT_EXPONENTIAL
-#define PRINTF_SUPPORT_EXPONENTIAL
+//#define PRINTF_SUPPORT_EXPONENTIAL
 #endif
 
 // define the default floating point precision
 // default: 6 digits
 #ifndef PRINTF_DEFAULT_FLOAT_PRECISION
-#define PRINTF_DEFAULT_FLOAT_PRECISION  6U
+//#define PRINTF_DEFAULT_FLOAT_PRECISION  6U
 #endif
 
 // define the largest float suitable to print with %f
 // default: 1e9
 #ifndef PRINTF_MAX_FLOAT
-#define PRINTF_MAX_FLOAT  1e9
+//#define PRINTF_MAX_FLOAT  1e9
 #endif
 
 // support for the long long types (%llu or %p)
 // default: activated
 #ifndef PRINTF_DISABLE_SUPPORT_LONG_LONG
-#define PRINTF_SUPPORT_LONG_LONG
+//#define PRINTF_SUPPORT_LONG_LONG
 #endif
 
 // support for the ptrdiff_t type (%t)
@@ -144,15 +144,6 @@ static inline void _out_null(char character, void* buffer, size_t idx, size_t ma
   (void)character; (void)buffer; (void)idx; (void)maxlen;
 }
 
-
-// internal _putchar wrapper
-static inline void _out_char(char character, void* buffer, size_t idx, size_t maxlen)
-{
-  (void)buffer; (void)idx; (void)maxlen;
-  if (character) {
-    _putchar(character);
-  }
-}
 
 
 // internal output function wrapper
@@ -859,16 +850,6 @@ static int _vsnprintf(out_fct_type out, char* buffer, const size_t maxlen, const
 
 ///////////////////////////////////////////////////////////////////////////////
 
-int printf_(const char* format, ...)
-{
-  va_list va;
-  va_start(va, format);
-  char buffer[1];
-  const int ret = _vsnprintf(_out_char, buffer, (size_t)-1, format, va);
-  va_end(va);
-  return ret;
-}
-
 
 int sprintf_(char* buffer, const char* format, ...)
 {
@@ -887,13 +868,6 @@ int snprintf_(char* buffer, size_t count, const char* format, ...)
   const int ret = _vsnprintf(_out_buffer, buffer, count, format, va);
   va_end(va);
   return ret;
-}
-
-
-int vprintf_(const char* format, va_list va)
-{
-  char buffer[1];
-  return _vsnprintf(_out_char, buffer, (size_t)-1, format, va);
 }
 
 
