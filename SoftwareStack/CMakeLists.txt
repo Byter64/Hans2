@@ -3,13 +3,12 @@ enable_language(C CXX ASM)
 project("Hans2_Software")
 
 add_compile_options(
-                    -DHAVE_MMAP=0 # don't compile MMAP
-                    -D_LDBL_EQ_DBL=0 # no long double support
                     -fno-exceptions
-                    -nostartfiles
                     -nostdlib
                     -fno-unwind-tables
+                    -fno-rtti
 )
+
 add_link_options(-nostdlib -nostartfiles
   -T${CMAKE_CURRENT_SOURCE_DIR}/riscv.ld
 )
