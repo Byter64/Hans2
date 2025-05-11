@@ -144,14 +144,14 @@ always_comb begin
                 next_address_type = NONE;
         end
         WORD_0: begin
-            //if(!is_busy && (action != READ || read_ready)) begin
+            if(!is_busy && (action != READ || read_ready)) begin
                 next_address_type = WORD_1;
-            //end
+            end
         end
         WORD_1: begin
-            //if(action != READ || read_ready) begin
+            if(action != READ || read_ready) begin
                 next_address_type = NONE;
-            //end
+            end
         end
     endcase
 
