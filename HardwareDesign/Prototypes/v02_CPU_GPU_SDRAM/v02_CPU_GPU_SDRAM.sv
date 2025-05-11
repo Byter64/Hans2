@@ -15,6 +15,9 @@ module CPU_with_GPU_SDRAM
 	inout  logic[15:0]  sdram_d
 ); 
 
+logic canBeDeleted;
+logic canBeDeleted;
+
 logic hdmi_pixClk;
 logic resetn = 0;
 logic trap;
@@ -60,7 +63,7 @@ localparam M_ADDR_WIDTH = {32'd25, 32'd8,		32'd15};
 
 logic         CPU_mem_axi_awvalid;
 logic         CPU_mem_axi_awready;
-logic [31:0]  CPU_mem_axi_awaddr;
+logic [31:0]  CPU_mem_axi_awaddr;  
 logic [ 2:0]  CPU_mem_axi_awprot;
 logic         CPU_mem_axi_wvalid;
 logic         CPU_mem_axi_wready;
@@ -145,7 +148,7 @@ logic[DATA_WIDTH-1:0]  SDRAM_s_axil_rdata;
 logic[1:0]             SDRAM_s_axil_rresp;
 logic                  SDRAM_s_axil_rvalid;
 logic                  SDRAM_s_axil_rready;
-/*
+
 AXILite_SDRAM SDRAM
 (
 	.clk_130mhz(clk_130mhz),
@@ -182,7 +185,7 @@ AXILite_SDRAM SDRAM
     .s_axil_rvalid(SDRAM_s_axil_rvalid),
     .s_axil_rready(SDRAM_s_axil_rready)
 );
-*/
+
 
 //Graphicsystem
 logic [ADDR_WIDTH-1:0] GS_s_axil_awaddr;

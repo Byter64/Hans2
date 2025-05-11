@@ -204,7 +204,7 @@ always @(posedge aclk) begin
 		s_axil_wready <= action == IDLE;
 end
 
-
+ 
 always @(posedge aclk) begin
     if (s_axil_wvalid && s_axil_wready) begin //Never add any other conditions. This is likely to break axi
         axi_write_data <= s_axil_wdata;

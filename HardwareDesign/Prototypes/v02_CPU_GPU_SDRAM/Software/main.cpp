@@ -10,6 +10,8 @@
 
 void updateAnimation(int& ticks, int& frame_x, int frame_width, int max_frame);
 
+volatile int* sdramInt = 0x00000000;
+
 int main() {
     int water_ticks = 20, water_frame_x = 0;
     int left_boat_x = 10, left_boat_y = 100;
@@ -22,6 +24,7 @@ int main() {
     Hapi::SetTargetFPS(60);
     Hapi::Image water = Hapi::LoadImage((char*)SproutLands::Water, 16, 16);
     Hapi::Image boat = Hapi::LoadImage((char*)SproutLands::Boats, 48, 32);
+
 
     while (true) {
 
@@ -38,16 +41,17 @@ int main() {
 		boat_pos += boat_speed;
 		left_boat_x = 50 + (boat_pos % 200);
 
-		char text[128]; 
-		//This is from ../printf
-		sprintf_(text, "Boat x pos: %i", left_boat_x);
+		char text[64]; 
+        //This is from ../printf
+        sprintf_(text, "Boat x pos: %i", left_boat_x);
         Hapi::DrawText(text, 5, 5, INT32_MAX);
-        Hapi::DrawText("Boat x pos: 000", 5, 10, INT32_MAX);
-        Hapi::Draw((Hapi::Image)Hapi::defaultFont.fontSheet, 0, 0, 250, 10, 120, 15, 120);
-        Hapi::Draw((Hapi::Image)Hapi::defaultFont.fontSheet, 56, 5, 5, 15, 3, 5, 120);
 
+        //sprintf_(text, "SDRAM contains number %i", *sdramInt);
+        //Hapi::DrawText(text, 5, 10, INT32_MAX);
+        Hapi::Draw((Hapi::Image)Hapi::defaultFont.fontSheet, 0, 0, 250, 10, 120, 15, 120);
         updateAnimation(water_ticks, water_frame_x, 16, 48);
         Hapi::EndDrawing();
+        *sdramInt = 12345;
     }
     Hapi::Terminate();
     return 0;
