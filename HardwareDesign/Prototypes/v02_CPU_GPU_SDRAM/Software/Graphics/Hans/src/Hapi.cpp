@@ -23,7 +23,7 @@ volatile int* VSYNC_BUFFER_SWAP = (int*)(GPU_BLOCK + 60);
 
 
 static Hapi::FontAtlas atlas{};
-static Hapi::Font defaultFont;
+Hapi::Font Hapi::defaultFont;
 static Hapi::Font LoadMiniFont()
 {
 	for (char i = 0; i < 26; i++) atlas.Add('A' + i, { i * 4, 0, 3, 5 });
@@ -61,6 +61,7 @@ static Hapi::Font LoadMiniFont()
 	atlas.Add(':', { 28 * 4, 10, 3, 5 });
 	atlas.Add(';', { 29 * 4, 10, 3, 5 });
 
+	atlas.Add(' ', { -1, -1, 3, 5 });
 
 	return Hapi::LoadFont((char*)Assets::minifont5x3, 120, 15, &atlas);
 }
@@ -148,7 +149,6 @@ void Hapi::DrawText(const char* text, Font font, int posX, int posY, unsigned in
 
 	for (; *text != '\0'; text++)
 	{
-		if (*text == ' ') continue;
 		const Rectangle& rect = atlas->atlas[*text];
 		int charSize = rect.width + 1;
 
@@ -158,8 +158,11 @@ void Hapi::DrawText(const char* text, Font font, int posX, int posY, unsigned in
 			posY += rect.height + 1;
 		}
 
-		WaitForGPU();
-		Draw((Hapi::Image)font.fontSheet, rect.x, rect.y, posX, posY, rect.width, rect.height, font.fontSheetWidth);
+		if (*text != ' ')
+		{
+			WaitForGPU();
+			Draw((Hapi::Image)font.fontSheet, rect.x, rect.y, posX, posY, rect.width, rect.height, font.fontSheetWidth);
+		}
 		posX += charSize;
 	}
 }

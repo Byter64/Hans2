@@ -6,7 +6,7 @@ namespace Hapi
 {
 	struct FontAtlas
 	{
-		Rectangle atlas[256];
+		Rectangle atlas[128];
 
 		/// <summary>
 		/// Add an entry to the font atlas

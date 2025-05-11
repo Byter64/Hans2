@@ -1,5 +1,3 @@
-// iverilog -g2012 testbench.sv ../Processor/picorv32.v ../Graphicsystem/BufferController.v ../Graphicsystem/Framebuffer.v ../Graphicsystem/GPU.v ../Graphicsystem/GraphicSystem.v ../Graphicsystem/HDMI_Out.v ../Graphicsystem/ULX3S_hdmi/TMDS_encoder.v
-
 module CPU_with_GPU_SDRAM
 (
     input logic  clk_25mhz,
@@ -15,8 +13,8 @@ module CPU_with_GPU_SDRAM
 	output logic[1:0]   sdram_ba,
 	output logic[1:0]   sdram_dqm,
 	inout  logic[15:0]  sdram_d
-);
-
+); 
+    
 logic canBeDeleted;
 logic canBeDeleted2;
 

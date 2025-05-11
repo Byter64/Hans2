@@ -14,6 +14,8 @@ namespace Hapi
 		FontAtlas* atlas;
 	};
 
+	extern Font defaultFont;
+
 	const int SCREEN_WIDTH = 400;
 	const int SCREEN_HEIGHT = 240;
 

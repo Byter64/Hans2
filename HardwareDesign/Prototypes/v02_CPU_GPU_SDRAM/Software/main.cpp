@@ -28,22 +28,25 @@ int main() {
         Hapi::StartDrawing();
         Hapi::Clear(Hapi::Color(255, 127, 127, 1));
 
-        for (int y = 0; y < 240; y += 16) {
-            for (int x = 0; x < 400; x += 16) {
-                Hapi::Draw(water, water_frame_x, 0, x, y, 16, 16, 48);
-            }
-        }
+        //for (int y = 0; y < 240; y += 16) {
+            //for (int x = 0; x < 400; x += 16) {
+              //  Hapi::Draw(water, water_frame_x, 0, x, y, 16, 16, 48);
+            //}
+        //}
         
-        Hapi::Draw(boat, 0, 0, left_boat_x, left_boat_y, 48, 32, 48);
-		boat_pos += boat_speed;
-		left_boat_x = 50 + (boat_pos % 200);
+        //Hapi::Draw(boat, 0, 0, left_boat_x, left_boat_y, 48, 32, 48);
+		//boat_pos += boat_speed;
+		//left_boat_x = 50 + (boat_pos % 200);
 
-		char text[128]; 
+		//char text[128]; 
 		//This is from ../printf
-		sprintf_(text, "Boat x pos: %i", left_boat_x);
-		Hapi::DrawText(text, 5, 5, INT32_MAX);
+		//sprintf_(text, "Boat x pos: %i", left_boat_x);
+        //Hapi::DrawText(text, 5, 5, INT32_MAX);
+        //Hapi::DrawText("Boat x pos: 000", 5, 10, INT32_MAX);
+        //Hapi::Draw((Hapi::Image)Hapi::defaultFont.fontSheet, 0, 0, 250, 10, 120, 15, 120);
+        Hapi::Draw((Hapi::Image)Hapi::defaultFont.fontSheet, 56, 5, 5, 15, 3, 5, 120);
 
-        updateAnimation(water_ticks, water_frame_x, 16, 48);
+        //updateAnimation(water_ticks, water_frame_x, 16, 48);
         Hapi::EndDrawing();
     }
     Hapi::Terminate();
