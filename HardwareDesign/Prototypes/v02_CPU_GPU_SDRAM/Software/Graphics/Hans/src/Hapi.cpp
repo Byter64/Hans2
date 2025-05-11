@@ -31,7 +31,7 @@ static Hapi::Font LoadMiniFont()
 	atlas.Add(']', { 27 * 4, 0, 3, 5 });
 	atlas.Add('{', { 28 * 4, 0, 3, 5 });
 	atlas.Add('}', { 29 * 4, 0, 3, 5 });
-
+	
 	for (char i = 0; i < 26; i++) atlas.Add('a' + i, { i * 4, 5, 3, 5 });
 	atlas.Add('\\', { 26 * 4, 5, 3, 5 });
 	atlas.Add('/', { 27 * 4, 5, 3, 5 });
@@ -148,6 +148,7 @@ void Hapi::DrawText(const char* text, Font font, int posX, int posY, unsigned in
 
 	for (; *text != '\0'; text++)
 	{
+		if (*text == ' ') continue;
 		const Rectangle& rect = atlas->atlas[*text];
 		int charSize = rect.width + 1;
 

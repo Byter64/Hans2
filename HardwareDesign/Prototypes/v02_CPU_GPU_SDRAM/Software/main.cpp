@@ -38,10 +38,10 @@ int main() {
 		boat_pos += boat_speed;
 		left_boat_x = 50 + (boat_pos % 200);
 
-		char text[128];
+		char text[128]; 
 		//This is from ../printf
 		sprintf_(text, "Boat x pos: %i", left_boat_x);
-		Hapi::DrawText(text, 0, 0, INT32_MAX);
+		Hapi::DrawText(text, 5, 5, INT32_MAX);
 
         updateAnimation(water_ticks, water_frame_x, 16, 48);
         Hapi::EndDrawing();

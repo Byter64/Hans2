@@ -8,21 +8,21 @@
 _Z4mainv:                               # @_Z4mainv
 	.cfi_startproc
 # %bb.0:
-	addi	sp, sp, -64
-	.cfi_def_cfa_offset 64
-	sw	ra, 60(sp)                      # 4-byte Folded Spill
-	sw	s0, 56(sp)                      # 4-byte Folded Spill
-	sw	s1, 52(sp)                      # 4-byte Folded Spill
-	sw	s2, 48(sp)                      # 4-byte Folded Spill
-	sw	s3, 44(sp)                      # 4-byte Folded Spill
-	sw	s4, 40(sp)                      # 4-byte Folded Spill
-	sw	s5, 36(sp)                      # 4-byte Folded Spill
-	sw	s6, 32(sp)                      # 4-byte Folded Spill
-	sw	s7, 28(sp)                      # 4-byte Folded Spill
-	sw	s8, 24(sp)                      # 4-byte Folded Spill
-	sw	s9, 20(sp)                      # 4-byte Folded Spill
-	sw	s10, 16(sp)                     # 4-byte Folded Spill
-	sw	s11, 12(sp)                     # 4-byte Folded Spill
+	addi	sp, sp, -208
+	.cfi_def_cfa_offset 208
+	sw	ra, 204(sp)                     # 4-byte Folded Spill
+	sw	s0, 200(sp)                     # 4-byte Folded Spill
+	sw	s1, 196(sp)                     # 4-byte Folded Spill
+	sw	s2, 192(sp)                     # 4-byte Folded Spill
+	sw	s3, 188(sp)                     # 4-byte Folded Spill
+	sw	s4, 184(sp)                     # 4-byte Folded Spill
+	sw	s5, 180(sp)                     # 4-byte Folded Spill
+	sw	s6, 176(sp)                     # 4-byte Folded Spill
+	sw	s7, 172(sp)                     # 4-byte Folded Spill
+	sw	s8, 168(sp)                     # 4-byte Folded Spill
+	sw	s9, 164(sp)                     # 4-byte Folded Spill
+	sw	s10, 160(sp)                    # 4-byte Folded Spill
+	sw	s11, 156(sp)                    # 4-byte Folded Spill
 	.cfi_offset ra, -4
 	.cfi_offset s0, -8
 	.cfi_offset s1, -12
@@ -50,74 +50,93 @@ _Z4mainv:                               # @_Z4mainv
 	li	a1, 48
 	li	a2, 32
 	call	_ZN4Hapi9LoadImageEPcii
-	mv	s1, a0
+	sw	a0, 16(sp)                      # 4-byte Folded Spill
 	li	s2, 0
-	li	s7, 0
-	li	s4, 10
-	li	s11, 20
-	li	s9, 384
+	li	s9, 0
+	li	s3, 10
+	li	s4, 20
+	li	s11, 384
 	li	s10, 224
 	lui	a0, 335544
+	lui	s5, 524288
 	lui	a1, 174763
-	addi	s8, a0, 1311
+	addi	s1, a0, 1311
+	addi	s5, s5, -1
 	addi	a0, a1, -1365
-	sw	a0, 0(sp)                       # 4-byte Folded Spill
-                                        # implicit-def: $x19
+	sw	a0, 12(sp)                      # 4-byte Folded Spill
+                                        # implicit-def: $x22
 .LBB0_1:                                # =>This Loop Header: Depth=1
                                         #     Child Loop BB0_2 Depth 2
                                         #       Child Loop BB0_3 Depth 3
 	call	_ZN4Hapi12StartDrawingEv
-	addi	a0, sp, 4
+	addi	a0, sp, 148
 	li	a1, 255
 	li	a2, 127
 	li	a3, 127
 	li	a4, 1
 	call	_ZN4Hapi5ColorC1Ehhhb
-	lhu	a1, 8(sp)
-	lw	a0, 4(sp)
+	lhu	a1, 152(sp)
+	lw	a0, 148(sp)
 	lui	a2, 1048560
-	and	a2, s3, a2
-	or	s3, a2, a1
-	mv	a1, s3
+	and	a2, s6, a2
+	or	s6, a2, a1
+	mv	a1, s6
 	call	_ZN4Hapi5ClearENS_5ColorE
 	li	a0, 0
 .LBB0_2:                                #   Parent Loop BB0_1 Depth=1
                                         # =>  This Loop Header: Depth=2
                                         #       Child Loop BB0_3 Depth 3
-	mv	s5, a0
-	li	s6, -16
+	mv	s7, a0
+	li	s8, -16
 .LBB0_3:                                #   Parent Loop BB0_1 Depth=1
                                         #     Parent Loop BB0_2 Depth=2
                                         # =>    This Inner Loop Header: Depth=3
-	addi	s6, s6, 16
+	addi	s8, s8, 16
 	li	a5, 16
 	li	a6, 16
 	li	a7, 48
 	mv	a0, s0
 	mv	a1, s2
 	li	a2, 0
-	mv	a3, s6
-	mv	a4, s5
+	mv	a3, s8
+	mv	a4, s7
 	call	_ZN4Hapi4DrawEjiiiiiii
-	bltu	s6, s9, .LBB0_3
+	bltu	s8, s11, .LBB0_3
 # %bb.4:                                #   in Loop: Header=BB0_2 Depth=2
-	addi	a0, s5, 16
-	bltu	s5, s10, .LBB0_2
+	addi	a0, s7, 16
+	bltu	s7, s10, .LBB0_2
 # %bb.5:                                #   in Loop: Header=BB0_1 Depth=1
 	li	a4, 100
 	li	a5, 48
 	li	a6, 32
-	li	a7, 144
-	mv	a0, s1
+	li	a7, 48
+	lw	a0, 16(sp)                      # 4-byte Folded Reload
 	li	a1, 0
 	li	a2, 0
-	mv	a3, s4
+	mv	a3, s3
 	call	_ZN4Hapi4DrawEjiiiiiii
-	addi	s11, s11, -1
-	bnez	s11, .LBB0_7
+	addi	s9, s9, 2
+	mulhu	a0, s9, s1
+	srli	a0, a0, 6
+	li	a1, 200
+	mul	a0, a0, a1
+	sub	a0, s9, a0
+	addi	s3, a0, 50
+	addi	a0, sp, 20
+	lui	a1, %hi(.L.str)
+	addi	a1, a1, %lo(.L.str)
+	mv	a2, s3
+	call	sprintf_
+	addi	a0, sp, 20
+	li	a1, 5
+	li	a2, 5
+	mv	a3, s5
+	call	_ZN4Hapi8DrawTextEPKciij
+	addi	s4, s4, -1
+	bnez	s4, .LBB0_7
 # %bb.6:                                #   in Loop: Header=BB0_1 Depth=1
 	addi	s2, s2, 16
-	lw	a0, 0(sp)                       # 4-byte Folded Reload
+	lw	a0, 12(sp)                      # 4-byte Folded Reload
 	mulh	a0, s2, a0
 	srli	a1, a0, 31
 	srli	a0, a0, 3
@@ -126,15 +145,8 @@ _Z4mainv:                               # @_Z4mainv
 	slli	a0, a0, 4
 	sub	a0, a0, a1
 	add	s2, s2, a0
-	li	s11, 20
+	li	s4, 20
 .LBB0_7:                                #   in Loop: Header=BB0_1 Depth=1
-	addi	s7, s7, 2
-	mulhu	a0, s7, s8
-	srli	a0, a0, 6
-	li	a1, 200
-	mul	a0, a0, a1
-	sub	s4, s7, a0
-	addi	s4, s4, 10
 	call	_ZN4Hapi10EndDrawingEv
 	j	.LBB0_1
 .Lfunc_end0:
@@ -163,265 +175,6 @@ _Z15updateAnimationRiS_ii:              # @_Z15updateAnimationRiS_ii
 .Lfunc_end1:
 	.size	_Z15updateAnimationRiS_ii, .Lfunc_end1-_Z15updateAnimationRiS_ii
                                         # -- End function
-	.globl	_Z8moveBoatRiS_ibbbb            # -- Begin function _Z8moveBoatRiS_ibbbb
-	.p2align	2
-	.type	_Z8moveBoatRiS_ibbbb,@function
-_Z8moveBoatRiS_ibbbb:                   # @_Z8moveBoatRiS_ibbbb
-# %bb.0:
-	bnez	a3, .LBB2_8
-# %bb.1:
-	bnez	a4, .LBB2_9
-.LBB2_2:
-	bnez	a5, .LBB2_10
-.LBB2_3:
-	beqz	a6, .LBB2_5
-.LBB2_4:
-	lw	a3, 0(a0)
-	add	a2, a3, a2
-	sw	a2, 0(a0)
-.LBB2_5:
-	lw	a2, 0(a1)
-	bltz	a2, .LBB2_11
-# %bb.6:
-	li	a3, 201
-	bltu	a2, a3, .LBB2_13
-# %bb.7:
-	li	a2, 200
-	j	.LBB2_12
-.LBB2_8:
-	lw	a3, 0(a1)
-	sub	a3, a3, a2
-	sw	a3, 0(a1)
-	beqz	a4, .LBB2_2
-.LBB2_9:
-	lw	a3, 0(a1)
-	add	a3, a3, a2
-	sw	a3, 0(a1)
-	beqz	a5, .LBB2_3
-.LBB2_10:
-	lw	a3, 0(a0)
-	sub	a3, a3, a2
-	sw	a3, 0(a0)
-	bnez	a6, .LBB2_4
-	j	.LBB2_5
-.LBB2_11:
-	li	a2, 0
-.LBB2_12:
-	sw	a2, 0(a1)
-.LBB2_13:
-	lw	a1, 0(a0)
-	bltz	a1, .LBB2_16
-# %bb.14:
-	li	a2, 353
-	bltu	a1, a2, .LBB2_18
-# %bb.15:
-	li	a1, 352
-	j	.LBB2_17
-.LBB2_16:
-	li	a1, 0
-.LBB2_17:
-	sw	a1, 0(a0)
-.LBB2_18:
-	ret
-.Lfunc_end2:
-	.size	_Z8moveBoatRiS_ibbbb, .Lfunc_end2-_Z8moveBoatRiS_ibbbb
-                                        # -- End function
-	.globl	_Z10fireBasketiii               # -- Begin function _Z10fireBasketiii
-	.p2align	2
-	.type	_Z10fireBasketiii,@function
-_Z10fireBasketiii:                      # @_Z10fireBasketiii
-# %bb.0:
-	lui	a3, %hi(baskets)
-	addi	a3, a3, %lo(baskets)
-	lbu	a4, 12(a3)
-	beqz	a4, .LBB3_3
-# %bb.1:
-	lbu	a4, 28(a3)
-	bnez	a4, .LBB3_4
-# %bb.2:
-	addi	a3, a3, 16
-.LBB3_3:
-	li	a4, 1
-	sw	a0, 0(a3)
-	sw	a1, 4(a3)
-	sw	a2, 8(a3)
-	sb	a4, 12(a3)
-.LBB3_4:
-	ret
-.Lfunc_end3:
-	.size	_Z10fireBasketiii, .Lfunc_end3-_Z10fireBasketiii
-                                        # -- End function
-	.globl	_Z13updateBasketsv              # -- Begin function _Z13updateBasketsv
-	.p2align	2
-	.type	_Z13updateBasketsv,@function
-_Z13updateBasketsv:                     # @_Z13updateBasketsv
-# %bb.0:
-	lui	a2, %hi(baskets)
-	addi	a2, a2, %lo(baskets)
-	li	a0, 401
-	addi	a1, a2, 12
-	addi	a2, a2, 44
-.LBB4_1:                                # =>This Inner Loop Header: Depth=1
-	lbu	a3, 0(a1)
-	beqz	a3, .LBB4_4
-# %bb.2:                                #   in Loop: Header=BB4_1 Depth=1
-	lw	a3, -12(a1)
-	lw	a4, -4(a1)
-	add	a3, a3, a4
-	sw	a3, -12(a1)
-	bltu	a3, a0, .LBB4_4
-# %bb.3:                                #   in Loop: Header=BB4_1 Depth=1
-	sb	zero, 0(a1)
-.LBB4_4:                                #   in Loop: Header=BB4_1 Depth=1
-	addi	a1, a1, 16
-	bne	a1, a2, .LBB4_1
-# %bb.5:
-	ret
-.Lfunc_end4:
-	.size	_Z13updateBasketsv, .Lfunc_end4-_Z13updateBasketsv
-                                        # -- End function
-	.type	MEMORY_ADDRESS,@object          # @MEMORY_ADDRESS
-	.data
-	.globl	MEMORY_ADDRESS
-	.p2align	2, 0x0
-MEMORY_ADDRESS:
-	.word	24576
-	.size	MEMORY_ADDRESS, 4
-
-	.type	GET_BUTTON_F1,@object           # @GET_BUTTON_F1
-	.globl	GET_BUTTON_F1
-	.p2align	2, 0x0
-GET_BUTTON_F1:
-	.word	25088
-	.size	GET_BUTTON_F1, 4
-
-	.type	GET_BUTTON_F2,@object           # @GET_BUTTON_F2
-	.globl	GET_BUTTON_F2
-	.p2align	2, 0x0
-GET_BUTTON_F2:
-	.word	25092
-	.size	GET_BUTTON_F2, 4
-
-	.type	GET_BUTTON_UP,@object           # @GET_BUTTON_UP
-	.globl	GET_BUTTON_UP
-	.p2align	2, 0x0
-GET_BUTTON_UP:
-	.word	25096
-	.size	GET_BUTTON_UP, 4
-
-	.type	GET_BUTTON_DOWN,@object         # @GET_BUTTON_DOWN
-	.globl	GET_BUTTON_DOWN
-	.p2align	2, 0x0
-GET_BUTTON_DOWN:
-	.word	25100
-	.size	GET_BUTTON_DOWN, 4
-
-	.type	GET_BUTTON_LEFT,@object         # @GET_BUTTON_LEFT
-	.globl	GET_BUTTON_LEFT
-	.p2align	2, 0x0
-GET_BUTTON_LEFT:
-	.word	25104
-	.size	GET_BUTTON_LEFT, 4
-
-	.type	GET_BUTTON_RIGHT,@object        # @GET_BUTTON_RIGHT
-	.globl	GET_BUTTON_RIGHT
-	.p2align	2, 0x0
-GET_BUTTON_RIGHT:
-	.word	25108
-	.size	GET_BUTTON_RIGHT, 4
-
-	.type	GET_NES_B,@object               # @GET_NES_B
-	.globl	GET_NES_B
-	.p2align	2, 0x0
-GET_NES_B:
-	.word	25600
-	.size	GET_NES_B, 4
-
-	.type	GET_NES_Y,@object               # @GET_NES_Y
-	.globl	GET_NES_Y
-	.p2align	2, 0x0
-GET_NES_Y:
-	.word	25604
-	.size	GET_NES_Y, 4
-
-	.type	GET_NES_SELECT,@object          # @GET_NES_SELECT
-	.globl	GET_NES_SELECT
-	.p2align	2, 0x0
-GET_NES_SELECT:
-	.word	25608
-	.size	GET_NES_SELECT, 4
-
-	.type	GET_NES_START,@object           # @GET_NES_START
-	.globl	GET_NES_START
-	.p2align	2, 0x0
-GET_NES_START:
-	.word	25612
-	.size	GET_NES_START, 4
-
-	.type	GET_NES_UP,@object              # @GET_NES_UP
-	.globl	GET_NES_UP
-	.p2align	2, 0x0
-GET_NES_UP:
-	.word	25616
-	.size	GET_NES_UP, 4
-
-	.type	GET_NES_DOWN,@object            # @GET_NES_DOWN
-	.globl	GET_NES_DOWN
-	.p2align	2, 0x0
-GET_NES_DOWN:
-	.word	25620
-	.size	GET_NES_DOWN, 4
-
-	.type	GET_NES_LEFT,@object            # @GET_NES_LEFT
-	.globl	GET_NES_LEFT
-	.p2align	2, 0x0
-GET_NES_LEFT:
-	.word	25624
-	.size	GET_NES_LEFT, 4
-
-	.type	GET_NES_RIGHT,@object           # @GET_NES_RIGHT
-	.globl	GET_NES_RIGHT
-	.p2align	2, 0x0
-GET_NES_RIGHT:
-	.word	25628
-	.size	GET_NES_RIGHT, 4
-
-	.type	GET_NES_A,@object               # @GET_NES_A
-	.globl	GET_NES_A
-	.p2align	2, 0x0
-GET_NES_A:
-	.word	25632
-	.size	GET_NES_A, 4
-
-	.type	GET_NES_X,@object               # @GET_NES_X
-	.globl	GET_NES_X
-	.p2align	2, 0x0
-GET_NES_X:
-	.word	25636
-	.size	GET_NES_X, 4
-
-	.type	GET_NES_L,@object               # @GET_NES_L
-	.globl	GET_NES_L
-	.p2align	2, 0x0
-GET_NES_L:
-	.word	25640
-	.size	GET_NES_L, 4
-
-	.type	GET_NES_R,@object               # @GET_NES_R
-	.globl	GET_NES_R
-	.p2align	2, 0x0
-GET_NES_R:
-	.word	25644
-	.size	GET_NES_R, 4
-
-	.type	baskets,@object                 # @baskets
-	.bss
-	.globl	baskets
-	.p2align	2, 0x0
-baskets:
-	.zero	32
-	.size	baskets, 32
-
 	.type	_ZN11SproutLandsL5WaterE,@object # @_ZN11SproutLandsL5WaterE
 	.section	.rodata,"a",@progbits
 	.p2align	1, 0x0
@@ -1455,6 +1208,56 @@ _ZN11SproutLandsL5WaterE:
 	.type	_ZN11SproutLandsL5BoatsE,@object # @_ZN11SproutLandsL5BoatsE
 	.p2align	1, 0x0
 _ZN11SproutLandsL5BoatsE:
+	.half	1                               # 0x1
+	.half	1                               # 0x1
+	.half	1                               # 0x1
+	.half	1                               # 0x1
+	.half	1                               # 0x1
+	.half	1                               # 0x1
+	.half	1                               # 0x1
+	.half	1                               # 0x1
+	.half	1                               # 0x1
+	.half	1                               # 0x1
+	.half	1                               # 0x1
+	.half	1                               # 0x1
+	.half	1                               # 0x1
+	.half	1                               # 0x1
+	.half	1                               # 0x1
+	.half	1                               # 0x1
+	.half	1                               # 0x1
+	.half	1                               # 0x1
+	.half	1                               # 0x1
+	.half	1                               # 0x1
+	.half	1                               # 0x1
+	.half	1                               # 0x1
+	.half	1                               # 0x1
+	.half	1                               # 0x1
+	.half	1                               # 0x1
+	.half	1                               # 0x1
+	.half	1                               # 0x1
+	.half	1                               # 0x1
+	.half	1                               # 0x1
+	.half	1                               # 0x1
+	.half	1                               # 0x1
+	.half	1                               # 0x1
+	.half	1                               # 0x1
+	.half	1                               # 0x1
+	.half	1                               # 0x1
+	.half	1                               # 0x1
+	.half	1                               # 0x1
+	.half	1                               # 0x1
+	.half	1                               # 0x1
+	.half	1                               # 0x1
+	.half	1                               # 0x1
+	.half	1                               # 0x1
+	.half	1                               # 0x1
+	.half	1                               # 0x1
+	.half	1                               # 0x1
+	.half	1                               # 0x1
+	.half	1                               # 0x1
+	.half	1                               # 0x1
+	.half	63489                           # 0xf801
+	.half	10177                           # 0x27c1
 	.half	0                               # 0x0
 	.half	0                               # 0x0
 	.half	0                               # 0x0
@@ -1499,6 +1302,9 @@ _ZN11SproutLandsL5BoatsE:
 	.half	0                               # 0x0
 	.half	0                               # 0x0
 	.half	0                               # 0x0
+	.half	10177                           # 0x27c1
+	.half	63489                           # 0xf801
+	.half	63489                           # 0xf801
 	.half	0                               # 0x0
 	.half	0                               # 0x0
 	.half	0                               # 0x0
@@ -1545,6 +1351,8 @@ _ZN11SproutLandsL5BoatsE:
 	.half	0                               # 0x0
 	.half	0                               # 0x0
 	.half	0                               # 0x0
+	.half	63489                           # 0xf801
+	.half	63489                           # 0xf801
 	.half	0                               # 0x0
 	.half	0                               # 0x0
 	.half	0                               # 0x0
@@ -1591,6 +1399,8 @@ _ZN11SproutLandsL5BoatsE:
 	.half	0                               # 0x0
 	.half	0                               # 0x0
 	.half	0                               # 0x0
+	.half	63489                           # 0xf801
+	.half	63489                           # 0xf801
 	.half	0                               # 0x0
 	.half	0                               # 0x0
 	.half	0                               # 0x0
@@ -1637,6 +1447,8 @@ _ZN11SproutLandsL5BoatsE:
 	.half	0                               # 0x0
 	.half	0                               # 0x0
 	.half	0                               # 0x0
+	.half	63489                           # 0xf801
+	.half	63489                           # 0xf801
 	.half	0                               # 0x0
 	.half	0                               # 0x0
 	.half	0                               # 0x0
@@ -1683,6 +1495,8 @@ _ZN11SproutLandsL5BoatsE:
 	.half	0                               # 0x0
 	.half	0                               # 0x0
 	.half	0                               # 0x0
+	.half	63489                           # 0xf801
+	.half	63489                           # 0xf801
 	.half	0                               # 0x0
 	.half	0                               # 0x0
 	.half	0                               # 0x0
@@ -1729,6 +1543,8 @@ _ZN11SproutLandsL5BoatsE:
 	.half	0                               # 0x0
 	.half	0                               # 0x0
 	.half	0                               # 0x0
+	.half	63489                           # 0xf801
+	.half	63489                           # 0xf801
 	.half	0                               # 0x0
 	.half	0                               # 0x0
 	.half	0                               # 0x0
@@ -1775,6 +1591,8 @@ _ZN11SproutLandsL5BoatsE:
 	.half	0                               # 0x0
 	.half	0                               # 0x0
 	.half	0                               # 0x0
+	.half	63489                           # 0xf801
+	.half	63489                           # 0xf801
 	.half	0                               # 0x0
 	.half	0                               # 0x0
 	.half	0                               # 0x0
@@ -1821,6 +1639,8 @@ _ZN11SproutLandsL5BoatsE:
 	.half	0                               # 0x0
 	.half	0                               # 0x0
 	.half	0                               # 0x0
+	.half	63489                           # 0xf801
+	.half	63489                           # 0xf801
 	.half	0                               # 0x0
 	.half	0                               # 0x0
 	.half	0                               # 0x0
@@ -1867,6 +1687,8 @@ _ZN11SproutLandsL5BoatsE:
 	.half	0                               # 0x0
 	.half	0                               # 0x0
 	.half	0                               # 0x0
+	.half	63489                           # 0xf801
+	.half	63489                           # 0xf801
 	.half	0                               # 0x0
 	.half	0                               # 0x0
 	.half	0                               # 0x0
@@ -1913,6 +1735,8 @@ _ZN11SproutLandsL5BoatsE:
 	.half	0                               # 0x0
 	.half	0                               # 0x0
 	.half	0                               # 0x0
+	.half	63489                           # 0xf801
+	.half	63489                           # 0xf801
 	.half	0                               # 0x0
 	.half	0                               # 0x0
 	.half	0                               # 0x0
@@ -1959,6 +1783,8 @@ _ZN11SproutLandsL5BoatsE:
 	.half	0                               # 0x0
 	.half	0                               # 0x0
 	.half	0                               # 0x0
+	.half	63489                           # 0xf801
+	.half	63489                           # 0xf801
 	.half	0                               # 0x0
 	.half	0                               # 0x0
 	.half	0                               # 0x0
@@ -1972,2080 +1798,26 @@ _ZN11SproutLandsL5BoatsE:
 	.half	0                               # 0x0
 	.half	0                               # 0x0
 	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	37655                           # 0x9317
-	.half	37655                           # 0x9317
-	.half	37655                           # 0x9317
-	.half	37655                           # 0x9317
-	.half	37655                           # 0x9317
-	.half	37655                           # 0x9317
-	.half	37655                           # 0x9317
-	.half	37655                           # 0x9317
-	.half	37655                           # 0x9317
-	.half	37655                           # 0x9317
-	.half	37655                           # 0x9317
-	.half	37655                           # 0x9317
-	.half	37655                           # 0x9317
-	.half	37655                           # 0x9317
-	.half	37655                           # 0x9317
-	.half	37655                           # 0x9317
-	.half	37655                           # 0x9317
-	.half	37655                           # 0x9317
-	.half	37655                           # 0x9317
-	.half	37655                           # 0x9317
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	37655                           # 0x9317
-	.half	37655                           # 0x9317
-	.half	37655                           # 0x9317
-	.half	37655                           # 0x9317
-	.half	37655                           # 0x9317
-	.half	37655                           # 0x9317
-	.half	37655                           # 0x9317
-	.half	37655                           # 0x9317
-	.half	37655                           # 0x9317
-	.half	37655                           # 0x9317
-	.half	37655                           # 0x9317
-	.half	37655                           # 0x9317
-	.half	37655                           # 0x9317
-	.half	37655                           # 0x9317
-	.half	37655                           # 0x9317
-	.half	37655                           # 0x9317
-	.half	37655                           # 0x9317
-	.half	37655                           # 0x9317
-	.half	37655                           # 0x9317
-	.half	37655                           # 0x9317
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	37655                           # 0x9317
-	.half	37655                           # 0x9317
-	.half	37655                           # 0x9317
-	.half	37655                           # 0x9317
-	.half	37655                           # 0x9317
-	.half	37655                           # 0x9317
-	.half	37655                           # 0x9317
-	.half	37655                           # 0x9317
-	.half	37655                           # 0x9317
-	.half	37655                           # 0x9317
-	.half	37655                           # 0x9317
-	.half	37655                           # 0x9317
-	.half	37655                           # 0x9317
-	.half	37655                           # 0x9317
-	.half	37655                           # 0x9317
-	.half	37655                           # 0x9317
-	.half	37655                           # 0x9317
-	.half	37655                           # 0x9317
-	.half	37655                           # 0x9317
-	.half	37655                           # 0x9317
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	37655                           # 0x9317
-	.half	37655                           # 0x9317
-	.half	37655                           # 0x9317
-	.half	56803                           # 0xdde3
-	.half	56803                           # 0xdde3
-	.half	56803                           # 0xdde3
-	.half	56803                           # 0xdde3
-	.half	56803                           # 0xdde3
-	.half	56803                           # 0xdde3
-	.half	56803                           # 0xdde3
-	.half	56803                           # 0xdde3
-	.half	56803                           # 0xdde3
-	.half	56803                           # 0xdde3
-	.half	56803                           # 0xdde3
-	.half	56803                           # 0xdde3
-	.half	56803                           # 0xdde3
-	.half	56803                           # 0xdde3
-	.half	56803                           # 0xdde3
-	.half	56803                           # 0xdde3
-	.half	56803                           # 0xdde3
-	.half	56803                           # 0xdde3
-	.half	56803                           # 0xdde3
-	.half	56803                           # 0xdde3
-	.half	37655                           # 0x9317
-	.half	37655                           # 0x9317
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	37655                           # 0x9317
-	.half	37655                           # 0x9317
-	.half	37655                           # 0x9317
-	.half	56803                           # 0xdde3
-	.half	56803                           # 0xdde3
-	.half	56803                           # 0xdde3
-	.half	56803                           # 0xdde3
-	.half	56803                           # 0xdde3
-	.half	56803                           # 0xdde3
-	.half	56803                           # 0xdde3
-	.half	56803                           # 0xdde3
-	.half	56803                           # 0xdde3
-	.half	56803                           # 0xdde3
-	.half	56803                           # 0xdde3
-	.half	56803                           # 0xdde3
-	.half	56803                           # 0xdde3
-	.half	56803                           # 0xdde3
-	.half	56803                           # 0xdde3
-	.half	56803                           # 0xdde3
-	.half	56803                           # 0xdde3
-	.half	56803                           # 0xdde3
-	.half	56803                           # 0xdde3
-	.half	56803                           # 0xdde3
-	.half	37655                           # 0x9317
-	.half	37655                           # 0x9317
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	37655                           # 0x9317
-	.half	37655                           # 0x9317
-	.half	37655                           # 0x9317
-	.half	56803                           # 0xdde3
-	.half	56803                           # 0xdde3
-	.half	56803                           # 0xdde3
-	.half	56803                           # 0xdde3
-	.half	56803                           # 0xdde3
-	.half	56803                           # 0xdde3
-	.half	56803                           # 0xdde3
-	.half	56803                           # 0xdde3
-	.half	56803                           # 0xdde3
-	.half	56803                           # 0xdde3
-	.half	56803                           # 0xdde3
-	.half	56803                           # 0xdde3
-	.half	56803                           # 0xdde3
-	.half	56803                           # 0xdde3
-	.half	56803                           # 0xdde3
-	.half	56803                           # 0xdde3
-	.half	56803                           # 0xdde3
-	.half	56803                           # 0xdde3
-	.half	56803                           # 0xdde3
-	.half	56803                           # 0xdde3
-	.half	37655                           # 0x9317
-	.half	37655                           # 0x9317
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	37655                           # 0x9317
-	.half	37655                           # 0x9317
-	.half	56803                           # 0xdde3
-	.half	56803                           # 0xdde3
-	.half	56803                           # 0xdde3
-	.half	46169                           # 0xb459
-	.half	46169                           # 0xb459
-	.half	46169                           # 0xb459
-	.half	46169                           # 0xb459
-	.half	46169                           # 0xb459
-	.half	46169                           # 0xb459
-	.half	46169                           # 0xb459
-	.half	46169                           # 0xb459
-	.half	46169                           # 0xb459
-	.half	46169                           # 0xb459
-	.half	46169                           # 0xb459
-	.half	46169                           # 0xb459
-	.half	46169                           # 0xb459
-	.half	46169                           # 0xb459
-	.half	46169                           # 0xb459
-	.half	46169                           # 0xb459
-	.half	46169                           # 0xb459
-	.half	46169                           # 0xb459
-	.half	46169                           # 0xb459
-	.half	46169                           # 0xb459
-	.half	56803                           # 0xdde3
-	.half	56803                           # 0xdde3
-	.half	37655                           # 0x9317
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	37655                           # 0x9317
-	.half	37655                           # 0x9317
-	.half	56803                           # 0xdde3
-	.half	56803                           # 0xdde3
-	.half	56803                           # 0xdde3
-	.half	46169                           # 0xb459
-	.half	46169                           # 0xb459
-	.half	46169                           # 0xb459
-	.half	46169                           # 0xb459
-	.half	46169                           # 0xb459
-	.half	46169                           # 0xb459
-	.half	46169                           # 0xb459
-	.half	46169                           # 0xb459
-	.half	46169                           # 0xb459
-	.half	46169                           # 0xb459
-	.half	46169                           # 0xb459
-	.half	46169                           # 0xb459
-	.half	46169                           # 0xb459
-	.half	46169                           # 0xb459
-	.half	46169                           # 0xb459
-	.half	46169                           # 0xb459
-	.half	46169                           # 0xb459
-	.half	46169                           # 0xb459
-	.half	46169                           # 0xb459
-	.half	46169                           # 0xb459
-	.half	56803                           # 0xdde3
-	.half	56803                           # 0xdde3
-	.half	37655                           # 0x9317
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	37655                           # 0x9317
-	.half	37655                           # 0x9317
-	.half	56803                           # 0xdde3
-	.half	56803                           # 0xdde3
-	.half	56803                           # 0xdde3
-	.half	46169                           # 0xb459
-	.half	46169                           # 0xb459
-	.half	46169                           # 0xb459
-	.half	46169                           # 0xb459
-	.half	46169                           # 0xb459
-	.half	46169                           # 0xb459
-	.half	46169                           # 0xb459
-	.half	46169                           # 0xb459
-	.half	46169                           # 0xb459
-	.half	46169                           # 0xb459
-	.half	46169                           # 0xb459
-	.half	46169                           # 0xb459
-	.half	46169                           # 0xb459
-	.half	46169                           # 0xb459
-	.half	46169                           # 0xb459
-	.half	46169                           # 0xb459
-	.half	46169                           # 0xb459
-	.half	46169                           # 0xb459
-	.half	46169                           # 0xb459
-	.half	46169                           # 0xb459
-	.half	56803                           # 0xdde3
-	.half	56803                           # 0xdde3
-	.half	37655                           # 0x9317
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	37655                           # 0x9317
-	.half	56803                           # 0xdde3
-	.half	56803                           # 0xdde3
-	.half	46169                           # 0xb459
-	.half	46169                           # 0xb459
-	.half	46169                           # 0xb459
-	.half	46169                           # 0xb459
-	.half	46169                           # 0xb459
-	.half	50395                           # 0xc4db
-	.half	50395                           # 0xc4db
-	.half	46169                           # 0xb459
-	.half	46169                           # 0xb459
-	.half	46169                           # 0xb459
-	.half	46169                           # 0xb459
-	.half	46169                           # 0xb459
-	.half	46169                           # 0xb459
-	.half	46169                           # 0xb459
-	.half	46169                           # 0xb459
-	.half	46169                           # 0xb459
-	.half	46169                           # 0xb459
-	.half	50395                           # 0xc4db
-	.half	50395                           # 0xc4db
-	.half	46169                           # 0xb459
-	.half	46169                           # 0xb459
-	.half	46169                           # 0xb459
-	.half	46169                           # 0xb459
-	.half	46169                           # 0xb459
-	.half	56803                           # 0xdde3
-	.half	37655                           # 0x9317
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	37655                           # 0x9317
-	.half	56803                           # 0xdde3
-	.half	56803                           # 0xdde3
-	.half	46169                           # 0xb459
-	.half	46169                           # 0xb459
-	.half	46169                           # 0xb459
-	.half	46169                           # 0xb459
-	.half	46169                           # 0xb459
-	.half	50395                           # 0xc4db
-	.half	50395                           # 0xc4db
-	.half	46169                           # 0xb459
-	.half	46169                           # 0xb459
-	.half	46169                           # 0xb459
-	.half	46169                           # 0xb459
-	.half	46169                           # 0xb459
-	.half	46169                           # 0xb459
-	.half	46169                           # 0xb459
-	.half	46169                           # 0xb459
-	.half	46169                           # 0xb459
-	.half	46169                           # 0xb459
-	.half	50395                           # 0xc4db
-	.half	50395                           # 0xc4db
-	.half	46169                           # 0xb459
-	.half	46169                           # 0xb459
-	.half	46169                           # 0xb459
-	.half	46169                           # 0xb459
-	.half	46169                           # 0xb459
-	.half	56803                           # 0xdde3
-	.half	37655                           # 0x9317
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	37655                           # 0x9317
-	.half	56803                           # 0xdde3
-	.half	56803                           # 0xdde3
-	.half	46169                           # 0xb459
-	.half	46169                           # 0xb459
-	.half	46169                           # 0xb459
-	.half	46169                           # 0xb459
-	.half	46169                           # 0xb459
-	.half	50395                           # 0xc4db
-	.half	50395                           # 0xc4db
-	.half	46169                           # 0xb459
-	.half	46169                           # 0xb459
-	.half	46169                           # 0xb459
-	.half	46169                           # 0xb459
-	.half	46169                           # 0xb459
-	.half	46169                           # 0xb459
-	.half	46169                           # 0xb459
-	.half	46169                           # 0xb459
-	.half	46169                           # 0xb459
-	.half	46169                           # 0xb459
-	.half	50395                           # 0xc4db
-	.half	50395                           # 0xc4db
-	.half	46169                           # 0xb459
-	.half	46169                           # 0xb459
-	.half	46169                           # 0xb459
-	.half	46169                           # 0xb459
-	.half	46169                           # 0xb459
-	.half	56803                           # 0xdde3
-	.half	37655                           # 0x9317
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
 	.half	37655                           # 0x9317
-	.half	56803                           # 0xdde3
-	.half	46169                           # 0xb459
-	.half	46169                           # 0xb459
-	.half	46169                           # 0xb459
-	.half	46169                           # 0xb459
-	.half	46169                           # 0xb459
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
-	.half	50395                           # 0xc4db
-	.half	50395                           # 0xc4db
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
-	.half	50395                           # 0xc4db
-	.half	50395                           # 0xc4db
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
-	.half	46169                           # 0xb459
-	.half	56803                           # 0xdde3
 	.half	37655                           # 0x9317
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
 	.half	37655                           # 0x9317
-	.half	56803                           # 0xdde3
-	.half	46169                           # 0xb459
-	.half	46169                           # 0xb459
-	.half	46169                           # 0xb459
-	.half	46169                           # 0xb459
-	.half	46169                           # 0xb459
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
-	.half	50395                           # 0xc4db
-	.half	50395                           # 0xc4db
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
-	.half	50395                           # 0xc4db
-	.half	50395                           # 0xc4db
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
-	.half	46169                           # 0xb459
-	.half	56803                           # 0xdde3
 	.half	37655                           # 0x9317
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
 	.half	37655                           # 0x9317
-	.half	56803                           # 0xdde3
-	.half	46169                           # 0xb459
-	.half	46169                           # 0xb459
-	.half	46169                           # 0xb459
-	.half	46169                           # 0xb459
-	.half	46169                           # 0xb459
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
-	.half	50395                           # 0xc4db
-	.half	50395                           # 0xc4db
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
-	.half	50395                           # 0xc4db
-	.half	50395                           # 0xc4db
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
-	.half	46169                           # 0xb459
-	.half	56803                           # 0xdde3
 	.half	37655                           # 0x9317
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
 	.half	37655                           # 0x9317
-	.half	56803                           # 0xdde3
-	.half	46169                           # 0xb459
-	.half	46169                           # 0xb459
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
-	.half	50395                           # 0xc4db
-	.half	50395                           # 0xc4db
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
-	.half	50395                           # 0xc4db
-	.half	50395                           # 0xc4db
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
-	.half	56803                           # 0xdde3
 	.half	37655                           # 0x9317
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
 	.half	37655                           # 0x9317
-	.half	56803                           # 0xdde3
-	.half	46169                           # 0xb459
-	.half	46169                           # 0xb459
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
-	.half	50395                           # 0xc4db
-	.half	50395                           # 0xc4db
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
-	.half	50395                           # 0xc4db
-	.half	50395                           # 0xc4db
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
-	.half	56803                           # 0xdde3
 	.half	37655                           # 0x9317
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
 	.half	37655                           # 0x9317
-	.half	56803                           # 0xdde3
-	.half	46169                           # 0xb459
-	.half	46169                           # 0xb459
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
-	.half	50395                           # 0xc4db
-	.half	50395                           # 0xc4db
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
-	.half	50395                           # 0xc4db
-	.half	50395                           # 0xc4db
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
-	.half	56803                           # 0xdde3
 	.half	37655                           # 0x9317
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
+	.half	37655                           # 0x9317
+	.half	37655                           # 0x9317
+	.half	37655                           # 0x9317
+	.half	37655                           # 0x9317
+	.half	37655                           # 0x9317
+	.half	37655                           # 0x9317
+	.half	37655                           # 0x9317
+	.half	37655                           # 0x9317
 	.half	0                               # 0x0
 	.half	0                               # 0x0
 	.half	0                               # 0x0
@@ -4054,44 +1826,13 @@ _ZN11SproutLandsL5BoatsE:
 	.half	0                               # 0x0
 	.half	0                               # 0x0
 	.half	0                               # 0x0
-	.half	37655                           # 0x9317
-	.half	56803                           # 0xdde3
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
-	.half	50395                           # 0xc4db
-	.half	50395                           # 0xc4db
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
-	.half	50395                           # 0xc4db
-	.half	50395                           # 0xc4db
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
-	.half	56803                           # 0xdde3
-	.half	37655                           # 0x9317
 	.half	0                               # 0x0
 	.half	0                               # 0x0
-	.half	63417                           # 0xf7b9
-	.half	63417                           # 0xf7b9
-	.half	63417                           # 0xf7b9
 	.half	0                               # 0x0
 	.half	0                               # 0x0
 	.half	0                               # 0x0
+	.half	63489                           # 0xf801
+	.half	63489                           # 0xf801
 	.half	0                               # 0x0
 	.half	0                               # 0x0
 	.half	0                               # 0x0
@@ -4102,94 +1843,44 @@ _ZN11SproutLandsL5BoatsE:
 	.half	0                               # 0x0
 	.half	0                               # 0x0
 	.half	0                               # 0x0
+	.half	37655                           # 0x9317
 	.half	37655                           # 0x9317
+	.half	37655                           # 0x9317
 	.half	56803                           # 0xdde3
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
-	.half	50395                           # 0xc4db
-	.half	50395                           # 0xc4db
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
-	.half	50395                           # 0xc4db
-	.half	50395                           # 0xc4db
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
+	.half	56803                           # 0xdde3
+	.half	56803                           # 0xdde3
+	.half	56803                           # 0xdde3
+	.half	56803                           # 0xdde3
+	.half	56803                           # 0xdde3
+	.half	56803                           # 0xdde3
+	.half	56803                           # 0xdde3
 	.half	56803                           # 0xdde3
+	.half	56803                           # 0xdde3
+	.half	56803                           # 0xdde3
+	.half	56803                           # 0xdde3
+	.half	56803                           # 0xdde3
+	.half	56803                           # 0xdde3
+	.half	56803                           # 0xdde3
+	.half	56803                           # 0xdde3
+	.half	56803                           # 0xdde3
+	.half	56803                           # 0xdde3
+	.half	56803                           # 0xdde3
+	.half	56803                           # 0xdde3
 	.half	37655                           # 0x9317
-	.half	63417                           # 0xf7b9
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	63417                           # 0xf7b9
-	.half	63417                           # 0xf7b9
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
+	.half	37655                           # 0x9317
 	.half	0                               # 0x0
 	.half	0                               # 0x0
 	.half	0                               # 0x0
 	.half	0                               # 0x0
 	.half	0                               # 0x0
-	.half	37655                           # 0x9317
-	.half	56803                           # 0xdde3
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
-	.half	50395                           # 0xc4db
-	.half	50395                           # 0xc4db
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
-	.half	50395                           # 0xc4db
-	.half	50395                           # 0xc4db
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
-	.half	56803                           # 0xdde3
-	.half	37655                           # 0x9317
-	.half	63417                           # 0xf7b9
-	.half	63417                           # 0xf7b9
-	.half	63417                           # 0xf7b9
 	.half	0                               # 0x0
 	.half	0                               # 0x0
 	.half	0                               # 0x0
-	.half	63417                           # 0xf7b9
 	.half	0                               # 0x0
 	.half	0                               # 0x0
 	.half	0                               # 0x0
+	.half	63489                           # 0xf801
+	.half	63489                           # 0xf801
 	.half	0                               # 0x0
 	.half	0                               # 0x0
 	.half	0                               # 0x0
@@ -4198,37 +1889,34 @@ _ZN11SproutLandsL5BoatsE:
 	.half	0                               # 0x0
 	.half	0                               # 0x0
 	.half	0                               # 0x0
+	.half	37655                           # 0x9317
 	.half	37655                           # 0x9317
 	.half	56803                           # 0xdde3
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
-	.half	50395                           # 0xc4db
-	.half	50395                           # 0xc4db
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
-	.half	50395                           # 0xc4db
-	.half	50395                           # 0xc4db
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
+	.half	56803                           # 0xdde3
+	.half	56803                           # 0xdde3
+	.half	46169                           # 0xb459
+	.half	46169                           # 0xb459
+	.half	46169                           # 0xb459
+	.half	46169                           # 0xb459
+	.half	46169                           # 0xb459
+	.half	46169                           # 0xb459
+	.half	46169                           # 0xb459
+	.half	46169                           # 0xb459
+	.half	46169                           # 0xb459
+	.half	46169                           # 0xb459
+	.half	46169                           # 0xb459
+	.half	46169                           # 0xb459
+	.half	46169                           # 0xb459
+	.half	46169                           # 0xb459
+	.half	46169                           # 0xb459
+	.half	46169                           # 0xb459
+	.half	46169                           # 0xb459
+	.half	46169                           # 0xb459
+	.half	46169                           # 0xb459
+	.half	46169                           # 0xb459
+	.half	56803                           # 0xdde3
 	.half	56803                           # 0xdde3
 	.half	37655                           # 0x9317
-	.half	63417                           # 0xf7b9
 	.half	0                               # 0x0
 	.half	0                               # 0x0
 	.half	0                               # 0x0
@@ -4239,6 +1927,8 @@ _ZN11SproutLandsL5BoatsE:
 	.half	0                               # 0x0
 	.half	0                               # 0x0
 	.half	0                               # 0x0
+	.half	63489                           # 0xf801
+	.half	63489                           # 0xf801
 	.half	0                               # 0x0
 	.half	0                               # 0x0
 	.half	0                               # 0x0
@@ -4248,36 +1938,33 @@ _ZN11SproutLandsL5BoatsE:
 	.half	0                               # 0x0
 	.half	37655                           # 0x9317
 	.half	56803                           # 0xdde3
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
+	.half	56803                           # 0xdde3
+	.half	46169                           # 0xb459
+	.half	46169                           # 0xb459
+	.half	46169                           # 0xb459
+	.half	46169                           # 0xb459
+	.half	46169                           # 0xb459
 	.half	50395                           # 0xc4db
 	.half	50395                           # 0xc4db
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
+	.half	46169                           # 0xb459
+	.half	46169                           # 0xb459
+	.half	46169                           # 0xb459
+	.half	46169                           # 0xb459
+	.half	46169                           # 0xb459
+	.half	46169                           # 0xb459
+	.half	46169                           # 0xb459
+	.half	46169                           # 0xb459
+	.half	46169                           # 0xb459
+	.half	46169                           # 0xb459
 	.half	50395                           # 0xc4db
 	.half	50395                           # 0xc4db
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
+	.half	46169                           # 0xb459
+	.half	46169                           # 0xb459
+	.half	46169                           # 0xb459
+	.half	46169                           # 0xb459
+	.half	46169                           # 0xb459
 	.half	56803                           # 0xdde3
 	.half	37655                           # 0x9317
-	.half	63417                           # 0xf7b9
-	.half	0                               # 0x0
 	.half	0                               # 0x0
 	.half	0                               # 0x0
 	.half	0                               # 0x0
@@ -4288,6 +1975,8 @@ _ZN11SproutLandsL5BoatsE:
 	.half	0                               # 0x0
 	.half	0                               # 0x0
 	.half	0                               # 0x0
+	.half	63489                           # 0xf801
+	.half	63489                           # 0xf801
 	.half	0                               # 0x0
 	.half	0                               # 0x0
 	.half	0                               # 0x0
@@ -4296,11 +1985,11 @@ _ZN11SproutLandsL5BoatsE:
 	.half	0                               # 0x0
 	.half	37655                           # 0x9317
 	.half	56803                           # 0xdde3
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
+	.half	46169                           # 0xb459
+	.half	46169                           # 0xb459
+	.half	46169                           # 0xb459
+	.half	46169                           # 0xb459
+	.half	46169                           # 0xb459
 	.half	43991                           # 0xabd7
 	.half	43991                           # 0xabd7
 	.half	50395                           # 0xc4db
@@ -4321,11 +2010,9 @@ _ZN11SproutLandsL5BoatsE:
 	.half	43991                           # 0xabd7
 	.half	43991                           # 0xabd7
 	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
+	.half	46169                           # 0xb459
 	.half	56803                           # 0xdde3
 	.half	37655                           # 0x9317
-	.half	63417                           # 0xf7b9
-	.half	0                               # 0x0
 	.half	0                               # 0x0
 	.half	0                               # 0x0
 	.half	0                               # 0x0
@@ -4336,16 +2023,18 @@ _ZN11SproutLandsL5BoatsE:
 	.half	0                               # 0x0
 	.half	0                               # 0x0
 	.half	0                               # 0x0
+	.half	63489                           # 0xf801
+	.half	63489                           # 0xf801
 	.half	0                               # 0x0
 	.half	0                               # 0x0
 	.half	0                               # 0x0
 	.half	0                               # 0x0
 	.half	0                               # 0x0
 	.half	0                               # 0x0
-	.half	63417                           # 0xf7b9
 	.half	37655                           # 0x9317
-	.half	56803                           # 0xdde3
 	.half	56803                           # 0xdde3
+	.half	46169                           # 0xb459
+	.half	46169                           # 0xb459
 	.half	43991                           # 0xabd7
 	.half	43991                           # 0xabd7
 	.half	43991                           # 0xabd7
@@ -4372,13 +2061,9 @@ _ZN11SproutLandsL5BoatsE:
 	.half	43991                           # 0xabd7
 	.half	56803                           # 0xdde3
 	.half	37655                           # 0x9317
-	.half	63417                           # 0xf7b9
-	.half	63417                           # 0xf7b9
 	.half	0                               # 0x0
 	.half	0                               # 0x0
 	.half	0                               # 0x0
-	.half	63417                           # 0xf7b9
-	.half	63417                           # 0xf7b9
 	.half	0                               # 0x0
 	.half	0                               # 0x0
 	.half	0                               # 0x0
@@ -4386,19 +2071,23 @@ _ZN11SproutLandsL5BoatsE:
 	.half	0                               # 0x0
 	.half	0                               # 0x0
 	.half	0                               # 0x0
+	.half	63489                           # 0xf801
+	.half	63489                           # 0xf801
 	.half	0                               # 0x0
 	.half	0                               # 0x0
 	.half	0                               # 0x0
 	.half	0                               # 0x0
-	.half	63417                           # 0xf7b9
+	.half	0                               # 0x0
+	.half	0                               # 0x0
 	.half	37655                           # 0x9317
-	.half	56803                           # 0xdde3
 	.half	56803                           # 0xdde3
 	.half	43991                           # 0xabd7
 	.half	43991                           # 0xabd7
 	.half	43991                           # 0xabd7
 	.half	43991                           # 0xabd7
 	.half	43991                           # 0xabd7
+	.half	43991                           # 0xabd7
+	.half	43991                           # 0xabd7
 	.half	50395                           # 0xc4db
 	.half	50395                           # 0xc4db
 	.half	43991                           # 0xabd7
@@ -4420,28 +2109,28 @@ _ZN11SproutLandsL5BoatsE:
 	.half	43991                           # 0xabd7
 	.half	56803                           # 0xdde3
 	.half	37655                           # 0x9317
-	.half	63417                           # 0xf7b9
+	.half	0                               # 0x0
+	.half	0                               # 0x0
 	.half	63417                           # 0xf7b9
 	.half	63417                           # 0xf7b9
 	.half	63417                           # 0xf7b9
-	.half	0                               # 0x0
 	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	63417                           # 0xf7b9
 	.half	0                               # 0x0
 	.half	0                               # 0x0
 	.half	0                               # 0x0
 	.half	0                               # 0x0
+	.half	63489                           # 0xf801
+	.half	63489                           # 0xf801
 	.half	0                               # 0x0
 	.half	0                               # 0x0
 	.half	0                               # 0x0
 	.half	0                               # 0x0
 	.half	0                               # 0x0
 	.half	0                               # 0x0
-	.half	63417                           # 0xf7b9
 	.half	37655                           # 0x9317
-	.half	56803                           # 0xdde3
 	.half	56803                           # 0xdde3
+	.half	43991                           # 0xabd7
+	.half	43991                           # 0xabd7
 	.half	43991                           # 0xabd7
 	.half	43991                           # 0xabd7
 	.half	43991                           # 0xabd7
@@ -4471,15 +2160,15 @@ _ZN11SproutLandsL5BoatsE:
 	.half	63417                           # 0xf7b9
 	.half	0                               # 0x0
 	.half	0                               # 0x0
-	.half	63417                           # 0xf7b9
-	.half	63417                           # 0xf7b9
-	.half	63417                           # 0xf7b9
+	.half	0                               # 0x0
 	.half	0                               # 0x0
 	.half	0                               # 0x0
 	.half	0                               # 0x0
 	.half	0                               # 0x0
 	.half	0                               # 0x0
 	.half	0                               # 0x0
+	.half	63489                           # 0xf801
+	.half	63489                           # 0xf801
 	.half	0                               # 0x0
 	.half	0                               # 0x0
 	.half	0                               # 0x0
@@ -4488,59 +2177,11 @@ _ZN11SproutLandsL5BoatsE:
 	.half	0                               # 0x0
 	.half	63417                           # 0xf7b9
 	.half	37655                           # 0x9317
-	.half	50395                           # 0xc4db
-	.half	50395                           # 0xc4db
 	.half	56803                           # 0xdde3
 	.half	56803                           # 0xdde3
-	.half	56803                           # 0xdde3
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
-	.half	50395                           # 0xc4db
-	.half	50395                           # 0xc4db
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
 	.half	43991                           # 0xabd7
 	.half	43991                           # 0xabd7
 	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
-	.half	50395                           # 0xc4db
-	.half	50395                           # 0xc4db
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
-	.half	56803                           # 0xdde3
-	.half	56803                           # 0xdde3
-	.half	37655                           # 0x9317
-	.half	63417                           # 0xf7b9
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	63417                           # 0xf7b9
-	.half	37655                           # 0x9317
-	.half	50395                           # 0xc4db
-	.half	50395                           # 0xc4db
-	.half	56803                           # 0xdde3
-	.half	56803                           # 0xdde3
-	.half	56803                           # 0xdde3
 	.half	43991                           # 0xabd7
 	.half	43991                           # 0xabd7
 	.half	50395                           # 0xc4db
@@ -4561,21 +2202,21 @@ _ZN11SproutLandsL5BoatsE:
 	.half	43991                           # 0xabd7
 	.half	43991                           # 0xabd7
 	.half	43991                           # 0xabd7
-	.half	56803                           # 0xdde3
+	.half	43991                           # 0xabd7
 	.half	56803                           # 0xdde3
 	.half	37655                           # 0x9317
 	.half	63417                           # 0xf7b9
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
+	.half	63417                           # 0xf7b9
 	.half	0                               # 0x0
 	.half	0                               # 0x0
 	.half	0                               # 0x0
+	.half	63417                           # 0xf7b9
+	.half	63417                           # 0xf7b9
 	.half	0                               # 0x0
 	.half	0                               # 0x0
 	.half	0                               # 0x0
+	.half	63489                           # 0xf801
+	.half	63489                           # 0xf801
 	.half	0                               # 0x0
 	.half	0                               # 0x0
 	.half	0                               # 0x0
@@ -4593,8 +2234,6 @@ _ZN11SproutLandsL5BoatsE:
 	.half	43991                           # 0xabd7
 	.half	50395                           # 0xc4db
 	.half	50395                           # 0xc4db
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
 	.half	43991                           # 0xabd7
 	.half	43991                           # 0xabd7
 	.half	43991                           # 0xabd7
@@ -4603,130 +2242,36 @@ _ZN11SproutLandsL5BoatsE:
 	.half	43991                           # 0xabd7
 	.half	43991                           # 0xabd7
 	.half	43991                           # 0xabd7
-	.half	50395                           # 0xc4db
-	.half	50395                           # 0xc4db
-	.half	43991                           # 0xabd7
-	.half	43991                           # 0xabd7
 	.half	43991                           # 0xabd7
 	.half	43991                           # 0xabd7
-	.half	56803                           # 0xdde3
-	.half	56803                           # 0xdde3
-	.half	37655                           # 0x9317
-	.half	63417                           # 0xf7b9
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	63417                           # 0xf7b9
-	.half	37655                           # 0x9317
-	.half	50395                           # 0xc4db
-	.half	50395                           # 0xc4db
-	.half	50395                           # 0xc4db
-	.half	50395                           # 0xc4db
-	.half	56803                           # 0xdde3
-	.half	56803                           # 0xdde3
-	.half	56803                           # 0xdde3
-	.half	56803                           # 0xdde3
-	.half	56803                           # 0xdde3
-	.half	56803                           # 0xdde3
-	.half	56803                           # 0xdde3
-	.half	56803                           # 0xdde3
-	.half	56803                           # 0xdde3
-	.half	56803                           # 0xdde3
-	.half	56803                           # 0xdde3
-	.half	56803                           # 0xdde3
-	.half	56803                           # 0xdde3
-	.half	56803                           # 0xdde3
-	.half	56803                           # 0xdde3
-	.half	56803                           # 0xdde3
-	.half	56803                           # 0xdde3
-	.half	56803                           # 0xdde3
-	.half	56803                           # 0xdde3
-	.half	56803                           # 0xdde3
-	.half	50395                           # 0xc4db
-	.half	37655                           # 0x9317
-	.half	63417                           # 0xf7b9
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	63417                           # 0xf7b9
-	.half	63417                           # 0xf7b9
-	.half	63417                           # 0xf7b9
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	0                               # 0x0
-	.half	63417                           # 0xf7b9
-	.half	37655                           # 0x9317
 	.half	50395                           # 0xc4db
-	.half	50395                           # 0xc4db
-	.half	50395                           # 0xc4db
-	.half	50395                           # 0xc4db
-	.half	56803                           # 0xdde3
-	.half	56803                           # 0xdde3
-	.half	56803                           # 0xdde3
-	.half	56803                           # 0xdde3
-	.half	56803                           # 0xdde3
-	.half	56803                           # 0xdde3
-	.half	56803                           # 0xdde3
-	.half	56803                           # 0xdde3
-	.half	56803                           # 0xdde3
-	.half	56803                           # 0xdde3
-	.half	56803                           # 0xdde3
-	.half	56803                           # 0xdde3
-	.half	56803                           # 0xdde3
-	.half	56803                           # 0xdde3
-	.half	56803                           # 0xdde3
-	.half	56803                           # 0xdde3
-	.half	56803                           # 0xdde3
-	.half	56803                           # 0xdde3
+	.half	50395                           # 0xc4db
+	.half	43991                           # 0xabd7
+	.half	43991                           # 0xabd7
+	.half	43991                           # 0xabd7
+	.half	43991                           # 0xabd7
 	.half	56803                           # 0xdde3
 	.half	56803                           # 0xdde3
-	.half	50395                           # 0xc4db
 	.half	37655                           # 0x9317
-	.half	63417                           # 0xf7b9
-	.half	63417                           # 0xf7b9
 	.half	63417                           # 0xf7b9
 	.half	0                               # 0x0
 	.half	0                               # 0x0
 	.half	0                               # 0x0
-	.half	63417                           # 0xf7b9
-	.half	63417                           # 0xf7b9
 	.half	0                               # 0x0
 	.half	0                               # 0x0
 	.half	0                               # 0x0
 	.half	0                               # 0x0
 	.half	0                               # 0x0
 	.half	0                               # 0x0
+	.half	63489                           # 0xf801
+	.half	63489                           # 0xf801
 	.half	0                               # 0x0
 	.half	0                               # 0x0
 	.half	0                               # 0x0
 	.half	0                               # 0x0
 	.half	0                               # 0x0
 	.half	0                               # 0x0
+	.half	0                               # 0x0
 	.half	63417                           # 0xf7b9
 	.half	37655                           # 0x9317
 	.half	50395                           # 0xc4db
@@ -4755,19 +2300,19 @@ _ZN11SproutLandsL5BoatsE:
 	.half	56803                           # 0xdde3
 	.half	50395                           # 0xc4db
 	.half	37655                           # 0x9317
-	.half	63417                           # 0xf7b9
-	.half	0                               # 0x0
-	.half	63417                           # 0xf7b9
 	.half	63417                           # 0xf7b9
-	.half	63417                           # 0xf7b9
 	.half	0                               # 0x0
 	.half	0                               # 0x0
 	.half	0                               # 0x0
+	.half	63417                           # 0xf7b9
 	.half	63417                           # 0xf7b9
+	.half	63417                           # 0xf7b9
 	.half	0                               # 0x0
 	.half	0                               # 0x0
 	.half	0                               # 0x0
 	.half	0                               # 0x0
+	.half	63489                           # 0xf801
+	.half	63489                           # 0xf801
 	.half	0                               # 0x0
 	.half	0                               # 0x0
 	.half	0                               # 0x0
@@ -4814,6 +2359,8 @@ _ZN11SproutLandsL5BoatsE:
 	.half	0                               # 0x0
 	.half	0                               # 0x0
 	.half	0                               # 0x0
+	.half	63489                           # 0xf801
+	.half	63489                           # 0xf801
 	.half	0                               # 0x0
 	.half	0                               # 0x0
 	.half	0                               # 0x0
@@ -4824,10 +2371,7 @@ _ZN11SproutLandsL5BoatsE:
 	.half	0                               # 0x0
 	.half	0                               # 0x0
 	.half	0                               # 0x0
-	.half	63417                           # 0xf7b9
 	.half	63417                           # 0xf7b9
-	.half	50395                           # 0xc4db
-	.half	50395                           # 0xc4db
 	.half	50395                           # 0xc4db
 	.half	50395                           # 0xc4db
 	.half	50395                           # 0xc4db
@@ -4852,8 +2396,10 @@ _ZN11SproutLandsL5BoatsE:
 	.half	50395                           # 0xc4db
 	.half	37655                           # 0x9317
 	.half	63417                           # 0xf7b9
-	.half	0                               # 0x0
-	.half	0                               # 0x0
+	.half	63417                           # 0xf7b9
+	.half	63417                           # 0xf7b9
+	.half	63417                           # 0xf7b9
+	.half	63417                           # 0xf7b9
 	.half	0                               # 0x0
 	.half	0                               # 0x0
 	.half	0                               # 0x0
@@ -4861,6 +2407,8 @@ _ZN11SproutLandsL5BoatsE:
 	.half	0                               # 0x0
 	.half	0                               # 0x0
 	.half	0                               # 0x0
+	.half	63489                           # 0xf801
+	.half	63489                           # 0xf801
 	.half	0                               # 0x0
 	.half	0                               # 0x0
 	.half	0                               # 0x0
@@ -4874,8 +2422,6 @@ _ZN11SproutLandsL5BoatsE:
 	.half	0                               # 0x0
 	.half	63417                           # 0xf7b9
 	.half	63417                           # 0xf7b9
-	.half	50395                           # 0xc4db
-	.half	50395                           # 0xc4db
 	.half	50395                           # 0xc4db
 	.half	50395                           # 0xc4db
 	.half	50395                           # 0xc4db
@@ -4895,11 +2441,11 @@ _ZN11SproutLandsL5BoatsE:
 	.half	50395                           # 0xc4db
 	.half	50395                           # 0xc4db
 	.half	50395                           # 0xc4db
-	.half	50395                           # 0xc4db
-	.half	50395                           # 0xc4db
-	.half	50395                           # 0xc4db
-	.half	37655                           # 0x9317
 	.half	63417                           # 0xf7b9
+	.half	63417                           # 0xf7b9
+	.half	0                               # 0x0
+	.half	0                               # 0x0
+	.half	0                               # 0x0
 	.half	0                               # 0x0
 	.half	0                               # 0x0
 	.half	0                               # 0x0
@@ -4909,6 +2455,8 @@ _ZN11SproutLandsL5BoatsE:
 	.half	0                               # 0x0
 	.half	0                               # 0x0
 	.half	0                               # 0x0
+	.half	63489                           # 0xf801
+	.half	63489                           # 0xf801
 	.half	0                               # 0x0
 	.half	0                               # 0x0
 	.half	0                               # 0x0
@@ -4923,34 +2471,24 @@ _ZN11SproutLandsL5BoatsE:
 	.half	0                               # 0x0
 	.half	0                               # 0x0
 	.half	63417                           # 0xf7b9
-	.half	50395                           # 0xc4db
-	.half	50395                           # 0xc4db
-	.half	50395                           # 0xc4db
-	.half	50395                           # 0xc4db
-	.half	50395                           # 0xc4db
-	.half	50395                           # 0xc4db
-	.half	50395                           # 0xc4db
-	.half	50395                           # 0xc4db
-	.half	50395                           # 0xc4db
-	.half	50395                           # 0xc4db
-	.half	50395                           # 0xc4db
-	.half	50395                           # 0xc4db
-	.half	50395                           # 0xc4db
-	.half	50395                           # 0xc4db
-	.half	50395                           # 0xc4db
-	.half	50395                           # 0xc4db
-	.half	50395                           # 0xc4db
-	.half	50395                           # 0xc4db
-	.half	50395                           # 0xc4db
-	.half	50395                           # 0xc4db
-	.half	50395                           # 0xc4db
-	.half	50395                           # 0xc4db
-	.half	37655                           # 0x9317
+	.half	63417                           # 0xf7b9
+	.half	63417                           # 0xf7b9
+	.half	63417                           # 0xf7b9
+	.half	63417                           # 0xf7b9
+	.half	63417                           # 0xf7b9
 	.half	63417                           # 0xf7b9
 	.half	63417                           # 0xf7b9
 	.half	63417                           # 0xf7b9
 	.half	63417                           # 0xf7b9
 	.half	63417                           # 0xf7b9
+	.half	63417                           # 0xf7b9
+	.half	63417                           # 0xf7b9
+	.half	63417                           # 0xf7b9
+	.half	63417                           # 0xf7b9
+	.half	63417                           # 0xf7b9
+	.half	63417                           # 0xf7b9
+	.half	63417                           # 0xf7b9
+	.half	63417                           # 0xf7b9
 	.half	0                               # 0x0
 	.half	0                               # 0x0
 	.half	0                               # 0x0
@@ -4965,42 +2503,16 @@ _ZN11SproutLandsL5BoatsE:
 	.half	0                               # 0x0
 	.half	0                               # 0x0
 	.half	0                               # 0x0
+	.half	63489                           # 0xf801
+	.half	63489                           # 0xf801
 	.half	0                               # 0x0
 	.half	0                               # 0x0
 	.half	0                               # 0x0
 	.half	0                               # 0x0
 	.half	0                               # 0x0
-	.half	63417                           # 0xf7b9
-	.half	50395                           # 0xc4db
-	.half	50395                           # 0xc4db
-	.half	50395                           # 0xc4db
-	.half	50395                           # 0xc4db
-	.half	50395                           # 0xc4db
-	.half	50395                           # 0xc4db
-	.half	50395                           # 0xc4db
-	.half	50395                           # 0xc4db
-	.half	50395                           # 0xc4db
-	.half	50395                           # 0xc4db
-	.half	50395                           # 0xc4db
-	.half	50395                           # 0xc4db
-	.half	50395                           # 0xc4db
-	.half	50395                           # 0xc4db
-	.half	50395                           # 0xc4db
-	.half	50395                           # 0xc4db
-	.half	50395                           # 0xc4db
-	.half	50395                           # 0xc4db
-	.half	50395                           # 0xc4db
-	.half	50395                           # 0xc4db
-	.half	50395                           # 0xc4db
-	.half	50395                           # 0xc4db
-	.half	37655                           # 0x9317
-	.half	63417                           # 0xf7b9
 	.half	0                               # 0x0
 	.half	0                               # 0x0
 	.half	0                               # 0x0
-	.half	63417                           # 0xf7b9
-	.half	63417                           # 0xf7b9
-	.half	63417                           # 0xf7b9
 	.half	0                               # 0x0
 	.half	0                               # 0x0
 	.half	0                               # 0x0
@@ -5018,38 +2530,9 @@ _ZN11SproutLandsL5BoatsE:
 	.half	0                               # 0x0
 	.half	0                               # 0x0
 	.half	0                               # 0x0
-	.half	63417                           # 0xf7b9
-	.half	50395                           # 0xc4db
-	.half	50395                           # 0xc4db
-	.half	50395                           # 0xc4db
-	.half	50395                           # 0xc4db
-	.half	50395                           # 0xc4db
-	.half	50395                           # 0xc4db
-	.half	50395                           # 0xc4db
-	.half	50395                           # 0xc4db
-	.half	50395                           # 0xc4db
-	.half	50395                           # 0xc4db
-	.half	50395                           # 0xc4db
-	.half	50395                           # 0xc4db
-	.half	50395                           # 0xc4db
-	.half	50395                           # 0xc4db
-	.half	50395                           # 0xc4db
-	.half	50395                           # 0xc4db
-	.half	50395                           # 0xc4db
-	.half	50395                           # 0xc4db
-	.half	50395                           # 0xc4db
-	.half	50395                           # 0xc4db
-	.half	50395                           # 0xc4db
-	.half	50395                           # 0xc4db
-	.half	37655                           # 0x9317
-	.half	63417                           # 0xf7b9
-	.half	63417                           # 0xf7b9
-	.half	63417                           # 0xf7b9
 	.half	0                               # 0x0
 	.half	0                               # 0x0
 	.half	0                               # 0x0
-	.half	63417                           # 0xf7b9
-	.half	63417                           # 0xf7b9
 	.half	0                               # 0x0
 	.half	0                               # 0x0
 	.half	0                               # 0x0
@@ -5067,30 +2550,9 @@ _ZN11SproutLandsL5BoatsE:
 	.half	0                               # 0x0
 	.half	0                               # 0x0
 	.half	0                               # 0x0
-	.half	63417                           # 0xf7b9
-	.half	63417                           # 0xf7b9
-	.half	50395                           # 0xc4db
-	.half	50395                           # 0xc4db
-	.half	50395                           # 0xc4db
-	.half	50395                           # 0xc4db
-	.half	50395                           # 0xc4db
-	.half	50395                           # 0xc4db
-	.half	50395                           # 0xc4db
-	.half	50395                           # 0xc4db
-	.half	50395                           # 0xc4db
-	.half	50395                           # 0xc4db
-	.half	50395                           # 0xc4db
-	.half	50395                           # 0xc4db
-	.half	50395                           # 0xc4db
-	.half	50395                           # 0xc4db
-	.half	50395                           # 0xc4db
-	.half	50395                           # 0xc4db
-	.half	50395                           # 0xc4db
-	.half	50395                           # 0xc4db
-	.half	50395                           # 0xc4db
-	.half	63417                           # 0xf7b9
-	.half	63417                           # 0xf7b9
 	.half	0                               # 0x0
+	.half	63489                           # 0xf801
+	.half	63489                           # 0xf801
 	.half	0                               # 0x0
 	.half	0                               # 0x0
 	.half	0                               # 0x0
@@ -5115,29 +2577,6 @@ _ZN11SproutLandsL5BoatsE:
 	.half	0                               # 0x0
 	.half	0                               # 0x0
 	.half	0                               # 0x0
-	.half	63417                           # 0xf7b9
-	.half	63417                           # 0xf7b9
-	.half	50395                           # 0xc4db
-	.half	50395                           # 0xc4db
-	.half	50395                           # 0xc4db
-	.half	50395                           # 0xc4db
-	.half	50395                           # 0xc4db
-	.half	50395                           # 0xc4db
-	.half	50395                           # 0xc4db
-	.half	50395                           # 0xc4db
-	.half	50395                           # 0xc4db
-	.half	50395                           # 0xc4db
-	.half	50395                           # 0xc4db
-	.half	50395                           # 0xc4db
-	.half	50395                           # 0xc4db
-	.half	50395                           # 0xc4db
-	.half	50395                           # 0xc4db
-	.half	50395                           # 0xc4db
-	.half	50395                           # 0xc4db
-	.half	50395                           # 0xc4db
-	.half	50395                           # 0xc4db
-	.half	63417                           # 0xf7b9
-	.half	63417                           # 0xf7b9
 	.half	0                               # 0x0
 	.half	0                               # 0x0
 	.half	0                               # 0x0
@@ -5160,32 +2599,11 @@ _ZN11SproutLandsL5BoatsE:
 	.half	0                               # 0x0
 	.half	0                               # 0x0
 	.half	0                               # 0x0
+	.half	63489                           # 0xf801
+	.half	63489                           # 0xf801
 	.half	0                               # 0x0
 	.half	0                               # 0x0
 	.half	0                               # 0x0
-	.half	63417                           # 0xf7b9
-	.half	63417                           # 0xf7b9
-	.half	50395                           # 0xc4db
-	.half	50395                           # 0xc4db
-	.half	50395                           # 0xc4db
-	.half	50395                           # 0xc4db
-	.half	50395                           # 0xc4db
-	.half	50395                           # 0xc4db
-	.half	50395                           # 0xc4db
-	.half	50395                           # 0xc4db
-	.half	50395                           # 0xc4db
-	.half	50395                           # 0xc4db
-	.half	50395                           # 0xc4db
-	.half	50395                           # 0xc4db
-	.half	50395                           # 0xc4db
-	.half	50395                           # 0xc4db
-	.half	50395                           # 0xc4db
-	.half	50395                           # 0xc4db
-	.half	50395                           # 0xc4db
-	.half	50395                           # 0xc4db
-	.half	50395                           # 0xc4db
-	.half	63417                           # 0xf7b9
-	.half	63417                           # 0xf7b9
 	.half	0                               # 0x0
 	.half	0                               # 0x0
 	.half	0                               # 0x0
@@ -5213,25 +2631,6 @@ _ZN11SproutLandsL5BoatsE:
 	.half	0                               # 0x0
 	.half	0                               # 0x0
 	.half	0                               # 0x0
-	.half	63417                           # 0xf7b9
-	.half	63417                           # 0xf7b9
-	.half	63417                           # 0xf7b9
-	.half	63417                           # 0xf7b9
-	.half	63417                           # 0xf7b9
-	.half	63417                           # 0xf7b9
-	.half	63417                           # 0xf7b9
-	.half	63417                           # 0xf7b9
-	.half	63417                           # 0xf7b9
-	.half	63417                           # 0xf7b9
-	.half	63417                           # 0xf7b9
-	.half	63417                           # 0xf7b9
-	.half	63417                           # 0xf7b9
-	.half	63417                           # 0xf7b9
-	.half	63417                           # 0xf7b9
-	.half	63417                           # 0xf7b9
-	.half	63417                           # 0xf7b9
-	.half	63417                           # 0xf7b9
-	.half	63417                           # 0xf7b9
 	.half	0                               # 0x0
 	.half	0                               # 0x0
 	.half	0                               # 0x0
@@ -5248,6 +2647,9 @@ _ZN11SproutLandsL5BoatsE:
 	.half	0                               # 0x0
 	.half	0                               # 0x0
 	.half	0                               # 0x0
+	.half	63489                           # 0xf801
+	.half	63489                           # 0xf801
+	.half	10177                           # 0x27c1
 	.half	0                               # 0x0
 	.half	0                               # 0x0
 	.half	0                               # 0x0
@@ -5261,25 +2663,6 @@ _ZN11SproutLandsL5BoatsE:
 	.half	0                               # 0x0
 	.half	0                               # 0x0
 	.half	0                               # 0x0
-	.half	63417                           # 0xf7b9
-	.half	63417                           # 0xf7b9
-	.half	63417                           # 0xf7b9
-	.half	63417                           # 0xf7b9
-	.half	63417                           # 0xf7b9
-	.half	63417                           # 0xf7b9
-	.half	63417                           # 0xf7b9
-	.half	63417                           # 0xf7b9
-	.half	63417                           # 0xf7b9
-	.half	63417                           # 0xf7b9
-	.half	63417                           # 0xf7b9
-	.half	63417                           # 0xf7b9
-	.half	63417                           # 0xf7b9
-	.half	63417                           # 0xf7b9
-	.half	63417                           # 0xf7b9
-	.half	63417                           # 0xf7b9
-	.half	63417                           # 0xf7b9
-	.half	63417                           # 0xf7b9
-	.half	63417                           # 0xf7b9
 	.half	0                               # 0x0
 	.half	0                               # 0x0
 	.half	0                               # 0x0
@@ -5309,29 +2692,67 @@ _ZN11SproutLandsL5BoatsE:
 	.half	0                               # 0x0
 	.half	0                               # 0x0
 	.half	0                               # 0x0
-	.half	63417                           # 0xf7b9
-	.half	63417                           # 0xf7b9
-	.half	63417                           # 0xf7b9
-	.half	63417                           # 0xf7b9
-	.half	63417                           # 0xf7b9
-	.half	63417                           # 0xf7b9
-	.half	63417                           # 0xf7b9
-	.half	63417                           # 0xf7b9
-	.half	63417                           # 0xf7b9
-	.half	63417                           # 0xf7b9
-	.half	63417                           # 0xf7b9
-	.half	63417                           # 0xf7b9
-	.half	63417                           # 0xf7b9
-	.half	63417                           # 0xf7b9
-	.half	63417                           # 0xf7b9
-	.half	63417                           # 0xf7b9
-	.half	63417                           # 0xf7b9
-	.half	63417                           # 0xf7b9
-	.half	63417                           # 0xf7b9
-	.zero	1470
-	.size	_ZN11SproutLandsL5BoatsE, 9216
+	.half	0                               # 0x0
+	.half	0                               # 0x0
+	.half	10177                           # 0x27c1
+	.half	63489                           # 0xf801
+	.half	1                               # 0x1
+	.half	1                               # 0x1
+	.half	1                               # 0x1
+	.half	1                               # 0x1
+	.half	1                               # 0x1
+	.half	1                               # 0x1
+	.half	1                               # 0x1
+	.half	1                               # 0x1
+	.half	1                               # 0x1
+	.half	1                               # 0x1
+	.half	1                               # 0x1
+	.half	1                               # 0x1
+	.half	1                               # 0x1
+	.half	1                               # 0x1
+	.half	1                               # 0x1
+	.half	1                               # 0x1
+	.half	1                               # 0x1
+	.half	1                               # 0x1
+	.half	1                               # 0x1
+	.half	1                               # 0x1
+	.half	1                               # 0x1
+	.half	1                               # 0x1
+	.half	1                               # 0x1
+	.half	1                               # 0x1
+	.half	1                               # 0x1
+	.half	1                               # 0x1
+	.half	1                               # 0x1
+	.half	1                               # 0x1
+	.half	1                               # 0x1
+	.half	1                               # 0x1
+	.half	1                               # 0x1
+	.half	1                               # 0x1
+	.half	1                               # 0x1
+	.half	1                               # 0x1
+	.half	1                               # 0x1
+	.half	1                               # 0x1
+	.half	1                               # 0x1
+	.half	1                               # 0x1
+	.half	1                               # 0x1
+	.half	1                               # 0x1
+	.half	1                               # 0x1
+	.half	1                               # 0x1
+	.half	1                               # 0x1
+	.half	1                               # 0x1
+	.half	1                               # 0x1
+	.half	1                               # 0x1
+	.half	1                               # 0x1
+	.half	1                               # 0x1
+	.size	_ZN11SproutLandsL5BoatsE, 3072
 
-	.ident	"clang version 21.0.0git (https://github.com/llvm/llvm-project 179d30f8c3fddd3c85056fd2b8e877a4a8513158)"
+	.type	.L.str,@object                  # @.str
+	.section	.rodata.str1.1,"aMS",@progbits,1
+.L.str:
+	.asciz	"Boat x pos: %i"
+	.size	.L.str, 15
+
+	.ident	"clang version 21.0.0git"
 	.section	".note.GNU-stack","",@progbits
 	.addrsig
 	.addrsig_sym _ZN11SproutLandsL5WaterE
