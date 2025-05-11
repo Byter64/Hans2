@@ -95,9 +95,11 @@ wire[$clog2(FB_WIDTH)+1:0] pos_x_1 = pos_x + 1;
 wire[$clog2(FB_HEIGHT)+1:0] pos_y_1 = pos_y + 1;
 wire[$clog2(FB_WIDTH)+1:0] next_pos_x = drawing ? (pos_x_1 == max_x ? 0 : pos_x_1) : 0;
 wire[$clog2(FB_HEIGHT)+1:0] next_pos_y = drawing ? (pos_x_1 == max_x ? pos_y_1 : pos_y) : 0;
-assign next_drawing = pos_y < max_y;
+assign next_drawing = (pos_y < max_y) && drawing;
 
 always @(posedge clk) begin
+    drawing <= next_drawing;
+
     if(!next_state[I_IDLE] && state[I_IDLE]) begin
         drawing <= 1;
     end
@@ -105,7 +107,6 @@ always @(posedge clk) begin
     if(drawing && (mem_valid || !state[I_DRAW])) begin
         pos_x <= next_pos_x;
         pos_y <= next_pos_y;
-        drawing <= next_drawing;
     end
     else if (!drawing) begin
         pos_x <= 0;
