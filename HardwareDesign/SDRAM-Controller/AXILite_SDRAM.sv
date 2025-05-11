@@ -66,7 +66,7 @@ Action action = IDLE;
 Action next_action;
 
 Type address_type = NONE;
-Type address_next_type;
+Type next_address_type;
 
 logic[24:0] address;
 logic[15:0] write_data;
@@ -81,7 +81,7 @@ sdram_controller SDRAM_Controller
     .wr_data(write_data),
     .wr_enable(write_enable),
     .rd_addr(address[24:1]),
-    .rd_data(address_next_type == WORD_1 ? read_data[31:16] : read_data[15:0]),
+    .rd_data(next_address_type == WORD_1 ? read_data[31:16] : read_data[15:0]),
     .rd_ready(read_ready),
     .rd_enable(read_enable),
     .busy(is_busy),
@@ -100,17 +100,17 @@ sdram_controller SDRAM_Controller
     .data_mask_high(sdram_dqm[1])
 );
 
-assign write_data = address_next_type == WORD_1 ? axi_write_data[31:16] : axi_write_data[15:0];
+assign write_data = next_address_type == WORD_1 ? axi_write_data[31:16] : axi_write_data[15:0];
 
 always_comb begin
     next_action = action;
     case (action)
         IDLE: begin
-            if (!is_busy && ((s_axil_wvalid && s_axil_wready) || (s_axil_rvalid && s_axil_rready))) begin
+            if (!is_busy) begin
                 if(s_axil_wvalid && s_axil_wready) begin
-                next_action = WRITE;
+                    next_action = WRITE;
                 end else if (s_axil_rready) begin
-                next_action = READ;
+                    next_action = READ;
                 end
             end
         end
@@ -127,41 +127,42 @@ always_comb begin
 end
 
 always_comb begin
-    address_next_type = address_type;
+    next_address_type = address_type;
     case (address_type)
         NONE: begin
             if(next_action != IDLE) begin
                 case (address[1:0])
-                    2'b00 : address_next_type = WORD_0;
+                    2'b00 : next_address_type = WORD_0;
                     //2'b00 : next_action = ??;
-                    2'b10 : address_next_type = HALF_WORD;
+                    2'b10 : next_address_type = HALF_WORD;
                     //2'b00 : next_action = ??;
                 endcase
             end
         end
         HALF_WORD: begin
-            if(!state == READ || read_ready)
-                address_next_type = NONE;
+            if(action != READ || read_ready)
+                next_address_type = NONE;
         end
         WORD_0: begin
-            if(!is_busy && (!state == READ || read_ready)) begin
-                address_next_type = WORD_1;
-            end
+            //if(!is_busy && (action != READ || read_ready)) begin
+                next_address_type = WORD_1;
+            //end
         end
         WORD_1: begin
-            if(!state == READ || read_ready) begin
-                address_next_type = NONE;
-            end
+            //if(action != READ || read_ready) begin
+                next_address_type = NONE;
+            //end
         end
     endcase
 
     if(!resetn) begin 
-        address_next_type = NONE;
+        next_address_type = NONE;
     end
 end
 
 always_ff @(posedge aclk) begin
     action <= next_action;
+    address_type <= next_address_type;
 end
 
 always_ff @(posedge aclk) begin
@@ -171,14 +172,14 @@ always_ff @(posedge aclk) begin
     //control signals for the SDRAM-Controller
     if(action == IDLE && next_action == WRITE) begin
         write_enable <= 1;
-    end else if (action == WRITE && address_next_type == WORD_1) begin
+    end else if (action == WRITE && next_address_type == WORD_1) begin
         write_enable <= 1;
     end
 
     //control signals for the SDRAM-Controller
     if(action == IDLE && next_action == READ) begin
         read_enable <= 1;
-    end else if (action == READ && address_next_type == WORD_1) begin
+    end else if (action == READ && next_address_type == WORD_1) begin
         read_enable <= 1;
     end
 end
