@@ -26,6 +26,7 @@ int main() {
     Hapi::Image boat = Hapi::LoadImage((char*)SproutLands::Boats, 48, 32);
 
 
+    *sdramInt = 12345;
     while (true) {
 
         Hapi::StartDrawing();
@@ -46,12 +47,11 @@ int main() {
         sprintf_(text, "Boat x pos: %i", left_boat_x);
         Hapi::DrawText(text, 5, 5, INT32_MAX);
 
-        //sprintf_(text, "SDRAM contains number %i", *sdramInt);
-        //Hapi::DrawText(text, 5, 10, INT32_MAX);
+        sprintf_(text, "SDRAM contains number %i", *sdramInt);
+        Hapi::DrawText(text, 5, 10, INT32_MAX);
         Hapi::Draw((Hapi::Image)Hapi::defaultFont.fontSheet, 0, 0, 250, 10, 120, 15, 120);
         updateAnimation(water_ticks, water_frame_x, 16, 48);
         Hapi::EndDrawing();
-        *sdramInt = 12345;
     }
     Hapi::Terminate();
     return 0;

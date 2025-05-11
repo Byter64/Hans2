@@ -123,11 +123,11 @@ always_comb begin
         end
     endcase
 
-    if(!resetn) next_action = IDLE;
+    if(!resetn) next_action = IDLE; 
 end
 
 always_comb begin
-    next_address_type = address_type;
+    next_address_type = address_type; 
     case (address_type)
         NONE: begin
             if(next_action != IDLE) begin
