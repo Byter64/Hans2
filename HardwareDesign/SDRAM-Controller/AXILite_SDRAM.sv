@@ -120,6 +120,9 @@ always_comb begin
             end
         end
         READ: begin
+            if((address_type == HALF_WORD || address_type == WORD_1) && read_ready) begin
+                next_action = IDLE;
+            end
         end
     endcase
 

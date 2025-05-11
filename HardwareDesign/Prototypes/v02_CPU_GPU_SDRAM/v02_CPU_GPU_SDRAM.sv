@@ -15,8 +15,9 @@ module CPU_with_GPU_SDRAM
 	inout  logic[15:0]  sdram_d
 ); 
 
-//logic canBeDeleted;
-
+logic canBeDeleted;
+logic canBeDeleted2;
+ 
 logic hdmi_pixClk;
 logic resetn = 0;
 logic trap;

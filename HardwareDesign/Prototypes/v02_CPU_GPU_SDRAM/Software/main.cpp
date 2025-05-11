@@ -26,8 +26,8 @@ int main() {
     Hapi::Image boat = Hapi::LoadImage((char*)SproutLands::Boats, 48, 32);
 
 
-    *sdramInt = 12345;
     while (true) {
+        *sdramInt = 12345;
 
         Hapi::StartDrawing();
         Hapi::Clear(Hapi::Color(255, 127, 127, 1));
