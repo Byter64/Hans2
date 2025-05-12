@@ -81,11 +81,11 @@ sdram_controller SDRAM_Controller
     //Host Interface
     .wr_addr(address[24:1]),
     .wr_data(write_data),
-    .wr_enable(write_enable),
+    .wr_enable(write_enable), //This may need to be synced
     .rd_addr(address[24:1]),
     .rd_data(read_data),
-    .rd_ready(read_ready),
-    .rd_enable(read_enable),
+    .rd_ready(read_ready), //This must be synced
+    .rd_enable(read_enable), //This may need to be synced
     .busy(is_busy),
     .rst_n(resetn),
     .clk(clk_130mhz), //Expects 133 MHz
@@ -101,6 +101,14 @@ sdram_controller SDRAM_Controller
     .data_mask_low(sdram_dqm[0]),
     .data_mask_high(sdram_dqm[1])
 );
+
+logic read_ready_slow;
+logic read_ready_old;
+logic read_ready_trigger;
+always_ff @(posedge clk_130mhz) read_ready_old <= read_ready;
+always_ff @(posedge clk_130mhz) if(read_ready_old == 0 && read_ready) read_ready_trigger <= 1
+                                else if(read_ready_slow == 1) read_ready_trigger <= 0;
+always_ff @(posedge aclk) if(read_ready_trigger) read_ready_slow <= 1 else read_ready_slow <= 0;
 
 assign write_data = next_address_type == WORD_1 ? axi_write_data[31:16] : axi_write_data[15:0];
 
@@ -129,7 +137,7 @@ always_comb begin
             end
         end
         READ: begin
-            if((address_type == HALF_WORD || address_type == WORD_1) && read_ready) begin
+            if((address_type == HALF_WORD || address_type == WORD_1) && read_ready_slow) begin
                 next_action = IDLE;
             end
         end
@@ -152,16 +160,16 @@ always @(*) begin
             end
         end
         HALF_WORD: begin
-            if(action != READ || read_ready)
+            if(action != READ || read_ready_slow)
                 next_address_type = NONE;
         end
         WORD_0: begin
-            if(!is_busy && (action != READ || read_ready)) begin
+            if(!is_busy && (action != READ || read_ready_slow)) begin
                 next_address_type = WORD_1;
             end
         end
         WORD_1: begin
-            if(action != READ || read_ready) begin
+            if(action != READ || read_ready_slow) begin
                 next_address_type = NONE;
             end
         end
