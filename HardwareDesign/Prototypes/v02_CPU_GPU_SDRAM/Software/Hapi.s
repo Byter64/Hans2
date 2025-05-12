@@ -8,16 +8,16 @@
 _ZN4Hapi4InitEv:                        # @_ZN4Hapi4InitEv
 	.cfi_startproc
 # %bb.0:
-	addi	sp, sp, -544
-	.cfi_def_cfa_offset 544
-	sw	ra, 540(sp)                     # 4-byte Folded Spill
-	sw	s0, 536(sp)                     # 4-byte Folded Spill
-	sw	s1, 532(sp)                     # 4-byte Folded Spill
-	sw	s2, 528(sp)                     # 4-byte Folded Spill
-	sw	s3, 524(sp)                     # 4-byte Folded Spill
-	sw	s4, 520(sp)                     # 4-byte Folded Spill
-	sw	s5, 516(sp)                     # 4-byte Folded Spill
-	sw	s6, 512(sp)                     # 4-byte Folded Spill
+	addi	sp, sp, -560
+	.cfi_def_cfa_offset 560
+	sw	ra, 556(sp)                     # 4-byte Folded Spill
+	sw	s0, 552(sp)                     # 4-byte Folded Spill
+	sw	s1, 548(sp)                     # 4-byte Folded Spill
+	sw	s2, 544(sp)                     # 4-byte Folded Spill
+	sw	s3, 540(sp)                     # 4-byte Folded Spill
+	sw	s4, 536(sp)                     # 4-byte Folded Spill
+	sw	s5, 532(sp)                     # 4-byte Folded Spill
+	sw	s6, 528(sp)                     # 4-byte Folded Spill
 	.cfi_offset ra, -4
 	.cfi_offset s0, -8
 	.cfi_offset s1, -12
@@ -34,13 +34,13 @@ _ZN4Hapi4InitEv:                        # @_ZN4Hapi4InitEv
 	addi	s0, s0, %lo(_ZL5atlas)
 	li	s5, 26
 .LBB0_1:                                # =>This Inner Loop Header: Depth=1
-	sw	s1, 496(sp)
-	sw	zero, 500(sp)
-	sw	s3, 504(sp)
-	sw	s4, 508(sp)
+	sw	s1, 512(sp)
+	sw	zero, 516(sp)
+	sw	s3, 520(sp)
+	sw	s4, 524(sp)
 	addi	a0, s2, 65
 	andi	a1, a0, 255
-	addi	a2, sp, 496
+	addi	a2, sp, 512
 	mv	a0, s0
 	call	_ZN4Hapi9FontAtlas3AddEcNS_9RectangleE
 	addi	s2, s2, 1
@@ -50,54 +50,54 @@ _ZN4Hapi4InitEv:                        # @_ZN4Hapi4InitEv
 	li	a0, 104
 	li	s1, 3
 	li	s2, 5
+	sw	a0, 496(sp)
+	sw	zero, 500(sp)
+	sw	s1, 504(sp)
+	sw	s2, 508(sp)
+	lui	s0, %hi(_ZL5atlas)
+	addi	s0, s0, %lo(_ZL5atlas)
+	li	a1, 91
+	addi	a2, sp, 496
+	mv	a0, s0
+	call	_ZN4Hapi9FontAtlas3AddEcNS_9RectangleE
+	li	a0, 108
 	sw	a0, 480(sp)
 	sw	zero, 484(sp)
 	sw	s1, 488(sp)
 	sw	s2, 492(sp)
-	lui	s0, %hi(_ZL5atlas)
-	addi	s0, s0, %lo(_ZL5atlas)
-	li	a1, 91
+	li	a1, 93
 	addi	a2, sp, 480
 	mv	a0, s0
 	call	_ZN4Hapi9FontAtlas3AddEcNS_9RectangleE
-	li	a0, 108
+	li	a0, 112
 	sw	a0, 464(sp)
 	sw	zero, 468(sp)
 	sw	s1, 472(sp)
 	sw	s2, 476(sp)
-	li	a1, 93
+	li	a1, 123
 	addi	a2, sp, 464
 	mv	a0, s0
 	call	_ZN4Hapi9FontAtlas3AddEcNS_9RectangleE
-	li	a0, 112
+	li	a0, 116
 	sw	a0, 448(sp)
 	sw	zero, 452(sp)
 	sw	s1, 456(sp)
 	sw	s2, 460(sp)
-	li	a1, 123
-	addi	a2, sp, 448
-	mv	a0, s0
-	call	_ZN4Hapi9FontAtlas3AddEcNS_9RectangleE
-	li	a0, 116
-	sw	a0, 432(sp)
-	sw	zero, 436(sp)
-	sw	s1, 440(sp)
-	sw	s2, 444(sp)
 	li	a1, 125
-	addi	a2, sp, 432
+	addi	a2, sp, 448
 	mv	a0, s0
 	call	_ZN4Hapi9FontAtlas3AddEcNS_9RectangleE
 	li	s3, 0
 	li	s4, 0
 	li	s5, 26
 .LBB0_3:                                # =>This Inner Loop Header: Depth=1
-	sw	s3, 416(sp)
-	sw	s2, 420(sp)
-	sw	s1, 424(sp)
-	sw	s2, 428(sp)
+	sw	s3, 432(sp)
+	sw	s2, 436(sp)
+	sw	s1, 440(sp)
+	sw	s2, 444(sp)
 	addi	a0, s4, 97
 	andi	a1, a0, 255
-	addi	a2, sp, 416
+	addi	a2, sp, 432
 	mv	a0, s0
 	call	_ZN4Hapi9FontAtlas3AddEcNS_9RectangleE
 	addi	s4, s4, 1
@@ -107,41 +107,41 @@ _ZN4Hapi4InitEv:                        # @_ZN4Hapi4InitEv
 	li	a0, 104
 	li	s1, 5
 	li	s2, 3
+	sw	a0, 416(sp)
+	sw	s1, 420(sp)
+	sw	s2, 424(sp)
+	sw	s1, 428(sp)
+	lui	s0, %hi(_ZL5atlas)
+	addi	s0, s0, %lo(_ZL5atlas)
+	li	a1, 92
+	addi	a2, sp, 416
+	mv	a0, s0
+	call	_ZN4Hapi9FontAtlas3AddEcNS_9RectangleE
+	li	a0, 108
 	sw	a0, 400(sp)
 	sw	s1, 404(sp)
 	sw	s2, 408(sp)
 	sw	s1, 412(sp)
-	lui	s0, %hi(_ZL5atlas)
-	addi	s0, s0, %lo(_ZL5atlas)
-	li	a1, 92
+	li	a1, 47
 	addi	a2, sp, 400
 	mv	a0, s0
 	call	_ZN4Hapi9FontAtlas3AddEcNS_9RectangleE
-	li	a0, 108
+	li	a0, 112
 	sw	a0, 384(sp)
 	sw	s1, 388(sp)
 	sw	s2, 392(sp)
 	sw	s1, 396(sp)
-	li	a1, 47
+	li	a1, 60
 	addi	a2, sp, 384
 	mv	a0, s0
 	call	_ZN4Hapi9FontAtlas3AddEcNS_9RectangleE
-	li	a0, 112
+	li	a0, 116
 	sw	a0, 368(sp)
 	sw	s1, 372(sp)
 	sw	s2, 376(sp)
 	sw	s1, 380(sp)
-	li	a1, 60
-	addi	a2, sp, 368
-	mv	a0, s0
-	call	_ZN4Hapi9FontAtlas3AddEcNS_9RectangleE
-	li	a0, 116
-	sw	a0, 352(sp)
-	sw	s1, 356(sp)
-	sw	s2, 360(sp)
-	sw	s1, 364(sp)
 	li	a1, 62
-	addi	a2, sp, 352
+	addi	a2, sp, 368
 	mv	a0, s0
 	call	_ZN4Hapi9FontAtlas3AddEcNS_9RectangleE
 	li	s3, 0
@@ -149,13 +149,13 @@ _ZN4Hapi4InitEv:                        # @_ZN4Hapi4InitEv
 	li	s5, 10
 	li	s6, 36
 .LBB0_5:                                # =>This Inner Loop Header: Depth=1
-	sw	s3, 336(sp)
-	sw	s5, 340(sp)
-	sw	s2, 344(sp)
-	sw	s1, 348(sp)
+	sw	s3, 352(sp)
+	sw	s5, 356(sp)
+	sw	s2, 360(sp)
+	sw	s1, 364(sp)
 	ori	a0, s4, 48
 	andi	a1, a0, 255
-	addi	a2, sp, 336
+	addi	a2, sp, 352
 	mv	a0, s0
 	call	_ZN4Hapi9FontAtlas3AddEcNS_9RectangleE
 	addi	s3, s3, 4
@@ -163,216 +163,225 @@ _ZN4Hapi4InitEv:                        # @_ZN4Hapi4InitEv
 	bne	s3, s6, .LBB0_5
 # %bb.6:
 	li	a0, 36
-	li	s1, 10
-	li	s2, 3
-	li	s3, 5
-	sw	a0, 320(sp)
-	sw	s1, 324(sp)
-	sw	s2, 328(sp)
-	sw	s3, 332(sp)
+	li	s3, 10
+	li	s1, 3
+	li	s2, 5
+	sw	a0, 336(sp)
+	sw	s3, 340(sp)
+	sw	s1, 344(sp)
+	sw	s2, 348(sp)
 	li	a1, 48
-	addi	a2, sp, 320
+	addi	a2, sp, 336
 	li	s4, 48
 	mv	a0, s0
 	call	_ZN4Hapi9FontAtlas3AddEcNS_9RectangleE
 	li	a0, 40
-	sw	a0, 304(sp)
-	sw	s1, 308(sp)
-	sw	s2, 312(sp)
-	sw	s3, 316(sp)
+	sw	a0, 320(sp)
+	sw	s3, 324(sp)
+	sw	s1, 328(sp)
+	sw	s2, 332(sp)
 	li	a1, 33
-	addi	a2, sp, 304
+	addi	a2, sp, 320
 	mv	a0, s0
 	call	_ZN4Hapi9FontAtlas3AddEcNS_9RectangleE
 	li	a0, 44
-	sw	a0, 288(sp)
-	sw	s1, 292(sp)
-	sw	s2, 296(sp)
-	sw	s3, 300(sp)
+	sw	a0, 304(sp)
+	sw	s3, 308(sp)
+	sw	s1, 312(sp)
+	sw	s2, 316(sp)
 	li	a1, 34
+	addi	a2, sp, 304
+	mv	a0, s0
+	call	_ZN4Hapi9FontAtlas3AddEcNS_9RectangleE
+	sw	s4, 288(sp)
+	sw	s3, 292(sp)
+	sw	s1, 296(sp)
+	sw	s2, 300(sp)
+	li	a1, 36
 	addi	a2, sp, 288
 	mv	a0, s0
 	call	_ZN4Hapi9FontAtlas3AddEcNS_9RectangleE
-	sw	s4, 272(sp)
-	sw	s1, 276(sp)
-	sw	s2, 280(sp)
-	sw	s3, 284(sp)
-	li	a1, 36
+	li	a0, 52
+	sw	a0, 272(sp)
+	sw	s3, 276(sp)
+	sw	s1, 280(sp)
+	sw	s2, 284(sp)
+	li	a1, 37
 	addi	a2, sp, 272
 	mv	a0, s0
 	call	_ZN4Hapi9FontAtlas3AddEcNS_9RectangleE
-	li	a0, 52
+	li	a0, 56
 	sw	a0, 256(sp)
-	sw	s1, 260(sp)
-	sw	s2, 264(sp)
-	sw	s3, 268(sp)
-	li	a1, 37
+	sw	s3, 260(sp)
+	sw	s1, 264(sp)
+	sw	s2, 268(sp)
+	li	a1, 94
 	addi	a2, sp, 256
 	mv	a0, s0
 	call	_ZN4Hapi9FontAtlas3AddEcNS_9RectangleE
-	li	a0, 56
+	li	a0, 60
 	sw	a0, 240(sp)
-	sw	s1, 244(sp)
-	sw	s2, 248(sp)
-	sw	s3, 252(sp)
-	li	a1, 94
+	sw	s3, 244(sp)
+	sw	s1, 248(sp)
+	sw	s2, 252(sp)
+	li	a1, 42
 	addi	a2, sp, 240
 	mv	a0, s0
 	call	_ZN4Hapi9FontAtlas3AddEcNS_9RectangleE
-	li	a0, 60
+	li	a0, 64
 	sw	a0, 224(sp)
-	sw	s1, 228(sp)
-	sw	s2, 232(sp)
-	sw	s3, 236(sp)
-	li	a1, 42
+	sw	s3, 228(sp)
+	sw	s1, 232(sp)
+	sw	s2, 236(sp)
+	li	a1, 40
 	addi	a2, sp, 224
 	mv	a0, s0
 	call	_ZN4Hapi9FontAtlas3AddEcNS_9RectangleE
-	li	a0, 64
+	li	a0, 68
 	sw	a0, 208(sp)
-	sw	s1, 212(sp)
-	sw	s2, 216(sp)
-	sw	s3, 220(sp)
-	li	a1, 40
+	sw	s3, 212(sp)
+	sw	s1, 216(sp)
+	sw	s2, 220(sp)
+	li	a1, 41
 	addi	a2, sp, 208
 	mv	a0, s0
 	call	_ZN4Hapi9FontAtlas3AddEcNS_9RectangleE
-	li	a0, 68
-	sw	a0, 192(sp)
-	sw	s1, 196(sp)
-	sw	s2, 200(sp)
-	sw	s3, 204(sp)
-	li	a1, 41
-	addi	a2, sp, 192
-	mv	a0, s0
-	call	_ZN4Hapi9FontAtlas3AddEcNS_9RectangleE
 	li	a0, 72
-	sw	a0, 176(sp)
-	sw	s1, 180(sp)
-	sw	s2, 184(sp)
-	sw	s3, 188(sp)
+	sw	a0, 192(sp)
+	sw	s3, 196(sp)
+	sw	s1, 200(sp)
+	sw	s2, 204(sp)
 	li	a1, 96
-	addi	a2, sp, 176
+	addi	a2, sp, 192
 	li	s4, 96
 	mv	a0, s0
 	call	_ZN4Hapi9FontAtlas3AddEcNS_9RectangleE
 	li	a0, 76
-	sw	a0, 160(sp)
-	sw	s1, 164(sp)
-	sw	s2, 168(sp)
-	sw	s3, 172(sp)
+	sw	a0, 176(sp)
+	sw	s3, 180(sp)
+	sw	s1, 184(sp)
+	sw	s2, 188(sp)
 	li	a1, 39
-	addi	a2, sp, 160
+	addi	a2, sp, 176
 	mv	a0, s0
 	call	_ZN4Hapi9FontAtlas3AddEcNS_9RectangleE
 	li	a0, 80
-	sw	a0, 144(sp)
-	sw	s1, 148(sp)
-	sw	s2, 152(sp)
-	sw	s3, 156(sp)
+	sw	a0, 160(sp)
+	sw	s3, 164(sp)
+	sw	s1, 168(sp)
+	sw	s2, 172(sp)
 	li	a1, 45
-	addi	a2, sp, 144
+	addi	a2, sp, 160
 	mv	a0, s0
 	call	_ZN4Hapi9FontAtlas3AddEcNS_9RectangleE
 	li	a0, 84
-	sw	a0, 128(sp)
-	sw	s1, 132(sp)
-	sw	s2, 136(sp)
-	sw	s3, 140(sp)
+	sw	a0, 144(sp)
+	sw	s3, 148(sp)
+	sw	s1, 152(sp)
+	sw	s2, 156(sp)
 	li	a1, 61
-	addi	a2, sp, 128
+	addi	a2, sp, 144
 	mv	a0, s0
 	call	_ZN4Hapi9FontAtlas3AddEcNS_9RectangleE
 	li	a0, 88
-	sw	a0, 112(sp)
-	sw	s1, 116(sp)
-	sw	s2, 120(sp)
-	sw	s3, 124(sp)
+	sw	a0, 128(sp)
+	sw	s3, 132(sp)
+	sw	s1, 136(sp)
+	sw	s2, 140(sp)
 	li	a1, 95
-	addi	a2, sp, 112
+	addi	a2, sp, 128
 	mv	a0, s0
 	call	_ZN4Hapi9FontAtlas3AddEcNS_9RectangleE
 	li	a0, 92
-	sw	a0, 96(sp)
-	sw	s1, 100(sp)
-	sw	s2, 104(sp)
-	sw	s3, 108(sp)
+	sw	a0, 112(sp)
+	sw	s3, 116(sp)
+	sw	s1, 120(sp)
+	sw	s2, 124(sp)
 	li	a1, 43
+	addi	a2, sp, 112
+	mv	a0, s0
+	call	_ZN4Hapi9FontAtlas3AddEcNS_9RectangleE
+	sw	s4, 96(sp)
+	sw	s3, 100(sp)
+	sw	s1, 104(sp)
+	sw	s2, 108(sp)
+	li	a1, 63
 	addi	a2, sp, 96
 	mv	a0, s0
 	call	_ZN4Hapi9FontAtlas3AddEcNS_9RectangleE
-	sw	s4, 80(sp)
-	sw	s1, 84(sp)
-	sw	s2, 88(sp)
-	sw	s3, 92(sp)
-	li	a1, 63
+	li	a0, 100
+	sw	a0, 80(sp)
+	sw	s3, 84(sp)
+	sw	s1, 88(sp)
+	sw	s2, 92(sp)
+	li	a1, 124
 	addi	a2, sp, 80
 	mv	a0, s0
 	call	_ZN4Hapi9FontAtlas3AddEcNS_9RectangleE
-	li	a0, 100
+	li	a0, 104
 	sw	a0, 64(sp)
-	sw	s1, 68(sp)
-	sw	s2, 72(sp)
-	sw	s3, 76(sp)
-	li	a1, 124
+	sw	s3, 68(sp)
+	sw	s1, 72(sp)
+	sw	s2, 76(sp)
+	li	a1, 46
 	addi	a2, sp, 64
 	mv	a0, s0
 	call	_ZN4Hapi9FontAtlas3AddEcNS_9RectangleE
-	li	a0, 104
+	li	a0, 108
 	sw	a0, 48(sp)
-	sw	s1, 52(sp)
-	sw	s2, 56(sp)
-	sw	s3, 60(sp)
-	li	a1, 46
+	sw	s3, 52(sp)
+	sw	s1, 56(sp)
+	sw	s2, 60(sp)
+	li	a1, 44
 	addi	a2, sp, 48
 	mv	a0, s0
 	call	_ZN4Hapi9FontAtlas3AddEcNS_9RectangleE
-	li	a0, 108
+	li	a0, 112
 	sw	a0, 32(sp)
-	sw	s1, 36(sp)
-	sw	s2, 40(sp)
-	sw	s3, 44(sp)
-	li	a1, 44
+	sw	s3, 36(sp)
+	sw	s1, 40(sp)
+	sw	s2, 44(sp)
+	li	a1, 58
 	addi	a2, sp, 32
 	mv	a0, s0
 	call	_ZN4Hapi9FontAtlas3AddEcNS_9RectangleE
-	li	a0, 112
+	li	a0, 116
 	sw	a0, 16(sp)
-	sw	s1, 20(sp)
-	sw	s2, 24(sp)
-	sw	s3, 28(sp)
-	li	a1, 58
+	sw	s3, 20(sp)
+	sw	s1, 24(sp)
+	sw	s2, 28(sp)
+	li	a1, 59
 	addi	a2, sp, 16
 	mv	a0, s0
 	call	_ZN4Hapi9FontAtlas3AddEcNS_9RectangleE
-	li	a0, 116
+	li	a0, -1
 	sw	a0, 0(sp)
-	sw	s1, 4(sp)
-	sw	s2, 8(sp)
-	sw	s3, 12(sp)
-	li	a1, 59
+	sw	a0, 4(sp)
+	sw	s1, 8(sp)
+	sw	s2, 12(sp)
+	li	a1, 32
 	mv	a2, sp
 	mv	a0, s0
 	call	_ZN4Hapi9FontAtlas3AddEcNS_9RectangleE
-	lui	a0, %hi(_ZL11defaultFont)
+	lui	a0, %hi(_ZN4Hapi11defaultFontE)
 	lui	a1, %hi(_ZN6AssetsL11minifont5x3E)
 	addi	a1, a1, %lo(_ZN6AssetsL11minifont5x3E)
 	li	a2, 120
-	sw	a1, %lo(_ZL11defaultFont)(a0)
+	sw	a1, %lo(_ZN4Hapi11defaultFontE)(a0)
 	li	a1, 15
-	addi	a0, a0, %lo(_ZL11defaultFont)
+	addi	a0, a0, %lo(_ZN4Hapi11defaultFontE)
 	sw	a2, 4(a0)
 	sw	a1, 8(a0)
 	sw	s0, 12(a0)
 	li	a0, 0
-	lw	ra, 540(sp)                     # 4-byte Folded Reload
-	lw	s0, 536(sp)                     # 4-byte Folded Reload
-	lw	s1, 532(sp)                     # 4-byte Folded Reload
-	lw	s2, 528(sp)                     # 4-byte Folded Reload
-	lw	s3, 524(sp)                     # 4-byte Folded Reload
-	lw	s4, 520(sp)                     # 4-byte Folded Reload
-	lw	s5, 516(sp)                     # 4-byte Folded Reload
-	lw	s6, 512(sp)                     # 4-byte Folded Reload
+	lw	ra, 556(sp)                     # 4-byte Folded Reload
+	lw	s0, 552(sp)                     # 4-byte Folded Reload
+	lw	s1, 548(sp)                     # 4-byte Folded Reload
+	lw	s2, 544(sp)                     # 4-byte Folded Reload
+	lw	s3, 540(sp)                     # 4-byte Folded Reload
+	lw	s4, 536(sp)                     # 4-byte Folded Reload
+	lw	s5, 532(sp)                     # 4-byte Folded Reload
+	lw	s6, 528(sp)                     # 4-byte Folded Reload
 	.cfi_restore ra
 	.cfi_restore s0
 	.cfi_restore s1
@@ -381,7 +390,7 @@ _ZN4Hapi4InitEv:                        # @_ZN4Hapi4InitEv
 	.cfi_restore s4
 	.cfi_restore s5
 	.cfi_restore s6
-	addi	sp, sp, 544
+	addi	sp, sp, 560
 	.cfi_def_cfa_offset 0
 	ret
 .Lfunc_end0:
@@ -543,68 +552,73 @@ _ZN4Hapi8DrawTextEPKcNS_4FontEiij:      # @_ZN4Hapi8DrawTextEPKcNS_4FontEiij
 	sw	s8, 12(sp)                      # 4-byte Folded Spill
 	sw	s9, 8(sp)                       # 4-byte Folded Spill
 	sw	s10, 4(sp)                      # 4-byte Folded Spill
-	lbu	s5, 0(a0)
-	beqz	s5, .LBB11_8
+	sw	s11, 0(sp)                      # 4-byte Folded Spill
+	lbu	s4, 0(a0)
+	beqz	s4, .LBB11_10
 # %bb.1:
-	lw	a5, 0(a1)
-	lw	a6, 12(a1)
-	lui	a7, %hi(.L_MergedGlobals)
-	addi	s1, a7, %lo(.L_MergedGlobals)
-	lw	a7, %lo(.L_MergedGlobals)(a7)
-	lw	t0, 44(s1)
-	lw	t1, 4(s1)
-	lw	t2, 8(s1)
-	lw	t3, 12(s1)
-	lw	t4, 16(s1)
-	lw	t5, 20(s1)
-	lw	t6, 24(s1)
-	lw	s0, 28(s1)
-	lw	s1, 36(s1)
+	lw	a5, 12(a1)
+	lui	a6, %hi(.L_MergedGlobals)
+	addi	s0, a6, %lo(.L_MergedGlobals)
+	lw	a6, %lo(.L_MergedGlobals)(a6)
+	lw	a7, 44(s0)
+	lw	t0, 4(s0)
+	lw	t1, 8(s0)
+	lw	t2, 12(s0)
+	lw	t3, 16(s0)
+	lw	t4, 20(s0)
+	lw	t5, 24(s0)
+	lw	t6, 28(s0)
+	lw	s0, 36(s0)
+	li	s1, 32
 	li	s2, 1
 	mv	s3, a2
 .LBB11_2:                               # =>This Loop Header: Depth=1
-                                        #     Child Loop BB11_4 Depth 2
-                                        #     Child Loop BB11_6 Depth 2
-	slli	s5, s5, 4
-	add	s6, a6, s5
-	lw	s5, 8(s6)
-	addi	s4, s5, 1
-	sub	s7, s3, a2
-	add	s7, s7, s4
-	bltu	s7, a4, .LBB11_4
+                                        #     Child Loop BB11_5 Depth 2
+                                        #     Child Loop BB11_7 Depth 2
+	slli	s7, s4, 4
+	add	s7, a5, s7
+	lw	s6, 8(s7)
+	addi	s5, s6, 1
+	sub	s8, s3, a2
+	add	s8, s8, s5
+	bltu	s8, a4, .LBB11_4
 # %bb.3:                                #   in Loop: Header=BB11_2 Depth=1
-	lw	s3, 12(s6)
+	lw	s3, 12(s7)
 	add	a3, a3, s3
 	addi	a3, a3, 1
 	mv	s3, a2
-.LBB11_4:                               #   Parent Loop BB11_2 Depth=1
+.LBB11_4:                               #   in Loop: Header=BB11_2 Depth=1
+	beq	s4, s1, .LBB11_9
+.LBB11_5:                               #   Parent Loop BB11_2 Depth=1
                                         # =>  This Inner Loop Header: Depth=2
-	lw	s7, 0(t0)
-	bnez	s7, .LBB11_4
-# %bb.5:                                #   in Loop: Header=BB11_2 Depth=1
-	lw	s7, 0(s6)
-	lw	s8, 4(s6)
-	lw	s6, 12(s6)
-	lw	s9, 4(a1)
-.LBB11_6:                               #   Parent Loop BB11_2 Depth=1
+	lw	s4, 0(a7)
+	bnez	s4, .LBB11_5
+# %bb.6:                                #   in Loop: Header=BB11_2 Depth=1
+	lw	s8, 0(s7)
+	lw	s9, 4(s7)
+	lw	s4, 12(s7)
+	lw	s10, 0(a1)
+	lw	s7, 4(a1)
+.LBB11_7:                               #   Parent Loop BB11_2 Depth=1
                                         # =>  This Inner Loop Header: Depth=2
-	lw	s10, 0(t0)
-	bnez	s10, .LBB11_6
-# %bb.7:                                #   in Loop: Header=BB11_2 Depth=1
-	sw	a5, 0(a7)
-	sw	s7, 0(t1)
-	sw	s8, 0(t2)
-	sw	s9, 0(t3)
-	sw	s5, 0(t4)
-	sw	s6, 0(t5)
-	sw	s3, 0(t6)
-	sw	a3, 0(s0)
-	sw	s2, 0(s1)
-	lbu	s5, 1(a0)
+	lw	s11, 0(a7)
+	bnez	s11, .LBB11_7
+# %bb.8:                                #   in Loop: Header=BB11_2 Depth=1
+	sw	s10, 0(a6)
+	sw	s8, 0(t0)
+	sw	s9, 0(t1)
+	sw	s7, 0(t2)
+	sw	s6, 0(t3)
+	sw	s4, 0(t4)
+	sw	s3, 0(t5)
+	sw	a3, 0(t6)
+	sw	s2, 0(s0)
+.LBB11_9:                               #   in Loop: Header=BB11_2 Depth=1
+	lbu	s4, 1(a0)
 	addi	a0, a0, 1
-	add	s3, s3, s4
-	bnez	s5, .LBB11_2
-.LBB11_8:
+	add	s3, s3, s5
+	bnez	s4, .LBB11_2
+.LBB11_10:
 	lw	s0, 44(sp)                      # 4-byte Folded Reload
 	lw	s1, 40(sp)                      # 4-byte Folded Reload
 	lw	s2, 36(sp)                      # 4-byte Folded Reload
@@ -616,6 +630,7 @@ _ZN4Hapi8DrawTextEPKcNS_4FontEiij:      # @_ZN4Hapi8DrawTextEPKcNS_4FontEiij
 	lw	s8, 12(sp)                      # 4-byte Folded Reload
 	lw	s9, 8(sp)                       # 4-byte Folded Reload
 	lw	s10, 4(sp)                      # 4-byte Folded Reload
+	lw	s11, 0(sp)                      # 4-byte Folded Reload
 	addi	sp, sp, 48
 	ret
 .Lfunc_end11:
@@ -626,12 +641,26 @@ _ZN4Hapi8DrawTextEPKcNS_4FontEiij:      # @_ZN4Hapi8DrawTextEPKcNS_4FontEiij
 	.type	_ZN4Hapi8DrawTextEPKciij,@function
 _ZN4Hapi8DrawTextEPKciij:               # @_ZN4Hapi8DrawTextEPKciij
 # %bb.0:
+	addi	sp, sp, -32
+	sw	ra, 28(sp)                      # 4-byte Folded Spill
 	mv	a4, a3
 	mv	a3, a2
 	mv	a2, a1
-	lui	a1, %hi(_ZL11defaultFont)
-	addi	a1, a1, %lo(_ZL11defaultFont)
-	tail	_ZN4Hapi8DrawTextEPKcNS_4FontEiij
+	lui	a1, %hi(_ZN4Hapi11defaultFontE)
+	lw	a5, %lo(_ZN4Hapi11defaultFontE)(a1)
+	addi	a1, a1, %lo(_ZN4Hapi11defaultFontE)
+	lw	a6, 4(a1)
+	lw	a7, 8(a1)
+	lw	a1, 12(a1)
+	sw	a5, 12(sp)
+	sw	a6, 16(sp)
+	sw	a7, 20(sp)
+	sw	a1, 24(sp)
+	addi	a1, sp, 12
+	call	_ZN4Hapi8DrawTextEPKcNS_4FontEiij
+	lw	ra, 28(sp)                      # 4-byte Folded Reload
+	addi	sp, sp, 32
+	ret
 .Lfunc_end12:
 	.size	_ZN4Hapi8DrawTextEPKciij, .Lfunc_end12-_ZN4Hapi8DrawTextEPKciij
                                         # -- End function
@@ -717,12 +746,17 @@ VSYNC_BUFFER_SWAP:
 	.word	33554492
 	.size	VSYNC_BUFFER_SWAP, 4
 
-	.type	_ZL11defaultFont,@object        # @_ZL11defaultFont
-	.local	_ZL11defaultFont
-	.comm	_ZL11defaultFont,16,4
+	.type	_ZN4Hapi11defaultFontE,@object  # @_ZN4Hapi11defaultFontE
+	.bss
+	.globl	_ZN4Hapi11defaultFontE
+	.p2align	2, 0x0
+_ZN4Hapi11defaultFontE:
+	.zero	16
+	.size	_ZN4Hapi11defaultFontE, 16
+
 	.type	_ZL5atlas,@object               # @_ZL5atlas
 	.local	_ZL5atlas
-	.comm	_ZL5atlas,4096,4
+	.comm	_ZL5atlas,2048,4
 	.type	_ZN6AssetsL11minifont5x3E,@object # @_ZN6AssetsL11minifont5x3E
 	.section	.rodata,"a",@progbits
 	.p2align	1, 0x0
