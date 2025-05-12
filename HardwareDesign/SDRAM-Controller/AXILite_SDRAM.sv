@@ -72,6 +72,8 @@ logic[24:0] address;
 logic[15:0] write_data;
 logic       write_enable;
 logic[15:0] read_data;
+logic[31:0] read_data_full;
+logic       read_enable;
 logic       read_ready;
 logic       is_busy;
 sdram_controller SDRAM_Controller 
@@ -81,7 +83,7 @@ sdram_controller SDRAM_Controller
     .wr_data(write_data),
     .wr_enable(write_enable),
     .rd_addr(address[24:1]),
-    .rd_data(next_address_type == WORD_1 ? read_data[31:16] : read_data[15:0]),
+    .rd_data(read_data),
     .rd_ready(read_ready),
     .rd_enable(read_enable),
     .busy(is_busy),
@@ -101,6 +103,13 @@ sdram_controller SDRAM_Controller
 );
 
 assign write_data = next_address_type == WORD_1 ? axi_write_data[31:16] : axi_write_data[15:0];
+
+always_ff @(posedge clk_130mhz) begin
+    if (address_type == WORD_1)
+        read_data_full[31:16] <= read_data;
+    if(address_type == WORD_0 || address_type == HALF_WORD)
+        read_data_full[15:0] <= read_data;
+end
 
 always_comb begin
     next_action = action;
@@ -129,7 +138,7 @@ always_comb begin
     if(!resetn) next_action = IDLE; 
 end
 
-always_comb begin
+always @(*) begin
     next_address_type = address_type; 
     case (address_type)
         NONE: begin

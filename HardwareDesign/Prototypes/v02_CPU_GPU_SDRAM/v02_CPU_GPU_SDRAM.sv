@@ -11,9 +11,11 @@ module CPU_with_GPU_SDRAM
 	output logic        sdram_casn,
 	output logic[12:0]  sdram_a,
 	output logic[1:0]   sdram_ba,
-	output logic[1:0]   sdram_dqm,
-	inout  logic[15:0]  sdram_d
+	output logic[1:0]   sdram_dqm
+	//inout  logic[15:0]  sdram_d
 ); 
+
+logic[15:0] sdram_d;
 
 logic canBeDeleted;
 logic canBeDeleted2;

@@ -26,8 +26,12 @@ int main() {
     Hapi::Image boat = Hapi::LoadImage((char*)SproutLands::Boats, 48, 32);
 
 
+    *sdramInt = 12345;
     while (true) {
-        *sdramInt = 12345;
+    int temp = *sdramInt;
+    *sdramInt = temp + 1;
+    }
+    /*while (true) {
 
         Hapi::StartDrawing();
         Hapi::Clear(Hapi::Color(255, 127, 127, 1));
@@ -53,6 +57,7 @@ int main() {
         updateAnimation(water_ticks, water_frame_x, 16, 48);
         Hapi::EndDrawing();
     }
+    */
     Hapi::Terminate();
     return 0;
 }
