@@ -271,7 +271,7 @@ always @(posedge aclk) begin
 		s_axil_rdata <= 0;
 	else if (!s_axil_rvalid || s_axil_rready)
 	begin
-    s_axil_rdata <= read_data;
+    s_axil_rdata <= read_data_full;
 	end
 end
     
