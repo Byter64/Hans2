@@ -33,9 +33,11 @@ module sd_controller(
     output  logic [4:0] status // For debug purposes: Current state of controller.
 );
 
-    logic [7:0] ram [512*8];
+    logic [7:0] ram [2048];
     initial begin
-        $readmemh("file.hex",ram);
+        for(int i = 0; i< 2048; i++) begin
+            ram[i] = 0;
+        end
     end
 
     parameter RST = 0;
@@ -74,6 +76,12 @@ module sd_controller(
     reg [9:0] bit_counter;
     
     reg [26:0] boot_counter = 27'd10;
+
+    logic [31:0] byte_address;
+    logic [8:0] address_counter = 0; 
+
+    assign byte_address = (address) + 31'(address_counter);
+
     always @(posedge clk) begin
         if(reset == 1) begin
             state <= RST;
@@ -92,6 +100,7 @@ module sd_controller(
                         cmd_mode <= 1;
                         bit_counter <= 160;
                         cs <= 1;
+                        address_counter <= 0;
                         state <= INIT;
                     end
                     else begin
@@ -135,6 +144,7 @@ module sd_controller(
                     end
                 end
                 IDLE: begin
+                    address_counter <= 0;
                     if(rd == 1) begin
                         state <= READ_BLOCK;
                     end
@@ -161,7 +171,8 @@ module sd_controller(
                     sclk_sig <= ~sclk_sig;
                 end
                 READ_BLOCK_DATA: begin
-                    dout <= ram[address>>9 + byte_counter];
+                    dout <= ram[byte_address];
+                    address_counter <= address_counter + 1;
                     byte_available <= 1;
                     if (byte_counter == 0) begin
                         bit_counter <= 7;
@@ -241,7 +252,8 @@ module sd_controller(
                             data_sig <= 8'hFE;
                         end
                         else begin
-                            ram[address>>9+byte_counter] <= din;
+                            address_counter <= address_counter + 1;
+                            ram[byte_address] <= din;
                             ready_for_next_byte <= 1;
                         end
                         bit_counter <= 7;

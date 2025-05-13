@@ -57,11 +57,12 @@ module sd_card_reader (
   logic [31:0] data_addr_read;
 
   logic store_read_write_operation = 0; // Read = 1; Write = 0;
-
+  //                        0           1     2           3            4           5
   typedef enum logic[31:0] {Initialize, Idle, WaitSDCard, WriteSDCard, ReadSDCard, PerformOperation} ControllerState;
   ControllerState state = Initialize;
 
   logic [7:0] ram [512];
+  
   logic ram_dirty = '0;
   logic [22:0] tag; 
 
@@ -96,7 +97,7 @@ module sd_card_reader (
   ///////////////////   W    /////////////////////
   always_ff @(posedge aclk) begin
       // Logic to determine S_AXIS_WREADY
-      s_axil_wready <= (state == Idle);
+      s_axil_wready <= (state == Idle && tag == data_addr_write[31:9]);
   end
 
   always_ff @(posedge aclk) begin
@@ -104,12 +105,13 @@ module sd_card_reader (
     if (s_axil_wvalid && s_axil_wready) begin //Never add any other conditions. This is likely to break axi
       data_in <= s_axil_wdata;
       write_data <= 1;
+      write_mask <= s_axil_wstrb;
     end
   end
   ///////////////////  AR    /////////////////////
   always_ff @(posedge aclk) begin
       // Logic to determine S_AXIS_ARREADY
-      s_axil_arready <= (state == Idle) && (s_axil_wvalid && s_axil_wready);
+      s_axil_arready <= (state == Idle) && ~(s_axil_wvalid && s_axil_wready);
   end
 
   always_ff @(posedge aclk) begin
@@ -123,7 +125,7 @@ module sd_card_reader (
   // just always 00
   logic next_bvalid; //Assign your valid logic to this signal
   logic[1:0] next_bresp; //Assign the data here
-  assign next_bvalid = 1;
+  assign next_bvalid = (state == Idle && tag == data_addr_write[31:9]);
   assign next_bresp = 0;
   always_ff @(posedge aclk) begin
     if (!aresetn)
@@ -187,33 +189,24 @@ module sd_card_reader (
       .din(sd_card_din),
       .ready_for_next_byte(sd_card_ready_for_next_byte),
       .ready(sd_card_ready),
-      .address(sd_card_sector_address),
+      .address({tag,9'b0}),
       .clk(aclk),
       .reset(rst)
   );
 
   logic old_sd_card_ready_for_next_byte;
   logic sd_card_ready_for_next_byte_strobe;
-
+  assign sd_card_ready_for_next_byte_strobe = (~old_sd_card_ready_for_next_byte && sd_card_ready_for_next_byte);
+  
   always_ff @(posedge aclk) begin
     old_sd_card_ready_for_next_byte <= sd_card_ready_for_next_byte;
-    if(~old_sd_card_ready_for_next_byte && sd_card_ready_for_next_byte) begin
-      sd_card_ready_for_next_byte_strobe <= 1;
-    end else begin
-      sd_card_ready_for_next_byte_strobe <= 0;
-    end
   end
 
   logic old_sd_card_byte_available;
   logic sd_card_byte_available_strobe;
-
+  assign sd_card_byte_available_strobe = (~old_sd_card_byte_available && sd_card_byte_available);
   always_ff @(posedge aclk) begin
     old_sd_card_byte_available <= sd_card_byte_available;
-    if(~old_sd_card_byte_available && sd_card_byte_available) begin
-      sd_card_byte_available_strobe <= 1;
-    end else begin
-      sd_card_byte_available_strobe <= 0;
-    end
   end
 
   always_ff @(posedge aclk) begin  
@@ -235,19 +228,19 @@ module sd_card_reader (
         if((tag == data_addr_read[31:9] && read_data) || (tag == data_addr_write[31:9] && write_data)) begin
           // Read data from RAM
           if(read_data) begin
-            data_out[31:24] <= ram[data_addr_read[8:0] + 3];
-            data_out[23:16] <= ram[data_addr_read[8:0] + 2];
-            data_out[15:8]  <= ram[data_addr_read[8:0] + 1];
-            data_out[7:0]   <= ram[data_addr_read[8:0] + 0];
+            data_out[31:24] <= ram[data_addr_read[8:0] + 0];
+            data_out[23:16] <= ram[data_addr_read[8:0] + 1];
+            data_out[15:8]  <= ram[data_addr_read[8:0] + 2];
+            data_out[7:0]   <= ram[data_addr_read[8:0] + 3];
             data_out_valid <= 1;
           end
           //Write data to RAM, set dirty bit
           else if(write_data) begin
             ram_dirty <= 1;
-            if(write_mask[3]) ram[data_addr_write[8:0] + 3] <= data_in[31:24];
-            if(write_mask[2]) ram[data_addr_write[8:0] + 2] <= data_in[23:16];
-            if(write_mask[1]) ram[data_addr_write[8:0] + 1] <= data_in[15:8];
-            if(write_mask[0]) ram[data_addr_write[8:0] + 0] <= data_in[7:0];
+            if(write_mask[3]) ram[data_addr_write[8:0] + 0] <= data_in[31:24];
+            if(write_mask[2]) ram[data_addr_write[8:0] + 1] <= data_in[23:16];
+            if(write_mask[1]) ram[data_addr_write[8:0] + 2] <= data_in[15:8];
+            if(write_mask[0]) ram[data_addr_write[8:0] + 3] <= data_in[7:0];
           end
         end
         // No Hit
@@ -306,19 +299,19 @@ module sd_card_reader (
       end
       PerformOperation: begin
           if(store_read_write_operation) begin
-            data_out[31:24] <= ram[data_addr[8:0] + 3];
-            data_out[23:16] <= ram[data_addr[8:0] + 2];
-            data_out[15:8]  <= ram[data_addr[8:0] + 1];
-            data_out[7:0]   <= ram[data_addr[8:0] + 0];
+            data_out[31:24] <= ram[data_addr[8:0] + 0];
+            data_out[23:16] <= ram[data_addr[8:0] + 1];
+            data_out[15:8]  <= ram[data_addr[8:0] + 2];
+            data_out[7:0]   <= ram[data_addr[8:0] + 3];
             data_out_valid <= 1;
           end
           //Write data to RAM, set dirty bit
           else begin
             ram_dirty <= 1;
-            if(write_mask[3]) ram[data_addr[8:0] + 3] <= data_in[31:24];
-            if(write_mask[2]) ram[data_addr[8:0] + 2] <= data_in[23:16];
-            if(write_mask[1]) ram[data_addr[8:0] + 1] <= data_in[15:8];
-            if(write_mask[0]) ram[data_addr[8:0] + 0] <= data_in[7:0];
+            if(write_mask[3]) ram[data_addr[8:0] + 0] <= data_in[31:24];
+            if(write_mask[2]) ram[data_addr[8:0] + 1] <= data_in[23:16];
+            if(write_mask[1]) ram[data_addr[8:0] + 2] <= data_in[15:8];
+            if(write_mask[0]) ram[data_addr[8:0] + 3] <= data_in[7:0];
           end
           state <= Idle;
       end
