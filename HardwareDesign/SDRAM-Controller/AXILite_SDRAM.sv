@@ -106,9 +106,11 @@ logic read_ready_slow;
 logic read_ready_old;
 logic read_ready_trigger;
 always_ff @(posedge clk_130mhz) read_ready_old <= read_ready;
-always_ff @(posedge clk_130mhz) if(read_ready_old == 0 && read_ready) read_ready_trigger <= 1
-                                else if(read_ready_slow == 1) read_ready_trigger <= 0;
-always_ff @(posedge aclk) if(read_ready_trigger) read_ready_slow <= 1 else read_ready_slow <= 0;
+always_ff @(posedge clk_130mhz) if(read_ready_old == 0 && read_ready) read_ready_trigger <= 1; else if(read_ready_slow == 1) read_ready_trigger <= 0;
+always_ff @(posedge aclk) if(read_ready_trigger) read_ready_slow <= 1; else read_ready_slow <= 0;
+
+logic s_axil_rready_old;
+always_ff @(posedge aclk) s_axil_rready_old <= s_axil_rready;
 
 assign write_data = next_address_type == WORD_1 ? axi_write_data[31:16] : axi_write_data[15:0];
 
@@ -126,7 +128,7 @@ always_comb begin
             if (!is_busy) begin
                 if(s_axil_wvalid && s_axil_wready) begin
                     next_action = WRITE;
-                end else if (s_axil_rready) begin
+                end else if (s_axil_rready_old == 0 && s_axil_rready) begin
                     next_action = READ;
                 end
             end
@@ -199,7 +201,7 @@ always_ff @(posedge aclk) begin
     //control signals for the SDRAM-Controller
     if(action == IDLE && next_action == READ) begin
         read_enable <= 1;
-    end else if (action == READ && next_address_type == WORD_1) begin
+    end else if (action == READ && address_type == WORD_0 && next_address_type == WORD_1) begin
         read_enable <= 1;
     end
 end
@@ -254,9 +256,15 @@ always @(posedge aclk) begin
 end
 
 //Read
-//This is not AXI compliant, but I could not think of a better way to invalidate s_axil_rdata if address is written at the sime time as data is read
-assign s_axil_rvalid = !aresetn ? 0 : !(s_axil_arvalid && s_axil_arready) && !is_busy;
-
+logic next_rvalid; //Assign your valid logic to this signal
+assign next_rvalid = !s_axil_rready ? 0 : s_axil_rvalid ? 0 : action == IDLE && !(s_axil_arvalid && s_axil_arready) && !is_busy;
+always_ff @(posedge aclk) begin
+	if (!aresetn)
+		s_axil_rvalid <= 0;
+	else if (!s_axil_rvalid || s_axil_rready) begin
+		s_axil_rvalid <= next_rvalid;
+    end
+end
 
 always @(posedge aclk) begin
 	if (!aresetn)
