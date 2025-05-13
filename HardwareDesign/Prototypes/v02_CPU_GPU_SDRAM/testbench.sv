@@ -37,7 +37,7 @@ initial begin
 	$dumpvars(0, Top.Processor);
 	$dumpvars(0, Top.SDRAM);
 	for(integer i = 0; i < 1000; i++) $dumpvars(0, Top.Bootloader.memory[i]);
-	#30000000
+	#20000000
 	$finish;
 end
 

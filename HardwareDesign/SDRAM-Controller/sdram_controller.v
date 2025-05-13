@@ -63,20 +63,20 @@ localparam CYCLES_BETWEEN_REFRESH = ( CLK_FREQUENCY
 // STATES - State
 localparam IDLE      = 5'b00000;
 
-localparam INIT_NOP1 = 5'b01000,
-           INIT_PRE1 = 5'b01001,
+localparam INIT_NOP1 = 5'b00000,
+           INIT_PRE1 = 5'b00001,
            INIT_NOP1_1=5'b00101,
-           INIT_REF1 = 5'b01010,
-           INIT_NOP2 = 5'b01011,
-           INIT_REF2 = 5'b01100,
-           INIT_NOP3 = 5'b01101,
-           INIT_LOAD = 5'b01110,
-           INIT_NOP4 = 5'b01111;
+           INIT_REF1 = 5'b00010,
+           INIT_NOP2 = 5'b00011,
+           INIT_REF2 = 5'b00100,
+           INIT_NOP3 = 5'b00101,
+           INIT_LOAD = 5'b00110,
+           INIT_NOP4 = 5'b00111;
 
-localparam REF_PRE  =  5'b00001,
-           REF_NOP1 =  5'b00010,
-           REF_REF  =  5'b00011,
-           REF_NOP2 =  5'b00100;
+localparam REF_PRE  =  5'b01001,
+           REF_NOP1 =  5'b01010,
+           REF_REF  =  5'b01011,
+           REF_NOP2 =  5'b01100;
 
 localparam READ_ACT  = 5'b10000,
            READ_NOP1 = 5'b10001,
@@ -202,7 +202,8 @@ always @ (posedge clk)
     else
       rd_ready_r <= 1'b0;
 
-    busy <= state[4];
+    //state is Read/Write or state is refresh
+    busy <= state[4] || state[3];
 
     if (rd_enable)
       haddr_r <= rd_addr;

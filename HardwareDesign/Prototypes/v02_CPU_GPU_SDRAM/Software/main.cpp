@@ -30,7 +30,6 @@ int main() {
     while (true) {
 
         Hapi::StartDrawing();
-        Hapi::Clear(Hapi::Color(255, 127, 127, 1));
 
         for (int y = 0; y < 240; y += 16) {
             for (int x = 0; x < 400; x += 16) {
@@ -47,8 +46,11 @@ int main() {
         sprintf_(text, "Boat x pos: %i", left_boat_x);
         Hapi::DrawText(text, 5, 5, INT32_MAX);
 
-        sprintf_(text, "SDRAM contains number %i", *sdramInt);
-        Hapi::DrawText(text, 5, 10, INT32_MAX);
+        for(int i = 0; i < 20; i++)
+        {
+            sprintf_(text, "SDRAM contains number %i", *sdramInt);
+            Hapi::DrawText(text, 5, 10, INT32_MAX);
+        }
         Hapi::Draw((Hapi::Image)Hapi::defaultFont.fontSheet, 0, 0, 250, 10, 120, 15, 120);
         updateAnimation(water_ticks, water_frame_x, 16, 48);
         Hapi::EndDrawing();

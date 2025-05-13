@@ -16,7 +16,7 @@ module CPU_with_GPU_SDRAM
 ); 
 
 logic canBeDeleted;
-logic canBeDeleted2;
+//logic canBeDeleted2;
  
 logic hdmi_pixClk;
 logic resetn = 0;
@@ -149,7 +149,7 @@ logic[1:0]             SDRAM_s_axil_rresp;
 logic                  SDRAM_s_axil_rvalid;
 logic                  SDRAM_s_axil_rready;
 
-AXILite_SDRAM SDRAM
+AXILite_SDRAM SDRAM 
 (
 	.clk_130mhz(clk_130mhz),
 	.resetn(resetn),

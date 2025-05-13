@@ -54,12 +54,13 @@ typedef enum logic[1:0]
     WAIT_ACKNOWLEDGE= 2'b11
 } Action;
 
-typedef enum logic[1:0] 
+typedef enum logic[2:0] 
 { 
-    NONE            = 2'b00,
-    HALF_WORD       = 2'b01,
-    WORD_0          = 2'b10,
-    WORD_1          = 2'b11
+    NONE            = 3'b000,
+    HALF_WORD       = 3'b001,
+    WORD_0          = 3'b010,
+    WORD_0_WAIT     = 3'b011,
+    WORD_1          = 3'b100
 } Type;
 
 Action action = IDLE;
@@ -166,7 +167,15 @@ always @(*) begin
                 next_address_type = NONE;
         end
         WORD_0: begin
-            if(!is_busy && (action != READ || read_ready_slow)) begin
+            if(action != READ || read_ready_slow) begin
+                if(is_busy)
+                    next_address_type = WORD_0_WAIT;
+                else
+                    next_address_type = WORD_1;
+            end
+        end
+        WORD_0_WAIT: begin
+            if(!is_busy) begin
                 next_address_type = WORD_1;
             end
         end
