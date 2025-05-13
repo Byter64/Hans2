@@ -16,7 +16,7 @@ CPU_with_GPU_SDRAM Top
 initial begin
 	$dumpvars(0, Top);
 	for(integer i = 0; i < 1000; i++) $dumpvars(0, Top.Bootloader.memory[i]);
-	#1000000
+	#100000
 	$finish;
 end
 

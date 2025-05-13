@@ -112,7 +112,7 @@ always_ff @(posedge aclk) if(read_ready_trigger) read_ready_slow <= 1; else read
 logic s_axil_rready_old;
 always_ff @(posedge aclk) s_axil_rready_old <= s_axil_rready;
 
-assign write_data = next_address_type == WORD_1 ? axi_write_data[31:16] : axi_write_data[15:0];
+assign write_data = address_type == WORD_1 ? axi_write_data[31:16] : axi_write_data[15:0];
 
 always_ff @(posedge clk_130mhz) begin
     if (address_type == WORD_1)
