@@ -140,7 +140,7 @@ assign sdram_casn   = !sdram_cas_o;
 assign sdram_a      = sdram_addr_o;
 assign sdram_ba     = sdram_ba_o;
 assign sdram_dqm    = sdram_dqm_o;
-assign sdram_d      = sdram_data_output_o; //???
+assign sdram_d      = sdram_data_output_o;
 
 //controller inputs
 assign clk_i = aclk;
@@ -161,7 +161,7 @@ assign inport_arid_i = 0;
 assign inport_arlen_i = 0;
 assign inport_arburst_i = 1;
 assign inport_rready_i = s_axil_rready;
-assign sdram_data_input_i = sdram_d; //???
+assign sdram_data_input_i = sdram_d;
 
 //Controller outputss
 assign s_axil_awready = inport_awready_o;
