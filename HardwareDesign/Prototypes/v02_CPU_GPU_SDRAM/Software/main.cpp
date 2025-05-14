@@ -31,7 +31,7 @@ int main() {
 
         Hapi::StartDrawing();
 
-        for (int y = 0; y < 240; y += 16) {
+        /*for (int y = 0; y < 240; y += 16) {
             for (int x = 0; x < 400; x += 16) {
                 Hapi::Draw(water, water_frame_x, 0, x, y, 16, 16, 48);
             }
@@ -40,16 +40,15 @@ int main() {
         Hapi::Draw(boat, 0, 0, left_boat_x, left_boat_y, 48, 32, 48);
 		boat_pos += boat_speed;
 		left_boat_x = 50 + (boat_pos % 200);
-
-		char text[64]; 
+*/
+		char text[2000]; 
         //This is from ../printf
         sprintf_(text, "Boat x pos: %i", left_boat_x);
         Hapi::DrawText(text, 5, 5, INT32_MAX);
 
-        for(int i = 0; i < 20; i++)
+        for(int i = 0; i < 2000; i++)
         {
-            sprintf_(text, "SDRAM contains number %i", *sdramInt);
-            Hapi::DrawText(text, 5, 10, INT32_MAX);
+            text[i] = (char)*sdramInt;
         }
         Hapi::Draw((Hapi::Image)Hapi::defaultFont.fontSheet, 0, 0, 250, 10, 120, 15, 120);
         updateAnimation(water_ticks, water_frame_x, 16, 48);

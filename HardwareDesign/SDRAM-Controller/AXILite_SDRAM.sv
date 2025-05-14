@@ -210,7 +210,7 @@ always_ff @(posedge aclk) begin
     //control signals for the SDRAM-Controller
     if(action == IDLE && next_action == READ) begin
         read_enable <= 1;
-    end else if (action == READ && address_type == WORD_0 && next_address_type == WORD_1) begin
+    end else if (action == READ && (address_type == WORD_0_WAIT || address_type == WORD_0) && next_address_type == WORD_1) begin
         read_enable <= 1;
     end
 end

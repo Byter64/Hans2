@@ -226,7 +226,7 @@ logic [DATA_WIDTH-1:0] GS_m_axil_rdata;
 logic [1:0]            GS_m_axil_rresp;
 logic                  GS_m_axil_rvalid;
 logic                  GS_m_axil_rready;
-
+   
 GraphicSystem GraphicSystem 
 (
 	.clk25Mhz(clk_25mhz),

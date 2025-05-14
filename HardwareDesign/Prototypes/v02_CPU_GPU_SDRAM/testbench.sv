@@ -34,10 +34,10 @@ CPU_with_GPU_SDRAM Top
 );
 
 initial begin
-	$dumpvars(0, Top.Processor);
+	$dumpvars(0, Top.Processor.picorv32_core.dbg_ascii_instr);
 	$dumpvars(0, Top.SDRAM);
-	for(integer i = 0; i < 1000; i++) $dumpvars(0, Top.Bootloader.memory[i]);
-	#20000000
+	$dumpvars(0, Top.GraphicSystem.gpu);
+	#40000000
 	$finish;
 end
 
