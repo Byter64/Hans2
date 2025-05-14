@@ -30,7 +30,7 @@ module AXILite_SDRAM #(
     input logic [STRB_WIDTH-1:0]             s_axil_wstrb,
     input logic                              s_axil_wvalid,
     output logic                             s_axil_wready,
-    output logic [1:0]                       s_axil_bresp = 0,
+    output logic [1:0]                       s_axil_bresp,
     output logic                             s_axil_bvalid,
     input logic                              s_axil_bready,
     input logic [ADDR_WIDTH-1:0]             s_axil_araddr,
@@ -43,247 +43,137 @@ module AXILite_SDRAM #(
     input logic                              s_axil_rready
 );
 
-logic[31:0] axi_write_data;
-logic[31:0] axi_read_data;
+logic        clk_i;
+logic        rst_i;
+logic        inport_awvalid_i;
+logic [31:0] inport_awaddr_i;
+logic [ 3:0] inport_awid_i;
+logic [ 7:0] inport_awlen_i;
+logic [ 1:0] inport_awburst_i;
+logic        inport_wvalid_i;
+logic [31:0] inport_wdata_i;
+logic [ 3:0] inport_wstrb_i;
+logic        inport_wlast_i;
+logic        inport_bready_i;
+logic        inport_arvalid_i;
+logic [31:0] inport_araddr_i;
+logic [ 3:0] inport_arid_i;
+logic [ 7:0] inport_arlen_i;
+logic [ 1:0] inport_arburst_i;
+logic        inport_rready_i;
+logic [15:0] sdram_data_input_i;
+logic        inport_awready_o;
+logic        inport_wready_o;
+logic        inport_bvalid_o;
+logic [ 1:0] inport_bresp_o;
+logic [ 3:0] inport_bid_o;
+logic        inport_arready_o;
+logic        inport_rvalid_o;
+logic [31:0] inport_rdata_o;
+logic [ 1:0] inport_rresp_o;
+logic [ 3:0] inport_rid_o;
+logic        inport_rlast_o;
+logic        sdram_clk_o;
+logic        sdram_cke_o;
+logic        sdram_cs_o;
+logic        sdram_ras_o;
+logic        sdram_cas_o;
+logic        sdram_we_o;
+logic [ 1:0] sdram_dqm_o;
+logic [12:0] sdram_addr_o;
+logic [ 1:0] sdram_ba_o;
+logic [15:0] sdram_data_output_o;
+logic        sdram_data_out_en_o;
 
-typedef enum logic[1:0] 
-{ 
-    IDLE            = 2'b00,
-    READ            = 2'b01,
-    WRITE           = 2'b10,
-    WAIT_ACKNOWLEDGE= 2'b11
-} Action;
-
-typedef enum logic[2:0] 
-{ 
-    NONE            = 3'b000,
-    HALF_WORD       = 3'b001,
-    WORD_0          = 3'b010,
-    WORD_0_WAIT     = 3'b011,
-    WORD_1          = 3'b100
-} Type;
-
-Action action = IDLE;
-Action next_action;
-
-Type address_type = NONE;
-Type next_address_type;
-
-logic[24:0] address;
-logic[15:0] write_data;
-logic       write_enable;
-logic[15:0] read_data;
-logic[31:0] read_data_full;
-logic       read_enable;
-logic       read_ready;
-logic       is_busy;
-sdram_controller SDRAM_Controller 
+sdram_axi sdram_axi 
 (
-    //Host Interface
-    .wr_addr(address[24:1]),
-    .wr_data(write_data),
-    .wr_enable(write_enable), //This may need to be synced
-    .rd_addr(address[24:1]),
-    .rd_data(read_data),
-    .rd_ready(read_ready), //This must be synced
-    .rd_enable(read_enable), //This may need to be synced
-    .busy(is_busy),
-    .rst_n(resetn),
-    .clk(clk_130mhz), //Expects 133 MHz
-    // SDRAM Interface
-    .addr(sdram_a),
-    .bank_addr(sdram_ba),
-    .data(sdram_d),
-    .clock_enable(sdram_cke),
-    .cs_n(sdram_csn),
-    .ras_n(sdram_rasn),
-    .cas_n(sdram_casn),
-    .we_n(sdram_wen),
-    .data_mask_low(sdram_dqm[0]),
-    .data_mask_high(sdram_dqm[1])
+    .clk_i(clk_i),
+    .rst_i(rst_i),
+    .inport_awvalid_i(inport_awvalid_i),
+    .inport_awaddr_i(inport_awaddr_i),
+    .inport_awid_i(inport_awid_i),
+    .inport_awlen_i(inport_awlen_i),
+    .inport_awburst_i(inport_awburst_i),
+    .inport_wvalid_i(inport_wvalid_i),
+    .inport_wdata_i(inport_wdata_i),
+    .inport_wstrb_i(inport_wstrb_i),
+    .inport_wlast_i(inport_wlast_i),
+    .inport_bready_i(inport_bready_i),
+    .inport_arvalid_i(inport_arvalid_i),
+    .inport_araddr_i(inport_araddr_i),
+    .inport_arid_i(inport_arid_i),
+    .inport_arlen_i(inport_arlen_i),
+    .inport_arburst_i(inport_arburst_i),
+    .inport_rready_i(inport_rready_i),
+    .sdram_data_input_i(sdram_data_input_i),
+    .inport_awready_o(inport_awready_o),
+    .inport_wready_o(inport_wready_o),
+    .inport_bvalid_o(inport_bvalid_o),
+    .inport_bresp_o(inport_bresp_o),
+    .inport_bid_o(inport_bid_o),
+    .inport_arready_o(inport_arready_o),
+    .inport_rvalid_o(inport_rvalid_o),
+    .inport_rdata_o(inport_rdata_o),
+    .inport_rresp_o(inport_rresp_o),
+    .inport_rid_o(inport_rid_o),
+    .inport_rlast_o(inport_rlast_o),
+    .sdram_clk_o(sdram_clk_o),
+    .sdram_cke_o(sdram_cke_o),
+    .sdram_cs_o(sdram_cs_o),
+    .sdram_ras_o(sdram_ras_o),
+    .sdram_cas_o(sdram_cas_o),
+    .sdram_we_o(sdram_we_o),
+    .sdram_dqm_o(sdram_dqm_o),
+    .sdram_addr_o(sdram_addr_o),
+    .sdram_ba_o(sdram_ba_o),
+    .sdram_data_output_o(sdram_data_output_o),
+    .sdram_data_out_en_o(sdram_data_out_en_o)
 );
 
-logic read_ready_slow;
-logic read_ready_old;
-logic read_ready_trigger;
-always_ff @(posedge clk_130mhz) read_ready_old <= read_ready;
-always_ff @(posedge clk_130mhz) if(read_ready_old == 0 && read_ready) read_ready_trigger <= 1; else if(read_ready_slow == 1) read_ready_trigger <= 0;
-always_ff @(posedge aclk) if(read_ready_trigger) read_ready_slow <= 1; else read_ready_slow <= 0;
+//SDRAM signals
+assign sdram_clk    = sdram_clk_o;
+assign sdram_cke    = sdram_cke_o;
+assign sdram_csn    = !sdram_cs_o;
+assign sdram_wen    = !sdram_we_o;
+assign sdram_rasn   = !sdram_ras_o;
+assign sdram_casn   = !sdram_cas_o;
+assign sdram_a      = sdram_addr_o;
+assign sdram_ba     = sdram_ba_o;
+assign sdram_dqm    = sdram_dqm_o;
+assign sdram_d      = sdram_data_output_o; //???
 
-logic s_axil_rready_old;
-always_ff @(posedge aclk) s_axil_rready_old <= s_axil_rready;
+//controller inputs
+assign clk_i = aclk;
+assign rst_i = !aresetn;
+assign inport_awvalid_i = s_axil_awvalid;
+assign inport_awaddr_i = s_axil_awaddr;
+assign inport_awid_i = 0;
+assign inport_awlen_i = 0;
+assign inport_awburst_i = 1;
+assign inport_wvalid_i = s_axil_wvalid;
+assign inport_wdata_i = s_axil_wdata;
+assign inport_wstrb_i = s_axil_wstrb;
+assign inport_wlast_i = 1;
+assign inport_bready_i = s_axil_bready;
+assign inport_arvalid_i = s_axil_arvalid;
+assign inport_araddr_i = s_axil_araddr;
+assign inport_arid_i = 0;
+assign inport_arlen_i = 0;
+assign inport_arburst_i = 1;
+assign inport_rready_i = s_axil_rready;
+assign sdram_data_input_i = sdram_d; //???
 
-assign write_data = address_type == WORD_1 ? axi_write_data[31:16] : axi_write_data[15:0];
-
-always_ff @(posedge clk_130mhz) begin
-    if (address_type == WORD_1)
-        read_data_full[31:16] <= read_data;
-    if(address_type == WORD_0 || address_type == HALF_WORD)
-        read_data_full[15:0] <= read_data;
-end
-
-always_comb begin
-    next_action = action;
-    case (action)
-        IDLE: begin
-            if (!is_busy) begin
-                if(s_axil_wvalid && s_axil_wready) begin
-                    next_action = WRITE;
-                end else if (s_axil_rready_old == 0 && s_axil_rready) begin
-                    next_action = READ;
-                end
-            end
-        end
-        WRITE: begin
-            if(address_type == HALF_WORD || address_type == WORD_1) begin
-                next_action = IDLE;
-            end
-        end
-        READ: begin
-            if((address_type == HALF_WORD || address_type == WORD_1) && read_ready_slow) begin
-                next_action = IDLE;
-            end
-        end
-    endcase
-
-    if(!resetn) next_action = IDLE; 
-end
-
-always @(*) begin
-    next_address_type = address_type; 
-    case (address_type)
-        NONE: begin
-            if(next_action != IDLE) begin
-                case (address[1:0])
-                    2'b00 : next_address_type = WORD_0;
-                    //2'b00 : next_action = ??;
-                    2'b10 : next_address_type = HALF_WORD;
-                    //2'b00 : next_action = ??;
-                endcase
-            end
-        end
-        HALF_WORD: begin
-            if(action != READ || read_ready_slow)
-                next_address_type = NONE;
-        end
-        WORD_0: begin
-            if(action != READ || read_ready_slow) begin
-                if(is_busy)
-                    next_address_type = WORD_0_WAIT;
-                else
-                    next_address_type = WORD_1;
-            end
-        end
-        WORD_0_WAIT: begin
-            if(!is_busy) begin
-                next_address_type = WORD_1;
-            end
-        end
-        WORD_1: begin
-            if(action != READ || read_ready_slow) begin
-                next_address_type = NONE;
-            end
-        end
-    endcase
-
-    if(!resetn) begin 
-        next_address_type = NONE;
-    end
-end
-
-always_ff @(posedge aclk) begin
-    action <= next_action;
-    address_type <= next_address_type;
-end
-
-always_ff @(posedge aclk) begin
-    write_enable <= 0;
-    read_enable <= 0;
-
-    //control signals for the SDRAM-Controller
-    if(action == IDLE && next_action == WRITE) begin
-        write_enable <= 1;
-    end else if (action == WRITE && next_address_type == WORD_1) begin
-        write_enable <= 1;
-    end
-
-    //control signals for the SDRAM-Controller
-    if(action == IDLE && next_action == READ) begin
-        read_enable <= 1;
-    end else if (action == READ && (address_type == WORD_0_WAIT || address_type == WORD_0) && next_address_type == WORD_1) begin
-        read_enable <= 1;
-    end
-end
-
-//Address Write
-logic[24:0] write_address;
-logic[24:0] read_address;
-logic[24:0] write_address_real;
-logic[24:0] read_address_real;
-assign write_address_real = s_axil_awvalid && s_axil_awready ? s_axil_awaddr : write_address;
-always @(posedge aclk) begin
-	s_axil_awready <= 1;
-end
-
-always @(posedge aclk) begin
-	if (s_axil_awvalid && s_axil_awready) begin //Never add any other conditions. This is likely to break axi
-		write_address <= s_axil_awaddr[24:0];
-    end
-end
-
-//Write
-always @(posedge aclk) begin
-		s_axil_wready <= action == IDLE;
-end
-
- 
-always @(posedge aclk) begin
-    if (s_axil_wvalid && s_axil_wready) begin //Never add any other conditions. This is likely to break axi
-        axi_write_data <= s_axil_wdata;
-    end
-end
-
-//Write response
-always @(posedge aclk) begin
-	if (!aresetn)
-		s_axil_bvalid <= 0;
-	else if (!s_axil_bvalid || s_axil_bready) begin
-		s_axil_bvalid <= 1;
-  end
-end
-
-//Address Read
-assign read_address_real = s_axil_arvalid && s_axil_arready ? s_axil_araddr : read_address;
-always @(posedge aclk) begin
-		s_axil_arready <= 1;
-end
-
-always @(posedge aclk) begin
-	if (s_axil_arvalid && s_axil_arready) begin //Never add any other conditions. This is likely to break axi
-		read_address <= s_axil_araddr[24:0];
-    end
-end
-
-//Read
-logic next_rvalid; //Assign your valid logic to this signal
-assign next_rvalid = !s_axil_rready ? 0 : s_axil_rvalid ? 0 : action == IDLE && !(s_axil_arvalid && s_axil_arready) && !is_busy;
-always_ff @(posedge aclk) begin
-	if (!aresetn)
-		s_axil_rvalid <= 0;
-	else if (!s_axil_rvalid || s_axil_rready) begin
-		s_axil_rvalid <= next_rvalid;
-    end
-end
-
-always @(posedge aclk) begin
-	if (!aresetn)
-		s_axil_rdata <= 0;
-	else if (!s_axil_rvalid || s_axil_rready)
-	begin
-    s_axil_rdata <= read_data_full;
-	end
-end
-    
-assign address = action == WRITE ? write_address_real : read_address_real;
+//Controller outputss
+assign s_axil_awready = inport_awready_o;
+assign s_axil_wready = inport_wready_o;
+assign s_axil_bvalid = inport_bvalid_o;
+assign s_axil_bresp = inport_bresp_o;
+//inport_bid_o
+assign s_axil_arready = inport_arready_o;
+assign s_axil_rvalid = inport_rvalid_o;
+assign s_axil_rdata = inport_rdata_o;
+assign s_axil_rresp = inport_rresp_o;
+//inport_rid_o
+//inport_rlast_o
 
 endmodule

@@ -37,7 +37,7 @@ initial begin
 	$dumpvars(0, Top.Processor.picorv32_core.dbg_ascii_instr);
 	$dumpvars(0, Top.SDRAM);
 	$dumpvars(0, Top.GraphicSystem.gpu);
-	#40000000
+	#10000000
 	$finish;
 end
 
