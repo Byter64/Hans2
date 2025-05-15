@@ -5,9 +5,6 @@ module AXILite_SDRAM #(
 )
 (
     //SDRAM
-
-    input logic clk_130mhz,
-    input logic resetn,
     output logic        sdram_clk,
     output logic        sdram_cke,
     output logic        sdram_csn,
@@ -131,7 +128,6 @@ sdram_axi sdram_axi
 );
 
 //SDRAM signals
-assign sdram_clk    = sdram_clk_o;
 assign sdram_cke    = sdram_cke_o;
 assign sdram_csn    = !sdram_cs_o;
 assign sdram_wen    = !sdram_we_o;
@@ -140,7 +136,6 @@ assign sdram_casn   = !sdram_cas_o;
 assign sdram_a      = sdram_addr_o;
 assign sdram_ba     = sdram_ba_o;
 assign sdram_dqm    = sdram_dqm_o;
-assign sdram_d      = sdram_data_output_o;
 
 //controller inputs
 assign clk_i = aclk;
@@ -161,7 +156,6 @@ assign inport_arid_i = 0;
 assign inport_arlen_i = 0;
 assign inport_arburst_i = 1;
 assign inport_rready_i = s_axil_rready;
-assign sdram_data_input_i = sdram_d;
 
 //Controller outputss
 assign s_axil_awready = inport_awready_o;
@@ -175,5 +169,38 @@ assign s_axil_rdata = inport_rdata_o;
 assign s_axil_rresp = inport_rresp_o;
 //inport_rid_o
 //inport_rlast_o
+
+ODDRX1F  
+#(
+    //.DDR_ALIGNMENT("NONE"),
+    //.INIT(1'b0),
+    //.SRTYPE("SYNC")
+)
+u_clock_delay
+(
+    .Q(sdram_clk),
+    .SCLK(clk_i),
+    .RST(1'b0),
+    .D0(1'b0),
+    .D1(1'b1)
+);
+
+genvar i;
+for (i=0; i < 16; i = i + 1) 
+begin
+  TRELLIS_IO 
+  #(
+    //.DRIVE(12),
+    //.IOSTANDARD("LVTTL"),
+    //.SLEWRATE("FAST")
+  )
+  u_data_buf
+  (
+    .O(sdram_data_input_i[i]),
+    .B(sdram_d[i]),
+    .I(sdram_data_output_o[i]),
+    .T(~sdram_data_out_en_o)
+  );
+end
 
 endmodule

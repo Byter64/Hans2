@@ -2,7 +2,7 @@ module CPU_with_GPU_SDRAM
 (
     input logic  clk_25mhz,
     output logic [3:0] gpdi_dp,
-
+ 
 	output logic        sdram_clk,
 	output logic        sdram_cke,
 	output logic        sdram_csn,
@@ -28,7 +28,7 @@ always_ff @(posedge hdmi_pixClk) begin
 
 	resetn <= reset_counter == 255;
 end
-
+ 
 wire clk_7mhz;
 wire clk_50mhz;
 wire clk_130mhz;
@@ -151,8 +151,6 @@ logic                  SDRAM_s_axil_rready;
 
 AXILite_SDRAM SDRAM 
 (
-	.clk_130mhz(clk_130mhz),
-	.resetn(resetn),
 	.sdram_clk(sdram_clk),
 	.sdram_cke(sdram_cke),
 	.sdram_csn(sdram_csn),
