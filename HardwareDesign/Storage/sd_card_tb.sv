@@ -154,7 +154,7 @@ module tb_sd_card_reader;
     $dumpfile("dump.vcd");
 
     $dumpvars(0,tb_sd_card_reader);
-    for (idx = 0; idx < 512; idx++) begin
+    for (idx = 0; idx < 128; idx++) begin
       $dumpvars(0,tb_sd_card_reader.dut.ram[idx]); 
     end
     for (idx = 0; idx < 2048; idx++) begin
