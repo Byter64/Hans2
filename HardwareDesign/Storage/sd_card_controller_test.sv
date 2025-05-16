@@ -36,7 +36,7 @@ module sd_controller(
     logic [7:0] ram [2048];
     initial begin
         for(int i = 0; i< 2048; i++) begin
-            ram[i] = 0;
+            ram[i] = i;
         end
     end
 
