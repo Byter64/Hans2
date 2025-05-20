@@ -11,9 +11,12 @@
 void updateAnimation(int& ticks, int& frame_x, int frame_width, int max_frame);
 
 volatile int* sdramInt = (volatile int*)0x00000004;
+volatile int16_t* sdramInt16 = (volatile int16_t*)0x00000008;
+volatile unsigned char* sdramChar = (volatile unsigned char*)0x000000012;
 
+volatile bool isCorrect;
 int main() {
-    int water_ticks = 20, water_frame_x = 0;
+    /*int water_ticks = 20, water_frame_x = 0;
     int left_boat_x = 10, left_boat_y = 100;
     int right_boat_x = 350, right_boat_y = 100;
     int boat_speed = 2;
@@ -24,12 +27,14 @@ int main() {
     Hapi::SetTargetFPS(60);
     Hapi::Image water = Hapi::LoadImage((char*)SproutLands::Water, 16, 16);
     Hapi::Image boat = Hapi::LoadImage((char*)SproutLands::Boats, 48, 32);
-    
+    */
 
     *sdramInt = 222288880;
+    *sdramInt16 = 30240;
+    *sdramChar = 5;
     while (true) {
 
-        Hapi::StartDrawing();
+        /*Hapi::StartDrawing();
 
         for (int y = 0; y < 240; y += 16) {
             for (int x = 0; x < 400; x += 16) {
@@ -41,16 +46,25 @@ int main() {
 		boat_pos += boat_speed;
 		left_boat_x = 50 + (boat_pos % 200);
         
-		char text[64]; 
+        */
+        isCorrect = false;
+        isCorrect = *sdramInt == 222288880;
+        isCorrect = *sdramInt16 == 30240;
+        isCorrect = *sdramChar == 5;
+
+		//char text[64]; 
         //This is from ../printf
-        sprintf_(text, "Boat x pos: %i", left_boat_x);
-        Hapi::DrawText(text, 5, 5, INT32_MAX);
-        sprintf_(text, "SDRAM contains number: %i", *sdramInt);
-        //*sdramInt = *sdramInt + 4;
-        Hapi::DrawText(text, 5, 10, INT32_MAX);
-        Hapi::Draw((Hapi::Image)Hapi::defaultFont.fontSheet, 0, 0, 250, 10, 120, 15, 120);
-        updateAnimation(water_ticks, water_frame_x, 16, 48);
-        Hapi::EndDrawing();
+        //sprintf_(text, "Boat x pos: %i", left_boat_x);
+        //Hapi::DrawText(text, 5, 5, INT32_MAX);
+        //sprintf_(text, "SDRAM Int32: %i", *sdramInt);
+        //Hapi::DrawText(text, 5, 10, INT32_MAX);
+        //sprintf_(text, "SDRAM Int16: %i", *sdramInt16);
+        //Hapi::DrawText(text, 5, 15, INT32_MAX);
+        //sprintf_(text, "SDRAM Char: %i", *sdramChar);
+        //Hapi::DrawText(text, 5, 20, INT32_MAX);
+        //Hapi::Draw((Hapi::Image)Hapi::defaultFont.fontSheet, 0, 0, 250, 10, 120, 15, 120);
+        //updateAnimation(water_ticks, water_frame_x, 16, 48);
+        //Hapi::EndDrawing();
     }
     
     Hapi::Terminate();

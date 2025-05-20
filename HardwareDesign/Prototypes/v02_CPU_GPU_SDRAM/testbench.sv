@@ -47,16 +47,14 @@ CPU_with_GPU_SDRAM Top
 	.sdram_d(sdram_d)
 );
  
-integer i;
+integer i; 
 initial begin
-	for(i = 0; i < 4; i++) begin
+	for(i = 0; i < 64; i++) begin
 		$dumpvars(0, SDRAM.Bank0[i]);
-		$dumpvars(0, SDRAM.Command[i]);
-		$dumpvars(0, SDRAM.Col_addr[i]);
 	end
-	$dumpvars(1, testbench);
+	$dumpvars(1, testbench);  
 	$dumpvars(0, SDRAM);
-	$dumpvars(0, Top.Processor.picorv32_core.dbg_ascii_instr);
+	$dumpvars(0, Top.Processor.picorv32_core);
 	$dumpvars(0, Top.SDRAM);
 	#1000000
 	$finish;
