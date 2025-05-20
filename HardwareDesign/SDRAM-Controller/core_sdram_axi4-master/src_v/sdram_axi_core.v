@@ -672,7 +672,7 @@ else if (rd_q[SDRAM_READ_LATENCY+1])
     data_buffer_q <= sample_data_q;
 
 // Read data output
-assign ram_read_data_w = {sample_data_q, data_buffer_q};
+assign ram_read_data_w = {data_buffer_q, sample_data_q};
 
 //-----------------------------------------------------------------
 // ACK
