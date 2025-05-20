@@ -85,7 +85,7 @@ logic [ 1:0] sdram_ba_o;
 logic [15:0] sdram_data_output_o;
 logic        sdram_data_out_en_o;
 
-logic ram_accept_w, ram_ack_w, ram_rd_w;
+logic cont_accept_o, cont_ack_o, cont_rd_o;
 sdram_axi sdram_axi 
 (
     .clk_i(clk_i),
@@ -130,17 +130,17 @@ sdram_axi sdram_axi
     .sdram_data_output_o(sdram_data_output_o),
     .sdram_data_out_en_o(sdram_data_out_en_o),
 
-    .ram_accept_w(ram_accept_w),
-    .ram_ack_w(ram_ack_w),
-    .ram_rd_w(ram_rd_w)
+    .cont_accept_o(cont_accept_o),
+    .cont_ack_o(cont_ack_o),
+    .cont_rd_o(cont_rd_o)
 );
 
 logic isReading = 0;
 
 always_ff @(posedge aclk) begin
-    if(ram_accept_w && ram_rd_w)
+    if(cont_accept_o && cont_rd_o)
         isReading <= 1;
-    if(ram_ack_w)
+    if(cont_ack_o)
         isReading <= 0;
 end
 

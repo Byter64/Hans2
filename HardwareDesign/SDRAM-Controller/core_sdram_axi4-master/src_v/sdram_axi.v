@@ -78,9 +78,9 @@ module sdram_axi
     ,output [  1:0]  sdram_ba_o
     ,output [ 15:0]  sdram_data_output_o
     ,output          sdram_data_out_en_o
-    ,output ram_accept_w
-    ,output ram_ack_w
-    ,output ram_rd_w
+    ,output          cont_accept_o
+    ,output          cont_ack_o
+    ,output          cont_rd_o
 );
 
 
@@ -98,14 +98,17 @@ parameter SDRAM_READ_LATENCY    = 2;
 //-----------------------------------------------------------------
 wire [ 31:0]  ram_addr_w;
 wire [  3:0]  ram_wr_w;
-//wire          ram_rd_w;
-//wire          ram_accept_w;
+wire          ram_rd_w;
+wire          ram_accept_w;
 wire [ 31:0]  ram_write_data_w;
 wire [ 31:0]  ram_read_data_w;
 wire [  7:0]  ram_len_w;
-//wire          ram_ack_w;
+wire          ram_ack_w;
 wire          ram_error_w;
 
+assign cont_accept_o = ram_accept_w;
+assign cont_ack_o = ram_ack_w;
+assign cont_rd_o = ram_rd_w;
 sdram_axi_pmem
 u_axi
 (

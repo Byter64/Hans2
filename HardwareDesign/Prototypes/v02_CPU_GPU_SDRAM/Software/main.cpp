@@ -13,7 +13,7 @@ void updateAnimation(int& ticks, int& frame_x, int frame_width, int max_frame);
 volatile int* sdramInt = (volatile int*)0x00000004;
 
 int main() {
-    /*int water_ticks = 20, water_frame_x = 0;
+    int water_ticks = 20, water_frame_x = 0;
     int left_boat_x = 10, left_boat_y = 100;
     int right_boat_x = 350, right_boat_y = 100;
     int boat_speed = 2;
@@ -25,11 +25,11 @@ int main() {
     Hapi::Image water = Hapi::LoadImage((char*)SproutLands::Water, 16, 16);
     Hapi::Image boat = Hapi::LoadImage((char*)SproutLands::Boats, 48, 32);
     
-*/
+
     *sdramInt = 222288880;
     while (true) {
 
-        /*Hapi::StartDrawing();
+        Hapi::StartDrawing();
 
         for (int y = 0; y < 240; y += 16) {
             for (int x = 0; x < 400; x += 16) {
@@ -45,15 +45,12 @@ int main() {
         //This is from ../printf
         sprintf_(text, "Boat x pos: %i", left_boat_x);
         Hapi::DrawText(text, 5, 5, INT32_MAX);
-        */
-        for(int i = 0; i < 200; i++)
-            volatile int temp = *sdramInt;
-        /*sprintf_(text, "SDRAM contains number: %i", *sdramInt);
-        *sdramInt = *sdramInt + 4;
+        sprintf_(text, "SDRAM contains number: %i", *sdramInt);
+        //*sdramInt = *sdramInt + 4;
         Hapi::DrawText(text, 5, 10, INT32_MAX);
         Hapi::Draw((Hapi::Image)Hapi::defaultFont.fontSheet, 0, 0, 250, 10, 120, 15, 120);
         updateAnimation(water_ticks, water_frame_x, 16, 48);
-        Hapi::EndDrawing();*/
+        Hapi::EndDrawing();
     }
     
     Hapi::Terminate();
