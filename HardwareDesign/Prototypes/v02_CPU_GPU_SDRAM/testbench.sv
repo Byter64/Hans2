@@ -17,19 +17,18 @@ inout logic[15:0]  sdram_d;
 
 always #20 clk_25mhz <= ~clk_25mhz;
 
-logic[15:0] memory[256];
-logic[15:0] data_out;
-assign sdram_d = sdram_wen ? data_out : 16'bzzzzzzzzzzzzzzzz;
-always_ff @(posedge sdram_clk) begin
-	if(sdram_cke && sdram_csn && sdram_rasn && sdram_casn && !sdram_a[10]) begin
-		//Write
-		if(!sdram_wen)
-			memory[sdram_a] <= sdram_d;
-		//Read
-		if (sdram_wen)
-			data_out <= memory[sdram_a];
-	end
-end
+IS42S16160 SDRAM 
+(
+	.Dq(sdram_d),
+	.Addr(sdram_a),
+	.Ba(sdram_ba),
+	.Clk(sdram_clk),
+	.Cke(sdram_cke),
+	.Cs_n(sdram_csn),
+	.Ras_n(sdram_rasn),
+	.Cas_n(sdram_casn),
+	.Dqm(sdram_dqm)
+);
 
 CPU_with_GPU_SDRAM Top 
 (
@@ -52,9 +51,9 @@ initial begin
 	for(i = 0; i < 256; i++)
 		$dumpvars(0, memory[i]);
 	$dumpvars(1, testbench);
+	$dumpvars(0, SDRAM);
 	$dumpvars(0, Top.Processor.picorv32_core.dbg_ascii_instr);
 	$dumpvars(0, Top.SDRAM);
-	$dumpvars(0, Top.GraphicSystem.gpu);
 	#4000000
 	$finish;
 end

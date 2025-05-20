@@ -14,6 +14,7 @@ list(APPEND sources_sim
   ${CMAKE_CURRENT_SOURCE_DIR}/../../SDRAM-Controller/core_sdram_axi4-master/src_v/sdram_axi.v
   ${CMAKE_CURRENT_SOURCE_DIR}/../../SDRAM-Controller/core_sdram_axi4-master/src_v/sdram_axi_core.v
   ${CMAKE_CURRENT_SOURCE_DIR}/../../SDRAM-Controller/core_sdram_axi4-master/src_v/sdram_axi_pmem.v
+  ${CMAKE_CURRENT_SOURCE_DIR}/../../SDRAM-Controller/42s16160.v
   ${CMAKE_CURRENT_SOURCE_DIR}/../../pll/ecp5pll.sv
   ${CMAKE_CURRENT_SOURCE_DIR}/../../Processor/picorv32.v
   ${CMAKE_CURRENT_SOURCE_DIR}/../../Graphicsystem/BufferController.v
