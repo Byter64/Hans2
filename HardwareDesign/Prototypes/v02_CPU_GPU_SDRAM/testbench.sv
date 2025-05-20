@@ -48,8 +48,12 @@ CPU_with_GPU_SDRAM Top
 
 integer i;
 initial begin
-	for(i = 0; i < 256; i++)
-		$dumpvars(0, memory[i]);
+	for(i = 0; i < 8; i++) begin
+		$dumpvars(0, SDRAM.Bank0[i]);
+		$dumpvars(0, SDRAM.Bank1[i]);
+		$dumpvars(0, SDRAM.Bank2[i]);
+		$dumpvars(0, SDRAM.Bank3[i]);
+	end
 	$dumpvars(1, testbench);
 	$dumpvars(0, SDRAM);
 	$dumpvars(0, Top.Processor.picorv32_core.dbg_ascii_instr);
