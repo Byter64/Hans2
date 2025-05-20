@@ -49,11 +49,10 @@ CPU_with_GPU_SDRAM Top
  
 integer i;
 initial begin
-	for(i = 0; i < 8; i++) begin
+	for(i = 0; i < 4; i++) begin
 		$dumpvars(0, SDRAM.Bank0[i]);
-		$dumpvars(0, SDRAM.Bank1[i]);
-		$dumpvars(0, SDRAM.Bank2[i]);
-		$dumpvars(0, SDRAM.Bank3[i]);
+		$dumpvars(0, SDRAM.Command[i]);
+		$dumpvars(0, SDRAM.Col_addr[i]);
 	end
 	$dumpvars(1, testbench);
 	$dumpvars(0, SDRAM);

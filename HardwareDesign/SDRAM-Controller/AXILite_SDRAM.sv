@@ -85,6 +85,7 @@ logic [ 1:0] sdram_ba_o;
 logic [15:0] sdram_data_output_o;
 logic        sdram_data_out_en_o;
 
+logic ram_accept_w, ram_ack_w, ram_rd_w;
 sdram_axi sdram_axi 
 (
     .clk_i(clk_i),
@@ -127,8 +128,21 @@ sdram_axi sdram_axi
     .sdram_addr_o(sdram_addr_o),
     .sdram_ba_o(sdram_ba_o),
     .sdram_data_output_o(sdram_data_output_o),
-    .sdram_data_out_en_o(sdram_data_out_en_o)
+    .sdram_data_out_en_o(sdram_data_out_en_o),
+
+    .ram_accept_w(ram_accept_w),
+    .ram_ack_w(ram_ack_w),
+    .ram_rd_w(ram_rd_w)
 );
+
+logic isReading = 0;
+
+always_ff @(posedge aclk) begin
+    if(ram_accept_w && ram_rd_w)
+        isReading <= 1;
+    if(ram_ack_w)
+        isReading <= 0;
+end
 
 //SDRAM signals
 assign sdram_clk    = sdram_clk_o;
@@ -140,7 +154,7 @@ assign sdram_casn   = sdram_cas_o;
 assign sdram_a      = sdram_addr_o;
 assign sdram_ba     = sdram_ba_o;
 assign sdram_dqm    = sdram_dqm_o;
-assign sdram_d      = sdram_data_output_o;
+assign sdram_d      = isReading ? 16'bz : sdram_data_output_o;
 
 //controller inputs
 assign clk_i = aclk;
