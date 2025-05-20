@@ -46,7 +46,7 @@ CPU_with_GPU_SDRAM Top
 	.sdram_dqm(sdram_dqm),
 	.sdram_d(sdram_d)
 );
- 
+  
 integer i; 
 initial begin
 	for(i = 0; i < 64; i++) begin

@@ -11,8 +11,8 @@
 void updateAnimation(int& ticks, int& frame_x, int frame_width, int max_frame);
 
 volatile int* sdramInt = (volatile int*)0x00000004;
-volatile int16_t* sdramInt16 = (volatile int16_t*)0x00000008;
-volatile unsigned char* sdramChar = (volatile unsigned char*)0x000000012;
+volatile int16_t* sdramInt16 = (volatile int16_t*)0x000000010;
+volatile unsigned char* sdramChar = (volatile unsigned char*)0x000000013;
 
 volatile bool isCorrect;
 int main() {
