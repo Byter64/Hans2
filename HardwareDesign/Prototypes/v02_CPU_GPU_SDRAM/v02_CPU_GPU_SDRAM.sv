@@ -49,8 +49,8 @@ ecp5pll #(
 ) TopLevelPLL (
   .clk_i(clk_25mhz),
   .clk_o({clk_50mhz, clk_130mhz})
-);
-
+); 
+   
 localparam S_COUNT = 2;
 localparam M_COUNT = 3;
 localparam ADDR_WIDTH = 32;
@@ -182,8 +182,7 @@ AXILite_SDRAM SDRAM
     .s_axil_rresp(SDRAM_s_axil_rresp),
     .s_axil_rvalid(SDRAM_s_axil_rvalid),
     .s_axil_rready(SDRAM_s_axil_rready)
-);
-
+);  
 
 //Graphicsystem
 logic [ADDR_WIDTH-1:0] GS_s_axil_awaddr;
