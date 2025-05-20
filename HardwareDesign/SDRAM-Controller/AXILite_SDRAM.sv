@@ -133,10 +133,10 @@ sdram_axi sdram_axi
 //SDRAM signals
 assign sdram_clk    = sdram_clk_o;
 assign sdram_cke    = sdram_cke_o;
-assign sdram_csn    = !sdram_cs_o;
-assign sdram_wen    = !sdram_we_o;
-assign sdram_rasn   = !sdram_ras_o;
-assign sdram_casn   = !sdram_cas_o;
+assign sdram_csn    = sdram_cs_o;
+assign sdram_wen    = sdram_we_o;
+assign sdram_rasn   = sdram_ras_o;
+assign sdram_casn   = sdram_cas_o;
 assign sdram_a      = sdram_addr_o;
 assign sdram_ba     = sdram_ba_o;
 assign sdram_dqm    = sdram_dqm_o;

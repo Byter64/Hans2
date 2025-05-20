@@ -27,6 +27,7 @@ IS42S16160 SDRAM
 	.Cs_n(sdram_csn),
 	.Ras_n(sdram_rasn),
 	.Cas_n(sdram_casn),
+	.We_n(sdram_wen),
 	.Dqm(sdram_dqm)
 );
 
@@ -45,7 +46,7 @@ CPU_with_GPU_SDRAM Top
 	.sdram_dqm(sdram_dqm),
 	.sdram_d(sdram_d)
 );
-
+ 
 integer i;
 initial begin
 	for(i = 0; i < 8; i++) begin
@@ -58,7 +59,7 @@ initial begin
 	$dumpvars(0, SDRAM);
 	$dumpvars(0, Top.Processor.picorv32_core.dbg_ascii_instr);
 	$dumpvars(0, Top.SDRAM);
-	#4000000
+	#1000000
 	$finish;
 end
 

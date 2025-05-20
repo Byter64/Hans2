@@ -13,7 +13,7 @@ void updateAnimation(int& ticks, int& frame_x, int frame_width, int max_frame);
 volatile int* sdramInt = (volatile int*)0x00000004;
 
 int main() {
-    int water_ticks = 20, water_frame_x = 0;
+    /*int water_ticks = 20, water_frame_x = 0;
     int left_boat_x = 10, left_boat_y = 100;
     int right_boat_x = 350, right_boat_y = 100;
     int boat_speed = 2;
@@ -25,7 +25,7 @@ int main() {
     Hapi::Image water = Hapi::LoadImage((char*)SproutLands::Water, 16, 16);
     Hapi::Image boat = Hapi::LoadImage((char*)SproutLands::Boats, 48, 32);
     
-
+*/
     *sdramInt = 222288880;
     while (true) {
 
