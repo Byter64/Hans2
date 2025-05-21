@@ -56,8 +56,8 @@ module sd_card_reader #(
     logic [31:0] data_out;
     logic data_out_valid;
     logic busy;
-    logic [31:0] data_addr_write;
-    logic [31:0] data_addr_read;
+    logic [31:0] data_addr_write = 0;
+    logic [31:0] data_addr_read = 0;
 
     logic store_read_write_operation = 0; // Read = 1; Write = 0;
     
@@ -127,24 +127,18 @@ module sd_card_reader #(
         end
     end
 
-    /////////////////// W /////////////////////
+    /////////////////// W ///////////////////// 
     always_ff @(posedge aclk) begin
         // Logic to determine S_AXIS_WREADY
-        s_axil_wready <= ((state == Idle) && ~read_data && ~write_data && !(s_axil_awready && s_axil_awvalid));
+        s_axil_wready <= (state == Idle) && ~read_data && ~write_data && !(s_axil_awready && s_axil_awvalid) && !s_axil_awvalid;
     end
 
-logic write_data_received = 0;
   always_ff @(posedge aclk) begin
     write_data <= 0;
     if (s_axil_wvalid && s_axil_wready) begin //Never add any other conditions. This is likely to break axi
       data_in <= s_axil_wdata;
-      write_data_received <= 1;
+      write_data <= 1;
       write_mask <= s_axil_wstrb;
-    end
-    
-    if(!(s_axil_awvalid && s_axil_awready)) begin
-        write_data_received <= 0;
-        write_data <= 1;
     end
   end
 
@@ -163,7 +157,6 @@ logic write_data_received = 0;
     end
 
     /////////////////// B /////////////////////
-    // just always 00
     logic next_bvalid; //Assign your valid logic to this signal
     logic[1:0] next_bresp; //Assign the data here
     assign next_bvalid = (state == Idle && tag == data_addr_write[31:9] && ~write_data);

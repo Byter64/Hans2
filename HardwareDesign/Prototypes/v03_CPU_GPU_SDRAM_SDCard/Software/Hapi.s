@@ -39,7 +39,7 @@ _ZN4Hapi4InitEv:                        # @_ZN4Hapi4InitEv
 	sw	s3, 520(sp)
 	sw	s4, 524(sp)
 	addi	a0, s2, 65
-	andi	a1, a0, 255
+	zext.b	a1, a0
 	addi	a2, sp, 512
 	mv	a0, s0
 	call	_ZN4Hapi9FontAtlas3AddEcNS_9RectangleE
@@ -96,7 +96,7 @@ _ZN4Hapi4InitEv:                        # @_ZN4Hapi4InitEv
 	sw	s1, 440(sp)
 	sw	s2, 444(sp)
 	addi	a0, s4, 97
-	andi	a1, a0, 255
+	zext.b	a1, a0
 	addi	a2, sp, 432
 	mv	a0, s0
 	call	_ZN4Hapi9FontAtlas3AddEcNS_9RectangleE
@@ -154,7 +154,7 @@ _ZN4Hapi4InitEv:                        # @_ZN4Hapi4InitEv
 	sw	s2, 360(sp)
 	sw	s1, 364(sp)
 	ori	a0, s4, 48
-	andi	a1, a0, 255
+	zext.b	a1, a0
 	addi	a2, sp, 352
 	mv	a0, s0
 	call	_ZN4Hapi9FontAtlas3AddEcNS_9RectangleE
@@ -2625,7 +2625,7 @@ _ZN6AssetsL11minifont5x3E:
 	.globl	GPU_COMMAND_SWAP_BUFFERS
 .set GPU_COMMAND_SWAP_BUFFERS, .L_MergedGlobals+52
 	.size	GPU_COMMAND_SWAP_BUFFERS, 4
-	.ident	"clang version 21.0.0git"
+	.ident	"clang version 21.0.0git (https://github.com/llvm/llvm-project 179d30f8c3fddd3c85056fd2b8e877a4a8513158)"
 	.section	".note.GNU-stack","",@progbits
 	.addrsig
 	.addrsig_sym _ZL5atlas

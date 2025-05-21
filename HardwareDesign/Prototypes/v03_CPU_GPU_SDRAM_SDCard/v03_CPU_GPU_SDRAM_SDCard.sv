@@ -19,7 +19,7 @@ module CPU_with_GPU_SDRAM_SDCard
 	output logic sdc_cs,
 	output logic sdc_mosi
 ); 
-
+ 
 logic canBeDeleted;
 logic canBeDeleted2;
   
@@ -208,8 +208,9 @@ logic[DATA_WIDTH-1:0]  SDC_s_axil_rdata;
 logic[1:0]             SDC_s_axil_rresp;
 logic                  SDC_s_axil_rvalid;
 logic                  SDC_s_axil_rready;
-sd_card_reader SDCard 
-(
+sd_card_reader #(
+	.OFFSET('h8000_0000)
+) SDCard (
 	.miso(sdc_miso),
 	.sclk(sdc_sclk),
 	.cs(sdc_cs),

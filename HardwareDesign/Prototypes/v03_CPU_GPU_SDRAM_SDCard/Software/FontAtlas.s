@@ -32,6 +32,6 @@ _ZN4Hapi9FontAtlasixEc:                 # @_ZN4Hapi9FontAtlasixEc
 .Lfunc_end1:
 	.size	_ZN4Hapi9FontAtlasixEc, .Lfunc_end1-_ZN4Hapi9FontAtlasixEc
                                         # -- End function
-	.ident	"clang version 21.0.0git"
+	.ident	"clang version 21.0.0git (https://github.com/llvm/llvm-project 179d30f8c3fddd3c85056fd2b8e877a4a8513158)"
 	.section	".note.GNU-stack","",@progbits
 	.addrsig

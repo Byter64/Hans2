@@ -173,6 +173,6 @@ _ZN5Halib5Image10GetRawDataEv:          # @_ZN5Halib5Image10GetRawDataEv
 	.globl	_ZN5Halib5ImageC1EPKtNS_5Veci2E
 	.type	_ZN5Halib5ImageC1EPKtNS_5Veci2E,@function
 .set _ZN5Halib5ImageC1EPKtNS_5Veci2E, _ZN5Halib5ImageC2EPKtNS_5Veci2E
-	.ident	"clang version 21.0.0git"
+	.ident	"clang version 21.0.0git (https://github.com/llvm/llvm-project 179d30f8c3fddd3c85056fd2b8e877a4a8513158)"
 	.section	".note.GNU-stack","",@progbits
 	.addrsig

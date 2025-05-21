@@ -154,7 +154,7 @@ _ZL10_vsnprintfPFvcPvjjEPcjPKcS_:       # @_ZL10_vsnprintfPFvcPvjjEPcjPKcS_
 	j	.LBB1_9
 .LBB1_21:                               #   in Loop: Header=BB1_4 Depth=1
 	addi	a1, a0, -48
-	andi	a1, a1, 255
+	zext.b	a1, a1
 	addi	s7, s6, -1
 	li	a2, 9
 	bltu	a2, a1, .LBB1_24
@@ -163,13 +163,13 @@ _ZL10_vsnprintfPFvcPvjjEPcjPKcS_:       # @_ZL10_vsnprintfPFvcPvjjEPcjPKcS_
 	li	a3, 10
 .LBB1_23:                               #   Parent Loop BB1_4 Depth=1
                                         # =>  This Inner Loop Header: Depth=2
-	andi	a1, a0, 255
+	zext.b	a1, a0
 	lbu	a0, 1(s7)
 	mul	a2, s5, a3
 	addi	s7, s7, 1
 	add	a1, a2, a1
 	addi	a2, a0, -48
-	andi	a2, a2, 255
+	zext.b	a2, a2
 	addi	s5, a1, -48
 	bltu	a2, a3, .LBB1_23
 	j	.LBB1_27
@@ -198,7 +198,7 @@ _ZL10_vsnprintfPFvcPvjjEPcjPKcS_:       # @_ZL10_vsnprintfPFvcPvjjEPcjPKcS_
 	lbu	a0, 1(s7)
 	ori	t4, t4, 1024
 	addi	a1, a0, -48
-	andi	a2, a1, 255
+	zext.b	a2, a1
 	addi	a1, s7, 1
 	li	a3, 9
 	bltu	a3, a2, .LBB1_32
@@ -207,13 +207,13 @@ _ZL10_vsnprintfPFvcPvjjEPcjPKcS_:       # @_ZL10_vsnprintfPFvcPvjjEPcjPKcS_
 	li	s6, 0
 .LBB1_30:                               #   Parent Loop BB1_4 Depth=1
                                         # =>  This Inner Loop Header: Depth=2
-	andi	a2, a0, 255
+	zext.b	a2, a0
 	lbu	a0, 1(a1)
 	mul	a3, s6, a4
 	addi	a1, a1, 1
 	add	a2, a3, a2
 	addi	a3, a0, -48
-	andi	a3, a3, 255
+	zext.b	a3, a3
 	addi	s6, a2, -48
 	bltu	a3, a4, .LBB1_30
 	j	.LBB1_35
@@ -594,7 +594,7 @@ _ZL10_vsnprintfPFvcPvjjEPcjPKcS_:       # @_ZL10_vsnprintfPFvcPvjjEPcjPKcS_
 	addi	s6, s6, -1
 .LBB1_119:                              #   in Loop: Header=BB1_116 Depth=2
 	addi	s3, s11, 1
-	andi	a0, a0, 255
+	zext.b	a0, a0
 	mv	a1, s2
 	mv	a2, s11
 	mv	a3, s0
@@ -1155,7 +1155,7 @@ _ZL10_ntoa_longPFvcPvjjEPcjjmbmjjj:     # @_ZL10_ntoa_longPFvcPvjjEPcjjmbmjjj
 	.size	_ZL10_ntoa_longPFvcPvjjEPcjjmbmjjj, .Lfunc_end8-_ZL10_ntoa_longPFvcPvjjEPcjjmbmjjj
 	.cfi_endproc
                                         # -- End function
-	.ident	"clang version 21.0.0git"
+	.ident	"clang version 21.0.0git (https://github.com/llvm/llvm-project 179d30f8c3fddd3c85056fd2b8e877a4a8513158)"
 	.section	".note.GNU-stack","",@progbits
 	.addrsig
 	.addrsig_sym _ZL11_out_buffercPvjj

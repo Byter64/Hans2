@@ -208,6 +208,6 @@ _ZN4Hapi5Color8GetColorEv:              # @_ZN4Hapi5Color8GetColorEv
 	.globl	_ZN4Hapi5ColorC1Ehhhb
 	.type	_ZN4Hapi5ColorC1Ehhhb,@function
 .set _ZN4Hapi5ColorC1Ehhhb, _ZN4Hapi5ColorC2Ehhhb
-	.ident	"clang version 21.0.0git"
+	.ident	"clang version 21.0.0git (https://github.com/llvm/llvm-project 179d30f8c3fddd3c85056fd2b8e877a4a8513158)"
 	.section	".note.GNU-stack","",@progbits
 	.addrsig
