@@ -1,4 +1,6 @@
-module sd_card_reader (
+module sd_card_reader #(
+    parameter OFFSET = 0
+) (
     input aclk,
     input aresetn,
 
@@ -121,22 +123,28 @@ module sd_card_reader (
 
     always_ff @(posedge aclk) begin
         if (s_axil_awvalid && s_axil_awready) begin //Never add any other conditions. This is likely to break axi
-            data_addr_write <= s_axil_awaddr;
+            data_addr_write <= s_axil_awaddr - OFFSET;
         end
     end
 
     /////////////////// W /////////////////////
     always_ff @(posedge aclk) begin
         // Logic to determine S_AXIS_WREADY
-        s_axil_wready <= ((state == Idle) && ~read_data && ~write_data);
+        s_axil_wready <= ((state == Idle) && ~read_data && ~write_data && !(s_axil_awready && s_axil_awvalid));
     end
 
+logic write_data_received = 0;
   always_ff @(posedge aclk) begin
     write_data <= 0;
     if (s_axil_wvalid && s_axil_wready) begin //Never add any other conditions. This is likely to break axi
       data_in <= s_axil_wdata;
-      write_data <= 1;
+      write_data_received <= 1;
       write_mask <= s_axil_wstrb;
+    end
+    
+    if(!(s_axil_awvalid && s_axil_awready)) begin
+        write_data_received <= 0;
+        write_data <= 1;
     end
   end
 
@@ -149,7 +157,7 @@ module sd_card_reader (
     always_ff @(posedge aclk) begin
         read_data <= 0;
         if (s_axil_arvalid && s_axil_arready) begin //Never add any other conditions. This is likely to break axi
-            data_addr_read <= s_axil_araddr;
+            data_addr_read <= s_axil_araddr - OFFSET;
             read_data <= 1;
         end
     end

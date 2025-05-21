@@ -439,7 +439,7 @@ assign {CPU_mem_axi_rvalid, GS_m_axil_rvalid} = AXI_s_axil_rvalid;
 assign AXI_s_axil_rready 	= {CPU_mem_axi_rready, GS_m_axil_rready};
 
 //SLAVE MAP
-//{SDRAM, Graphicsystem, Bootloader}
+//{SDRAM, Graphicsystem, Bootloader, SDCard}
 assign {SDRAM_s_axil_awaddr, GS_s_axil_awaddr, BOOT_s_axil_awaddr, SDC_s_axil_awaddr} = AXI_m_axil_awaddr;
 assign {SDRAM_s_axil_awprot, GS_s_axil_awprot, BOOT_s_axil_awprot, SDC_s_axil_awprot} = AXI_m_axil_awprot;
 assign {SDRAM_s_axil_awvalid, GS_s_axil_awvalid, BOOT_s_axil_awvalid, SDC_s_axil_awvalid} = AXI_m_axil_awvalid;
@@ -459,7 +459,7 @@ assign AXI_m_axil_rdata 	= {SDRAM_s_axil_rdata, GS_s_axil_rdata, BOOT_s_axil_rda
 assign AXI_m_axil_rresp 	= {SDRAM_s_axil_rresp, GS_s_axil_rresp, BOOT_s_axil_rresp, SDC_s_axil_rresp};
 assign AXI_m_axil_rvalid 	= {SDRAM_s_axil_rvalid, GS_s_axil_rvalid, BOOT_s_axil_rvalid, SDC_s_axil_rvalid};
 assign {SDRAM_s_axil_rready, GS_s_axil_rready, BOOT_s_axil_rready, SDC_s_axil_rready} = AXI_m_axil_rready;
-
+   
 axil_crossbar #(
 	.S_COUNT(S_COUNT),
 	.M_COUNT(M_COUNT),

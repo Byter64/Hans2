@@ -31,6 +31,11 @@ IS42S16160 SDRAM
 	.Dqm(sdram_dqm)
 );
 
+logic sdc_miso = 0;
+logic sdc_sclk; 
+logic sdc_cs;
+logic sdc_mosi;
+
 CPU_with_GPU_SDRAM_SDCard Top 
 (
 	.clk_25mhz(clk_25mhz),
@@ -44,7 +49,12 @@ CPU_with_GPU_SDRAM_SDCard Top
 	.sdram_a(sdram_a),
 	.sdram_ba(sdram_ba),
 	.sdram_dqm(sdram_dqm),
-	.sdram_d(sdram_d)
+	.sdram_d(sdram_d),
+
+	.sdc_miso(sdc_miso),
+	.sdc_sclk(sdc_sclk),
+	.sdc_cs(sdc_cs),
+	.sdc_mosi(sdc_mosi)
 );
     
 integer i; 
