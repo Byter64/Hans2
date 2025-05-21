@@ -38,7 +38,8 @@ always_ff @(posedge aclk) begin
     if (!aresetn)
         s_axil_rdata <= 0;
     else begin
-        s_axil_rdata <= next_rData;
+        s_axil_rdata[11:0] <= next_rData;
+        s_axil_rdata[31:12] <= 0;
     end
 end
 ///////////// AXI LITE END ////////////////////
