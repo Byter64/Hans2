@@ -11,9 +11,9 @@
 void updateAnimation(int& ticks, int& frame_x, int frame_width, int max_frame);
 
 uintptr_t nullAdress = 0;
-volatile int* ram0 = (int*)nullAdress;
-volatile int* ram1 = (int*)0x4;
-volatile int* ram2 = (int*)0x8;
+volatile short* ram0 = (short*)nullAdress;
+volatile short* ram1 = (short*)0x2;
+volatile char* ram2 = (char*)0x5;
 
 int main() {
     int water_ticks = 20, water_frame_x = 0;
@@ -29,9 +29,14 @@ int main() {
     Hapi::Image boat = Hapi::LoadImage((char*)SproutLands::Boats, 48, 32);
     
     
-    *ram0 = 0x33221100;
-    *ram1 = 0x77665544;
-    *ram2 = 0xBBAA9988;
+    *ram0 = 0x1100;
+    *ram1 = 0x5544;
+    *ram2 = 0x42;
+
+    //RAM Map:
+    //00: 11005544
+    //04: 002C0000
+    //08: 00000000
     while (true) {
         
         Hapi::StartDrawing();
