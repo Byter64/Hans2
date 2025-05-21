@@ -1,4 +1,4 @@
-module CPU_with_GPU_SDRAM
+module CPU_with_GPU_SDRAM_SDCard
 (
     input logic  clk_25mhz,
     output logic [3:0] gpdi_dp,

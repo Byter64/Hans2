@@ -31,7 +31,7 @@ IS42S16160 SDRAM
 	.Dqm(sdram_dqm)
 );
 
-CPU_with_GPU_SDRAM Top 
+CPU_with_GPU_SDRAM_SDCard Top 
 (
 	.clk_25mhz(clk_25mhz),
 	.gpdi_dp(gpdi_dp),
