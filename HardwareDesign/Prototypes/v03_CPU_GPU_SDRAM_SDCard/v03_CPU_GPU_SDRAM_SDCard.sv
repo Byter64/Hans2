@@ -187,7 +187,7 @@ AXILite_SDRAM SDRAM
     .s_axil_rresp(SDRAM_s_axil_rresp),
     .s_axil_rvalid(SDRAM_s_axil_rvalid),
     .s_axil_rready(SDRAM_s_axil_rready)
-);  
+);   
 
 logic [ADDR_WIDTH-1:0] SDC_s_axil_awaddr;
 logic [2:0]            SDC_s_axil_awprot;

@@ -157,16 +157,24 @@ module sd_card_reader #(
     end
 
     /////////////////// B /////////////////////
+    logic pending_write_answer = 0;
     logic next_bvalid; //Assign your valid logic to this signal
     logic[1:0] next_bresp; //Assign the data here
-    assign next_bvalid = (state == Idle && tag == data_addr_write[31:9] && ~write_data);
+    assign next_bvalid = pending_write_answer && (state == Idle && tag == data_addr_write[31:9] && ~write_data);
     assign next_bresp = 0;
+
+    always_ff @(posedge aclk) begin
+        if(s_axil_wready && s_axil_wvalid)
+            pending_write_answer <= 1;
+        if (s_axil_bready && s_axil_bvalid)
+            pending_write_answer <= 0; 
+    end
     
     always_ff @(posedge aclk) begin
         if (!aresetn)
             s_axil_bvalid <= 0;
         else if (!s_axil_bvalid || s_axil_bready) begin
-            s_axil_bvalid <= next_bvalid;
+            s_axil_bvalid <= (s_axil_bvalid && s_axil_bready) ? 0 : next_bvalid;
         end
     end
 

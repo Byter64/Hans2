@@ -10,7 +10,7 @@
 
 void updateAnimation(int& ticks, int& frame_x, int frame_width, int max_frame);
 
-volatile unsigned char* sdCard = (unsigned char*)0x80000000;
+volatile int* sdCard = (int*)0x80000000;
 int main() {
     /*int water_ticks = 20, water_frame_x = 0;
     int left_boat_x = 10, left_boat_y = 100;
@@ -25,10 +25,9 @@ int main() {
     Hapi::Image boat = Hapi::LoadImage((char*)SproutLands::Boats, 48, 32);
     */
     
-    *((unsigned char*)1) = 33;
-    *(sdCard + 0) = 42;
-    *(sdCard + 1) = 100;
-    *(sdCard + 2) = 244;
+    *(sdCard + 0) = 0x33221100;
+    *(sdCard + 129) = 0x77665544;
+    *(sdCard + 258) = 0xBBAA9988;
     while (true) {
         /*
         Hapi::StartDrawing();
@@ -49,14 +48,14 @@ int main() {
         //Hapi::DrawText("SDRAM:", 5, 5, INT32_MAX);
         sprintf_(text, "0x00: %x", *(sdCard + 0));
         //Hapi::DrawText(text, 5, 10, INT32_MAX);
-        sprintf_(text, "0x04: %x", *(sdCard + 1));
+        sprintf_(text, "0x04: %x", *(sdCard + 129));
         //Hapi::DrawText(text, 5, 15, INT32_MAX);
-        sprintf_(text, "0x08: %x", *(sdCard + 2));
+        sprintf_(text, "0x08: %x", *(sdCard + 258));
         //Hapi::DrawText(text, 5, 20, INT32_MAX);
         
         for(int i = 0; i < 12; i++)
         {
-            sprintf_(text, "0x%x: %x", i, *(sdCard + i));
+            //sprintf_(text, "0x%x: %x", i, *(sdCard + i));
             //Hapi::DrawText(text, 5, 60 + i * 5, INT32_MAX);
         }
 
