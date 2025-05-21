@@ -11,7 +11,7 @@ logic        sdram_wen;
 logic        sdram_rasn;
 logic        sdram_casn;
 logic[12:0]  sdram_a;
-logic[1:0]   sdram_ba;
+logic[1:0]   sdram_ba; 
 logic[1:0]   sdram_dqm;
 inout logic[15:0]  sdram_d;
 

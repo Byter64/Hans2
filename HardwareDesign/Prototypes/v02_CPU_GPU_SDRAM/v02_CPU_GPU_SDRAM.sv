@@ -295,7 +295,7 @@ logic                  BOOT_s_axil_rready;
 AXILiteMemory #(
 	.OFFSET(BOOTLOADER_START),
     .ADDR_WIDTH(ADDR_WIDTH),
-    .DATA_WIDTH(DATA_WIDTH),
+    .DATA_WIDTH(DATA_WIDTH), 
     .STRB_WIDTH(STRB_WIDTH),
     .MEMORY_DEPTH(8192) //In 32-Bit words
 ) Bootloader (
