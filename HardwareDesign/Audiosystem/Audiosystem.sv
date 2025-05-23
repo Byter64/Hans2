@@ -2,54 +2,38 @@
 //Be aware, that unfortunate timing of changing channel settings can lead
 //To channels being off by 1 sample
 module Audiosystem (
-    input logic  clk,
-    input logic  clk_25mhz,
-    input logic  rst,
+    input logic            clk,
+    input logic            clk_25mhz,
+    input logic            rst,
 
-    //CPU Interface
-    input logic[31:0] registerData,
-    input logic[3:0] registerSelect,
-    input logic[7:0] channelSelect,
-    input logic      masterSelect, //If high, master values will be changed
-    
-    //Memory Interface (AXI Lite Master)
     input logic            aclk,
     input logic            aresetn,
-    output logic[31:0]     m_axil_awaddr,
-    output logic[2:0]      m_axil_awprot,
-    output logic           m_axil_awvalid,
-    input logic            m_axil_awready,
+    //CPU Interface (AXI Late Slave)
+    input logic [31:0]     s_axil_awaddr,
+    input logic            s_axil_awvalid,
+    output logic           s_axil_awready,
+    input logic [31:0]     s_axil_wdata,
+    input logic [3:0]      s_axil_wstrb,
+    input logic            s_axil_wvalid,
+    output logic           s_axil_wready,
+    output logic [1:0]     s_axil_bresp,
+    output logic           s_axil_bvalid,
+    input logic            s_axil_bready,
 
-    output logic[15:0]     m_axil_wdata,
-    output logic[1:0]      m_axil_wstrb,
-    output logic           m_axil_wvalid,
-    input logic            m_axil_wready,
-
-    input logic[1:0]       m_axil_bresp,
-    input logic            m_axil_bvalid,
-    output logic           m_axil_bready,
-
+    
+    //Memory Interface (AXI Lite Master)
     output logic[31:0]     m_axil_araddr,
-    output logic[2:0]      m_axil_arprot,
     output logic           m_axil_arvalid,
     input logic            m_axil_arready,
-
-    input logic[15:0]      m_axil_rdata,
-    input logic[1:0]       m_axil_rresp,
+    input logic[31:0]      m_axil_rdata,
     input logic            m_axil_rvalid,
     output logic           m_axil_rready,
 
     //I²S Interface
-    output logic  audio_bclk,
-    output logic  audio_lrclk,
-    output logic  audio_dout
+    output logic           audio_bclk,
+    output logic           audio_lrclk,
+    output logic           audio_dout
 );
-
-//CPU Interface
-logic[31:0] registerData;
-logic[3:0]  registerSelect;
-logic[7:0]  channelSelect;
-logic       masterSelect; //If high, master values will be changed
 
 typedef enum logic[3:0] {
         IDLE                = 0,
@@ -63,23 +47,14 @@ typedef enum logic[3:0] {
         SET_ISLOOPING       = 8,
         SET_ISPLAYING       = 9,
         SET_ISMONO          = 10,
-        SET_ISRIGHT          = 11
+        SET_ISRIGHT         = 11,
+        SET_GLOBAL_VOLUME   = 12
     } ChannelSettings;
 
 logic[7:0] isMono;
 logic[7:0] isRight;
 logic[15:0] sample[8];
 logic[31:0] o_nextSampleAddress[8];
-
-assign m_axil_awaddr  = 'b0;
-assign m_axil_awprot  = 'b0;
-assign m_axil_awvalid = 'b0;
-assign m_axil_wdata   = 'b0;
-assign m_axil_wstrb   = 'b0;
-assign m_axil_wvalid  = 'b0;
-assign m_axil_bready  = 'b0;
-
-assign m_axil_arprot = 'b0;
 
 logic sampleClk; //This is also the Word Select for the left/right channel
 logic clk_64khz;
@@ -170,6 +145,8 @@ end
 
 always_ff @(posedge aclk) loadingState <= nextLoadingState;
 
+//###############################################
+//AXI MASTER
 //AXI ADDRESS READ
 always_ff @(posedge aclk) begin
 	if (!aresetn)
@@ -210,6 +187,37 @@ always_ff @(posedge aclk) begin
 end
 
 //AXI READ END
+
+//##################################################
+//AXI SLAVE
+//CPU Interface
+logic[31:0] registerData;
+logic[3:0]  registerSelect; //s_axil_xdata[3:0]
+logic[7:0]  channelSelect;  //a_axil_xdata[11:4]
+
+//AW
+always_ff @(posedge aclk) s_axil_awready <= 1;
+
+always_ff @(posedge aclk) begin
+	if (s_axil_awvalid && s_axil_awready) begin //Never add any other conditions. This is likely to break axi
+		registerSelect <= s_axil_wdata[3:0];
+        channelSelect <= s_axil_wdata[11:4];
+    end
+end
+
+//W
+always_ff @(posedge aclk) s_axil_wready <= 1;
+
+always_ff @(posedge aclk) begin
+	if (s_axil_wvalid && s_axil_wready) begin //Never add any other conditions. This is likely to break axi
+        registerData <= s_axil_wdata;
+    end
+end
+
+//B
+assign s_axil_bvalid = 1;
+assign s_axil_bresp = 0;
+
 
 always_ff @(posedge aclk) begin
     i_ready <= 0;
@@ -268,7 +276,7 @@ end
 
 logic[7:0] masterVolume = 128;
 always_ff @(posedge clk) begin
-    if(masterSelect && registerSelect == SET_VOLUME)
+    if(registerSelect == SET_GLOBAL_VOLUME)
         masterVolume <= registerData;
     
     if(rst)

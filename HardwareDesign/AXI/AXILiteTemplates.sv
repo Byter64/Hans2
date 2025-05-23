@@ -61,13 +61,13 @@ module AXILiteTemplates (
 //####Templates for the receiver of a signal####
 //##############################################
 always_ff @(posedge aclk) begin
-		// Logic to determine S_AXIS_TREADY
+	// Logic to determine S_AXIS_TREADY
 end
 
 always_ff @(posedge aclk) begin
 	if (s_axil_Tvalid && s_axil_Tready) begin //Never add any other conditions. This is likely to break axi
-		// Do something
-    end
+	  // Do something
+  end
 end
 
 //##############################################
