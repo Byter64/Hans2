@@ -33,7 +33,7 @@ IS42S16160 SDRAM
 
 logic sd_clk; 
 logic sd_cmd;
-logic[3:0] sd_d;
+inout logic[3:0] sd_d;
 assign sd_d[0] = 0;
 
 CPU_with_GPU_SDRAM_SDCard Top 
@@ -53,7 +53,7 @@ CPU_with_GPU_SDRAM_SDCard Top
 
 	.sd_clk(sd_clk),
 	.sd_cmd(sd_cmd),
-	.sd_d(sd_d),
+	.sd_d(sd_d)
 );
     
 integer i; 

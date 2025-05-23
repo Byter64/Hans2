@@ -21,13 +21,13 @@ int main() {
     
     Hapi::Init();
     Hapi::SetTargetFPS(60);
-    Hapi::Image water = Hapi::LoadImage((char*)SproutLands::Water, 16, 16);
+    //Hapi::Image water = Hapi::LoadImage((char*)SproutLands::Water, 16, 16);
     Hapi::Image boat = Hapi::LoadImage((char*)SproutLands::Boats, 48, 32);
     
     
-    *(sdCard + 0) = 0x33221100;
-    *(sdCard + 129) = 0x77665544;
-    *(sdCard + 258) = 0xBBAA9988;
+    //*(sdCard + 0) = 0x33221100;
+    //*(sdCard + 129) = 0x77665544;
+    //*(sdCard + 258) = 0xBBAA9988;
     while (true) {
         
         Hapi::StartDrawing();
@@ -45,7 +45,7 @@ int main() {
         
 		char text[64]; 
         text[0] = '\0';
-        Hapi::DrawText("SDRAM:", 5, 5, INT32_MAX);
+        Hapi::DrawText("SD-Karte:", 5, 5, INT32_MAX);
         sprintf_(text, "0x00: %x", *(sdCard + 0));
         Hapi::DrawText(text, 5, 10, INT32_MAX);
         sprintf_(text, "0x04: %x", *(sdCard + 129));
@@ -55,8 +55,8 @@ int main() {
         
         for(int i = 0; i < 12; i++)
         {
-            sprintf_(text, "0x%x: %x", i, *(sdCard + i));
-            Hapi::DrawText(text, 5, 60 + i * 5, INT32_MAX);
+            //sprintf_(text, "0x%x: %x", i, *(sdCard + i));
+            //Hapi::DrawText(text, 5, 60 + i * 5, INT32_MAX);
         }
 
         Hapi::Draw((Hapi::Image)Hapi::defaultFont.fontSheet, 0, 0, 250, 10, 120, 15, 120);
