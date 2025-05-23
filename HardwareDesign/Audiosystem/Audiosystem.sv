@@ -1,6 +1,6 @@
 //Please make clk and aclk be the same clock, as well as rst == !aresetn
 //Be aware, that unfortunate timing of changing channel settings can lead
-//To channels being of by 1 sample
+//To channels being off by 1 sample
 module Audiosystem (
     input logic  clk,
     input logic  clk_25mhz,
@@ -44,6 +44,12 @@ module Audiosystem (
     output logic  audio_lrclk,
     output logic  audio_dout
 );
+
+//CPU Interface
+logic[31:0] registerData;
+logic[3:0]  registerSelect;
+logic[7:0]  channelSelect;
+logic       masterSelect; //If high, master values will be changed
 
 typedef enum logic[3:0] {
         IDLE                = 0,

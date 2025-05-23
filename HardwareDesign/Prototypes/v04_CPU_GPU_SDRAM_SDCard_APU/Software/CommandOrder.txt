@@ -1,0 +1,6 @@
+# Windows + clang
+clang++ --target=riscv32-none-elf -march=rv32im -Os -Wl,--gc-sections -ffreestanding -Bstatic -T riscv.ld -nostdlib -nostartfiles -IHalib/include -IGraphics/include Halib/src/Veci2.cpp Halib/src/Image.cpp Graphics/Hans/src/Hapi.cpp Graphics/src/Color.cpp printf/printf.c Graphics/src/FontAtlas.cpp main.cpp start.s -o firmware.elf
+
+objcopy -O verilog firmware.elf firmware.hex
+
+python hex8tohex32.py firmware.hex > firmware32.hex
