@@ -17,12 +17,17 @@ list(APPEND sources_all
   ${CMAKE_CURRENT_SOURCE_DIR}/../../AXI/verilog-axi-master/rtl/priority_encoder.v
   ${CMAKE_CURRENT_SOURCE_DIR}/../../Processor/picorv32.v
   ${CMAKE_CURRENT_SOURCE_DIR}/../../pll/ecp5pll.sv
+  ${CMAKE_CURRENT_SOURCE_DIR}/../../Audiosystem/Audiosystem.sv
+  ${CMAKE_CURRENT_SOURCE_DIR}/../../Audiosystem/Channel.sv
+  ${CMAKE_CURRENT_SOURCE_DIR}/../../Audiosystem/ClockGenerator.sv
+  ${CMAKE_CURRENT_SOURCE_DIR}/../../Audiosystem/I2STransmitter.sv
   ${CMAKE_CURRENT_SOURCE_DIR}/../../Graphicsystem/BufferController.v
   ${CMAKE_CURRENT_SOURCE_DIR}/../../Graphicsystem/Framebuffer.v
   ${CMAKE_CURRENT_SOURCE_DIR}/../../Graphicsystem/GPU.v
   ${CMAKE_CURRENT_SOURCE_DIR}/../../Graphicsystem/GraphicSystem.sv
   ${CMAKE_CURRENT_SOURCE_DIR}/../../Graphicsystem/HDMI_Out.v
   ${CMAKE_CURRENT_SOURCE_DIR}/../../Graphicsystem/ULX3S_hdmi/TMDS_encoder.v
+
   ${CMAKE_CURRENT_SOURCE_DIR}/../../SDRAM-Controller/AXILite_SDRAM.sv
   ${CMAKE_CURRENT_SOURCE_DIR}/../../SDRAM-Controller/core_sdram_axi4-master/src_v/sdram_axi.v
   ${CMAKE_CURRENT_SOURCE_DIR}/../../SDRAM-Controller/core_sdram_axi4-master/src_v/sdram_axi_core.v

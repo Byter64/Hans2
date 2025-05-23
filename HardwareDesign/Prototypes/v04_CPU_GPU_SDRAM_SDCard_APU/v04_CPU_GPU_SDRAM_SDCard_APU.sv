@@ -23,9 +23,6 @@ module CPU_with_GPU_SDRAM_SDCard_APU
 	output logic sdc_cs,
 	output logic sdc_mosi
 ); 
- 
-logic canBeDeleted;
-logic canBeDeleted2;
   
 logic hdmi_pixClk;
 logic resetn = 0;
