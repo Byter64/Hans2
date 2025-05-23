@@ -14,14 +14,11 @@ module CPU_with_GPU_SDRAM_SDCard
 	output logic[1:0]   sdram_dqm,
 	inout  logic[15:0]  sdram_d,
 
-	input  logic sdc_miso,
-	output logic sdc_sclk,
-	output logic sdc_cs,
-	output logic sdc_mosi
+    output logic        sd_clk,
+    output logic        sd_cmd,
+    inout  logic [3:0]  sd_d
 ); 
- 
-logic canBeDeleted;
-logic canBeDeleted2;
+
   
 logic hdmi_pixClk;
 logic resetn = 0;
@@ -189,6 +186,7 @@ AXILite_SDRAM SDRAM
     .s_axil_rready(SDRAM_s_axil_rready)
 );   
 
+logic sd_cs;
 logic [ADDR_WIDTH-1:0] SDC_s_axil_awaddr;
 logic [2:0]            SDC_s_axil_awprot;
 logic                  SDC_s_axil_awvalid;
@@ -208,13 +206,15 @@ logic[DATA_WIDTH-1:0]  SDC_s_axil_rdata;
 logic[1:0]             SDC_s_axil_rresp;
 logic                  SDC_s_axil_rvalid;
 logic                  SDC_s_axil_rready;
+assign sd_d[3] = sd_cs;
+
 sd_card_reader #(
 	.OFFSET('h8000_0000)
 ) SDCard (
-	.miso(sdc_miso),
-	.sclk(sdc_sclk),
-	.cs(sdc_cs),
-	.mosi(sdc_mosi),
+	.miso(sd_d[0]),
+	.sclk(sd_clk),
+	.cs(sd_cs),
+	.mosi(sd_cmd),
 
 	.aclk(clk_50mhz),
 	.aresetn(resetn),
