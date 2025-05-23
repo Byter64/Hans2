@@ -3,15 +3,12 @@ module cont_test (
     input clk_25mhz,
     output reg[7:0] led,
 
-    output v33out,
     input cont_data,
     output reg cont_clk = 0,
     output cont_activate
 );
 
 //yosys -p"read_verilog controller_test.v; synth_ecp5 -json ausgabe.json"
-
-assign v33out = 1;
 
 
 reg clk = 0; //"fast clock" at 166,67 kHz
