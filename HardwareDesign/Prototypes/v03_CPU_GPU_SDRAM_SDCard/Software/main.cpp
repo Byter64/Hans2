@@ -25,9 +25,9 @@ int main() {
     Hapi::Image boat = Hapi::LoadImage((char*)SproutLands::Boats, 48, 32);
     
     
-    //*(sdCard + 0) = 0x33221100;
-    //*(sdCard + 129) = 0x77665544;
-    //*(sdCard + 258) = 0xBBAA9988;
+    *(sdCard + 0) = 0x33221100;
+    *(sdCard + 129) = 0x77665544;
+    *(sdCard + 258) = 0xBBAA9988;
     while (true) {
         
         Hapi::StartDrawing();
