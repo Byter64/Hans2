@@ -36,7 +36,7 @@ logic sdc_sclk;
 logic sdc_cs;
 logic sdc_mosi;
 
-CPU_with_GPU_SDRAM_SDCard Top 
+CPU_with_GPU_SDRAM_SDCard_APU Top 
 (
 	.clk_25mhz(clk_25mhz),
 	.gpdi_dp(gpdi_dp),
