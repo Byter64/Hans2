@@ -1,17 +1,17 @@
-`timescale 1ns/1ps
+`timescale 1ns/1ns
 module ecp5pll
 #(
   parameter integer in_hz      =  25000000,
-  parameter integer out0_hz    =  25000000,
+  parameter integer out0_hz    =  50000000,
   parameter integer out0_deg   =         0, // keep 0
   parameter integer out0_tol_hz=         0, // tolerance: if freq differs more, then error
-  parameter integer out1_hz    =         0,
+  parameter integer out1_hz    =  50000000,
   parameter integer out1_deg   =         0,
   parameter integer out1_tol_hz=         0,
-  parameter integer out2_hz    =         0,
+  parameter integer out2_hz    =  50000000,
   parameter integer out2_deg   =         0,
   parameter integer out2_tol_hz=         0,
-  parameter integer out3_hz    =         0,
+  parameter integer out3_hz    =  50000000,
   parameter integer out3_deg   =         0,
   parameter integer out3_tol_hz=         0,
   parameter integer reset_en   =         0,

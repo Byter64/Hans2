@@ -2,13 +2,21 @@ module top_ulx3s_sd_mem (
     input  logic        clk_25mhz,
     output logic        sd_clk,
     output logic        sd_cmd,
-    inout  logic [3:0]  sd_d
+    inout  logic [3:0]  sd_d,
+    output logic [7:0] led
 );
-
   // Clock and reset
-  logic clk;
   logic rst = 1;
-  assign clk = clk_25mhz;
+  logic clk;
+  ecp5pll #(
+    .in_hz       (25000000),
+    .out0_hz     (50000000)
+  ) uut (
+    .clk_i(clk_25mhz),
+    .clk_o(clk)
+  );
+
+
 
   // Tie SD lines
   assign sd_d[1] = 1'b1; // DAT1 must be held HIGH
@@ -43,7 +51,7 @@ module top_ulx3s_sd_mem (
 
   state_t state = IDLE;
   integer sector = 0;
-  integer word_idx = 0;
+  reg [31:0] word_idx = 0;
 
   always_ff @(posedge clk) begin
     if (rst) begin
@@ -57,15 +65,17 @@ module top_ulx3s_sd_mem (
       word_idx <= 0;
       sector   <= 0;
       rst      <= 0; // release reset after first cycle
+      led      <= 1;
     end else begin
       case (state)
         IDLE: begin
           // Start writing to first sector
           awaddr  <= sector * 512 + word_idx * 4;
-          wdata   <= 32'hABCD1000 + word_idx;
+          wdata   <= 32'hFFFFA000 + word_idx;
           awvalid <= 1;
           wvalid  <= 1;
           state   <= WRITE;
+          led      <= 2;
         end
 
         WRITE: begin
@@ -74,11 +84,12 @@ module top_ulx3s_sd_mem (
             wvalid  <= 0;
             state   <= WAIT_WRITE_DONE;
           end
+          led      <= 4;
         end
 
         WAIT_WRITE_DONE: begin
           if (bvalid) begin
-            if (word_idx < 100) begin
+            if (word_idx < 32) begin
               word_idx <= word_idx + 1;
               state    <= IDLE;
             end else if (sector < 3) begin
@@ -89,10 +100,12 @@ module top_ulx3s_sd_mem (
               state <= DONE;
             end
           end
+          led      <= 8;
         end
 
         DONE: begin
           // Do nothing
+          led      <= 15;
         end
       endcase
     end
