@@ -3,6 +3,7 @@
 project ("Bootloader")
 
 add_compile_definitions("__riscv32__")
+add_compile_definitions("DEBUG")
 add_subdirectory("elfload")
 
 add_executable (Bootloader)
