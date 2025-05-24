@@ -1,0 +1,3 @@
+[submodule "Software/Bootloader/elfload"]
+	path = Software/Bootloader/elfload
+	url = ../../erincandescent/elfload
