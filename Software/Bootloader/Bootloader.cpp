@@ -26,6 +26,7 @@ static void* memoryAllocation(el_ctx* ctx, Elf_Addr physicalAddress, Elf_Addr vi
 
 static void check(el_status stat, const char* expln)
 {
+#ifdef DEBUG
 	if (stat)
 	{
 		fprintf(stderr, "%s: error %d\n", expln, stat);
@@ -35,20 +36,24 @@ static void check(el_status stat, const char* expln)
 	{
 		printf("%s\n", expln);
 	}
+#endif // DEBUG
 }
 
 int main()
 {
 	//TODO: Include fatfs
 	//TODO: Add graphical progress bar
-
 	elfFile = fopen(R"(C:\Users\Yanni\Documents\Hans2\Software\Bootloader\firmware.elf)", "rb");
+
+	
+#ifdef DEBUG
 	loadAddress = malloc(32768);
 	if (!elfFile)
 	{
 		perror("File could not be opened");
 		return -1;
 	}
+#endif
 
 	el_ctx ctx;
 	ctx.pread = fileRead;
@@ -60,10 +65,20 @@ int main()
 	ctx.base_load_paddr = (uintptr_t)loadAddress;
 	
 	result = el_load(&ctx, memoryAllocation);
-	check(result, "Loading the data");
-	/*
+	check(result, "Loading data");
+	
 
 	result = el_relocate(&ctx);
 	check(result, "Resolving relocations");
-	*/
+	
+	uintptr_t entryPoint = ctx.ehdr.e_entry + (uintptr_t)loadAddress;
+
+#ifdef DEBUG
+	printf("Entry point within the program is address %p; Program is loaded at address %p\n", (uintptr_t)ctx.ehdr.e_entry, (uintptr_t)entryPoint);
+	printf("Jumping into loaded program. (This will not work on OSes)");
+#endif // DEBUG
+
+	int (*loadedMain)() = (int (*)())entryPoint;
+	loadedMain();
+
 }
