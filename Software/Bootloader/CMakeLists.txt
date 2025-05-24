@@ -8,11 +8,12 @@ add_subdirectory("elfload")
 
 add_executable (Bootloader)
 
+target_link_libraries(Bootloader "elfload")
+
 target_sources(Bootloader PRIVATE
 	"Bootloader.cpp"
 )
 
-target_link_libraries(Bootloader "elfload")
 
 
 if (CMAKE_VERSION VERSION_GREATER 3.12)
