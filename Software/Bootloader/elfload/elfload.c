@@ -40,7 +40,6 @@ el_status el_findphdr(el_ctx *ctx, Elf_Phdr *phdr, uint32_t type, unsigned *i)
 
 el_status el_init(el_ctx *ctx)
 {
-	printf("%i\n", EM_THIS);
     el_status rv = EL_OK;
     if ((rv = el_pread(ctx, &ctx->ehdr, sizeof ctx->ehdr, 0)))
         return rv;

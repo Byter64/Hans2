@@ -1,10 +1,9 @@
 ﻿extern "C" {
 	#include "elfload/elfload.h"
 }
-#ifdef DEBUG
+
 #include <stdio.h>
 #include <stdlib.h>
-#endif // DEBUG
 
 FILE* elfFile;
 void* loadAddress = 0;
