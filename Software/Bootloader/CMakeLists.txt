@@ -10,16 +10,20 @@ add_compile_options(
                     -nostdlib
                     -fno-unwind-tables
                     -fno-rtti
-					"--target=riscv32-none-elf"
+					--target=riscv32-none-elf
 					-march=rv32im 
 					-Os
-					"-Wl,--gc-sections" 
 					-ffreestanding 
 					-Bstatic
+					-fuse-ld=ld.lld
+					"-Wl,--gc-sections" 
 )
 
-add_link_options(-nostdlib -nostartfiles
-  -T${CMAKE_CURRENT_SOURCE_DIR}/riscv.ld
+add_link_options(
+	-nostdlib 
+	-nostartfiles
+	-T${CMAKE_CURRENT_SOURCE_DIR}/riscv.ld
+	"-Wl,--gc-sections" 
 )
 
 include_directories(Bootloader.elf
@@ -27,7 +31,6 @@ include_directories(Bootloader.elf
 )
 
 add_subdirectory("elfload")
-add_subdirectory("fatfs")
 
 add_executable (Bootloader.elf)
 
@@ -38,7 +41,7 @@ target_link_libraries(Bootloader.elf
 	${CMAKE_CURRENT_SOURCE_DIR}/newlib/libm.a
 	elfload)
 
-target_sources(Bootloader.elf PRIVATE
+target_sources(Bootloader.elf PUBLIC
 	"start.S"
 	"Bootloader.cpp"
 )

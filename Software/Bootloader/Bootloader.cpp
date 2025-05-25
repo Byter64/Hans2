@@ -82,4 +82,6 @@ int main()
 	int (*loadedMain)() = (int (*)())entryPoint;
 	loadedMain();
 
+	while (true);
+	return 0;
 }
