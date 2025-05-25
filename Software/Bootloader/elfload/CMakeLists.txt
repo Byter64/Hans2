@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.8) 
+cmake_minimum_required(VERSION 3.30.0) 
 
 if (CMAKE_COMPILER_IS_GNUCC)
   add_compile_options(-Wall -Wextra)

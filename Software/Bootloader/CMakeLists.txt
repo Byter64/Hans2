@@ -1,6 +1,7 @@
-﻿cmake_minimum_required (VERSION 3.8)
+﻿cmake_minimum_required (VERSION 3.30.0)
 project ("Bootloader")
 enable_language(C CXX ASM)
+set(CMAKE_LINKER_TYPE LLD)
 
 add_compile_definitions("__riscv32__")
 #add_compile_definitions("DEBUG")
@@ -15,14 +16,13 @@ add_compile_options(
 					-Os
 					-ffreestanding 
 					-Bstatic
-					-fuse-ld=ld.lld
-					"-Wl,--gc-sections" 
 )
 
 add_link_options(
 	-nostdlib 
 	-nostartfiles
-	-T${CMAKE_CURRENT_SOURCE_DIR}/riscv.ld
+	-fuse-ld=ld.lld
+	-T ${CMAKE_CURRENT_SOURCE_DIR}/riscv.ld
 	"-Wl,--gc-sections" 
 )
 
