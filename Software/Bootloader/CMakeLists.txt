@@ -1,7 +1,6 @@
 ﻿cmake_minimum_required (VERSION 3.8)
-enable_language(C CXX ASM)
-
 project ("Bootloader")
+enable_language(C CXX ASM)
 
 add_compile_definitions("__riscv32__")
 #add_compile_definitions("DEBUG")
@@ -23,13 +22,21 @@ add_link_options(-nostdlib -nostartfiles
   -T${CMAKE_CURRENT_SOURCE_DIR}/riscv.ld
 )
 
+include_directories(Bootloader.elf
+	PUBLIC SYSTEM ${CMAKE_CURRENT_SOURCE_DIR}/../newlib/newlib-4.5.0.20241231/newlib/libc/include
+)
 
 add_subdirectory("elfload")
 add_subdirectory("fatfs")
 
 add_executable (Bootloader.elf)
 
-target_link_libraries(Bootloader.elf "elfload")
+target_link_libraries(Bootloader.elf 
+	${CMAKE_CURRENT_SOURCE_DIR}/newlib/libc.a
+	${CMAKE_CURRENT_SOURCE_DIR}/newlib/libg.a
+	${CMAKE_CURRENT_SOURCE_DIR}/newlib/libgloss.a
+	${CMAKE_CURRENT_SOURCE_DIR}/newlib/libm.a
+	elfload)
 
 target_sources(Bootloader.elf PRIVATE
 	"start.S"
