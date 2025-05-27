@@ -1,30 +1,34 @@
 ﻿cmake_minimum_required (VERSION 3.30.0)
 project ("Bootloader")
 enable_language(C CXX ASM)
-set(CMAKE_LINKER_TYPE LLD)
 
 add_compile_definitions("__riscv32__")
 #add_compile_definitions("DEBUG")
 
 add_compile_options(
-                    -fno-exceptions
-                    -nostdlib
-                    -fno-unwind-tables
-                    -fno-rtti
-					--target=riscv32-none-elf
-					-march=rv32im 
-					-Os
-					-ffreestanding 
-					-Bstatic
+	-fno-exceptions
+	-nostdlib
+	-fno-unwind-tables
+	-fno-rtti
+	-march=rv32im
+	-Os
+	-ffreestanding
+	-Bstatic
+	-nostdlib 
 )
 
 add_link_options(
+	-nostdlib
+	-nostartfiles
+	-T ${CMAKE_CURRENT_SOURCE_DIR}/riscv.ld
+	-Wl,--gc-sections
+	-ffreestanding
+	-Bstatic
 	-nostdlib 
 	-nostartfiles
-	-fuse-ld=ld.lld
-	-T ${CMAKE_CURRENT_SOURCE_DIR}/riscv.ld
-	"-Wl,--gc-sections" 
+	#-fuse-ld=ld.lld
 )
+
 
 include_directories(Bootloader.elf
 	PUBLIC SYSTEM ${CMAKE_CURRENT_SOURCE_DIR}/../newlib/newlib-4.5.0.20241231/newlib/libc/include
