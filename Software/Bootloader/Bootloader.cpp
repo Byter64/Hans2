@@ -40,8 +40,51 @@ static void check(el_status stat, const char* expln)
 #endif // DEBUG
 }
 
+volatile char* GPU_BLOCK = (char*)0x02000000;
+volatile uint16_t** GPU_IMAGE_START = (volatile uint16_t**)(GPU_BLOCK + 0);
+volatile int* GPU_IMAGE_X = (int*)(GPU_BLOCK + 4);
+volatile int* GPU_IMAGE_Y = (int*)(GPU_BLOCK + 8);
+volatile int* GPU_IMAGE_WIDTH = (int*)(GPU_BLOCK + 12);
+volatile int* GPU_EXCERPT_WIDTH = (int*)(GPU_BLOCK + 16);
+volatile int* GPU_EXCERPT_HEIGHT = (int*)(GPU_BLOCK + 20);
+volatile int* GPU_SCREEN_X = (int*)(GPU_BLOCK + 24);
+volatile int* GPU_SCREEN_Y = (int*)(GPU_BLOCK + 28);
+volatile int* GPU_CLEAR_COLOR = (int*)(GPU_BLOCK + 32);
+volatile bool* GPU_COMMAND_DRAW = (bool*)(GPU_BLOCK + 36);
+volatile bool* GPU_COMMAND_CLEAR = (bool*)(GPU_BLOCK + 40);
+volatile int* GPU_IS_BUSY = (int*)(GPU_BLOCK + 44);
+
+volatile bool* GPU_VSYNC = (bool*)(GPU_BLOCK + 48);
+volatile bool* GPU_HSYNC = (bool*)(GPU_BLOCK + 52);
+
+volatile bool* GPU_COMMAND_SWAP_BUFFERS = (bool*)(GPU_BLOCK + 56);
+volatile bool* VSYNC_BUFFER_SWAP = (bool*)(GPU_BLOCK + 60);
+
+uint16_t black = 0b0000000000000001;
+
 int main()
 {
+	*GPU_IMAGE_START = &black;
+	*GPU_IMAGE_X = 0;
+	*GPU_IMAGE_Y = 0;
+	*GPU_IMAGE_WIDTH = 1;
+	*GPU_EXCERPT_WIDTH = 1;
+	*GPU_EXCERPT_HEIGHT = 1;
+	
+	while(true)
+	{
+		for(int y = 0; y < 240; y++)
+			for(int x = 0; x < 400; x++)
+			{
+				*GPU_SCREEN_X = x;
+				*GPU_SCREEN_Y = y;
+				*GPU_COMMAND_DRAW = true;
+				while(!*GPU_VSYNC);
+				*GPU_COMMAND_SWAP_BUFFERS = true;
+			}
+	}
+	
+
 	//TODO: Include fatfs
 	//TODO: Add graphical progress bar
 	elfFile = fopen(R"(C:\Users\Yanni\Documents\Hans2\Software\Bootloader\firmware.elf)", "rb");
