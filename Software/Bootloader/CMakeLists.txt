@@ -37,7 +37,7 @@ add_subdirectory("elfload")
 
 add_executable (Bootloader.elf)
 
-target_link_libraries(Bootloader 
+target_link_libraries(Bootloader.elf 
 	${CMAKE_CURRENT_SOURCE_DIR}/newlib/libc.a
 	${CMAKE_CURRENT_SOURCE_DIR}/newlib/libg.a
 	${CMAKE_CURRENT_SOURCE_DIR}/newlib/libgloss.a
