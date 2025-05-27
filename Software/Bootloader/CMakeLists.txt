@@ -26,20 +26,18 @@ add_link_options(
 	-Bstatic
 	-nostdlib 
 	-nostartfiles
-	#-fuse-ld=ld.lld
 )
 
 
 include_directories(Bootloader.elf
 	PUBLIC SYSTEM ${CMAKE_CURRENT_SOURCE_DIR}/../newlib/newlib-4.5.0.20241231/newlib/libc/include
-	PUBLIC SYSTEM ${CMAKE_CURRENT_SOURCE_DIR}/../newlib/newlib-4.5.0.20241231/newlib/libc/include/sys
 )
 
 add_subdirectory("elfload")
 
 add_executable (Bootloader.elf)
 
-target_link_libraries(Bootloader.elf 
+target_link_libraries(Bootloader 
 	${CMAKE_CURRENT_SOURCE_DIR}/newlib/libc.a
 	${CMAKE_CURRENT_SOURCE_DIR}/newlib/libg.a
 	${CMAKE_CURRENT_SOURCE_DIR}/newlib/libgloss.a
@@ -51,8 +49,9 @@ target_sources(Bootloader.elf PUBLIC
 	"Bootloader.cpp"
 )
 
+add_custom_command(TARGET Bootloader.elf POST_BUILD
+	COMMAND objcopy ARGS -O verilog Bootloader.elf Bootloader.hex)
 
-
-if (CMAKE_VERSION VERSION_GREATER 3.12)
-  set_property(TARGET Bootloader.elf PROPERTY CXX_STANDARD 20)
-endif()
+add_custom_command(TARGET Bootloader.elf POST_BUILD
+	COMMAND python ARGS ../hex8tohex32.py Bootloader.hex > Bootloader32.hex
+)
