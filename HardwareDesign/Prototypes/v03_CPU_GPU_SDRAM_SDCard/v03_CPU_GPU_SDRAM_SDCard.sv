@@ -52,7 +52,7 @@ ecp5pll #(
   .clk_i(clk_25mhz),
   .clk_o({clk_50mhz, clk_130mhz})
 ); 
-         
+          
 localparam S_COUNT = 2;
 localparam M_COUNT = 4;
 localparam ADDR_WIDTH = 32;

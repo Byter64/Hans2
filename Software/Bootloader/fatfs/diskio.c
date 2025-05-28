@@ -12,7 +12,7 @@
 #include "ff.h"     /* Obtains integer types */
 
 // TODO: richtig richtig machen und auch gut, weil gut hält besser
-#define MMC_OFFSET 0x2010000
+#define MMC_OFFSET 0x80000000
 
 /*-----------------------------------------------------------------------*/
 /* Get Drive Status                                                      */
@@ -20,13 +20,7 @@
 
 DSTATUS disk_status(BYTE pdrv /* Physical drive nmuber to identify the drive */
 ) {
-  DSTATUS stat;
-  int result;
-
-  // result = MMC_disk_status();
-  // translate the reslut code here
-
-  return stat;
+  return 0;
 }
 
 /*-----------------------------------------------------------------------*/
@@ -36,12 +30,8 @@ DSTATUS disk_status(BYTE pdrv /* Physical drive nmuber to identify the drive */
 DSTATUS
 disk_initialize(BYTE pdrv /* Physical drive nmuber to identify the drive */
 ) {
-  DSTATUS stat;
-  int result;
 
-  // Stub for Hans2
-
-  return stat;
+  return 0;
 }
 
 /*-----------------------------------------------------------------------*/

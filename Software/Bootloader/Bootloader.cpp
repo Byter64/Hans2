@@ -63,12 +63,14 @@ volatile bool* VSYNC_BUFFER_SWAP = (bool*)(GPU_BLOCK + 60);
 
 uint16_t black = 0b0000000000000001;
 
+volatile int* fickDich = 0;
 int main()
 {	//TODO: Include fatfs
 	//TODO: Add graphical progress bar
 
 	DIR directory;
 	FILINFO fileInfo;
+	while(true) (*fickDich)++;
 	//Find main program to load
 	FRESULT fatfsResult = f_findfirst(&directory, &fileInfo, "/", "*.elf");
 	
