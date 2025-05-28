@@ -4,7 +4,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include "ff.h"
+#include "fatfs/ff.h"
 
 FILE* elfFile;
 void* loadAddress = 0;
@@ -70,9 +70,9 @@ int main()
 	DIR directory;
 	FILINFO fileInfo;
 	//Find main program to load
-	FRESULT result = f_findfirst(&directory, &fileInfo, "/", "*.elf");
+	FRESULT fatfsResult = f_findfirst(&directory, &fileInfo, "/", "*.elf");
 	
-	if(result != FR_OK) while(true);
+	if(fatfsResult != FR_OK) while(true);
 	char elfFilePath[16] = "/";
 	int i;
 	for(i = 0; fileInfo.fname[i] != '\0'; i++)
