@@ -12,7 +12,7 @@
 #include "ff.h"     /* Obtains integer types */
 
 // TODO: richtig richtig machen und auch gut, weil gut hält besser
-#define MMC_OFFSET 200
+#define MMC_OFFSET 0x2010000
 
 /*-----------------------------------------------------------------------*/
 /* Get Drive Status                                                      */

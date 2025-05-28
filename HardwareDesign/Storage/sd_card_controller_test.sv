@@ -33,12 +33,7 @@ module sd_controller(
     output  logic [4:0] status // For debug purposes: Current state of controller.
 );
 
-    logic [7:0] ram [2048];
-    initial begin
-        for(int i = 0; i< 2048; i++) begin
-            ram[i] = i;
-        end
-    end
+    logic [7:0] ram [32768];
 
     parameter RST = 0;
     parameter INIT = 1;
