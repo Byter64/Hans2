@@ -4,6 +4,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include "ff.h"
 
 FILE* elfFile;
 void* loadAddress = 0;
@@ -63,32 +64,22 @@ volatile bool* VSYNC_BUFFER_SWAP = (bool*)(GPU_BLOCK + 60);
 uint16_t black = 0b0000000000000001;
 
 int main()
-{
-	*GPU_IMAGE_START = &black;
-	*GPU_IMAGE_X = 0;
-	*GPU_IMAGE_Y = 0;
-	*GPU_IMAGE_WIDTH = 1;
-	*GPU_EXCERPT_WIDTH = 1;
-	*GPU_EXCERPT_HEIGHT = 1;
-	
-	while(true)
-	{
-		for(int y = 0; y < 240; y++)
-			for(int x = 0; x < 400; x++)
-			{
-				*GPU_SCREEN_X = x;
-				*GPU_SCREEN_Y = y;
-				*GPU_COMMAND_DRAW = true;
-				while(!*GPU_VSYNC);
-				*GPU_COMMAND_SWAP_BUFFERS = true;
-			}
-	}
-	
-
-	//TODO: Include fatfs
+{	//TODO: Include fatfs
 	//TODO: Add graphical progress bar
-	elfFile = fopen(R"(C:\Users\Yanni\Documents\Hans2\Software\Bootloader\firmware.elf)", "rb");
 
+	DIR directory;
+	FILINFO fileInfo;
+	//Find main program to load
+	FRESULT result = f_findfirst(&directory, &fileInfo, "/", "*.elf");
+	
+	if(result != FR_OK) while(true);
+	char elfFilePath[16] = "/";
+	int i;
+	for(i = 0; fileInfo.fname[i] != '\0'; i++)
+		elfFilePath[i + 1] = fileInfo.fname[i];
+	elfFilePath[i + 1] = '\0';
+	
+	elfFile = fopen(elfFilePath, "rb");
 	
 #ifdef DEBUG
 	loadAddress = malloc(32768);

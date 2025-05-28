@@ -31,6 +31,7 @@ add_link_options(
 
 include_directories(Bootloader.elf
 	PUBLIC SYSTEM ${CMAKE_CURRENT_SOURCE_DIR}/../newlib/newlib-4.5.0.20241231/newlib/libc/include
+	PUBLIC ${CMAUE_CURRENT_SOURCE_DIR}/fatfs
 )
 
 add_subdirectory("elfload")
