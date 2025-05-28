@@ -34,6 +34,7 @@ include_directories(Bootloader.elf
 )
 
 add_subdirectory("elfload")
+add_subdirectory("fatfs")
 
 add_executable (Bootloader.elf)
 
@@ -42,9 +43,11 @@ target_link_libraries(Bootloader.elf
 	${CMAKE_CURRENT_SOURCE_DIR}/newlib/libg.a
 	${CMAKE_CURRENT_SOURCE_DIR}/newlib/libgloss.a
 	${CMAKE_CURRENT_SOURCE_DIR}/newlib/libm.a
-	elfload)
+	elfload
+	fatfs)
 
 target_sources(Bootloader.elf PUBLIC
+	"syscall.c"
 	"start.S"
 	"Bootloader.cpp"
 )
