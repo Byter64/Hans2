@@ -70,9 +70,9 @@ int main()
 
 	DIR directory;
 	FILINFO fileInfo;
-	while(true) (*fickDich)++;
 	//Find main program to load
 	FRESULT fatfsResult = f_findfirst(&directory, &fileInfo, "/", "*.elf");
+	while(true) (*fickDich)++;
 	
 	if(fatfsResult != FR_OK) while(true);
 	char elfFilePath[16] = "/";
