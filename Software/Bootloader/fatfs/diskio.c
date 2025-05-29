@@ -10,6 +10,7 @@
 // File adapted for Hans2
 #include "diskio.h" /* Declarations of disk functions */
 #include "ff.h"     /* Obtains integer types */
+#include "../DebugHelper.h"
 
 // TODO: richtig richtig machen und auch gut, weil gut hält besser
 #define MMC_OFFSET 0x80000000
@@ -45,13 +46,22 @@ DRESULT disk_read(BYTE pdrv,  /* Physical drive nmuber to identify the drive */
 ) {
   DRESULT res = RES_OK;
 
-  volatile BYTE *addr = (volatile BYTE *)(sector + MMC_OFFSET);
+  volatile BYTE *addr = ((volatile BYTE *)(MMC_OFFSET)) + sector;
 
   int i;
-  for (i = 0; i < count; i++) {
-    buff[i] = addr[i];
+  ScreenPrint("Sector:");
+  for (i = 0; i < count; i++)
+  {
+      buff[i] = addr[i];
+			for(int i = 0; i < 512; i++)
+			{
+				char buffer[3];
+				ByteToHex(addr[i], buffer);
+				ScreenPrint(buffer);
+			}
   }
-
+  ScreenPrint("End");
+    
   return res;
 }
 
@@ -68,7 +78,7 @@ DRESULT disk_write(BYTE pdrv, /* Physical drive nmuber to identify the drive */
 ) {
   DRESULT res = RES_OK;
 
-  volatile BYTE *addr = (volatile BYTE *)(sector + MMC_OFFSET);
+  volatile BYTE *addr = ((volatile BYTE *)(MMC_OFFSET)) + sector;
 
   int i;
   for (i = 0; i < count; i++) {

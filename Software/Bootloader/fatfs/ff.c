@@ -18,6 +18,7 @@
 /
 /----------------------------------------------------------------------------*/
 
+
 #include <string.h>
 #include "ff.h"			/* Declarations of FatFs API */
 #include "diskio.h"		/* Declarations of device I/O functions */
@@ -1094,14 +1095,6 @@ static FRESULT move_window (	/* Returns FR_OK or FR_DISK_ERR */
 				res = FR_DISK_ERR;
 			}
 			fs->winsect = sect;
-			ScreenPrint("Sector:");
-			for(int i = 0; i < 512; i++)
-			{
-				char buffer[3];
-				ByteToHex(fs->win[i], buffer);
-				ScreenPrint(buffer);
-			}
-			ScreenPrint("End");
 		}
 	}
 	return res;
