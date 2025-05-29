@@ -200,8 +200,8 @@ always_ff @(posedge aclk) s_axil_awready <= 1;
 
 always_ff @(posedge aclk) begin
 	if (s_axil_awvalid && s_axil_awready) begin //Never add any other conditions. This is likely to break axi
-		registerSelect <= s_axil_wdata[3:0];
-        channelSelect <= s_axil_wdata[11:4];
+		registerSelect <= s_axil_awaddr[3:0];
+        channelSelect <= s_axil_awaddr[11:4];
     end
 end
 
