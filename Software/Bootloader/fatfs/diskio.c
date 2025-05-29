@@ -46,7 +46,7 @@ DRESULT disk_read(BYTE pdrv,  /* Physical drive nmuber to identify the drive */
 ) {
   DRESULT res = RES_OK;
 
-  volatile BYTE *addr = ((volatile BYTE *)(MMC_OFFSET)) + sector;
+  volatile BYTE *addr = ((volatile BYTE *)(MMC_OFFSET)) + (sector * 512);
 
   int i;
   for (i = 0; i < count * FF_MAX_SS; i++)
@@ -70,7 +70,7 @@ DRESULT disk_write(BYTE pdrv, /* Physical drive nmuber to identify the drive */
 ) {
   DRESULT res = RES_OK;
 
-  volatile BYTE *addr = ((volatile BYTE *)(MMC_OFFSET)) + sector;
+  volatile BYTE *addr = ((volatile BYTE *)(MMC_OFFSET)) + (sector * 512);
 
   int i;
   for (i = 0; i < count * FF_MAX_SS; i++) {
