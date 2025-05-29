@@ -48,7 +48,8 @@ typedef enum logic[3:0] {
         SET_ISPLAYING       = 9,
         SET_ISMONO          = 10,
         SET_ISRIGHT         = 11,
-        SET_GLOBAL_VOLUME   = 12
+        SET_GLOBAL_VOLUME   = 12,
+		SET_CHANNEL_SELECT	= 13
     } ChannelSettings;
 
 logic[7:0] isMono;
@@ -192,16 +193,15 @@ end
 //AXI SLAVE
 //CPU Interface
 logic[31:0] registerData;
-logic[3:0]  registerSelect; //s_axil_xdata[3:0]
-logic[7:0]  channelSelect;  //a_axil_xdata[11:4]
+logic[3:0]  registerSelect; //s_axil_xdata[5:2]
+logic[7:0]  channelSelect;
 
 //AW
 always_ff @(posedge aclk) s_axil_awready <= 1;
 
 always_ff @(posedge aclk) begin
 	if (s_axil_awvalid && s_axil_awready) begin //Never add any other conditions. This is likely to break axi
-		registerSelect <= s_axil_awaddr[3:0];
-        channelSelect <= s_axil_awaddr[11:4];
+		registerSelect <= s_axil_awaddr[5:2];
     end
 end
 
@@ -210,7 +210,10 @@ always_ff @(posedge aclk) s_axil_wready <= 1;
 
 always_ff @(posedge aclk) begin
 	if (s_axil_wvalid && s_axil_wready) begin //Never add any other conditions. This is likely to break axi
-        registerData <= s_axil_wdata;
+		if(registerSelect == SET_CHANNEL_SELECT)
+			channelSelect <= s_axil_wdata[7:0];
+		else
+			registerData <= s_axil_wdata;
     end
 end
 
