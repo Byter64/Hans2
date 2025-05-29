@@ -133,10 +133,10 @@ int main()
 	Hapi::Init();
 
 	FRESULT fatfsResult;
+    is_mounted = 1;
 	DrawResult(fatfsResult);
 	//Find main program to load
-	//fatfsResult = f_mount(&FatFs, "", 0);
-    is_mounted = 1;
+	fatfsResult = f_mount(&FatFs, "", 0);
 
 
 	DIR directory;
