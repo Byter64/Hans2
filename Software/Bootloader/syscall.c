@@ -19,7 +19,7 @@ struct FD_Data {
 } FD_Data_default = {NULL, FA_READ, 0};
 typedef struct FD_Data FD_Data;
 
-#define FILE_AMOUNT 100
+#define FILE_AMOUNT 4
 static FD_Data fd_data[FILE_AMOUNT];
 
 int _write(int fd, char *ptr, int len) {
