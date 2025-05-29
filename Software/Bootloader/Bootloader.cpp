@@ -1,7 +1,9 @@
 ﻿extern "C" {
 	#include "elfload/elfload.h"
+	#include "DebugHelper.h"
 }
 
+#include <stdlib.h>
 #include <stdio.h>
 #include "ff.h"
 #include "Hapi.h"
@@ -112,18 +114,50 @@ const char* FRESULTToString(FRESULT fResult)
 	break;
 	}
 }
-extern FATFS FatFs;
-extern BYTE is_mounted;
 
+const char* ByteToHex(unsigned char byte, char* buffer)
+{
+	unsigned char nibble0 = byte & 0x0F;
+	unsigned char nibble1 = (byte & 0xF0) >> 4;
+
+	if(nibble0 < 10) buffer[1] = '0' + nibble0;
+	else 			 buffer[1] = 'A' + nibble0 - 10;
+
+	if(nibble1 < 10) buffer[0] = '0' + nibble1;
+	else 			 buffer[0] = 'A' + nibble1 - 10;
+	
+	buffer[2] = '\0';
+	return buffer;
+}
+
+void ScreenPrint(const char* text)
+{
+	static int x = 5;
+	static int y = 5;
+	//if(x >= 400) return;
+	Hapi::DrawText(">", x - 4, y, 100);
+	Hapi::DrawText(text, x, y, 1000000);
+	Hapi::EndDrawing();
+
+	Hapi::DrawText(">", x - 4, y, 100);
+	Hapi::DrawText(text, x, y, 1000000);
+	Hapi::EndDrawing();
+
+	y += 5;
+	if (y == 240)
+	{
+		y = 5;
+		x += 25;
+	}
+}
 
 void DrawResult(FRESULT fatfsResult, int x, int y)
 {
-	Hapi::DrawText(FRESULTToString(fatfsResult), x, y, 1000000);
-	Hapi::EndDrawing();
-	Hapi::DrawText(FRESULTToString(fatfsResult), x, y, 1000000);
-	Hapi::EndDrawing();
+	ScreenPrint(FRESULTToString(fatfsResult));
 }
 
+extern FATFS FatFs;
+extern BYTE is_mounted;
 int main()
 {
 	//TODO: Add graphical progress bar
