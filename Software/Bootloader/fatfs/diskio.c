@@ -49,18 +49,10 @@ DRESULT disk_read(BYTE pdrv,  /* Physical drive nmuber to identify the drive */
   volatile BYTE *addr = ((volatile BYTE *)(MMC_OFFSET)) + sector;
 
   int i;
-  ScreenPrint("Sector:");
   for (i = 0; i < count; i++)
   {
       buff[i] = addr[i];
-			for(int i = 0; i < 512; i++)
-			{
-				char buffer[3];
-				ByteToHex(addr[i], buffer);
-				ScreenPrint(buffer);
-			}
   }
-  ScreenPrint("End");
     
   return res;
 }
