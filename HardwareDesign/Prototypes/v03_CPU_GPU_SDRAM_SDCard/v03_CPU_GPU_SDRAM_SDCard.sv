@@ -18,7 +18,7 @@ module CPU_with_GPU_SDRAM_SDCard
     output logic        sd_cmd,
     inout  logic [3:0]  sd_d
 ); 
-
+  
   
 logic hdmi_pixClk;
 logic resetn = 0;
@@ -52,7 +52,7 @@ ecp5pll #(
   .clk_i(clk_25mhz),
   .clk_o({clk_50mhz, clk_130mhz})
 ); 
-         
+           
 localparam S_COUNT = 2;
 localparam M_COUNT = 4;
 localparam ADDR_WIDTH = 32;
@@ -61,8 +61,8 @@ localparam STRB_WIDTH = 4;
 localparam BOOTLOADER_START = 32'h0201_0000;
 //						  {SDRAM, Graphicsystem, Bootloader, 	  SDCARD}
 localparam M_BASE_ADDR  = {32'h0, 32'h200_0000, BOOTLOADER_START, 32'h8000_0000};
-localparam M_ADDR_WIDTH = {32'd25, 32'd8,		32'd15,			  32'd31};
-
+localparam M_ADDR_WIDTH = {32'd25, 32'd8,		32'd16,			  32'd31};
+           
 logic         CPU_mem_axi_awvalid;
 logic         CPU_mem_axi_awready;
 logic [31:0]  CPU_mem_axi_awaddr;  
@@ -76,7 +76,7 @@ logic         CPU_mem_axi_bready;
 logic [ 1:0]  CPU_mem_axi_bresp;
 logic         CPU_mem_axi_arvalid;
 logic         CPU_mem_axi_arready;
-logic [31:0]  CPU_mem_axi_araddr;
+logic [31:0]  CPU_mem_axi_araddr; 
 logic [ 2:0]  CPU_mem_axi_arprot;
 logic         CPU_mem_axi_rvalid;
 logic         CPU_mem_axi_rready;
@@ -330,7 +330,7 @@ GraphicSystem GraphicSystem
 	.m_axil_rready(GS_m_axil_rready)
 );
 
-
+ 
 logic[ADDR_WIDTH-1:0]  BOOT_s_axil_awaddr;
 logic[2:0]             BOOT_s_axil_awprot;
 logic                  BOOT_s_axil_awvalid;
@@ -354,7 +354,7 @@ AXILiteMemory #(
     .ADDR_WIDTH(ADDR_WIDTH),
     .DATA_WIDTH(DATA_WIDTH), 
     .STRB_WIDTH(STRB_WIDTH),
-    .MEMORY_DEPTH(8192) //In 32-Bit words
+    .MEMORY_DEPTH(12288) //In 32-Bit words
 ) Bootloader (
     .aclk(clk_50mhz),
     .aresetn(resetn),
