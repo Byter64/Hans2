@@ -153,7 +153,7 @@ void Hapi::DrawText(const char* text, Font font, int posX, int posY, unsigned in
 	{
 		if(*text >= 128)
 		{
-			posX += atlas->atlas[0].width;
+			posX += atlas->atlas['a'].width;
 			continue;
 		}
 		const Rectangle& rect = atlas->atlas[*text];
