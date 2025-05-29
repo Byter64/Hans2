@@ -40,7 +40,14 @@ static void check(el_status stat, const char* expln)
 	{
 		printf("%s\n", expln);
 	}
-#endif // DEBUG
+#else
+	ScreenPrint(expln);
+	if(stat) 
+	{
+		ScreenPrint("Caused error:");
+		ScreenPrintByte(stat);
+	}
+	#endif // DEBUG
 }
 
 uint16_t black = 0b0000000000000001;
@@ -115,6 +122,25 @@ const char* FRESULTToString(FRESULT fResult)
 	}
 }
 
+void ScreenPrintHWord(uint16_t hword)
+{
+	char buffer[5];
+	unsigned char byte0 = hword & 0x00FF;
+	unsigned char byte1 = (hword & 0xFF00) >> 8;
+
+	ByteToHex(byte1, buffer + 0);
+	ByteToHex(byte0, buffer + 2);
+
+	ScreenPrint(buffer);
+}
+
+void ScreenPrintByte(unsigned char byte)
+{
+	char buffer[3];
+	ByteToHex(byte, buffer);
+	ScreenPrint(buffer);
+}
+
 const char* ByteToHex(unsigned char byte, char* buffer)
 {
 	unsigned char nibble0 = byte & 0x0F;
@@ -147,11 +173,11 @@ void ScreenPrint(const char* text)
 	if (y == 240)
 	{
 		y = 5;
-		x += 25;
+		x += 35;
 	}
 }
 
-void DrawResult(FRESULT fatfsResult, int x, int y)
+void ScreenPrintResult(FRESULT fatfsResult)
 {
 	ScreenPrint(FRESULTToString(fatfsResult));
 }
@@ -168,26 +194,42 @@ int main()
 	Hapi::EndDrawing();
 
 	FRESULT fatfsResult;
+
+	ScreenPrint("Mounting SD-Card...");
 	fatfsResult = f_mount(&FatFs, "", 0);
     is_mounted = 1;
-	DrawResult(fatfsResult, 10, 50);
+	ScreenPrintResult(fatfsResult);
 	
 	
 	//Find main program to load
+	ScreenPrint("Search *.elf...");
 	DIR directory;
 	FILINFO fileInfo;
 	fatfsResult = f_findfirst(&directory, &fileInfo, "/", "*.elf");
-	DrawResult(fatfsResult, 10, 60);
+	ScreenPrintResult(fatfsResult);
 	
 	if(fatfsResult != FR_OK) while(true);
 
 	char elfFilePath[16] = "/";
+	char debugMessage[32] = "Opening ";
 	int i;
 	for(i = 0; fileInfo.fname[i] != '\0'; i++)
+	{
 		elfFilePath[i + 1] = fileInfo.fname[i];
+		debugMessage[i + 8] = fileInfo.fname[i];
+	}
 	elfFilePath[i + 1] = '\0';
+	debugMessage[i + 8] = '.';
+	debugMessage[i + 9] = '.';
+	debugMessage[i + 10] = '.';
+	debugMessage[i + 11] = '\0';
 	
+
+	ScreenPrint(debugMessage);
 	elfFile = fopen(elfFilePath, "rb");
+	ScreenPrint(elfFile ? "Success" : "Failed");
+	if(!elfFile) while(true);
+
 	#ifdef DEBUG
 	loadAddress = malloc(32768);
 	if (!elfFile)

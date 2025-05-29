@@ -52,7 +52,6 @@ DRESULT disk_read(BYTE pdrv,  /* Physical drive nmuber to identify the drive */
   for (i = 0; i < count * FF_MAX_SS; i++)
   {
       buff[i] = addr[i];
-      ScreenPrintByte(buff[i]);
   }
     
   return res;
