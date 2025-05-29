@@ -116,14 +116,11 @@ extern FATFS FatFs;
 extern BYTE is_mounted;
 
 
-void DrawResult(FRESULT fatfsResult)
+void DrawResult(FRESULT fatfsResult, int x, int y)
 {
-	Hapi::StartDrawing();
-	
-	Hapi::Clear(Hapi::Color(0, 128, 128, 1));
-	Hapi::DrawText(FRESULTToString(fatfsResult), 10, 50, 1000000);
-	Hapi::Draw((Hapi::Image)Hapi::defaultFont.fontSheet, 0, 0, 250, 10, 120, 15, 120);
-	
+	Hapi::DrawText(FRESULTToString(fatfsResult), x, y, 1000000);
+	Hapi::EndDrawing();
+	Hapi::DrawText(FRESULTToString(fatfsResult), x, y, 1000000);
 	Hapi::EndDrawing();
 }
 
@@ -131,18 +128,22 @@ int main()
 {
 	//TODO: Add graphical progress bar
 	Hapi::Init();
+	Hapi::Clear(Hapi::Color(0, 128, 128, 1));
+	Hapi::EndDrawing();
+	Hapi::Clear(Hapi::Color(0, 128, 128, 1));
+	Hapi::EndDrawing();
 
 	FRESULT fatfsResult;
-    is_mounted = 1;
-	DrawResult(fatfsResult);
-	//Find main program to load
 	fatfsResult = f_mount(&FatFs, "", 0);
-
-
+    is_mounted = 1;
+	DrawResult(fatfsResult, 10, 50);
+	
+	
+	//Find main program to load
 	DIR directory;
 	FILINFO fileInfo;
 	fatfsResult = f_findfirst(&directory, &fileInfo, "/", "*.elf");
-
+	DrawResult(fatfsResult, 10, 60);
 	
 	if(fatfsResult != FR_OK) while(true);
 
