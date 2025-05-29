@@ -330,7 +330,7 @@ GraphicSystem GraphicSystem
 	.m_axil_rready(GS_m_axil_rready)
 );
 
-
+ 
 logic[ADDR_WIDTH-1:0]  BOOT_s_axil_awaddr;
 logic[2:0]             BOOT_s_axil_awprot;
 logic                  BOOT_s_axil_awvalid;

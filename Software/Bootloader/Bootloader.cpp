@@ -3,8 +3,6 @@
 }
 
 #include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
 #include "ff.h"
 #include "Hapi.h"
 
@@ -45,93 +43,106 @@ static void check(el_status stat, const char* expln)
 
 uint16_t black = 0b0000000000000001;
 
-void FRESULTToString(FRESULT fResult, char* buffer)
+const char* FRESULTToString(FRESULT fResult)
 {
 	switch (fResult)
 	{
 	case FR_OK:
-		strcpy(buffer, "FR_OK");
+		return "FR_OK";
 	break;
 	case FR_DISK_ERR:
-		strcpy(buffer, "FR_DISK_ERR");
+		return"FR_DISK_ERR";
 	break;
 	case FR_INT_ERR:
-		strcpy(buffer, "FR_INT_ERR");
+		return"FR_INT_ERR";
 	break;
 	case FR_NOT_READY:
-		strcpy(buffer, "FR_NOT_READY");
+		return"FR_NOT_READY";
 	break;
 	case FR_NO_FILE:
-		strcpy(buffer, "FR_NO_FILE");
+		return"FR_NO_FILE";
 	break;
 	case FR_NO_PATH:
-		strcpy(buffer, "FR_NO_PATH");
+		return"FR_NO_PATH";
 	break;
 	case FR_INVALID_NAME:
-		strcpy(buffer, "FR_INVALID_NAME");
+		return"FR_INVALID_NAME";
 	break;
 	case FR_DENIED:
-		strcpy(buffer, "FR_DENIED");
+		return"FR_DENIED";
 	break;
 	case FR_EXIST:
-		strcpy(buffer, "FR_EXIST");
+		return"FR_EXIST";
 	break;
 	case FR_INVALID_OBJECT:
-		strcpy(buffer, "FR_INVALID_OBJECT");
+		return"FR_INVALID_OBJECT";
 	break;
 	case FR_WRITE_PROTECTED:
-		strcpy(buffer, "FR_WRITE_PROTECTED");
+		return"FR_WRITE_PROTECTED";
 	break;
 	case FR_INVALID_DRIVE:
-		strcpy(buffer, "FR_INVALID_DRIVE");
+		return"FR_INVALID_DRIVE";
 	break;
 	case FR_NOT_ENABLED:
-		strcpy(buffer, "FR_NOT_ENABLED");
+		return"FR_NOT_ENABLED";
 	break;
 	case FR_NO_FILESYSTEM:
-		strcpy(buffer, "FR_NO_FILESYSTEM");
+		return"FR_NO_FILESYSTEM";
 	break;
 	case FR_MKFS_ABORTED:
-		strcpy(buffer, "FR_MKFS_ABORTED");
+		return"FR_MKFS_ABORTED";
 	break;
 	case FR_TIMEOUT:
-		strcpy(buffer, "FR_TIMEOUT");
+		return"FR_TIMEOUT";
 	break;
 	case FR_LOCKED:
-		strcpy(buffer, "FR_LOCKED");
+		return"FR_LOCKED";
 	break;
 	case FR_NOT_ENOUGH_CORE:
-		strcpy(buffer, "FR_NOT_ENOUGH_CORE");
+		return"FR_NOT_ENOUGH_CORE";
 	break;
 	case FR_TOO_MANY_OPEN_FILES:
-		strcpy(buffer, "FR_TOO_MANY_OPEN_FILES");
+		return"FR_TOO_MANY_OPEN_FILES";
 	break;
 	case FR_INVALID_PARAMETER:
-		strcpy(buffer, "FR_INVALID_PARAMETER");
+		return"FR_INVALID_PARAMETER";
+	break;
+	default:
+		return"Invalid result";
 	break;
 	}
+}
+extern FATFS FatFs;
+extern BYTE is_mounted;
+
+
+void DrawResult(FRESULT fatfsResult)
+{
+	Hapi::StartDrawing();
+	
+	Hapi::Clear(Hapi::Color(0, 128, 128, 1));
+	Hapi::DrawText(FRESULTToString(fatfsResult), 10, 50, 1000000);
+	Hapi::Draw((Hapi::Image)Hapi::defaultFont.fontSheet, 0, 0, 250, 10, 120, 15, 120);
+	
+	Hapi::EndDrawing();
 }
 
 int main()
 {
 	//TODO: Add graphical progress bar
+	Hapi::Init();
+
+	FRESULT fatfsResult;
+	DrawResult(fatfsResult);
+	//Find main program to load
+	//fatfsResult = f_mount(&FatFs, "", 0);
+    is_mounted = 1;
+
 
 	DIR directory;
 	FILINFO fileInfo;
-	//Find main program to load
-	FRESULT fatfsResult = f_findfirst(&directory, &fileInfo, "/", "*.elf");
-	while(true)
-	{
-	Hapi::StartDrawing();
-	Hapi::Clear(Hapi::Color(0, 128, 128, 1));
+	fatfsResult = f_findfirst(&directory, &fileInfo, "/", "*.elf");
 
-	char resultString[32];
-	FRESULTToString(fatfsResult, resultString);
-	Hapi::DrawText("HALLO", 10, 50, 1000000);
-	Hapi::Draw((Hapi::Image)Hapi::defaultFont.fontSheet, 0, 0, 250, 10, 120, 15, 120);
-	
-	Hapi::EndDrawing();
-	}
 	
 	if(fatfsResult != FR_OK) while(true);
 
@@ -142,19 +153,18 @@ int main()
 	elfFilePath[i + 1] = '\0';
 	
 	elfFile = fopen(elfFilePath, "rb");
-	
-#ifdef DEBUG
+	#ifdef DEBUG
 	loadAddress = malloc(32768);
 	if (!elfFile)
 	{
 		perror("File could not be opened");
 		return -1;
 	}
-#endif
-
+	#endif
+	
 	el_ctx ctx;
 	ctx.pread = fileRead;
-
+	
 	el_status result = el_init(&ctx);
 	check(result, "Initialising");
 	
@@ -164,20 +174,21 @@ int main()
 	result = el_load(&ctx, memoryAllocation);
 	check(result, "Loading data");
 	
-
+	
 	result = el_relocate(&ctx);
 	check(result, "Resolving relocations");
 	
 	uintptr_t entryPoint = ctx.ehdr.e_entry + (uintptr_t)loadAddress;
-
-#ifdef DEBUG
+	
+	#ifdef DEBUG
 	printf("Entry point within the program is address %p; Program is loaded at address %p\n", (uintptr_t)ctx.ehdr.e_entry, (uintptr_t)entryPoint);
 	printf("Jumping into loaded program. (This will not work on OSes)");
-#endif // DEBUG
-
+	#endif // DEBUG
+	
 	int (*loadedMain)() = (int (*)())entryPoint;
 	loadedMain();
-
+	
 	while (true);
+	
 	return 0;
 }

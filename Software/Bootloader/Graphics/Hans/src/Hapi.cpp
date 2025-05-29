@@ -1,5 +1,6 @@
 #include "Hapi.h"
 #include "../../../Assets/include/fonts/minifont5x3.h"
+#include <stdlib.h>
 
 volatile char* GPU_BLOCK = (char*)0x02000000;
 volatile int* GPU_IMAGE_START = (int*)(GPU_BLOCK + 0);
@@ -22,52 +23,53 @@ volatile int* GPU_COMMAND_SWAP_BUFFERS = (int*)(GPU_BLOCK + 56);
 volatile int* VSYNC_BUFFER_SWAP = (int*)(GPU_BLOCK + 60);
 
 
-static Hapi::FontAtlas atlas{};
+static Hapi::FontAtlas* atlas;
 Hapi::Font Hapi::defaultFont;
 static Hapi::Font LoadMiniFont()
 {
-	for (char i = 0; i < 26; i++) atlas.Add('A' + i, { i * 4, 0, 3, 5 });
-	atlas.Add('[', { 26 * 4, 0, 3, 5 });
-	atlas.Add(']', { 27 * 4, 0, 3, 5 });
-	atlas.Add('{', { 28 * 4, 0, 3, 5 });
-	atlas.Add('}', { 29 * 4, 0, 3, 5 });
+	for (char i = 0; i < 26; i++) atlas->Add('A' + i, { i * 4, 0, 3, 5 });
+	atlas->Add('[', { 26 * 4, 0, 3, 5 });
+	atlas->Add(']', { 27 * 4, 0, 3, 5 });
+	atlas->Add('{', { 28 * 4, 0, 3, 5 });
+	atlas->Add('}', { 29 * 4, 0, 3, 5 });
 	
-	for (char i = 0; i < 26; i++) atlas.Add('a' + i, { i * 4, 5, 3, 5 });
-	atlas.Add('\\', { 26 * 4, 5, 3, 5 });
-	atlas.Add('/', { 27 * 4, 5, 3, 5 });
-	atlas.Add('<', { 28 * 4, 5, 3, 5 });
-	atlas.Add('>', { 29 * 4, 5, 3, 5 });
+	for (char i = 0; i < 26; i++) atlas->Add('a' + i, { i * 4, 5, 3, 5 });
+	atlas->Add('\\', { 26 * 4, 5, 3, 5 });
+	atlas->Add('/', { 27 * 4, 5, 3, 5 });
+	atlas->Add('<', { 28 * 4, 5, 3, 5 });
+	atlas->Add('>', { 29 * 4, 5, 3, 5 });
 
-	for (char i = 1; i < 10; i++) atlas.Add('0' + i, { (i - 1) * 4, 10, 3, 5 });
-	atlas.Add('0', { 9 * 4, 10, 3, 5 });
-	atlas.Add('!', { 10 * 4, 10, 3, 5 });
-	atlas.Add('"', { 11 * 4, 10, 3, 5 });
-	atlas.Add('$', { 12 * 4, 10, 3, 5 });
-	atlas.Add('%', { 13 * 4, 10, 3, 5 });
-	atlas.Add('^', { 14 * 4, 10, 3, 5 });
-	atlas.Add('*', { 15 * 4, 10, 3, 5 });
-	atlas.Add('(', { 16 * 4, 10, 3, 5 });
-	atlas.Add(')', { 17 * 4, 10, 3, 5 });
-	atlas.Add('`', { 18 * 4, 10, 3, 5 });
-	atlas.Add('\'', { 19 * 4, 10, 3, 5 });
-	atlas.Add('-', { 20 * 4, 10, 3, 5 });
-	atlas.Add('=', { 21 * 4, 10, 3, 5 });
-	atlas.Add('_', { 22 * 4, 10, 3, 5 });
-	atlas.Add('+', { 23 * 4, 10, 3, 5 });
-	atlas.Add('?', { 24 * 4, 10, 3, 5 });
-	atlas.Add('|', { 25 * 4, 10, 3, 5 });
-	atlas.Add('.', { 26 * 4, 10, 3, 5 });
-	atlas.Add(',', { 27 * 4, 10, 3, 5 });
-	atlas.Add(':', { 28 * 4, 10, 3, 5 });
-	atlas.Add(';', { 29 * 4, 10, 3, 5 });
+	for (char i = 1; i < 10; i++) atlas->Add('0' + i, { (i - 1) * 4, 10, 3, 5 });
+	atlas->Add('0', { 9 * 4, 10, 3, 5 });
+	atlas->Add('!', { 10 * 4, 10, 3, 5 });
+	atlas->Add('"', { 11 * 4, 10, 3, 5 });
+	atlas->Add('$', { 12 * 4, 10, 3, 5 });
+	atlas->Add('%', { 13 * 4, 10, 3, 5 });
+	atlas->Add('^', { 14 * 4, 10, 3, 5 });
+	atlas->Add('*', { 15 * 4, 10, 3, 5 });
+	atlas->Add('(', { 16 * 4, 10, 3, 5 });
+	atlas->Add(')', { 17 * 4, 10, 3, 5 });
+	atlas->Add('`', { 18 * 4, 10, 3, 5 });
+	atlas->Add('\'', { 19 * 4, 10, 3, 5 });
+	atlas->Add('-', { 20 * 4, 10, 3, 5 });
+	atlas->Add('=', { 21 * 4, 10, 3, 5 });
+	atlas->Add('_', { 22 * 4, 10, 3, 5 });
+	atlas->Add('+', { 23 * 4, 10, 3, 5 });
+	atlas->Add('?', { 24 * 4, 10, 3, 5 });
+	atlas->Add('|', { 25 * 4, 10, 3, 5 });
+	atlas->Add('.', { 26 * 4, 10, 3, 5 });
+	atlas->Add(',', { 27 * 4, 10, 3, 5 });
+	atlas->Add(':', { 28 * 4, 10, 3, 5 });
+	atlas->Add(';', { 29 * 4, 10, 3, 5 });
 
-	atlas.Add(' ', { -1, -1, 3, 5 });
+	atlas->Add(' ', { -1, -1, 3, 5 });
 
-	return Hapi::LoadFont((char*)Assets::minifont5x3, 120, 15, &atlas);
+	return Hapi::LoadFont((char*)Assets::minifont5x3, 120, 15, atlas);
 }
 
 int Hapi::Init()
 {
+	atlas = (FontAtlas*)(sizeof(FontAtlas));
 	defaultFont = LoadMiniFont();
 	return 0;
 }
