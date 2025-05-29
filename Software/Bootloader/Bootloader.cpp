@@ -4,7 +4,9 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include "fatfs/ff.h"
+#include <string.h>
+#include "ff.h"
+#include "Hapi.h"
 
 FILE* elfFile;
 void* loadAddress = 0;
@@ -41,41 +43,98 @@ static void check(el_status stat, const char* expln)
 #endif // DEBUG
 }
 
-volatile char* GPU_BLOCK = (char*)0x02000000;
-volatile uint16_t** GPU_IMAGE_START = (volatile uint16_t**)(GPU_BLOCK + 0);
-volatile int* GPU_IMAGE_X = (int*)(GPU_BLOCK + 4);
-volatile int* GPU_IMAGE_Y = (int*)(GPU_BLOCK + 8);
-volatile int* GPU_IMAGE_WIDTH = (int*)(GPU_BLOCK + 12);
-volatile int* GPU_EXCERPT_WIDTH = (int*)(GPU_BLOCK + 16);
-volatile int* GPU_EXCERPT_HEIGHT = (int*)(GPU_BLOCK + 20);
-volatile int* GPU_SCREEN_X = (int*)(GPU_BLOCK + 24);
-volatile int* GPU_SCREEN_Y = (int*)(GPU_BLOCK + 28);
-volatile int* GPU_CLEAR_COLOR = (int*)(GPU_BLOCK + 32);
-volatile bool* GPU_COMMAND_DRAW = (bool*)(GPU_BLOCK + 36);
-volatile bool* GPU_COMMAND_CLEAR = (bool*)(GPU_BLOCK + 40);
-volatile int* GPU_IS_BUSY = (int*)(GPU_BLOCK + 44);
-
-volatile bool* GPU_VSYNC = (bool*)(GPU_BLOCK + 48);
-volatile bool* GPU_HSYNC = (bool*)(GPU_BLOCK + 52);
-
-volatile bool* GPU_COMMAND_SWAP_BUFFERS = (bool*)(GPU_BLOCK + 56);
-volatile bool* VSYNC_BUFFER_SWAP = (bool*)(GPU_BLOCK + 60);
-
 uint16_t black = 0b0000000000000001;
 
-volatile int* fickDich = 0;
+void FRESULTToString(FRESULT fResult, char* buffer)
+{
+	switch (fResult)
+	{
+	case FR_OK:
+		strcpy(buffer, "FR_OK");
+	break;
+	case FR_DISK_ERR:
+		strcpy(buffer, "FR_DISK_ERR");
+	break;
+	case FR_INT_ERR:
+		strcpy(buffer, "FR_INT_ERR");
+	break;
+	case FR_NOT_READY:
+		strcpy(buffer, "FR_NOT_READY");
+	break;
+	case FR_NO_FILE:
+		strcpy(buffer, "FR_NO_FILE");
+	break;
+	case FR_NO_PATH:
+		strcpy(buffer, "FR_NO_PATH");
+	break;
+	case FR_INVALID_NAME:
+		strcpy(buffer, "FR_INVALID_NAME");
+	break;
+	case FR_DENIED:
+		strcpy(buffer, "FR_DENIED");
+	break;
+	case FR_EXIST:
+		strcpy(buffer, "FR_EXIST");
+	break;
+	case FR_INVALID_OBJECT:
+		strcpy(buffer, "FR_INVALID_OBJECT");
+	break;
+	case FR_WRITE_PROTECTED:
+		strcpy(buffer, "FR_WRITE_PROTECTED");
+	break;
+	case FR_INVALID_DRIVE:
+		strcpy(buffer, "FR_INVALID_DRIVE");
+	break;
+	case FR_NOT_ENABLED:
+		strcpy(buffer, "FR_NOT_ENABLED");
+	break;
+	case FR_NO_FILESYSTEM:
+		strcpy(buffer, "FR_NO_FILESYSTEM");
+	break;
+	case FR_MKFS_ABORTED:
+		strcpy(buffer, "FR_MKFS_ABORTED");
+	break;
+	case FR_TIMEOUT:
+		strcpy(buffer, "FR_TIMEOUT");
+	break;
+	case FR_LOCKED:
+		strcpy(buffer, "FR_LOCKED");
+	break;
+	case FR_NOT_ENOUGH_CORE:
+		strcpy(buffer, "FR_NOT_ENOUGH_CORE");
+	break;
+	case FR_TOO_MANY_OPEN_FILES:
+		strcpy(buffer, "FR_TOO_MANY_OPEN_FILES");
+	break;
+	case FR_INVALID_PARAMETER:
+		strcpy(buffer, "FR_INVALID_PARAMETER");
+	break;
+	}
+}
+
 int main()
-{	//TODO: Include fatfs
+{
 	//TODO: Add graphical progress bar
 
 	DIR directory;
 	FILINFO fileInfo;
 	//Find main program to load
 	FRESULT fatfsResult = f_findfirst(&directory, &fileInfo, "/", "*.elf");
+	while(true)
+	{
+	Hapi::StartDrawing();
+	Hapi::Clear(Hapi::Color(0, 128, 128, 1));
+
+	char resultString[32];
+	FRESULTToString(fatfsResult, resultString);
+	Hapi::DrawText("HALLO", 10, 50, 1000000);
+	Hapi::Draw((Hapi::Image)Hapi::defaultFont.fontSheet, 0, 0, 250, 10, 120, 15, 120);
 	
-	*fickDich = 1;
+	Hapi::EndDrawing();
+	}
+	
 	if(fatfsResult != FR_OK) while(true);
-	while(true) (*fickDich)++;
+
 	char elfFilePath[16] = "/";
 	int i;
 	for(i = 0; fileInfo.fname[i] != '\0'; i++)

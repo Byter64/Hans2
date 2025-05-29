@@ -31,11 +31,13 @@ add_link_options(
 
 include_directories(Bootloader.elf
 	PUBLIC SYSTEM ${CMAKE_CURRENT_SOURCE_DIR}/../newlib/newlib-4.5.0.20241231/newlib/libc/include
-	PUBLIC ${CMAUE_CURRENT_SOURCE_DIR}/fatfs
+	PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/fatfs
+	PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/Graphics/include
 )
 
 add_subdirectory("elfload")
 add_subdirectory("fatfs")
+add_subdirectory("Graphics")
 
 add_executable (Bootloader.elf)
 
@@ -45,7 +47,8 @@ target_link_libraries(Bootloader.elf
 	${CMAKE_CURRENT_SOURCE_DIR}/newlib/libgloss.a
 	${CMAKE_CURRENT_SOURCE_DIR}/newlib/libm.a
 	elfload
-	fatfs)
+	fatfs
+	Graphic_Hans_API)
 
 target_sources(Bootloader.elf PUBLIC
 	"syscall.c"
