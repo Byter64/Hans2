@@ -169,8 +169,8 @@ void ScreenPrint(const char* text)
 	Hapi::DrawText(text, x, y, 1000000);
 	Hapi::EndDrawing();
 
-	y += 5;
-	if (y == 240)
+	y += 6;
+	if (y >= 230)
 	{
 		y = 5;
 		x += 35;
@@ -202,11 +202,16 @@ int main()
 	
 	
 	//Find main program to load
-	ScreenPrint("Search *.elf...");
+	ScreenPrint("Searching *.elf...");
 	DIR directory;
 	FILINFO fileInfo;
 	fatfsResult = f_findfirst(&directory, &fileInfo, "/", "*.elf");
 	ScreenPrintResult(fatfsResult);
+	if(fileInfo.fname[0] == '\0')
+	{
+		ScreenPrint("No .elf found");
+		while(true);
+	}
 	
 	if(fatfsResult != FR_OK) while(true);
 
@@ -243,17 +248,17 @@ int main()
 	ctx.pread = fileRead;
 	
 	el_status result = el_init(&ctx);
-	check(result, "Initialising");
+	check(result, "Initialising elfloader...");
 	
 	ctx.base_load_vaddr = (uintptr_t)loadAddress;
 	ctx.base_load_paddr = (uintptr_t)loadAddress;
 	
 	result = el_load(&ctx, memoryAllocation);
-	check(result, "Loading data");
+	check(result, "Loading elf file...");
 	
 	
 	result = el_relocate(&ctx);
-	check(result, "Resolving relocations");
+	check(result, "Resolving relocations...");
 	
 	uintptr_t entryPoint = ctx.ehdr.e_entry + (uintptr_t)loadAddress;
 	
