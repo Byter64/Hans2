@@ -12,6 +12,7 @@ add_link_options(-nostdlib)
 add_library(fatfs STATIC
   diskio.c
   ff.c
+  ffunicode.c
 )
 
 target_link_libraries(fatfs
