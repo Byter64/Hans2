@@ -44,17 +44,14 @@ module counter #(
         end
     end
 
-    logic[63:0] le_counter;
-    assign le_counter = {counter[7:0],counter[15:8],counter[23:16],counter[31:24],counter[39:32],counter[47:40],counter[55:48],counter[63:56]};
-
     always_comb begin : next_rData
-        case (address)
-            0: next_rData = le_counter[31:0];
-            1: next_rData = le_counter[39:8];
-            2: next_rData = le_counter[47:16];
-            3: next_rData = le_counter[55:24];
-            4: next_rData = le_counter[63:32];
-            default: next_rData = le_counter[63:32];
+        case (address[31:2]) //So that the CPU can stick to address alignment
+            0: next_rData = counter[63:32];
+            1: next_rData = counter[55:24];
+            2: next_rData = counter[47:16];
+            3: next_rData = counter[39:8];
+            4: next_rData = counter[31:0];
+            default: next_rData = counter[63:32];
         endcase
     end
 
