@@ -17,8 +17,9 @@ module CPU_with_GPU_SDRAM_SDCard
     output logic        sd_clk,
     output logic        sd_cmd,
     inout  logic [3:0]  sd_d
-); 
-  
+);  
+
+logic canBeDeleted;
   
 logic hdmi_pixClk;
 logic resetn = 0;
@@ -150,7 +151,7 @@ logic[DATA_WIDTH-1:0]  SDRAM_s_axil_rdata;
 logic[1:0]             SDRAM_s_axil_rresp;
 logic                  SDRAM_s_axil_rvalid;
 logic                  SDRAM_s_axil_rready;
-
+ 
 AXILite_SDRAM SDRAM 
 (
 	.sdram_clk(sdram_clk),
@@ -329,8 +330,8 @@ GraphicSystem GraphicSystem
 	.m_axil_rvalid(GS_m_axil_rvalid),
 	.m_axil_rready(GS_m_axil_rready)
 );
-
- 
+              
+      
 logic[ADDR_WIDTH-1:0]  BOOT_s_axil_awaddr;
 logic[2:0]             BOOT_s_axil_awprot;
 logic                  BOOT_s_axil_awvalid;
@@ -346,7 +347,7 @@ logic[2:0]             BOOT_s_axil_arprot;
 logic                  BOOT_s_axil_arvalid;
 logic                  BOOT_s_axil_arready;
 logic[DATA_WIDTH-1:0]  BOOT_s_axil_rdata;
-logic[1:0]             BOOT_s_axil_rresp;
+logic[1:0]             BOOT_s_axil_rresp;     
 logic                  BOOT_s_axil_rvalid;
 logic                  BOOT_s_axil_rready;
 AXILiteMemory #(
