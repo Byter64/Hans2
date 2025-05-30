@@ -3,6 +3,7 @@
 #include <errno.h>
 #include <stdio.h>
 #include <sys/stat.h>
+#include "DebugHelper.h"
 
 void *__dso_handle = 0;
 
@@ -45,9 +46,9 @@ int _write(int fd, char *ptr, int len) {
 
     f_close(&fp);
     return written;
-  } else if (fd > 2 && fd < FILE_AMOUNT && fd_data[fd].is_open) {
+  } else if (fd > 2 && (fd-3) < FILE_AMOUNT && fd_data[fd-3].is_open) {
     UINT bw = 0;
-    f_write(&fd_data[fd].fp, ptr, len, &bw);
+    f_write(&fd_data[fd-3].fp, ptr, len, &bw);
     return bw;
   }
 
@@ -55,9 +56,9 @@ int _write(int fd, char *ptr, int len) {
 }
 
 int _read(int fd, char *ptr, int len) {
-  if (fd > 2 && fd < FILE_AMOUNT && fd_data[fd].is_open) {
+  if (fd > 2 && (fd-3) < FILE_AMOUNT && fd_data[fd-3].is_open) {
     UINT br = 0;
-    f_read(&fd_data[fd].fp, ptr, len, &br);
+    f_read(&fd_data[fd-3].fp, ptr, len, &br);
     return br;
   }
 
@@ -86,9 +87,42 @@ int _fstat([[maybe_unused]] int fd, struct stat *st) {
   return 0;
 }
 
-int _lseek([[maybe_unused]] int fd, [[maybe_unused]] int offset,
-           [[maybe_unused]] int whence) {
-  return 0;
+int _lseek(int fd, int offset, int whence) {
+  // Invalid lseek call
+  ScreenPrint("File Data:");
+  ScreenPrintByte(fd);
+  if (fd > 2){
+    ScreenPrintByte(fd_data[fd-3].is_open);
+  }
+  if (fd <= 2 || (fd-3) >= FILE_AMOUNT || !fd_data[fd-3].is_open) {
+    return -1;
+  }
+
+  // Calculate the correct offset for f_lseek()
+  FSIZE_t ofs = 0;
+  switch (whence) {
+    // Set to offset directly
+    case SEEK_SET:
+      ofs = offset;
+      break;
+
+    // Increment by offset
+    case SEEK_CUR:
+      ofs = f_tell(&fd_data[fd-3].fp) + offset;
+      break;
+
+    // Append offset to EOF
+    case SEEK_END:
+      ofs = f_size(&fd_data[fd-3].fp) + offset;
+      break;
+    default:
+      return -1;
+  }
+
+  FRESULT result = f_lseek(&fd_data[fd-3].fp, ofs);
+  ScreenPrint("Result of fseek");
+  ScreenPrintResult(result);
+  return result;
 }
 
 int _open(const char *name, [[maybe_unused]] int flags, int mode) {
@@ -111,15 +145,16 @@ int _open(const char *name, [[maybe_unused]] int flags, int mode) {
 
     fd_data[i].mode = mode;
     fd_data[i].is_open = 1;
-    return i;
+    // Exclude stdout, stderr, stdin
+    return i+3;
   }
 
   return -1;
 }
 
 int _close(int fd) {
-  if (fd > 2 && fd < FILE_AMOUNT) {
-    fd_data[fd].is_open = 0;
+  if (fd > 2 && (fd-3) < FILE_AMOUNT) {
+    fd_data[fd-3].is_open = 0;
     return 0;
   }
 
