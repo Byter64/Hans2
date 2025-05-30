@@ -31,7 +31,7 @@ namespace Hall
 	void SetImageWidth(unsigned short imageWidth);
 	void SetWidth(unsigned short width);
 	void SetHeight(unsigned short height);
-	void SetSrreenX(unsigned short x);
+	void SetScreenX(unsigned short x);
 	void SetScreenY(unsigned short y);
 	void SetClearColor(unsigned short color);
 	void SetCommandDraw();

@@ -70,7 +70,7 @@ void Hall::SetHeight(unsigned short height)
 }
 
 
-void Hall::SetSrreenX(unsigned short x)
+void Hall::SetScreenX(unsigned short x)
 {
 	*GPU_SCREEN_X = x;
 }
