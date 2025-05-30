@@ -89,11 +89,6 @@ int _fstat([[maybe_unused]] int fd, struct stat *st) {
 
 int _lseek(int fd, int offset, int whence) {
   // Invalid lseek call
-  ScreenPrint("File Data:");
-  ScreenPrintByte(fd);
-  if (fd > 2){
-    ScreenPrintByte(fd_data[fd-3].is_open);
-  }
   if (fd <= 2 || (fd-3) >= FILE_AMOUNT || !fd_data[fd-3].is_open) {
     return -1;
   }
