@@ -12,8 +12,7 @@
 #include "ff.h"     /* Obtains integer types */
 #include "../DebugHelper.h"
 
-// TODO: richtig richtig machen und auch gut, weil gut hält besser
-#define MMC_OFFSET 0x80000000
+static volatile void* const SD_CARD_START = (void*)0x80000000;
 
 /*-----------------------------------------------------------------------*/
 /* Get Drive Status                                                      */
@@ -46,14 +45,26 @@ DRESULT disk_read(BYTE pdrv,  /* Physical drive nmuber to identify the drive */
 ) {
   DRESULT res = RES_OK;
 
-  volatile BYTE *addr = ((volatile BYTE *)(MMC_OFFSET)) + (sector * 512);
+  static int deleteMe = 0;
+  ScreenPrint("Reading disk");
+  BYTE *baseAddress = ((BYTE*)(SD_CARD_START)) + (sector * 512);
+  if(deleteMe == 1)
+    {
+      ScreenPrint("Sector:");
+      ScreenPrintHWord(sector);
+      ScreenPrint("Content:");
+    }
 
-  int i;
-  for (i = 0; i < count * FF_MAX_SS; i++)
+  for (int i = 0; i < count * 512; i++)
   {
-      buff[i] = addr[i];
+    buff[i] = baseAddress[i];
+      if(deleteMe == 1)
+        {
+          ScreenPrintByte(buff[i]);
+        }
   }
     
+deleteMe += 1;
   return res;
 }
 
@@ -70,11 +81,10 @@ DRESULT disk_write(BYTE pdrv, /* Physical drive nmuber to identify the drive */
 ) {
   DRESULT res = RES_OK;
 
-  volatile BYTE *addr = ((volatile BYTE *)(MMC_OFFSET)) + (sector * 512);
+  BYTE *baseAddress = ((BYTE*)(SD_CARD_START)) + (sector * 512);
 
-  int i;
-  for (i = 0; i < count * FF_MAX_SS; i++) {
-    addr[i] = buff[i];
+  for (int i = 0; i < count * 512; i++) {
+    baseAddress[i] = buff[i];
   }
 
   return res;
