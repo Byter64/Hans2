@@ -4748,7 +4748,7 @@ FRESULT f_findnext (
 {
 	FRESULT res;
 
-	ScreenPrint("Iterating over dir");
+	ScreenPrint("Iterating over dir:");
 	for (;;) {
 		res = f_readdir(dp, fno);		/* Get a directory item */
 		if (res != FR_OK || !fno || !fno->fname[0]) break;	/* Terminate if any error or end of directory */
@@ -4780,8 +4780,6 @@ FRESULT f_findfirst (
 
 	dp->pat = pattern;		/* Save pointer to pattern string */
 	res = f_opendir(dp, path);		/* Open the target directory */
-	ScreenPrint("Directory name");
-	ScreenPrint((char*)dp->fn);
 	if (res == FR_OK) {
 		res = f_findnext(dp, fno);	/* Find the first item */
 	}

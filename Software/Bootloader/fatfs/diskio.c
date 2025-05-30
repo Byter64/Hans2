@@ -45,26 +45,11 @@ DRESULT disk_read(BYTE pdrv,  /* Physical drive nmuber to identify the drive */
 ) {
   DRESULT res = RES_OK;
 
-  static int deleteMe = 0;
-  ScreenPrint("Reading disk");
   BYTE *baseAddress = ((BYTE*)(SD_CARD_START)) + (sector * 512);
-  if(deleteMe == 1)
-    {
-      ScreenPrint("Sector:");
-      ScreenPrintHWord(sector);
-      ScreenPrint("Content:");
-    }
 
   for (int i = 0; i < count * 512; i++)
-  {
     buff[i] = baseAddress[i];
-      if(deleteMe == 1)
-        {
-          ScreenPrintByte(buff[i]);
-        }
-  }
-    
-deleteMe += 1;
+
   return res;
 }
 
@@ -83,9 +68,8 @@ DRESULT disk_write(BYTE pdrv, /* Physical drive nmuber to identify the drive */
 
   BYTE *baseAddress = ((BYTE*)(SD_CARD_START)) + (sector * 512);
 
-  for (int i = 0; i < count * 512; i++) {
+  for (int i = 0; i < count * 512; i++)
     baseAddress[i] = buff[i];
-  }
 
   return res;
 }
