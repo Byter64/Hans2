@@ -7,6 +7,7 @@
 #include <stdio.h>
 #include "ff.h"
 #include "Hapi.h"
+#include <errno.h>
 
 FILE* elfFile;
 void* loadAddress = 0;
@@ -23,6 +24,7 @@ static bool fileRead(el_ctx* ctx, void* dest, size_t nb, size_t offset)
 	if (temp != 1)
 	{
 		ScreenPrint("fread failed");
+		ScreenPrintWord(errno);
 		ScreenPrintByte(temp);
 		return false;
 	}
@@ -100,7 +102,7 @@ int main()
 	debugMessage[i + 11] = '\0';
 	
 	SetStatus(debugMessage, 25, 10);
-	elfFile = fopen(elfFilePath, "w");
+	elfFile = fopen(elfFilePath, "r");
 	SetStatus(elfFile ? "Open succeeded" : "Open failed", 30, 20);
 	if(!elfFile) while(true);
 

@@ -56,15 +56,9 @@ int _write(int fd, char *ptr, int len) {
 }
 
 int _read(int fd, char *ptr, int len) {
-  ScreenPrint("read result");
-  ScreenPrintWord(fd);
-  ScreenPrintWord((int)ptr);
-  ScreenPrintWord(len);
-  ScreenPrintByte(fd_data[fd-3].is_open);
   if (fd > 2 && (fd-3) < FILE_AMOUNT && fd_data[fd-3].is_open) {
     UINT bytesRead = 0;
     FRESULT result = f_read(&fd_data[fd-3].fp, ptr, len, &bytesRead);
-    ScreenPrintByte(result);
     return bytesRead;
   }
 
@@ -137,11 +131,8 @@ int _open(const char *name, [[maybe_unused]] int flags, int mode) {
       continue;
     }
     mode = FA_READ;
-    ScreenPrint("Mode:");
-    ScreenPrintWord(mode);
     FRESULT fr = f_open(&fd_data[i].fp, name, mode);
     if (fr != FR_OK) {
-      ScreenPrintByte(fr);
       return -1;
     }
 
