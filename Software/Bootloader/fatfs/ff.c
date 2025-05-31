@@ -3755,18 +3755,19 @@ FRESULT f_open (
 		dj.obj.fs = fs;
 		INIT_NAMBUF(fs);
 		res = follow_path(&dj, path);	/* Follow the file path */
-#if !FF_FS_READONLY	/* Read/Write configuration */
+		#if !FF_FS_READONLY	/* Read/Write configuration */
 		if (res == FR_OK) {
 			if (dj.fn[NSFLAG] & NS_NONAME) {	/* Origin directory itself? */
 				res = FR_INVALID_NAME;
 			}
-#if FF_FS_LOCK
+			#if FF_FS_LOCK
 			else {
 				res = chk_share(&dj, (mode & ~FA_READ) ? 1 : 0);	/* Check if the file can be used */
 			}
-#endif
+			#endif
 		}
 		/* Create or Open a file */
+		ScreenPrintByte(mode);
 		if (mode & (FA_CREATE_ALWAYS | FA_OPEN_ALWAYS | FA_CREATE_NEW)) {
 			if (res != FR_OK) {					/* No file, create new */
 				if (res == FR_NO_FILE) {		/* There is no file to open, create a new entry */
@@ -3782,6 +3783,7 @@ FRESULT f_open (
 				if (dj.obj.attr & (AM_RDO | AM_DIR)) {	/* Cannot overwrite it (R/O or DIR) */
 					res = FR_DENIED;
 				} else {
+					ScreenPrint("HEEEEEELP");
 					if (mode & FA_CREATE_NEW) res = FR_EXIST;	/* Cannot create as new file */
 				}
 			}
