@@ -54,6 +54,7 @@ target_sources(Bootloader.elf PUBLIC
 	"syscall.c"
 	"start.S"
 	"Bootloader.cpp"
+	"DebugHelper.cpp"
 )
 
 add_custom_command(TARGET Bootloader.elf POST_BUILD
