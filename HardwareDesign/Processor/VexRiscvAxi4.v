@@ -7284,13 +7284,13 @@ module VexRiscvAxi4 (
   assign dBusAxi_aw_payload_prot = dbus_axi_arw_payload_prot;
   assign dBusAxi_w_valid = dbus_axi_w_valid;
   assign dBusAxi_w_payload_data = dbus_axi_w_payload_data;
-  assign dBusAxi_w_payload_strb = dbus_axi_w_payload_strb;
+  assign dBusAxi_w_payload_strb = dbus_axi_ẞw_payload_strb;
   assign dBusAxi_w_payload_last = dbus_axi_w_payload_last;
   assign dBusAxi_r_ready = dbus_axi_r_ready;
   assign dBusAxi_b_ready = dbus_axi_b_ready;
   always @(posedge clk or posedge reset) begin
     if(reset) begin
-      IBusCachedPlugin_fetchPc_pcReg <= 32'h80000000;
+      IBusCachedPlugin_fetchPc_pcReg <= 32'h80000000; //PC RESET????ẞ
       IBusCachedPlugin_fetchPc_correctionReg <= 1'b0;
       IBusCachedPlugin_fetchPc_booted <= 1'b0;
       IBusCachedPlugin_fetchPc_inc <= 1'b0;
