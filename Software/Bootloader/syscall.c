@@ -49,6 +49,7 @@ int _write(int fd, char *ptr, int len) {
   } else if (fd > 2 && (fd-3) < FILE_AMOUNT && fd_data[fd-3].is_open) {
     UINT bw = 0;
     f_write(&fd_data[fd-3].fp, ptr, len, &bw);
+
     return bw;
   }
 
@@ -59,6 +60,9 @@ int _read(int fd, char *ptr, int len) {
   if (fd > 2 && (fd-3) < FILE_AMOUNT && fd_data[fd-3].is_open) {
     UINT bytesRead = 0;
     FRESULT result = f_read(&fd_data[fd-3].fp, ptr, len, &bytesRead);
+    ScreenPrint("_read");
+    ScreenPrintHWord(len);
+    ScreenPrintHWord(bytesRead);
     return bytesRead;
   }
 
@@ -79,11 +83,13 @@ void *_sbrk(int incr) {
     heap += incr;
   }
 
+  ScreenPrint("sbrk");
   return prev_heap;
 }
 
 int _fstat([[maybe_unused]] int fd, struct stat *st) {
-  st->st_mode = S_IFCHR;
+  st->st_mode = S_IFREG;
+  ScreenPrint("fstat");
   return 0;
 }
 
@@ -154,7 +160,12 @@ int _close(int fd) {
   return -1;
 }
 
-int _isatty([[maybe_unused]] int fd) { return 1; }
+int _isatty([[maybe_unused]] int fd) 
+{ 
+  errno = ENOTTY;
+  ScreenPrint("isatty");
+  return 0; 
+}
 
 void _exit([[maybe_unused]] int status) {
   while (1) {

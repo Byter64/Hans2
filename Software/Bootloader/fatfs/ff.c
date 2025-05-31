@@ -4015,6 +4015,7 @@ FRESULT f_read (
 #endif
 	}
 
+	ScreenPrint("f_read_end");
 	LEAVE_FF(fs, FR_OK);
 }
 

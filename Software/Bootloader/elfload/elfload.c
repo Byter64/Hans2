@@ -146,7 +146,6 @@ el_status el_load(el_ctx *ctx, el_alloc_cb alloc)
     for(;;) {
         if ((rv = el_findphdr(ctx, &ph, PT_LOAD, &i)))
             return rv;
-        ScreenPrint("1");
         if (i == (unsigned) -1)
             break;
 
@@ -161,16 +160,13 @@ el_status el_load(el_ctx *ctx, el_alloc_cb alloc)
 
         EL_DEBUG("Loading segment with fileoffset 0x%x and vaddr 0x%x to address %p\n",
             ph.p_offset, ph.p_vaddr, dest);
-        ScreenPrint("2");
+        ScreenPrint("X");
         /* read loaded portion */
-        debug = 1;
         ScreenPrintWord(ph.p_filesz);
         if ((rv = el_pread(ctx, dest, ph.p_filesz, ph.p_offset)))
             return rv;
-        ScreenPrint("3");
         /* zero mem-only portion */
         memset(dest + ph.p_filesz, 0, ph.p_memsz - ph.p_filesz);
-        ScreenPrint("4");
         i++;
     }
 

@@ -116,16 +116,16 @@ picorv32_axi #(
 	.mem_axi_wdata(CPU_mem_axi_wdata),
 	.mem_axi_wstrb(CPU_mem_axi_wstrb),
 	.mem_axi_bvalid(CPU_mem_axi_bvalid),
-	.mem_axi_bready(CPU_mem_axi_bready),
+	.mem_axi_bready(CPU_mem_axi_bready),     
 	.mem_axi_arvalid(CPU_mem_axi_arvalid),
 	.mem_axi_arready(CPU_mem_axi_arready),
-	.mem_axi_araddr(CPU_mem_axi_araddr),
-	.mem_axi_arprot(CPU_mem_axi_arprot), 
-	.mem_axi_rvalid(CPU_mem_axi_rvalid),
+	.mem_axi_araddr(CPU_mem_axi_araddr), 
+	.mem_axi_arprot(CPU_mem_axi_arprot),     
+	.mem_axi_rvalid(CPU_mem_axi_rvalid),  
 	.mem_axi_rready(CPU_mem_axi_rready),
 	.mem_axi_rdata(CPU_mem_axi_rdata),
  
-	.irq(CPU_irq),
+	.irq(CPU_irq), 
 	.eoi(CPU_eoi),
 
 	.trace_valid(CPU_trace_valid),
@@ -357,7 +357,7 @@ AXILiteMemory #(
     .STRB_WIDTH(STRB_WIDTH),
     .MEMORY_DEPTH(12288) //In 32-Bit words
 ) Bootloader (
-    .aclk(clk_50mhz),
+    .aclk(clk_50mhz), 
     .aresetn(resetn),
     .s_axil_awaddr(BOOT_s_axil_awaddr),
     .s_axil_awprot(BOOT_s_axil_awprot),

@@ -10,7 +10,6 @@
 // File adapted for Hans2
 #include "diskio.h" /* Declarations of disk functions */
 #include "ff.h"     /* Obtains integer types */
-#include "DebugHelper.h"
 
 static volatile void* const SD_CARD_START = (void*)0x80000000;
 
@@ -37,28 +36,19 @@ disk_initialize(BYTE pdrv /* Physical drive nmuber to identify the drive */
 /*-----------------------------------------------------------------------*/
 /* Read Sector(s)                                                        */
 /*-----------------------------------------------------------------------*/
-extern int debug;
 DRESULT disk_read(BYTE pdrv,  /* Physical drive nmuber to identify the drive */
                   BYTE *buff, /* Data buffer to store read data */
                   LBA_t sector, /* Start sector in LBA */
                   UINT count    /* Number of sectors to read */
 ) {
   DRESULT res = RES_OK;
-  if(debug)
-  {
-    ScreenPrint("Sectors:");
-    ScreenPrintByte(count);
-  }
   BYTE *baseAddress = ((BYTE*)(SD_CARD_START)) + (sector * 512);
 
   for (int i = 0; i < count * 512; i++)
   {
     buff[i] = baseAddress[i];
-    if(i % 512 == 0 && debug)
-      ScreenPrintWord(i);
   }
 
-  ScreenPrint("disk_read_end");
   return res;
 }
 
@@ -79,7 +69,6 @@ DRESULT disk_write(BYTE pdrv, /* Physical drive nmuber to identify the drive */
 
   for (int i = 0; i < count * 512; i++)
     baseAddress[i] = buff[i];
-
   return res;
 }
 
