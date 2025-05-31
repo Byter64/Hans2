@@ -15,19 +15,11 @@ void* loadAddress = 0;
 static bool fileRead(el_ctx* ctx, void* dest, size_t nb, size_t offset)
 {
 	if (fseek(elfFile, offset, SEEK_SET))
-	{
-		ScreenPrint("fseek failed");
 		return false;
-	}
 
 	int temp = fread(dest, nb, 1, elfFile);
 	if (temp != 1)
-	{
-		ScreenPrint("fread failed");
-		ScreenPrintWord(errno);
-		ScreenPrintByte(temp);
 		return false;
-	}
 
 	return true;
 }
@@ -51,6 +43,7 @@ static void check(el_status stat, const char* text)
 
 extern FATFS FatFs;
 extern BYTE is_mounted;
+
 int main()
 {
 	char buffer[3];
@@ -65,7 +58,6 @@ int main()
 	Hapi::Clear(Hapi::Color(0, 128, 128, 1));
 	Hapi::EndDrawing();
 #endif
-	
 	SetStatus("Mounting SD-Card...", 0, 20);
 	fatfsResult = f_mount(&FatFs, "", 0);
     is_mounted = 1;

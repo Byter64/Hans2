@@ -14,6 +14,7 @@
  */
 #include "elfload.h"
 #include <string.h>
+#include "DebugHelper.h"
 
 el_status el_pread(el_ctx *ctx, void *def, size_t nb, size_t offset)
 {
@@ -130,7 +131,7 @@ typedef void* (*el_alloc_cb)(
     Elf_Addr virt,
     Elf_Addr size);
 */
-
+int debug = 0;
 el_status el_load(el_ctx *ctx, el_alloc_cb alloc)
 {
     el_status rv = EL_OK;
@@ -145,7 +146,7 @@ el_status el_load(el_ctx *ctx, el_alloc_cb alloc)
     for(;;) {
         if ((rv = el_findphdr(ctx, &ph, PT_LOAD, &i)))
             return rv;
-
+        ScreenPrint("1");
         if (i == (unsigned) -1)
             break;
 
@@ -154,19 +155,21 @@ el_status el_load(el_ctx *ctx, el_alloc_cb alloc)
 
         /* allocate mem */
         char *dest = alloc(ctx, pload, vload, ph.p_memsz);
-        if (!dest)
-            return EL_ENOMEM;
+        // We can't do this check, because 0 is a valid allocation address ~ Yannik
+        //if (!dest)
+        //    return EL_ENOMEM;
 
         EL_DEBUG("Loading segment with fileoffset 0x%x and vaddr 0x%x to address %p\n",
             ph.p_offset, ph.p_vaddr, dest);
-
+        ScreenPrint("2");
         /* read loaded portion */
+        debug = 1;
         if ((rv = el_pread(ctx, dest, ph.p_filesz, ph.p_offset)))
             return rv;
-
+        ScreenPrint("3");
         /* zero mem-only portion */
         memset(dest + ph.p_filesz, 0, ph.p_memsz - ph.p_filesz);
-
+        ScreenPrint("4");
         i++;
     }
 
