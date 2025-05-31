@@ -57,7 +57,7 @@ int main()
 	//TODO: Add graphical progress bar
 	Hapi::Init();
 	FRESULT fatfsResult;
-	WaitFrame(90);
+	WaitFrame(120);
 	
 #ifndef USE_STARTUP_SCREEN
 	Hapi::Clear(Hapi::Color(0, 128, 128, 1));
@@ -101,7 +101,7 @@ int main()
 	debugMessage[i + 11] = '\0';
 	
 	SetStatus(debugMessage, 25, 10);
-	elfFile = fopen(elfFilePath, "r");
+	elfFile = fopen(elfFilePath, "w");
 	SetStatus(elfFile ? "Open succeeded" : "Open failed", 30, 20);
 	if(!elfFile) while(true);
 

@@ -3767,7 +3767,6 @@ FRESULT f_open (
 			#endif
 		}
 		/* Create or Open a file */
-		ScreenPrintByte(mode);
 		if (mode & (FA_CREATE_ALWAYS | FA_OPEN_ALWAYS | FA_CREATE_NEW)) {
 			if (res != FR_OK) {					/* No file, create new */
 				if (res == FR_NO_FILE) {		/* There is no file to open, create a new entry */
@@ -3783,7 +3782,6 @@ FRESULT f_open (
 				if (dj.obj.attr & (AM_RDO | AM_DIR)) {	/* Cannot overwrite it (R/O or DIR) */
 					res = FR_DENIED;
 				} else {
-					ScreenPrint("HEEEEEELP");
 					if (mode & FA_CREATE_NEW) res = FR_EXIST;	/* Cannot create as new file */
 				}
 			}
@@ -4750,17 +4748,14 @@ FRESULT f_findnext (
 {
 	FRESULT res;
 
-	ScreenPrint("Iterating over dir:");
 	for (;;) {
 		res = f_readdir(dp, fno);		/* Get a directory item */
 		if (res != FR_OK || !fno || !fno->fname[0]) break;	/* Terminate if any error or end of directory */
-		ScreenPrint(fno->fname);
 		if (pattern_match(dp->pat, fno->fname, 0, FIND_RECURS)) break;		/* Test for the file name */
 #if FF_USE_LFN && FF_USE_FIND == 2
 		if (pattern_match(dp->pat, fno->altname, 0, FIND_RECURS)) break;	/* Test for alternative name if exist */
 #endif
 	}
-	ScreenPrint("Ended iteration");
 	return res;
 }
 

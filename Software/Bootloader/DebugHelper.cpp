@@ -7,8 +7,9 @@ extern "C" {
 const uint16_t BACKGROUND_COLOUR = 0x18c7; //HTML Farben: (30, 30, 30)
 const uint16_t MAIN_COLOUR = 0x0265; //HTML Farben: (10, 71, 137)
 
-const uint16_t backgroundColourRectangle[32] = 
+const uint16_t backgroundColourRectangle[40] = 
 {
+    BACKGROUND_COLOUR, BACKGROUND_COLOUR, BACKGROUND_COLOUR, BACKGROUND_COLOUR, BACKGROUND_COLOUR, BACKGROUND_COLOUR, BACKGROUND_COLOUR, BACKGROUND_COLOUR,
     BACKGROUND_COLOUR, BACKGROUND_COLOUR, BACKGROUND_COLOUR, BACKGROUND_COLOUR, BACKGROUND_COLOUR, BACKGROUND_COLOUR, BACKGROUND_COLOUR, BACKGROUND_COLOUR,
     BACKGROUND_COLOUR, BACKGROUND_COLOUR, BACKGROUND_COLOUR, BACKGROUND_COLOUR, BACKGROUND_COLOUR, BACKGROUND_COLOUR, BACKGROUND_COLOUR, BACKGROUND_COLOUR,
     BACKGROUND_COLOUR, BACKGROUND_COLOUR, BACKGROUND_COLOUR, BACKGROUND_COLOUR, BACKGROUND_COLOUR, BACKGROUND_COLOUR, BACKGROUND_COLOUR, BACKGROUND_COLOUR,
@@ -50,7 +51,7 @@ void SetLoadingBar(int percent)
         Hapi::Draw((Hapi::Image)mainColourRectangle, 0, 0, LOADING_BAR_X + i, LOADING_BAR_Y, RECTANGLE_WIDTH, RECTANGLE_HEIGHT, RECTANGLE_WIDTH);
     Hapi::EndDrawing();
     
-    for(int i = loaded; i <= percent; i += RECTANGLE_WIDTH)
+    for(int i = loaded * 3; i <= percent * 3; i += RECTANGLE_WIDTH)
         Hapi::Draw((Hapi::Image)mainColourRectangle, 0, 0, LOADING_BAR_X + i, LOADING_BAR_Y, RECTANGLE_WIDTH, RECTANGLE_HEIGHT, RECTANGLE_WIDTH);
     Hapi::EndDrawing();
 
@@ -74,13 +75,13 @@ void ScreenPrintStatus(const char* text)
 	static const int y = LOADING_BAR_Y - 7;
 
     for(int i = 0; i < LOADING_BAR_WIDTH; i += RECTANGLE_WIDTH)
-        Hapi::Draw((Hapi::Image)backgroundColourRectangle, 0, 0, x + i, y, RECTANGLE_WIDTH, RECTANGLE_HEIGHT, RECTANGLE_WIDTH);
+        Hapi::Draw((Hapi::Image)backgroundColourRectangle, 0, 0, x + i, y, RECTANGLE_WIDTH, 5, RECTANGLE_WIDTH);
 	Hapi::DrawText(">", x, y, 100);
 	Hapi::DrawText(text, x + 4, y, 1000000);
 	Hapi::EndDrawing();
 
     for(int i = 0; i < LOADING_BAR_WIDTH; i += RECTANGLE_WIDTH)
-        Hapi::Draw((Hapi::Image)backgroundColourRectangle, 0, 0, x + i, y, RECTANGLE_WIDTH, RECTANGLE_HEIGHT, RECTANGLE_WIDTH);
+        Hapi::Draw((Hapi::Image)backgroundColourRectangle, 0, 0, x + i, y, RECTANGLE_WIDTH, 5, RECTANGLE_WIDTH);
 	Hapi::DrawText(">", x, y, 100);
 	Hapi::DrawText(text, x + 4, y, 1000000);
 	Hapi::EndDrawing();
