@@ -2,7 +2,6 @@
 #include "ff.h"
 
 #define USE_STARTUP_SCREEN
-const char* FRESULTToString(FRESULT fResult);
 
 //Cant go backwards
 void SetLoadingBar(int percent);

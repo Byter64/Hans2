@@ -88,77 +88,6 @@ void ScreenPrintStatus(const char* text)
 	Hapi::EndDrawing();
 }
 
-
-const char* FRESULTToString(FRESULT fResult)
-{
-	switch (fResult)
-	{
-	case FR_OK:
-		return "FR_OK";
-	break;
-	case FR_DISK_ERR:
-		return"FR_DISK_ERR";
-	break;
-	case FR_INT_ERR:
-		return"FR_INT_ERR";
-	break;
-	case FR_NOT_READY:
-		return"FR_NOT_READY";
-	break;
-	case FR_NO_FILE:
-		return"FR_NO_FILE";
-	break;
-	case FR_NO_PATH:
-		return"FR_NO_PATH";
-	break;
-	case FR_INVALID_NAME:
-		return"FR_INVALID_NAME";
-	break;
-	case FR_DENIED:
-		return"FR_DENIED";
-	break;
-	case FR_EXIST:
-		return"FR_EXIST";
-	break;
-	case FR_INVALID_OBJECT:
-		return"FR_INVALID_OBJECT";
-	break;
-	case FR_WRITE_PROTECTED:
-		return"FR_WRITE_PROTECTED";
-	break;
-	case FR_INVALID_DRIVE:
-		return"FR_INVALID_DRIVE";
-	break;
-	case FR_NOT_ENABLED:
-		return"FR_NOT_ENABLED";
-	break;
-	case FR_NO_FILESYSTEM:
-		return"FR_NO_FILESYSTEM";
-	break;
-	case FR_MKFS_ABORTED:
-		return"FR_MKFS_ABORTED";
-	break;
-	case FR_TIMEOUT:
-		return"FR_TIMEOUT";
-	break;
-	case FR_LOCKED:
-		return"FR_LOCKED";
-	break;
-	case FR_NOT_ENOUGH_CORE:
-		return"FR_NOT_ENOUGH_CORE";
-	break;
-	case FR_TOO_MANY_OPEN_FILES:
-		return"FR_TOO_MANY_OPEN_FILES";
-	break;
-	case FR_INVALID_PARAMETER:
-		return"FR_INVALID_PARAMETER";
-	break;
-	default:
-		return"Invalid result";
-	break;
-	}
-}
-
 void ScreenPrintWord(uint32_t word)
 {
     char buffer[9];
@@ -227,10 +156,4 @@ void ScreenPrint(const char* text)
 		y = 5;
 		x += 35;
 	}
-}
-
-
-void ScreenPrintResult(FRESULT fatfsResult)
-{
-	ScreenPrint(FRESULTToString(fatfsResult));
 }

@@ -64,7 +64,7 @@ int _read(int fd, char *ptr, int len) {
   if (fd > 2 && (fd-3) < FILE_AMOUNT && fd_data[fd-3].is_open) {
     UINT bytesRead = 0;
     FRESULT result = f_read(&fd_data[fd-3].fp, ptr, len, &bytesRead);
-    ScreenPrintResult(result);
+    ScreenPrintByte(result);
     return bytesRead;
   }
 
@@ -141,7 +141,7 @@ int _open(const char *name, [[maybe_unused]] int flags, int mode) {
     ScreenPrintWord(mode);
     FRESULT fr = f_open(&fd_data[i].fp, name, mode);
     if (fr != FR_OK) {
-      ScreenPrintResult(fr);
+      ScreenPrintByte(fr);
       return -1;
     }
 

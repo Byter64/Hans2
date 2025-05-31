@@ -51,6 +51,7 @@ extern FATFS FatFs;
 extern BYTE is_mounted;
 int main()
 {
+	char buffer[3];
 	//TODO: Add graphical progress bar
 	Hapi::Init();
 	FRESULT fatfsResult;
@@ -66,7 +67,8 @@ int main()
 	SetStatus("Mounting SD-Card...", 0, 20);
 	fatfsResult = f_mount(&FatFs, "", 0);
     is_mounted = 1;
-	SetStatus(FRESULTToString(fatfsResult), 10, 10);
+
+	SetStatus(ByteToHex(fatfsResult, buffer), 10, 10);
 
 	//Find main program to load
 	SetStatus("Searching *.elf...", 15, 15);
@@ -74,7 +76,7 @@ int main()
 	FILINFO fileInfo;
 	fatfsResult = f_findfirst(&directory, &fileInfo, "/", "*.elf");
 
-	SetStatus(FRESULTToString(fatfsResult), 20, 20);
+	SetStatus(ByteToHex(fatfsResult, buffer), 20, 20);
 	if(fileInfo.fname[0] == '\0')
 	{
 		SetStatus("No .elf found", 20, 0);
@@ -116,19 +118,19 @@ int main()
 	
 	SetStatus("Initialising elfloader...", 35, 20);
 	el_status result = el_init(&ctx);
-	check(result, "Initialising elfloader FAILED!");
+	check(result, "Init FAILED!");
 	
 	ctx.base_load_vaddr = (uintptr_t)loadAddress;
 	ctx.base_load_paddr = (uintptr_t)loadAddress;
 	
 	SetStatus("Loading .elf file...", 40, 60);
 	result = el_load(&ctx, memoryAllocation);
-	check(result, "Loading elf file FAILED!");
+	check(result, "Load FAILED!");
 	
 	
 	SetStatus("Resolving relocations...", 80, 10);
 	result = el_relocate(&ctx);
-	check(result, "Resolving relocations FAILED!");
+	check(result, "Relocs FAILED!");
 	
 	uintptr_t entryPoint = ctx.ehdr.e_entry + (uintptr_t)loadAddress;
 	
@@ -137,7 +139,7 @@ int main()
 	printf("Jumping into loaded program. (This will not work on OSes)");
 	#endif // DEBUG
 	
-	SetStatus("Succeded. What a journey, your program will be loaded. Have fun :)", 100, 60);
+	SetStatus("Have fun :)", 100, 30);
 	int (*loadedMain)() = (int (*)())entryPoint;
 	loadedMain();
 	
