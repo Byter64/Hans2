@@ -17,22 +17,22 @@ module CPU_with_GPU_SDRAM_SDCard
     output logic        sd_clk,
     output logic        sd_cmd,
     inout  logic [3:0]  sd_d
-);  
-
-logic canBeDeleted;
+);      
   
-logic hdmi_pixClk;
-logic resetn = 0;
-logic trap;
+logic canBeDeleted;   
+       
+logic hdmi_pixClk;   
+logic resetn = 0;    
+logic trap; 
 logic [7:0] reset_counter = 0;
 always_ff @(posedge hdmi_pixClk) begin
     if(reset_counter != 255)
         reset_counter <= reset_counter + 1;
-
+ 
 	resetn <= reset_counter == 255;
 end
- 
-wire clk_7mhz;
+  
+wire clk_7mhz;  
 wire clk_50mhz;
 wire clk_130mhz;
 ecp5pll #(
