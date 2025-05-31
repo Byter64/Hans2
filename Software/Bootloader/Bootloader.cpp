@@ -121,12 +121,14 @@ int main()
 	ctx.base_load_vaddr = (uintptr_t)loadAddress;
 	ctx.base_load_paddr = (uintptr_t)loadAddress;
 	
+	SetStatus("Loading .elf file...", 40, 60);
 	result = el_load(&ctx, memoryAllocation);
-	check(result, "Loading elf file...");
+	check(result, "Loading elf file FAILED!");
 	
 	
+	SetStatus("Resolving relocations...", 80, 10);
 	result = el_relocate(&ctx);
-	check(result, "Resolving relocations...");
+	check(result, "Resolving relocations FAILED!");
 	
 	uintptr_t entryPoint = ctx.ehdr.e_entry + (uintptr_t)loadAddress;
 	
@@ -135,6 +137,7 @@ int main()
 	printf("Jumping into loaded program. (This will not work on OSes)");
 	#endif // DEBUG
 	
+	SetStatus("Succeded. What a journey, your program will be loaded. Have fun :)", 100, 60);
 	int (*loadedMain)() = (int (*)())entryPoint;
 	loadedMain();
 	
