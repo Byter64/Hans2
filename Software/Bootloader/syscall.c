@@ -132,9 +132,9 @@ int _open(const char *name, [[maybe_unused]] int flags, int mode) {
       // Entry already in use
       continue;
     }
-    ScreenPrint("Mode and flags:");
+    mode = FA_READ;
+    ScreenPrint("Mode:");
     ScreenPrintWord(mode);
-    ScreenPrintWord(flags);
     FRESULT fr = f_open(&fd_data[i].fp, name, mode);
     if (fr != FR_OK) {
       ScreenPrintResult(fr);
