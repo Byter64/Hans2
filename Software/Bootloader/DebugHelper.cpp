@@ -45,6 +45,7 @@ void WaitFrame(int frames)
 
 void SetLoadingBar(int percent)
 {
+    if(percent < 0) return;
     static int loaded = 0; //In percent
     
     for(int i = loaded * 3; i <= percent * 3; i += RECTANGLE_WIDTH)

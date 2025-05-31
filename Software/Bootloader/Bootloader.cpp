@@ -14,10 +14,18 @@ void* loadAddress = 0;
 static bool fileRead(el_ctx* ctx, void* dest, size_t nb, size_t offset)
 {
 	if (fseek(elfFile, offset, SEEK_SET))
+	{
+		ScreenPrint("fseek failed");
 		return false;
+	}
 
-	if (fread(dest, nb, 1, elfFile) != 1)
+	int temp = fread(dest, nb, 1, elfFile);
+	if (temp != 1)
+	{
+		ScreenPrint("fread failed");
+		ScreenPrintByte(temp);
 		return false;
+	}
 
 	return true;
 }
@@ -28,26 +36,15 @@ static void* memoryAllocation(el_ctx* ctx, Elf_Addr physicalAddress, Elf_Addr vi
 	return (void*)virtualAddress;
 }
 
-static void check(el_status stat, const char* expln)
+static void check(el_status stat, const char* text)
 {
-#ifdef DEBUG
-	if (stat)
+	if(stat)
 	{
-		fprintf(stderr, "%s: error %d\n", expln, stat);
-		exit(1);
-	}
-	else
-	{
-		printf("%s\n", expln);
-	}
-#else
-	ScreenPrint(expln);
-	if(stat) 
-	{
-		ScreenPrint("Caused error:");
+		ScreenPrint("Error Code:");
 		ScreenPrintByte(stat);
+		SetStatus(text, -1, 20);
+		while(true);
 	}
-	#endif // DEBUG
 }
 
 extern FATFS FatFs;
@@ -117,8 +114,9 @@ int main()
 	el_ctx ctx;
 	ctx.pread = fileRead;
 	
+	SetStatus("Initialising elfloader...", 35, 20);
 	el_status result = el_init(&ctx);
-	check(result, "Initialising elfloader...");
+	check(result, "Initialising elfloader FAILED!");
 	
 	ctx.base_load_vaddr = (uintptr_t)loadAddress;
 	ctx.base_load_paddr = (uintptr_t)loadAddress;
