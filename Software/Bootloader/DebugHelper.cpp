@@ -29,12 +29,16 @@ static const int LOADING_BAR_Y = 197;
 static const int RECTANGLE_WIDTH = 8;
 static const int RECTANGLE_HEIGHT = 4;
 
+
+extern volatile int* GPU_VSYNC;
 void WaitFrame(int frames)
 {
     for(int i = 0; i < frames; i++)
     {
-        Hapi::EndDrawing();
-        Hapi::EndDrawing();
+        while (!*GPU_VSYNC);
+        while (*GPU_VSYNC);
+        while (!*GPU_VSYNC);
+        while (*GPU_VSYNC);
     }
 }
 
@@ -42,15 +46,26 @@ void SetLoadingBar(int percent)
 {
     static int loaded = 0; //In percent
     
-    for(int i = loaded; i <= percent; i += RECTANGLE_WIDTH)
-        Hapi::Draw((Hapi::Image)mainColourRectangle, 0, 0, LOADING_BAR_X + i * 3, LOADING_BAR_Y, RECTANGLE_WIDTH, RECTANGLE_HEIGHT, RECTANGLE_WIDTH);
+    for(int i = loaded * 3; i <= percent * 3; i += RECTANGLE_WIDTH)
+        Hapi::Draw((Hapi::Image)mainColourRectangle, 0, 0, LOADING_BAR_X + i, LOADING_BAR_Y, RECTANGLE_WIDTH, RECTANGLE_HEIGHT, RECTANGLE_WIDTH);
     Hapi::EndDrawing();
     
     for(int i = loaded; i <= percent; i += RECTANGLE_WIDTH)
-        Hapi::Draw((Hapi::Image)mainColourRectangle, 0, 0, LOADING_BAR_X + i * 3, LOADING_BAR_Y, RECTANGLE_WIDTH, RECTANGLE_HEIGHT, RECTANGLE_WIDTH);
+        Hapi::Draw((Hapi::Image)mainColourRectangle, 0, 0, LOADING_BAR_X + i, LOADING_BAR_Y, RECTANGLE_WIDTH, RECTANGLE_HEIGHT, RECTANGLE_WIDTH);
     Hapi::EndDrawing();
 
     loaded = percent;
+}
+
+void SetStatus(const char* text, int loadingProgress, int waitFrames)
+{
+#ifdef USE_STARTUP_SCREEN
+    ScreenPrintStatus(text);
+    SetLoadingBar(loadingProgress);
+    WaitFrame(waitFrames);
+#else
+    ScreenPrint(text);
+#endif    
 }
 
 void ScreenPrintStatus(const char* text)
@@ -140,6 +155,22 @@ const char* FRESULTToString(FRESULT fResult)
 		return"Invalid result";
 	break;
 	}
+}
+
+void ScreenPrintWord(uint32_t word)
+{
+    char buffer[9];
+	unsigned char byte0 =  word & 0xFF;
+	unsigned char byte1 = (word & 0xFF00) >> 8;
+	unsigned char byte2 = (word & 0xFF0000) >> 16;
+	unsigned char byte3 = (word & 0xFF000000) >> 24;
+
+	ByteToHex(byte3, buffer + 0);
+	ByteToHex(byte2, buffer + 2);
+	ByteToHex(byte1, buffer + 4);
+	ByteToHex(byte0, buffer + 6);
+
+	ScreenPrint(buffer);
 }
 
 void ScreenPrintHWord(uint16_t hword)

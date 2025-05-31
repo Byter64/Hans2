@@ -56,28 +56,31 @@ int main()
 {
 	//TODO: Add graphical progress bar
 	Hapi::Init();
-	Hapi::Clear(Hapi::Color(0, 128, 128, 1));
-	Hapi::EndDrawing();
-	Hapi::Clear(Hapi::Color(0, 128, 128, 1));
-	Hapi::EndDrawing();
-
 	FRESULT fatfsResult;
-
-	ScreenPrint("Mounting SD-Card...");
+	WaitFrame(90);
+	
+#ifndef USE_STARTUP_SCREEN
+	Hapi::Clear(Hapi::Color(0, 128, 128, 1));
+	Hapi::EndDrawing();
+	Hapi::Clear(Hapi::Color(0, 128, 128, 1));
+	Hapi::EndDrawing();
+#endif
+	
+	SetStatus("Mounting SD-Card...", 0, 20);
 	fatfsResult = f_mount(&FatFs, "", 0);
     is_mounted = 1;
-	ScreenPrintResult(fatfsResult);
-	
-	
+	SetStatus(FRESULTToString(fatfsResult), 10, 10);
+
 	//Find main program to load
-	ScreenPrint("Searching *.elf...");
+	SetStatus("Searching *.elf...", 15, 15);
 	DIR directory;
 	FILINFO fileInfo;
 	fatfsResult = f_findfirst(&directory, &fileInfo, "/", "*.elf");
-	ScreenPrintResult(fatfsResult);
+
+	SetStatus(FRESULTToString(fatfsResult), 20, 20);
 	if(fileInfo.fname[0] == '\0')
 	{
-		ScreenPrint("No .elf found");
+		SetStatus("No .elf found", 20, 0);
 		while(true);
 	}
 	
@@ -97,10 +100,9 @@ int main()
 	debugMessage[i + 10] = '.';
 	debugMessage[i + 11] = '\0';
 	
-	ScreenPrint(elfFilePath);
-	ScreenPrint(debugMessage);
+	SetStatus(debugMessage, 25, 10);
 	elfFile = fopen(elfFilePath, "r");
-	ScreenPrint(elfFile ? "Success" : "Failed");
+	SetStatus(elfFile ? "Open succeeded" : "Open failed", 30, 20);
 	if(!elfFile) while(true);
 
 	#ifdef DEBUG
