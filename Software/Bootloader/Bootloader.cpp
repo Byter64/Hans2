@@ -99,7 +99,7 @@ int main()
 	
 	ScreenPrint(elfFilePath);
 	ScreenPrint(debugMessage);
-	elfFile = fopen(elfFilePath, "rb");
+	elfFile = fopen(elfFilePath, "r");
 	ScreenPrint(elfFile ? "Success" : "Failed");
 	if(!elfFile) while(true);
 

@@ -5,6 +5,8 @@ const char* FRESULTToString(FRESULT fResult);
 
 //Cant go backwards
 void SetLoadingBar(int percent);
+void WaitFrame(int frames);
+
 
 void ScreenPrint(const char* text);
 void ScreenPrintStatus(const char* text);

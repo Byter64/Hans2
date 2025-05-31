@@ -29,6 +29,15 @@ static const int LOADING_BAR_Y = 197;
 static const int RECTANGLE_WIDTH = 8;
 static const int RECTANGLE_HEIGHT = 4;
 
+void WaitFrame(int frames)
+{
+    for(int i = 0; i < frames; i++)
+    {
+        Hapi::EndDrawing();
+        Hapi::EndDrawing();
+    }
+}
+
 void SetLoadingBar(int percent)
 {
     static int loaded = 0; //In percent
