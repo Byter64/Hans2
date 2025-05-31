@@ -50,138 +50,6 @@ static void check(el_status stat, const char* expln)
 	#endif // DEBUG
 }
 
-uint16_t black = 0b0000000000000001;
-
-const char* FRESULTToString(FRESULT fResult)
-{
-	switch (fResult)
-	{
-	case FR_OK:
-		return "FR_OK";
-	break;
-	case FR_DISK_ERR:
-		return"FR_DISK_ERR";
-	break;
-	case FR_INT_ERR:
-		return"FR_INT_ERR";
-	break;
-	case FR_NOT_READY:
-		return"FR_NOT_READY";
-	break;
-	case FR_NO_FILE:
-		return"FR_NO_FILE";
-	break;
-	case FR_NO_PATH:
-		return"FR_NO_PATH";
-	break;
-	case FR_INVALID_NAME:
-		return"FR_INVALID_NAME";
-	break;
-	case FR_DENIED:
-		return"FR_DENIED";
-	break;
-	case FR_EXIST:
-		return"FR_EXIST";
-	break;
-	case FR_INVALID_OBJECT:
-		return"FR_INVALID_OBJECT";
-	break;
-	case FR_WRITE_PROTECTED:
-		return"FR_WRITE_PROTECTED";
-	break;
-	case FR_INVALID_DRIVE:
-		return"FR_INVALID_DRIVE";
-	break;
-	case FR_NOT_ENABLED:
-		return"FR_NOT_ENABLED";
-	break;
-	case FR_NO_FILESYSTEM:
-		return"FR_NO_FILESYSTEM";
-	break;
-	case FR_MKFS_ABORTED:
-		return"FR_MKFS_ABORTED";
-	break;
-	case FR_TIMEOUT:
-		return"FR_TIMEOUT";
-	break;
-	case FR_LOCKED:
-		return"FR_LOCKED";
-	break;
-	case FR_NOT_ENOUGH_CORE:
-		return"FR_NOT_ENOUGH_CORE";
-	break;
-	case FR_TOO_MANY_OPEN_FILES:
-		return"FR_TOO_MANY_OPEN_FILES";
-	break;
-	case FR_INVALID_PARAMETER:
-		return"FR_INVALID_PARAMETER";
-	break;
-	default:
-		return"Invalid result";
-	break;
-	}
-}
-
-void ScreenPrintHWord(uint16_t hword)
-{
-	char buffer[5];
-	unsigned char byte0 = hword & 0x00FF;
-	unsigned char byte1 = (hword & 0xFF00) >> 8;
-
-	ByteToHex(byte1, buffer + 0);
-	ByteToHex(byte0, buffer + 2);
-
-	ScreenPrint(buffer);
-}
-
-void ScreenPrintByte(unsigned char byte)
-{
-	char buffer[3];
-	ByteToHex(byte, buffer);
-	ScreenPrint(buffer);
-}
-
-const char* ByteToHex(unsigned char byte, char* buffer)
-{
-	unsigned char nibble0 = byte & 0x0F;
-	unsigned char nibble1 = (byte & 0xF0) >> 4;
-
-	if(nibble0 < 10) buffer[1] = '0' + nibble0;
-	else 			 buffer[1] = 'A' + nibble0 - 10;
-
-	if(nibble1 < 10) buffer[0] = '0' + nibble1;
-	else 			 buffer[0] = 'A' + nibble1 - 10;
-	
-	buffer[2] = '\0';
-	return buffer;
-}
-
-void ScreenPrint(const char* text)
-{
-	static int x = 5;
-	static int y = 5;
-	//if(x >= 400) return;
-	Hapi::DrawText(">", x - 4, y, 100);
-	Hapi::DrawText(text, x, y, 1000000);
-	Hapi::EndDrawing();
-
-	Hapi::DrawText(">", x - 4, y, 100);
-	Hapi::DrawText(text, x, y, 1000000);
-	Hapi::EndDrawing();
-
-	y += 6;
-	if (y >= 230)
-	{
-		y = 5;
-		x += 35;
-	}
-}
-
-void ScreenPrintResult(FRESULT fatfsResult)
-{
-	ScreenPrint(FRESULTToString(fatfsResult));
-}
-
 extern FATFS FatFs;
 extern BYTE is_mounted;
 int main()
@@ -229,7 +97,7 @@ int main()
 	debugMessage[i + 10] = '.';
 	debugMessage[i + 11] = '\0';
 	
-
+	ScreenPrint(elfFilePath);
 	ScreenPrint(debugMessage);
 	elfFile = fopen(elfFilePath, "rb");
 	ScreenPrint(elfFile ? "Success" : "Failed");

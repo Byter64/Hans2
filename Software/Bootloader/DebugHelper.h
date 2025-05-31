@@ -1,11 +1,16 @@
+#pragma once
 #include "ff.h"
 
-extern const char* FRESULTToString(FRESULT fResult);
+const char* FRESULTToString(FRESULT fResult);
 
-extern void ScreenPrint(const char* text);
+//Cant go backwards
+void SetLoadingBar(int percent);
 
-extern void ScreenPrintByte(unsigned char byte);
-extern void ScreenPrintHWord(uint16_t hword);
-extern void ScreenPrintResult(FRESULT fatfsResult);
+void ScreenPrint(const char* text);
+void ScreenPrintStatus(const char* text);
 
-extern const char* ByteToHex(unsigned char byte, char* buffer);
+void ScreenPrintByte(unsigned char byte);
+void ScreenPrintHWord(uint16_t hword);
+void ScreenPrintResult(FRESULT fatfsResult);
+
+const char* ByteToHex(unsigned char byte, char* buffer);
