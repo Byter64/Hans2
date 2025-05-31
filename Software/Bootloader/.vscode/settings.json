@@ -1,5 +1,7 @@
 {
     "files.associations": {
-        "ff.h": "c"
+        "ff.h": "c",
+        "debughelper.h": "c",
+        "stddef.h": "c"
     }
 }

@@ -151,9 +151,9 @@ void ScreenPrint(const char* text)
 	Hapi::EndDrawing();
 
 	y += 6;
-	if (y >= 230)
+	if (y >= 190)
 	{
 		y = 5;
-		x += 35;
+		x += 70;
 	}
 }

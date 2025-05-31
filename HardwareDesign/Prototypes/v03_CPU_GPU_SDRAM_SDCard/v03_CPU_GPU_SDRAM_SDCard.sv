@@ -39,7 +39,7 @@ ecp5pll #(
   .in_hz       (25000000),
   .out0_hz    (130000000),
   .out0_deg    (       0),
-  .out0_tol_hz (       0),
+  .out0_tol_hz (       0),  
   .out1_hz     (50000000),
   .out1_deg    (       0),
   .out1_tol_hz ( 1000000),
@@ -48,12 +48,12 @@ ecp5pll #(
   .out2_tol_hz (       0),
   .out3_hz     (       0),
   .out3_deg    (       0),
-  .out3_tol_hz (       0)    
+  .out3_tol_hz (       0)     
 ) TopLevelPLL (
-  .clk_i(clk_25mhz),
-  .clk_o({clk_50mhz, clk_130mhz})
+  .clk_i(clk_25mhz),  
+  .clk_o({clk_50mhz, clk_130mhz})  
 ); 
-            
+                  
 localparam S_COUNT = 2;
 localparam M_COUNT = 4;
 localparam ADDR_WIDTH = 32;
@@ -120,11 +120,11 @@ picorv32_axi #(
 	.mem_axi_arvalid(CPU_mem_axi_arvalid),
 	.mem_axi_arready(CPU_mem_axi_arready),
 	.mem_axi_araddr(CPU_mem_axi_araddr),
-	.mem_axi_arprot(CPU_mem_axi_arprot),
+	.mem_axi_arprot(CPU_mem_axi_arprot), 
 	.mem_axi_rvalid(CPU_mem_axi_rvalid),
 	.mem_axi_rready(CPU_mem_axi_rready),
 	.mem_axi_rdata(CPU_mem_axi_rdata),
-
+ 
 	.irq(CPU_irq),
 	.eoi(CPU_eoi),
 

@@ -57,6 +57,8 @@ DRESULT disk_read(BYTE pdrv,  /* Physical drive nmuber to identify the drive */
     if(i % 512 == 0 && debug)
       ScreenPrintWord(i);
   }
+
+  ScreenPrint("disk_read_end");
   return res;
 }
 

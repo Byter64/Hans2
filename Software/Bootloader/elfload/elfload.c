@@ -164,6 +164,7 @@ el_status el_load(el_ctx *ctx, el_alloc_cb alloc)
         ScreenPrint("2");
         /* read loaded portion */
         debug = 1;
+        ScreenPrintWord(ph.p_filesz);
         if ((rv = el_pread(ctx, dest, ph.p_filesz, ph.p_offset)))
             return rv;
         ScreenPrint("3");

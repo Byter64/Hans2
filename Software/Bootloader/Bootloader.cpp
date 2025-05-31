@@ -17,7 +17,9 @@ static bool fileRead(el_ctx* ctx, void* dest, size_t nb, size_t offset)
 	if (fseek(elfFile, offset, SEEK_SET))
 		return false;
 
+	ScreenPrint("Calling fread");
 	int temp = fread(dest, nb, 1, elfFile);
+	ScreenPrint("End call");
 	if (temp != 1)
 		return false;
 
