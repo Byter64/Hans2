@@ -24,7 +24,7 @@ static bool fileRead(el_ctx* ctx, void* dest, size_t nb, size_t offset)
 static void* memoryAllocation(el_ctx* ctx, Elf_Addr physicalAddress, Elf_Addr virtualAddress, Elf_Addr size)
 {
 	//This is what the example does, but I don't know why one can just return the virtual address
-	return (void*)virtualAddress;
+	return (void*)physicalAddress;
 }
 
 static void check(el_status stat, const char* text)
@@ -124,18 +124,21 @@ int main()
 	result = el_load(&ctx, memoryAllocation);
 	check(result, "Load FAILED!");
 	
-	
+
+	ScreenPrint("reloc");
 	SetStatus("Resolving relocations...", 80, 120);
 	result = el_relocate(&ctx);
 	check(result, "Relocs FAILED!");
 	
 	uintptr_t entryPoint = ctx.ehdr.e_entry + (uintptr_t)loadAddress;
-	
+	ScreenPrintByte(entryPoint);
+
+	f_close(&elfFile);
+	ScreenPrint("Fertig");
 	SetStatus("Succeeded. What a journey man, Have fun :)", 100, 120);
 	int (*loadedMain)() = (int (*)())entryPoint;
-	while(true);
 	loadedMain();
-	
+
 	while (true);
 	
 	return 0;
