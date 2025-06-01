@@ -125,16 +125,12 @@ int main()
 	check(result, "Load FAILED!");
 	
 
-	ScreenPrint("reloc");
 	SetStatus("Resolving relocations...", 80, 120);
 	result = el_relocate(&ctx);
 	check(result, "Relocs FAILED!");
 	
 	uintptr_t entryPoint = ctx.ehdr.e_entry + (uintptr_t)loadAddress;
-	ScreenPrintByte(entryPoint);
 
-	f_close(&elfFile);
-	ScreenPrint("Fertig");
 	SetStatus("Succeeded. What a journey man, Have fun :)", 100, 120);
 	int (*loadedMain)() = (int (*)())entryPoint;
 	loadedMain();
