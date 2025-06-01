@@ -109,7 +109,7 @@ VexRiscvAxiLite #(
 	.PROGADDR_RESET(BOOTLOADER_START)
 ) Processor (
 	.aclk(aclk),
-	.aresetn(aresetn),
+	.aresetn(resetn),
 	.i_m_axil_awaddr(CPU_i_axil_awaddr),
 	.i_m_axil_awprot(CPU_i_axil_awprot),
 	.i_m_axil_awvalid(CPU_i_axil_awvalid),
