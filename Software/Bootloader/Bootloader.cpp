@@ -43,21 +43,12 @@ extern BYTE is_mounted;
 
 int main()
 {
-	void (*func)() = (void (*)())0;
-	func();
-	char buffer[3];
+
 
 	Hapi::Init();
 	FRESULT fatfsResult;
 	WaitFrame(120);
 	
-#ifndef USE_STARTUP_SCREEN
-	Hapi::Clear(Hapi::Color(0, 128, 128, 1));
-	Hapi::EndDrawing();
-	Hapi::Clear(Hapi::Color(0, 128, 128, 1));
-	Hapi::EndDrawing();
-#endif
-
 	SetStatus("Mounting SD-Card...", 0, 20);
 	fatfsResult = f_mount(&FatFs, "", 0);
     is_mounted = 1;
@@ -68,7 +59,7 @@ int main()
 		ScreenPrint(FRESULTToString(fatfsResult));
 		while(true);
 	}
-	SetStatus(ByteToHex(fatfsResult, buffer), 10, 10);
+	SetStatus(FRESULTToString(fatfsResult), 10, 10);
 
 	//Find main program to load
 	SetStatus("Searching *.elf...", 15, 15);
