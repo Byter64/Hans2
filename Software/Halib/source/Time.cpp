@@ -1,26 +1,34 @@
 #include "Time.h"
 #include "Hall.h"
 
-extern int Halib::SECS_TO_TICKS = Hall::SYSTEM_CLK_FREQUENCY / 65536;
+const int Halib::SECS_TO_TICKS			= Hall::SYSTEM_CLK_FREQUENCY / 65536;
+		  
+const int Halib::MIL_SECS_TO_PREC_TICKS	= Hall::SYSTEM_CLK_FREQUENCY / 1000;
+const int Halib::MIC_SECS_TO_PREC_TICKS = Hall::SYSTEM_CLK_FREQUENCY / 1000000;
 
 Halib::Tick Halib::GetCurrentTick()
 {
 	return Hall::GetSystemTime(2);
 }
 
+Halib::PreciseTick Halib::GetCurrentPreciseTick()
+{
+	return Hall::GetSystemTime(0);
+}
+
 int Halib::GetCurrentSeconds()
 {
-	return GetCurrentTick() / Hall::SYSTEM_CLK_FREQUENCY;
+	return GetCurrentTick() / SECS_TO_TICKS;
 }
 
 int Halib::GetCurrentMilliSeconds()
 {
-	return GetCurrentSeconds() * 1000;
+	return GetCurrentPreciseTick() / MIL_SECS_TO_PREC_TICKS;
 }
 
 int Halib::GetCurrentMicroSeconds()
 {
-	return GetCurrentMilliSeconds() * 1000;
+	return GetCurrentPreciseTick() / MIC_SECS_TO_PREC_TICKS;
 }
 
 
