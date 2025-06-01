@@ -394,7 +394,7 @@ logic[S_COUNT*ADDR_WIDTH-1:0] AXI_s_axil_araddr;
 logic[S_COUNT*3-1:0]          AXI_s_axil_arprot;
 logic[S_COUNT-1:0]            AXI_s_axil_arvalid;
 logic[S_COUNT-1:0]            AXI_s_axil_arready;
-logic[S_COUNT*DATA_WIDTH-1:0] AXI_s_axil_rdata;
+logic[S_COUNT*DATA_WIDTH-1:0] AXI_s_axil_rdata; 
 logic[S_COUNT*2-1:0]          AXI_s_axil_rresp;
 logic[S_COUNT-1:0]            AXI_s_axil_rvalid;
 logic[S_COUNT-1:0]            AXI_s_axil_rready;

@@ -43,6 +43,8 @@ extern BYTE is_mounted;
 
 int main()
 {
+	void (*func)() = (void (*)())0;
+	func();
 	char buffer[3];
 
 	Hapi::Init();
