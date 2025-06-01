@@ -2,6 +2,7 @@
     "files.associations": {
         "ff.h": "c",
         "debughelper.h": "c",
-        "stddef.h": "c"
+        "stddef.h": "c",
+        "elfload.h": "c"
     }
 }
