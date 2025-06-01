@@ -13,7 +13,6 @@
  * PERFORMANCE OF THIS SOFTWARE.
  */
 #include "elfload.h"
-#include "DebugHelper.h"
 #include <string.h>
 
 el_status el_pread(el_ctx *ctx, void *def, size_t nb, size_t offset)
@@ -160,9 +159,7 @@ el_status el_load(el_ctx *ctx, el_alloc_cb alloc)
 
         EL_DEBUG("Loading segment with fileoffset 0x%x and vaddr 0x%x to address %p\n",
             ph.p_offset, ph.p_vaddr, dest);
-        ScreenPrint("X");
         /* read loaded portion */
-        ScreenPrintWord(ph.p_filesz);
         if ((rv = el_pread(ctx, dest, ph.p_filesz, ph.p_offset)))
             return rv;
         /* zero mem-only portion */

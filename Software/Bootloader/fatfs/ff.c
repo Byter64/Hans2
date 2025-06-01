@@ -22,7 +22,6 @@
 #include <string.h>
 #include "ff.h"			/* Declarations of FatFs API */
 #include "diskio.h"		/* Declarations of device I/O functions */
-#include "DebugHelper.h"
 
 /*--------------------------------------------------------------------------
 
@@ -4014,8 +4013,6 @@ FRESULT f_read (
 		memcpy(rbuff, fp->buf + fp->fptr % SS(fs), rcnt);	/* Extract partial sector */
 #endif
 	}
-
-	ScreenPrint("f_read_end");
 	LEAVE_FF(fs, FR_OK);
 }
 

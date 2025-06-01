@@ -120,18 +120,18 @@ int main()
 	ctx.base_load_vaddr = (uintptr_t)loadAddress;
 	ctx.base_load_paddr = (uintptr_t)loadAddress;
 	
-	SetStatus("Loading .elf file...", 40, 60);
+	SetStatus("Loading .elf file...", 40, 120);
 	result = el_load(&ctx, memoryAllocation);
 	check(result, "Load FAILED!");
 	
 	
-	SetStatus("Resolving relocations...", 80, 10);
+	SetStatus("Resolving relocations...", 80, 120);
 	result = el_relocate(&ctx);
 	check(result, "Relocs FAILED!");
 	
 	uintptr_t entryPoint = ctx.ehdr.e_entry + (uintptr_t)loadAddress;
 	
-	SetStatus("Succeeded. What a journey man, Have fun :)", 100, 45);
+	SetStatus("Succeeded. What a journey man, Have fun :)", 100, 120);
 	int (*loadedMain)() = (int (*)())entryPoint;
 	while(true);
 	loadedMain();
