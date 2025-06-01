@@ -15,7 +15,12 @@ list(APPEND sources_all
   ${CMAKE_CURRENT_SOURCE_DIR}/../../AXI/verilog-axi-master/rtl/axil_register_rd.v
   ${CMAKE_CURRENT_SOURCE_DIR}/../../AXI/verilog-axi-master/rtl/axil_register_wr.v
   ${CMAKE_CURRENT_SOURCE_DIR}/../../AXI/verilog-axi-master/rtl/priority_encoder.v
-  ${CMAKE_CURRENT_SOURCE_DIR}/../../Processor/picorv32.v
+  #${CMAKE_CURRENT_SOURCE_DIR}/../../Processor/picorv32.v
+  ${CMAKE_CURRENT_SOURCE_DIR}/../../Processor/VexRiscvAxiLite.sv
+  ${CMAKE_CURRENT_SOURCE_DIR}/../../Processor/VexRiscvAxi4.v
+  ${CMAKE_CURRENT_SOURCE_DIR}/../../AXI/verilog-axi-master/rtl/axi_axil_adapter.v
+  ${CMAKE_CURRENT_SOURCE_DIR}/../../AXI/verilog-axi-master/rtl/axi_axil_adapter_rd.v
+  ${CMAKE_CURRENT_SOURCE_DIR}/../../AXI/verilog-axi-master/rtl/axi_axil_adapter_wr.v
   ${CMAKE_CURRENT_SOURCE_DIR}/../../pll/ecp5pll.sv
   ${CMAKE_CURRENT_SOURCE_DIR}/../../Graphicsystem/BufferController.v
   ${CMAKE_CURRENT_SOURCE_DIR}/../../Graphicsystem/Framebuffer.v

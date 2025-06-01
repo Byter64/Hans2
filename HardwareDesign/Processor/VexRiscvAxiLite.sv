@@ -4,8 +4,8 @@ module VexRiscvAxiLite #(
     parameter DATA_WIDTH = 32,
     parameter STRB_WIDTH = ADDR_WIDTH / 8
 )(
-    input aclk,
-    input aresetn,
+    input                                    aclk,
+    input                                    aresetn,
 
     output logic[ADDR_WIDTH-1:0]             i_m_axil_awaddr,
     output logic[2:0]                        i_m_axil_awprot,
