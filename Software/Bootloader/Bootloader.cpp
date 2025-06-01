@@ -41,9 +41,13 @@ static void check(el_status stat, const char* text)
 extern FATFS FatFs;
 extern BYTE is_mounted;
 
+int (*function)() = (int (*)())0;
+
+volatile int* x = (int*)0x2010000;
 int main()
 {
-
+	for(int i = 0; i < 10; i++) *x += i;
+	function();
 
 	Hapi::Init();
 	FRESULT fatfsResult;
