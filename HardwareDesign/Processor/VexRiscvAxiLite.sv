@@ -48,8 +48,9 @@ axi_axil_adapter IAdapter
     
 );
 
-VexRiscvAxi4 VexCPU 
-(
+VexRiscvAxi4 #(
+    .PROGADDR_RESET(32'h0201_0000)
+) VexCPU (
     .timerInterrupt(?),
     .externalInterrupt(?),
     .softwareInterrupt(?),

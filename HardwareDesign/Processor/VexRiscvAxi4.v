@@ -4,7 +4,10 @@
 
 `timescale 1ns/1ps
 
-module VexRiscvAxi4 (
+module VexRiscvAxi4 #(
+  parameter PROGADDR_RESET = 0
+)
+(
   input  wire          timerInterrupt,
   input  wire          externalInterrupt,
   input  wire          softwareInterrupt,
@@ -151,7 +154,6 @@ module VexRiscvAxi4 (
   wire                dataCache_1_io_cpu_flush_valid;
   wire                dataCache_1_io_cpu_flush_payload_singleLine;
   wire       [6:0]    dataCache_1_io_cpu_flush_payload_lineId;
-  reg        [1:0]    _zz_3_spinal_port1;
   reg        [31:0]   RegFilePlugin_regFile_spinal_port0;
   reg        [31:0]   RegFilePlugin_regFile_spinal_port1;
   wire                IBusCachedPlugin_cache_io_cpu_prefetch_haltIt;
@@ -246,18 +248,12 @@ module VexRiscvAxi4 (
   wire       [1:0]    _zz_IBusCachedPlugin_jump_pcLoad_payload_6;
   wire       [31:0]   _zz_IBusCachedPlugin_fetchPc_pc;
   wire       [2:0]    _zz_IBusCachedPlugin_fetchPc_pc_1;
-  wire       [1:0]    _zz__zz_3_port;
-  wire       [1:0]    _zz__zz_3_port_1;
-  wire       [1:0]    _zz__zz_3_port_2;
-  wire       [9:0]    _zz__zz_3_port_3;
-  wire       [9:0]    _zz__zz_decode_PREDICTION_CONTEXT_hazard_4;
-  wire       [29:0]   _zz__zz_decode_PREDICTION_CONTEXT_hazard_4_1;
-  wire       [9:0]    _zz__zz_decode_PREDICTION_CONTEXT_line_history_2;
-  wire       [1:0]    _zz__zz_decode_PREDICTION_CONTEXT_hazard;
-  wire       [19:0]   _zz__zz_6;
-  wire       [11:0]   _zz__zz_8;
-  wire       [31:0]   _zz__zz_10;
-  wire       [31:0]   _zz__zz_10_1;
+  wire       [11:0]   _zz__zz_IBusCachedPlugin_decodePrediction_cmd_hadBranch;
+  wire       [31:0]   _zz_IBusCachedPlugin_decodePrediction_cmd_hadBranch_2;
+  wire       [19:0]   _zz__zz_2;
+  wire       [11:0]   _zz__zz_4;
+  wire       [31:0]   _zz__zz_6;
+  wire       [31:0]   _zz__zz_6_1;
   wire       [19:0]   _zz__zz_IBusCachedPlugin_predictionJumpInterface_payload;
   wire       [11:0]   _zz__zz_IBusCachedPlugin_predictionJumpInterface_payload_2;
   wire                _zz_IBusCachedPlugin_predictionJumpInterface_payload_4;
@@ -632,8 +628,6 @@ module VexRiscvAxi4 (
   wire                memory_FPU_COMMIT;
   wire                execute_FPU_COMMIT;
   wire                decode_FPU_COMMIT;
-  wire       [1:0]    _zz_execute_to_memory_BRANCH_CTRL;
-  wire       [1:0]    _zz_execute_to_memory_BRANCH_CTRL_1;
   wire       [1:0]    _zz_decode_to_execute_BRANCH_CTRL;
   wire       [1:0]    _zz_decode_to_execute_BRANCH_CTRL_1;
   wire       [0:0]    _zz_memory_to_writeBack_ENV_CTRL;
@@ -682,12 +676,11 @@ module VexRiscvAxi4 (
   wire       [1:0]    _zz_decode_to_execute_SRC1_CTRL;
   wire       [1:0]    _zz_decode_to_execute_SRC1_CTRL_1;
   wire                decode_MEMORY_FORCE_CONSTISTENCY;
-  wire                execute_PREDICTION_CONTEXT_hazard;
-  wire       [1:0]    execute_PREDICTION_CONTEXT_line_history;
   wire       [31:0]   writeBack_FORMAL_PC_NEXT;
   wire       [31:0]   memory_FORMAL_PC_NEXT;
   wire       [31:0]   execute_FORMAL_PC_NEXT;
   wire       [31:0]   decode_FORMAL_PC_NEXT;
+  wire       [31:0]   memory_PC;
   reg                 _zz_memory_to_writeBack_FPU_FORKED;
   reg                 _zz_execute_to_memory_FPU_FORKED;
   reg                 _zz_decode_to_execute_FPU_FORKED;
@@ -809,14 +802,6 @@ module VexRiscvAxi4 (
   wire       [1:0]    decode_BRANCH_CTRL;
   wire       [1:0]    _zz_decode_BRANCH_CTRL_1;
   wire       [31:0]   decode_INSTRUCTION;
-  wire       [1:0]    memory_BRANCH_CTRL;
-  wire       [1:0]    _zz_memory_BRANCH_CTRL;
-  wire       [31:0]   memory_PC;
-  wire                memory_PREDICTION_CONTEXT_hazard;
-  wire       [1:0]    memory_PREDICTION_CONTEXT_line_history;
-  wire                decode_PREDICTION_CONTEXT_hazard;
-  wire       [1:0]    decode_PREDICTION_CONTEXT_line_history;
-  reg                 _zz_2;
   reg        [31:0]   _zz_memory_to_writeBack_FORMAL_PC_NEXT;
   reg        [31:0]   _zz_decode_to_execute_FORMAL_PC_NEXT;
   wire       [31:0]   decode_PC;
@@ -1115,20 +1100,13 @@ module VexRiscvAxi4 (
   wire                when_Fetcher_l331_3;
   reg                 IBusCachedPlugin_injector_nextPcCalc_valids_4;
   wire                when_Fetcher_l331_4;
-  wire                _zz_decode_PREDICTION_CONTEXT_hazard;
-  wire       [9:0]    _zz_decode_PREDICTION_CONTEXT_hazard_1;
-  reg                 _zz_decode_PREDICTION_CONTEXT_hazard_2;
-  reg        [9:0]    _zz_decode_PREDICTION_CONTEXT_hazard_3;
-  wire       [29:0]   _zz_decode_PREDICTION_CONTEXT_line_history;
-  wire                _zz_decode_PREDICTION_CONTEXT_line_history_1;
-  reg                 _zz_decode_PREDICTION_CONTEXT_hazard_4;
-  reg        [1:0]    _zz_decode_PREDICTION_CONTEXT_line_history_2;
-  wire                _zz_decode_PREDICTION_CONTEXT_hazard_5;
-  wire                _zz_6;
-  reg        [10:0]   _zz_7;
-  wire                _zz_8;
-  reg        [18:0]   _zz_9;
-  reg                 _zz_10;
+  wire                _zz_IBusCachedPlugin_decodePrediction_cmd_hadBranch;
+  reg        [18:0]   _zz_IBusCachedPlugin_decodePrediction_cmd_hadBranch_1;
+  wire                _zz_2;
+  reg        [10:0]   _zz_3;
+  wire                _zz_4;
+  reg        [18:0]   _zz_5;
+  reg                 _zz_6;
   wire                _zz_IBusCachedPlugin_predictionJumpInterface_payload;
   reg        [10:0]   _zz_IBusCachedPlugin_predictionJumpInterface_payload_1;
   wire                _zz_IBusCachedPlugin_predictionJumpInterface_payload_2;
@@ -1435,7 +1413,7 @@ module VexRiscvAxi4 (
   reg                 lastStageRegFileWrite_valid /* verilator public */ ;
   reg        [4:0]    lastStageRegFileWrite_payload_address /* verilator public */ ;
   reg        [31:0]   lastStageRegFileWrite_payload_data /* verilator public */ ;
-  reg                 _zz_14;
+  reg                 _zz_10;
   reg        [31:0]   execute_IntAluPlugin_bitwise;
   reg        [31:0]   _zz_execute_REGFILE_WRITE_DATA;
   reg        [31:0]   _zz_execute_SRC1;
@@ -1746,160 +1724,152 @@ module VexRiscvAxi4 (
   wire                when_Pipeline_l124_8;
   reg        [31:0]   memory_to_writeBack_FORMAL_PC_NEXT;
   wire                when_Pipeline_l124_9;
-  reg                 decode_to_execute_PREDICTION_CONTEXT_hazard;
-  reg        [1:0]    decode_to_execute_PREDICTION_CONTEXT_line_history;
-  wire                when_Pipeline_l124_10;
-  reg                 execute_to_memory_PREDICTION_CONTEXT_hazard;
-  reg        [1:0]    execute_to_memory_PREDICTION_CONTEXT_line_history;
-  wire                when_Pipeline_l124_11;
   reg                 decode_to_execute_MEMORY_FORCE_CONSTISTENCY;
-  wire                when_Pipeline_l124_12;
+  wire                when_Pipeline_l124_10;
   reg        [1:0]    decode_to_execute_SRC1_CTRL;
-  wire                when_Pipeline_l124_13;
+  wire                when_Pipeline_l124_11;
   reg                 decode_to_execute_SRC_USE_SUB_LESS;
-  wire                when_Pipeline_l124_14;
+  wire                when_Pipeline_l124_12;
   reg                 decode_to_execute_MEMORY_ENABLE;
-  wire                when_Pipeline_l124_15;
+  wire                when_Pipeline_l124_13;
   reg                 execute_to_memory_MEMORY_ENABLE;
-  wire                when_Pipeline_l124_16;
+  wire                when_Pipeline_l124_14;
   reg                 memory_to_writeBack_MEMORY_ENABLE;
-  wire                when_Pipeline_l124_17;
+  wire                when_Pipeline_l124_15;
   reg        [1:0]    decode_to_execute_ALU_CTRL;
-  wire                when_Pipeline_l124_18;
+  wire                when_Pipeline_l124_16;
   reg        [1:0]    decode_to_execute_SRC2_CTRL;
-  wire                when_Pipeline_l124_19;
+  wire                when_Pipeline_l124_17;
   reg                 decode_to_execute_REGFILE_WRITE_VALID;
-  wire                when_Pipeline_l124_20;
+  wire                when_Pipeline_l124_18;
   reg                 execute_to_memory_REGFILE_WRITE_VALID;
-  wire                when_Pipeline_l124_21;
+  wire                when_Pipeline_l124_19;
   reg                 memory_to_writeBack_REGFILE_WRITE_VALID;
-  wire                when_Pipeline_l124_22;
+  wire                when_Pipeline_l124_20;
   reg                 decode_to_execute_BYPASSABLE_EXECUTE_STAGE;
-  wire                when_Pipeline_l124_23;
+  wire                when_Pipeline_l124_21;
   reg                 decode_to_execute_BYPASSABLE_MEMORY_STAGE;
-  wire                when_Pipeline_l124_24;
+  wire                when_Pipeline_l124_22;
   reg                 execute_to_memory_BYPASSABLE_MEMORY_STAGE;
-  wire                when_Pipeline_l124_25;
+  wire                when_Pipeline_l124_23;
   reg                 decode_to_execute_MEMORY_WR;
-  wire                when_Pipeline_l124_26;
+  wire                when_Pipeline_l124_24;
   reg                 execute_to_memory_MEMORY_WR;
-  wire                when_Pipeline_l124_27;
+  wire                when_Pipeline_l124_25;
   reg                 memory_to_writeBack_MEMORY_WR;
-  wire                when_Pipeline_l124_28;
+  wire                when_Pipeline_l124_26;
   reg                 decode_to_execute_MEMORY_MANAGMENT;
-  wire                when_Pipeline_l124_29;
+  wire                when_Pipeline_l124_27;
   reg                 decode_to_execute_IS_SFENCE_VMA2;
-  wire                when_Pipeline_l124_30;
+  wire                when_Pipeline_l124_28;
   reg                 decode_to_execute_SRC_LESS_UNSIGNED;
-  wire                when_Pipeline_l124_31;
+  wire                when_Pipeline_l124_29;
   reg        [1:0]    decode_to_execute_ALU_BITWISE_CTRL;
-  wire                when_Pipeline_l124_32;
+  wire                when_Pipeline_l124_30;
   reg        [1:0]    decode_to_execute_SHIFT_CTRL;
-  wire                when_Pipeline_l124_33;
+  wire                when_Pipeline_l124_31;
   reg        [1:0]    execute_to_memory_SHIFT_CTRL;
-  wire                when_Pipeline_l124_34;
+  wire                when_Pipeline_l124_32;
   reg                 decode_to_execute_IS_MUL;
-  wire                when_Pipeline_l124_35;
+  wire                when_Pipeline_l124_33;
   reg                 execute_to_memory_IS_MUL;
-  wire                when_Pipeline_l124_36;
+  wire                when_Pipeline_l124_34;
   reg                 memory_to_writeBack_IS_MUL;
-  wire                when_Pipeline_l124_37;
+  wire                when_Pipeline_l124_35;
   reg                 decode_to_execute_IS_DIV;
-  wire                when_Pipeline_l124_38;
+  wire                when_Pipeline_l124_36;
   reg                 execute_to_memory_IS_DIV;
-  wire                when_Pipeline_l124_39;
+  wire                when_Pipeline_l124_37;
   reg                 decode_to_execute_IS_RS1_SIGNED;
-  wire                when_Pipeline_l124_40;
+  wire                when_Pipeline_l124_38;
   reg                 decode_to_execute_IS_RS2_SIGNED;
-  wire                when_Pipeline_l124_41;
+  wire                when_Pipeline_l124_39;
   reg                 decode_to_execute_IS_CSR;
-  wire                when_Pipeline_l124_42;
+  wire                when_Pipeline_l124_40;
   reg        [0:0]    decode_to_execute_ENV_CTRL;
-  wire                when_Pipeline_l124_43;
+  wire                when_Pipeline_l124_41;
   reg        [0:0]    execute_to_memory_ENV_CTRL;
-  wire                when_Pipeline_l124_44;
+  wire                when_Pipeline_l124_42;
   reg        [0:0]    memory_to_writeBack_ENV_CTRL;
-  wire                when_Pipeline_l124_45;
+  wire                when_Pipeline_l124_43;
   reg        [1:0]    decode_to_execute_BRANCH_CTRL;
-  wire                when_Pipeline_l124_46;
-  reg        [1:0]    execute_to_memory_BRANCH_CTRL;
-  wire                when_Pipeline_l124_47;
+  wire                when_Pipeline_l124_44;
   reg                 decode_to_execute_FPU_COMMIT;
-  wire                when_Pipeline_l124_48;
+  wire                when_Pipeline_l124_45;
   reg                 execute_to_memory_FPU_COMMIT;
-  wire                when_Pipeline_l124_49;
+  wire                when_Pipeline_l124_46;
   reg                 memory_to_writeBack_FPU_COMMIT;
-  wire                when_Pipeline_l124_50;
+  wire                when_Pipeline_l124_47;
   reg                 decode_to_execute_FPU_RSP;
-  wire                when_Pipeline_l124_51;
+  wire                when_Pipeline_l124_48;
   reg                 execute_to_memory_FPU_RSP;
-  wire                when_Pipeline_l124_52;
+  wire                when_Pipeline_l124_49;
   reg                 memory_to_writeBack_FPU_RSP;
-  wire                when_Pipeline_l124_53;
+  wire                when_Pipeline_l124_50;
   reg        [3:0]    decode_to_execute_FPU_OPCODE;
-  wire                when_Pipeline_l124_54;
+  wire                when_Pipeline_l124_51;
   reg        [3:0]    execute_to_memory_FPU_OPCODE;
-  wire                when_Pipeline_l124_55;
+  wire                when_Pipeline_l124_52;
   reg        [3:0]    memory_to_writeBack_FPU_OPCODE;
-  wire                when_Pipeline_l124_56;
+  wire                when_Pipeline_l124_53;
   reg        [31:0]   decode_to_execute_RS1;
-  wire                when_Pipeline_l124_57;
+  wire                when_Pipeline_l124_54;
   reg        [31:0]   execute_to_memory_RS1;
-  wire                when_Pipeline_l124_58;
+  wire                when_Pipeline_l124_55;
   reg        [31:0]   memory_to_writeBack_RS1;
-  wire                when_Pipeline_l124_59;
+  wire                when_Pipeline_l124_56;
   reg        [31:0]   decode_to_execute_RS2;
-  wire                when_Pipeline_l124_60;
+  wire                when_Pipeline_l124_57;
   reg                 decode_to_execute_SRC2_FORCE_ZERO;
-  wire                when_Pipeline_l124_61;
+  wire                when_Pipeline_l124_58;
   reg                 decode_to_execute_CSR_WRITE_OPCODE;
-  wire                when_Pipeline_l124_62;
+  wire                when_Pipeline_l124_59;
   reg                 decode_to_execute_CSR_READ_OPCODE;
-  wire                when_Pipeline_l124_63;
+  wire                when_Pipeline_l124_60;
   reg                 decode_to_execute_DO_EBREAK;
-  wire                when_Pipeline_l124_64;
+  wire                when_Pipeline_l124_61;
   reg                 decode_to_execute_PREDICTION_HAD_BRANCHED1;
-  wire                when_Pipeline_l124_65;
+  wire                when_Pipeline_l124_62;
   reg                 decode_to_execute_FPU_FORKED;
-  wire                when_Pipeline_l124_66;
+  wire                when_Pipeline_l124_63;
   reg                 execute_to_memory_FPU_FORKED;
-  wire                when_Pipeline_l124_67;
+  wire                when_Pipeline_l124_64;
   reg                 memory_to_writeBack_FPU_FORKED;
-  wire                when_Pipeline_l124_68;
+  wire                when_Pipeline_l124_65;
   reg                 decode_to_execute_FPU_COMMIT_LOAD;
-  wire                when_Pipeline_l124_69;
+  wire                when_Pipeline_l124_66;
   reg                 execute_to_memory_FPU_COMMIT_LOAD;
-  wire                when_Pipeline_l124_70;
+  wire                when_Pipeline_l124_67;
   reg                 memory_to_writeBack_FPU_COMMIT_LOAD;
-  wire                when_Pipeline_l124_71;
+  wire                when_Pipeline_l124_68;
   reg        [31:0]   execute_to_memory_MEMORY_STORE_DATA_RF;
-  wire                when_Pipeline_l124_72;
+  wire                when_Pipeline_l124_69;
   reg        [31:0]   memory_to_writeBack_MEMORY_STORE_DATA_RF;
-  wire                when_Pipeline_l124_73;
+  wire                when_Pipeline_l124_70;
   reg                 execute_to_memory_IS_DBUS_SHARING;
-  wire                when_Pipeline_l124_74;
+  wire                when_Pipeline_l124_71;
   reg                 memory_to_writeBack_IS_DBUS_SHARING;
-  wire                when_Pipeline_l124_75;
+  wire                when_Pipeline_l124_72;
   reg        [31:0]   execute_to_memory_REGFILE_WRITE_DATA;
-  wire                when_Pipeline_l124_76;
+  wire                when_Pipeline_l124_73;
   reg        [31:0]   memory_to_writeBack_REGFILE_WRITE_DATA;
-  wire                when_Pipeline_l124_77;
+  wire                when_Pipeline_l124_74;
   reg        [31:0]   execute_to_memory_SHIFT_RIGHT;
-  wire                when_Pipeline_l124_78;
+  wire                when_Pipeline_l124_75;
   reg        [31:0]   execute_to_memory_MUL_LL;
-  wire                when_Pipeline_l124_79;
+  wire                when_Pipeline_l124_76;
   reg        [33:0]   execute_to_memory_MUL_LH;
-  wire                when_Pipeline_l124_80;
+  wire                when_Pipeline_l124_77;
   reg        [33:0]   execute_to_memory_MUL_HL;
-  wire                when_Pipeline_l124_81;
+  wire                when_Pipeline_l124_78;
   reg        [33:0]   execute_to_memory_MUL_HH;
-  wire                when_Pipeline_l124_82;
+  wire                when_Pipeline_l124_79;
   reg        [33:0]   memory_to_writeBack_MUL_HH;
-  wire                when_Pipeline_l124_83;
+  wire                when_Pipeline_l124_80;
   reg                 execute_to_memory_BRANCH_DO;
-  wire                when_Pipeline_l124_84;
+  wire                when_Pipeline_l124_81;
   reg        [31:0]   execute_to_memory_BRANCH_CALC;
-  wire                when_Pipeline_l124_85;
+  wire                when_Pipeline_l124_82;
   reg        [51:0]   memory_to_writeBack_MUL_LOW;
   wire                when_Pipeline_l151;
   wire                when_Pipeline_l154;
@@ -2017,7 +1987,7 @@ module VexRiscvAxi4 (
   wire                when_Stream_l1119_1;
   wire                dBus_cmd_haltWhen_fork2_outputs_0_fire;
   wire                dBus_cmd_haltWhen_fork2_outputs_1_fire;
-  reg                 _zz_15;
+  reg                 _zz_11;
   reg                 dBus_cmd_haltWhen_fork2_outputs_0_throwWhen_valid;
   wire                dBus_cmd_haltWhen_fork2_outputs_0_throwWhen_ready;
   wire                dBus_cmd_haltWhen_fork2_outputs_0_throwWhen_payload_wr;
@@ -2052,8 +2022,6 @@ module VexRiscvAxi4 (
   reg [63:0] _zz_execute_to_memory_FPU_OPCODE_1_string;
   reg [63:0] _zz_decode_to_execute_FPU_OPCODE_string;
   reg [63:0] _zz_decode_to_execute_FPU_OPCODE_1_string;
-  reg [31:0] _zz_execute_to_memory_BRANCH_CTRL_string;
-  reg [31:0] _zz_execute_to_memory_BRANCH_CTRL_1_string;
   reg [31:0] _zz_decode_to_execute_BRANCH_CTRL_string;
   reg [31:0] _zz_decode_to_execute_BRANCH_CTRL_1_string;
   reg [31:0] _zz_memory_to_writeBack_ENV_CTRL_string;
@@ -2120,8 +2088,6 @@ module VexRiscvAxi4 (
   reg [95:0] _zz_decode_SRC1_CTRL_1_string;
   reg [31:0] decode_BRANCH_CTRL_string;
   reg [31:0] _zz_decode_BRANCH_CTRL_1_string;
-  reg [31:0] memory_BRANCH_CTRL_string;
-  reg [31:0] _zz_memory_BRANCH_CTRL_string;
   reg [63:0] FpuPlugin_port_cmd_payload_opcode_string;
   reg [47:0] FpuPlugin_port_cmd_payload_format_string;
   reg [23:0] FpuPlugin_port_cmd_payload_roundMode_string;
@@ -2151,13 +2117,11 @@ module VexRiscvAxi4 (
   reg [31:0] execute_to_memory_ENV_CTRL_string;
   reg [31:0] memory_to_writeBack_ENV_CTRL_string;
   reg [31:0] decode_to_execute_BRANCH_CTRL_string;
-  reg [31:0] execute_to_memory_BRANCH_CTRL_string;
   reg [63:0] decode_to_execute_FPU_OPCODE_string;
   reg [63:0] execute_to_memory_FPU_OPCODE_string;
   reg [63:0] memory_to_writeBack_FPU_OPCODE_string;
   `endif
 
-  reg [1:0] _zz_3 [0:1023];
   reg [31:0] RegFilePlugin_regFile [0:31] /* verilator public */ ;
 
   assign _zz_when = (|{decodeExceptionPort_valid,IBusCachedPlugin_decodeExceptionPort_valid});
@@ -2175,16 +2139,12 @@ module VexRiscvAxi4 (
   assign _zz__zz_IBusCachedPlugin_jump_pcLoad_payload_1 = (_zz_IBusCachedPlugin_jump_pcLoad_payload - 4'b0001);
   assign _zz_IBusCachedPlugin_fetchPc_pc_1 = {IBusCachedPlugin_fetchPc_inc,2'b00};
   assign _zz_IBusCachedPlugin_fetchPc_pc = {29'd0, _zz_IBusCachedPlugin_fetchPc_pc_1};
-  assign _zz__zz_3_port_1 = ($signed(memory_PREDICTION_CONTEXT_line_history) + $signed(_zz__zz_3_port_2));
-  assign _zz__zz_3_port_2 = (_zz_decode_PREDICTION_CONTEXT_hazard_5 ? 2'b11 : 2'b01);
-  assign _zz__zz_decode_PREDICTION_CONTEXT_line_history_2 = _zz_decode_PREDICTION_CONTEXT_line_history[9:0];
-  assign _zz__zz_decode_PREDICTION_CONTEXT_hazard_4_1 = (IBusCachedPlugin_iBusRsp_stages_0_input_payload >>> 2'd2);
-  assign _zz__zz_decode_PREDICTION_CONTEXT_hazard_4 = _zz__zz_decode_PREDICTION_CONTEXT_hazard_4_1[9:0];
-  assign _zz__zz_decode_PREDICTION_CONTEXT_hazard = (_zz_decode_PREDICTION_CONTEXT_hazard_5 ? 2'b10 : 2'b01);
-  assign _zz__zz_6 = {{{decode_INSTRUCTION[31],decode_INSTRUCTION[19 : 12]},decode_INSTRUCTION[20]},decode_INSTRUCTION[30 : 21]};
-  assign _zz__zz_8 = {{{decode_INSTRUCTION[31],decode_INSTRUCTION[7]},decode_INSTRUCTION[30 : 25]},decode_INSTRUCTION[11 : 8]};
-  assign _zz__zz_10 = {{_zz_7,{{{decode_INSTRUCTION[31],decode_INSTRUCTION[19 : 12]},decode_INSTRUCTION[20]},decode_INSTRUCTION[30 : 21]}},1'b0};
-  assign _zz__zz_10_1 = {{_zz_9,{{{decode_INSTRUCTION[31],decode_INSTRUCTION[7]},decode_INSTRUCTION[30 : 25]},decode_INSTRUCTION[11 : 8]}},1'b0};
+  assign _zz__zz_IBusCachedPlugin_decodePrediction_cmd_hadBranch = {{{decode_INSTRUCTION[31],decode_INSTRUCTION[7]},decode_INSTRUCTION[30 : 25]},decode_INSTRUCTION[11 : 8]};
+  assign _zz_IBusCachedPlugin_decodePrediction_cmd_hadBranch_2 = {{_zz_IBusCachedPlugin_decodePrediction_cmd_hadBranch_1,{{{decode_INSTRUCTION[31],decode_INSTRUCTION[7]},decode_INSTRUCTION[30 : 25]},decode_INSTRUCTION[11 : 8]}},1'b0};
+  assign _zz__zz_2 = {{{decode_INSTRUCTION[31],decode_INSTRUCTION[19 : 12]},decode_INSTRUCTION[20]},decode_INSTRUCTION[30 : 21]};
+  assign _zz__zz_4 = {{{decode_INSTRUCTION[31],decode_INSTRUCTION[7]},decode_INSTRUCTION[30 : 25]},decode_INSTRUCTION[11 : 8]};
+  assign _zz__zz_6 = {{_zz_3,{{{decode_INSTRUCTION[31],decode_INSTRUCTION[19 : 12]},decode_INSTRUCTION[20]},decode_INSTRUCTION[30 : 21]}},1'b0};
+  assign _zz__zz_6_1 = {{_zz_5,{{{decode_INSTRUCTION[31],decode_INSTRUCTION[7]},decode_INSTRUCTION[30 : 25]},decode_INSTRUCTION[11 : 8]}},1'b0};
   assign _zz__zz_IBusCachedPlugin_predictionJumpInterface_payload = {{{decode_INSTRUCTION[31],decode_INSTRUCTION[19 : 12]},decode_INSTRUCTION[20]},decode_INSTRUCTION[30 : 21]};
   assign _zz__zz_IBusCachedPlugin_predictionJumpInterface_payload_2 = {{{decode_INSTRUCTION[31],decode_INSTRUCTION[7]},decode_INSTRUCTION[30 : 25]},decode_INSTRUCTION[11 : 8]};
   assign _zz_io_cpu_flush_payload_lineId = _zz_io_cpu_flush_payload_lineId_1;
@@ -2243,7 +2203,6 @@ module VexRiscvAxi4 (
   assign _zz_FpuPlugin_pendings_7 = FpuPlugin_port_rsp_fire;
   assign _zz_FpuPlugin_pendings_6 = {5'd0, _zz_FpuPlugin_pendings_7};
   assign _zz_dbus_axi_arw_payload_len = ((dBus_cmd_haltWhen_fork2_outputs_0_throwWhen_payload_size == 3'b101) ? 3'b111 : 3'b000);
-  assign _zz__zz_3_port = _zz__zz_3_port_1;
   assign _zz_decode_RegFilePlugin_rs1Data = 1'b1;
   assign _zz_decode_RegFilePlugin_rs2Data = 1'b1;
   assign _zz_IBusCachedPlugin_jump_pcLoad_payload_6 = {_zz_IBusCachedPlugin_jump_pcLoad_payload_4,_zz_IBusCachedPlugin_jump_pcLoad_payload_3};
@@ -2521,18 +2480,6 @@ module VexRiscvAxi4 (
   assign _zz_execute_BranchPlugin_branch_src2_8 = execute_INSTRUCTION[20];
   assign _zz_execute_BranchPlugin_branch_src2_9 = execute_INSTRUCTION[31];
   assign _zz_execute_BranchPlugin_branch_src2_10 = execute_INSTRUCTION[7];
-  always @(posedge clk) begin
-    if(_zz_2) begin
-      _zz_3[_zz_decode_PREDICTION_CONTEXT_hazard_1] <= _zz__zz_3_port;
-    end
-  end
-
-  always @(posedge clk) begin
-    if(_zz_decode_PREDICTION_CONTEXT_line_history_1) begin
-      _zz_3_spinal_port1 <= _zz_3[_zz__zz_decode_PREDICTION_CONTEXT_line_history_2];
-    end
-  end
-
   always @(posedge clk) begin
     if(_zz_decode_RegFilePlugin_rs1Data) begin
       RegFilePlugin_regFile_spinal_port0 <= RegFilePlugin_regFile[decode_RegFilePlugin_regFileReadAddress1];
@@ -3087,24 +3034,6 @@ module VexRiscvAxi4 (
       FpuOpcode_FCLASS : _zz_decode_to_execute_FPU_OPCODE_1_string = "FCLASS  ";
       FpuOpcode_FCVT_X_X : _zz_decode_to_execute_FPU_OPCODE_1_string = "FCVT_X_X";
       default : _zz_decode_to_execute_FPU_OPCODE_1_string = "????????";
-    endcase
-  end
-  always @(*) begin
-    case(_zz_execute_to_memory_BRANCH_CTRL)
-      BranchCtrlEnum_INC : _zz_execute_to_memory_BRANCH_CTRL_string = "INC ";
-      BranchCtrlEnum_B : _zz_execute_to_memory_BRANCH_CTRL_string = "B   ";
-      BranchCtrlEnum_JAL : _zz_execute_to_memory_BRANCH_CTRL_string = "JAL ";
-      BranchCtrlEnum_JALR : _zz_execute_to_memory_BRANCH_CTRL_string = "JALR";
-      default : _zz_execute_to_memory_BRANCH_CTRL_string = "????";
-    endcase
-  end
-  always @(*) begin
-    case(_zz_execute_to_memory_BRANCH_CTRL_1)
-      BranchCtrlEnum_INC : _zz_execute_to_memory_BRANCH_CTRL_1_string = "INC ";
-      BranchCtrlEnum_B : _zz_execute_to_memory_BRANCH_CTRL_1_string = "B   ";
-      BranchCtrlEnum_JAL : _zz_execute_to_memory_BRANCH_CTRL_1_string = "JAL ";
-      BranchCtrlEnum_JALR : _zz_execute_to_memory_BRANCH_CTRL_1_string = "JALR";
-      default : _zz_execute_to_memory_BRANCH_CTRL_1_string = "????";
     endcase
   end
   always @(*) begin
@@ -3718,24 +3647,6 @@ module VexRiscvAxi4 (
     endcase
   end
   always @(*) begin
-    case(memory_BRANCH_CTRL)
-      BranchCtrlEnum_INC : memory_BRANCH_CTRL_string = "INC ";
-      BranchCtrlEnum_B : memory_BRANCH_CTRL_string = "B   ";
-      BranchCtrlEnum_JAL : memory_BRANCH_CTRL_string = "JAL ";
-      BranchCtrlEnum_JALR : memory_BRANCH_CTRL_string = "JALR";
-      default : memory_BRANCH_CTRL_string = "????";
-    endcase
-  end
-  always @(*) begin
-    case(_zz_memory_BRANCH_CTRL)
-      BranchCtrlEnum_INC : _zz_memory_BRANCH_CTRL_string = "INC ";
-      BranchCtrlEnum_B : _zz_memory_BRANCH_CTRL_string = "B   ";
-      BranchCtrlEnum_JAL : _zz_memory_BRANCH_CTRL_string = "JAL ";
-      BranchCtrlEnum_JALR : _zz_memory_BRANCH_CTRL_string = "JALR";
-      default : _zz_memory_BRANCH_CTRL_string = "????";
-    endcase
-  end
-  always @(*) begin
     case(FpuPlugin_port_cmd_payload_opcode)
       FpuOpcode_LOAD : FpuPlugin_port_cmd_payload_opcode_string = "LOAD    ";
       FpuOpcode_STORE : FpuPlugin_port_cmd_payload_opcode_string = "STORE   ";
@@ -4071,15 +3982,6 @@ module VexRiscvAxi4 (
     endcase
   end
   always @(*) begin
-    case(execute_to_memory_BRANCH_CTRL)
-      BranchCtrlEnum_INC : execute_to_memory_BRANCH_CTRL_string = "INC ";
-      BranchCtrlEnum_B : execute_to_memory_BRANCH_CTRL_string = "B   ";
-      BranchCtrlEnum_JAL : execute_to_memory_BRANCH_CTRL_string = "JAL ";
-      BranchCtrlEnum_JALR : execute_to_memory_BRANCH_CTRL_string = "JALR";
-      default : execute_to_memory_BRANCH_CTRL_string = "????";
-    endcase
-  end
-  always @(*) begin
     case(decode_to_execute_FPU_OPCODE)
       FpuOpcode_LOAD : decode_to_execute_FPU_OPCODE_string = "LOAD    ";
       FpuOpcode_STORE : decode_to_execute_FPU_OPCODE_string = "STORE   ";
@@ -4181,7 +4083,6 @@ module VexRiscvAxi4 (
   assign memory_FPU_COMMIT = execute_to_memory_FPU_COMMIT;
   assign execute_FPU_COMMIT = decode_to_execute_FPU_COMMIT;
   assign decode_FPU_COMMIT = _zz_decode_FPU_RSP[34];
-  assign _zz_execute_to_memory_BRANCH_CTRL = _zz_execute_to_memory_BRANCH_CTRL_1;
   assign _zz_decode_to_execute_BRANCH_CTRL = _zz_decode_to_execute_BRANCH_CTRL_1;
   assign _zz_memory_to_writeBack_ENV_CTRL = _zz_memory_to_writeBack_ENV_CTRL_1;
   assign _zz_execute_to_memory_ENV_CTRL = _zz_execute_to_memory_ENV_CTRL_1;
@@ -4214,12 +4115,11 @@ module VexRiscvAxi4 (
   assign decode_SRC1_CTRL = _zz_decode_SRC1_CTRL;
   assign _zz_decode_to_execute_SRC1_CTRL = _zz_decode_to_execute_SRC1_CTRL_1;
   assign decode_MEMORY_FORCE_CONSTISTENCY = 1'b0;
-  assign execute_PREDICTION_CONTEXT_hazard = decode_to_execute_PREDICTION_CONTEXT_hazard;
-  assign execute_PREDICTION_CONTEXT_line_history = decode_to_execute_PREDICTION_CONTEXT_line_history;
   assign writeBack_FORMAL_PC_NEXT = memory_to_writeBack_FORMAL_PC_NEXT;
   assign memory_FORMAL_PC_NEXT = execute_to_memory_FORMAL_PC_NEXT;
   assign execute_FORMAL_PC_NEXT = decode_to_execute_FORMAL_PC_NEXT;
   assign decode_FORMAL_PC_NEXT = (decode_PC + 32'h00000004);
+  assign memory_PC = execute_to_memory_PC;
   always @(*) begin
     _zz_memory_to_writeBack_FPU_FORKED = memory_FPU_FORKED;
     if(memory_arbitration_isStuck) begin
@@ -4499,19 +4399,6 @@ module VexRiscvAxi4 (
 
   assign decode_BRANCH_CTRL = _zz_decode_BRANCH_CTRL_1;
   assign decode_INSTRUCTION = IBusCachedPlugin_iBusRsp_output_payload_rsp_inst;
-  assign memory_BRANCH_CTRL = _zz_memory_BRANCH_CTRL;
-  assign memory_PC = execute_to_memory_PC;
-  assign memory_PREDICTION_CONTEXT_hazard = execute_to_memory_PREDICTION_CONTEXT_hazard;
-  assign memory_PREDICTION_CONTEXT_line_history = execute_to_memory_PREDICTION_CONTEXT_line_history;
-  assign decode_PREDICTION_CONTEXT_hazard = _zz_decode_PREDICTION_CONTEXT_hazard_4;
-  assign decode_PREDICTION_CONTEXT_line_history = _zz_decode_PREDICTION_CONTEXT_line_history_2;
-  always @(*) begin
-    _zz_2 = 1'b0;
-    if(_zz_decode_PREDICTION_CONTEXT_hazard) begin
-      _zz_2 = 1'b1;
-    end
-  end
-
   always @(*) begin
     _zz_memory_to_writeBack_FORMAL_PC_NEXT = memory_FORMAL_PC_NEXT;
     if(BranchPlugin_jumpInterface_valid) begin
@@ -5011,63 +4898,81 @@ module VexRiscvAxi4 (
     end
   end
 
-  assign _zz_decode_PREDICTION_CONTEXT_line_history = (IBusCachedPlugin_fetchPc_output_payload >>> 2'd2);
-  assign _zz_decode_PREDICTION_CONTEXT_line_history_1 = (IBusCachedPlugin_iBusRsp_stages_0_output_ready || IBusCachedPlugin_externalFlush);
-  assign _zz_decode_PREDICTION_CONTEXT_hazard_5 = (IBusCachedPlugin_decodePrediction_rsp_wasWrong ^ memory_PREDICTION_CONTEXT_line_history[1]);
-  assign _zz_decode_PREDICTION_CONTEXT_hazard_1 = (memory_PC[11 : 2] + 10'h0);
-  assign _zz_decode_PREDICTION_CONTEXT_hazard = ((((! memory_PREDICTION_CONTEXT_hazard) && memory_arbitration_isFiring) && (memory_BRANCH_CTRL == BranchCtrlEnum_B)) && (! ($signed(memory_PREDICTION_CONTEXT_line_history) == $signed(_zz__zz_decode_PREDICTION_CONTEXT_hazard))));
+  assign _zz_IBusCachedPlugin_decodePrediction_cmd_hadBranch = _zz__zz_IBusCachedPlugin_decodePrediction_cmd_hadBranch[11];
   always @(*) begin
-    IBusCachedPlugin_decodePrediction_cmd_hadBranch = ((decode_BRANCH_CTRL == BranchCtrlEnum_JAL) || ((decode_BRANCH_CTRL == BranchCtrlEnum_B) && decode_PREDICTION_CONTEXT_line_history[1]));
-    if(_zz_10) begin
+    _zz_IBusCachedPlugin_decodePrediction_cmd_hadBranch_1[18] = _zz_IBusCachedPlugin_decodePrediction_cmd_hadBranch;
+    _zz_IBusCachedPlugin_decodePrediction_cmd_hadBranch_1[17] = _zz_IBusCachedPlugin_decodePrediction_cmd_hadBranch;
+    _zz_IBusCachedPlugin_decodePrediction_cmd_hadBranch_1[16] = _zz_IBusCachedPlugin_decodePrediction_cmd_hadBranch;
+    _zz_IBusCachedPlugin_decodePrediction_cmd_hadBranch_1[15] = _zz_IBusCachedPlugin_decodePrediction_cmd_hadBranch;
+    _zz_IBusCachedPlugin_decodePrediction_cmd_hadBranch_1[14] = _zz_IBusCachedPlugin_decodePrediction_cmd_hadBranch;
+    _zz_IBusCachedPlugin_decodePrediction_cmd_hadBranch_1[13] = _zz_IBusCachedPlugin_decodePrediction_cmd_hadBranch;
+    _zz_IBusCachedPlugin_decodePrediction_cmd_hadBranch_1[12] = _zz_IBusCachedPlugin_decodePrediction_cmd_hadBranch;
+    _zz_IBusCachedPlugin_decodePrediction_cmd_hadBranch_1[11] = _zz_IBusCachedPlugin_decodePrediction_cmd_hadBranch;
+    _zz_IBusCachedPlugin_decodePrediction_cmd_hadBranch_1[10] = _zz_IBusCachedPlugin_decodePrediction_cmd_hadBranch;
+    _zz_IBusCachedPlugin_decodePrediction_cmd_hadBranch_1[9] = _zz_IBusCachedPlugin_decodePrediction_cmd_hadBranch;
+    _zz_IBusCachedPlugin_decodePrediction_cmd_hadBranch_1[8] = _zz_IBusCachedPlugin_decodePrediction_cmd_hadBranch;
+    _zz_IBusCachedPlugin_decodePrediction_cmd_hadBranch_1[7] = _zz_IBusCachedPlugin_decodePrediction_cmd_hadBranch;
+    _zz_IBusCachedPlugin_decodePrediction_cmd_hadBranch_1[6] = _zz_IBusCachedPlugin_decodePrediction_cmd_hadBranch;
+    _zz_IBusCachedPlugin_decodePrediction_cmd_hadBranch_1[5] = _zz_IBusCachedPlugin_decodePrediction_cmd_hadBranch;
+    _zz_IBusCachedPlugin_decodePrediction_cmd_hadBranch_1[4] = _zz_IBusCachedPlugin_decodePrediction_cmd_hadBranch;
+    _zz_IBusCachedPlugin_decodePrediction_cmd_hadBranch_1[3] = _zz_IBusCachedPlugin_decodePrediction_cmd_hadBranch;
+    _zz_IBusCachedPlugin_decodePrediction_cmd_hadBranch_1[2] = _zz_IBusCachedPlugin_decodePrediction_cmd_hadBranch;
+    _zz_IBusCachedPlugin_decodePrediction_cmd_hadBranch_1[1] = _zz_IBusCachedPlugin_decodePrediction_cmd_hadBranch;
+    _zz_IBusCachedPlugin_decodePrediction_cmd_hadBranch_1[0] = _zz_IBusCachedPlugin_decodePrediction_cmd_hadBranch;
+  end
+
+  always @(*) begin
+    IBusCachedPlugin_decodePrediction_cmd_hadBranch = ((decode_BRANCH_CTRL == BranchCtrlEnum_JAL) || ((decode_BRANCH_CTRL == BranchCtrlEnum_B) && _zz_IBusCachedPlugin_decodePrediction_cmd_hadBranch_2[31]));
+    if(_zz_6) begin
       IBusCachedPlugin_decodePrediction_cmd_hadBranch = 1'b0;
     end
   end
 
-  assign _zz_6 = _zz__zz_6[19];
+  assign _zz_2 = _zz__zz_2[19];
   always @(*) begin
-    _zz_7[10] = _zz_6;
-    _zz_7[9] = _zz_6;
-    _zz_7[8] = _zz_6;
-    _zz_7[7] = _zz_6;
-    _zz_7[6] = _zz_6;
-    _zz_7[5] = _zz_6;
-    _zz_7[4] = _zz_6;
-    _zz_7[3] = _zz_6;
-    _zz_7[2] = _zz_6;
-    _zz_7[1] = _zz_6;
-    _zz_7[0] = _zz_6;
+    _zz_3[10] = _zz_2;
+    _zz_3[9] = _zz_2;
+    _zz_3[8] = _zz_2;
+    _zz_3[7] = _zz_2;
+    _zz_3[6] = _zz_2;
+    _zz_3[5] = _zz_2;
+    _zz_3[4] = _zz_2;
+    _zz_3[3] = _zz_2;
+    _zz_3[2] = _zz_2;
+    _zz_3[1] = _zz_2;
+    _zz_3[0] = _zz_2;
   end
 
-  assign _zz_8 = _zz__zz_8[11];
+  assign _zz_4 = _zz__zz_4[11];
   always @(*) begin
-    _zz_9[18] = _zz_8;
-    _zz_9[17] = _zz_8;
-    _zz_9[16] = _zz_8;
-    _zz_9[15] = _zz_8;
-    _zz_9[14] = _zz_8;
-    _zz_9[13] = _zz_8;
-    _zz_9[12] = _zz_8;
-    _zz_9[11] = _zz_8;
-    _zz_9[10] = _zz_8;
-    _zz_9[9] = _zz_8;
-    _zz_9[8] = _zz_8;
-    _zz_9[7] = _zz_8;
-    _zz_9[6] = _zz_8;
-    _zz_9[5] = _zz_8;
-    _zz_9[4] = _zz_8;
-    _zz_9[3] = _zz_8;
-    _zz_9[2] = _zz_8;
-    _zz_9[1] = _zz_8;
-    _zz_9[0] = _zz_8;
+    _zz_5[18] = _zz_4;
+    _zz_5[17] = _zz_4;
+    _zz_5[16] = _zz_4;
+    _zz_5[15] = _zz_4;
+    _zz_5[14] = _zz_4;
+    _zz_5[13] = _zz_4;
+    _zz_5[12] = _zz_4;
+    _zz_5[11] = _zz_4;
+    _zz_5[10] = _zz_4;
+    _zz_5[9] = _zz_4;
+    _zz_5[8] = _zz_4;
+    _zz_5[7] = _zz_4;
+    _zz_5[6] = _zz_4;
+    _zz_5[5] = _zz_4;
+    _zz_5[4] = _zz_4;
+    _zz_5[3] = _zz_4;
+    _zz_5[2] = _zz_4;
+    _zz_5[1] = _zz_4;
+    _zz_5[0] = _zz_4;
   end
 
   always @(*) begin
     case(decode_BRANCH_CTRL)
       BranchCtrlEnum_JAL : begin
-        _zz_10 = _zz__zz_10[1];
+        _zz_6 = _zz__zz_6[1];
       end
       default : begin
-        _zz_10 = _zz__zz_10_1[1];
+        _zz_6 = _zz__zz_6_1[1];
       end
     endcase
   end
@@ -5814,21 +5719,21 @@ module VexRiscvAxi4 (
   assign decode_RegFilePlugin_rs2Data = RegFilePlugin_regFile_spinal_port1;
   always @(*) begin
     lastStageRegFileWrite_valid = (_zz_lastStageRegFileWrite_valid && writeBack_arbitration_isFiring);
-    if(_zz_14) begin
+    if(_zz_10) begin
       lastStageRegFileWrite_valid = 1'b1;
     end
   end
 
   always @(*) begin
     lastStageRegFileWrite_payload_address = _zz_lastStageRegFileWrite_payload_address[11 : 7];
-    if(_zz_14) begin
+    if(_zz_10) begin
       lastStageRegFileWrite_payload_address = 5'h0;
     end
   end
 
   always @(*) begin
     lastStageRegFileWrite_payload_data = _zz_decode_RS2_2;
-    if(_zz_14) begin
+    if(_zz_10) begin
       lastStageRegFileWrite_payload_data = 32'h0;
     end
   end
@@ -6825,118 +6730,113 @@ module VexRiscvAxi4 (
   assign when_Pipeline_l124_7 = (! memory_arbitration_isStuck);
   assign when_Pipeline_l124_8 = (! writeBack_arbitration_isStuck);
   assign when_Pipeline_l124_9 = (! execute_arbitration_isStuck);
-  assign when_Pipeline_l124_10 = (! memory_arbitration_isStuck);
-  assign when_Pipeline_l124_11 = (! execute_arbitration_isStuck);
   assign _zz_decode_to_execute_SRC1_CTRL_1 = decode_SRC1_CTRL;
   assign _zz_decode_SRC1_CTRL = _zz_decode_SRC1_CTRL_1;
-  assign when_Pipeline_l124_12 = (! execute_arbitration_isStuck);
+  assign when_Pipeline_l124_10 = (! execute_arbitration_isStuck);
   assign _zz_execute_SRC1_CTRL = decode_to_execute_SRC1_CTRL;
-  assign when_Pipeline_l124_13 = (! execute_arbitration_isStuck);
-  assign when_Pipeline_l124_14 = (! execute_arbitration_isStuck);
-  assign when_Pipeline_l124_15 = (! memory_arbitration_isStuck);
-  assign when_Pipeline_l124_16 = (! writeBack_arbitration_isStuck);
+  assign when_Pipeline_l124_11 = (! execute_arbitration_isStuck);
+  assign when_Pipeline_l124_12 = (! execute_arbitration_isStuck);
+  assign when_Pipeline_l124_13 = (! memory_arbitration_isStuck);
+  assign when_Pipeline_l124_14 = (! writeBack_arbitration_isStuck);
   assign _zz_decode_to_execute_ALU_CTRL_1 = decode_ALU_CTRL;
   assign _zz_decode_ALU_CTRL = _zz_decode_ALU_CTRL_1;
-  assign when_Pipeline_l124_17 = (! execute_arbitration_isStuck);
+  assign when_Pipeline_l124_15 = (! execute_arbitration_isStuck);
   assign _zz_execute_ALU_CTRL = decode_to_execute_ALU_CTRL;
   assign _zz_decode_to_execute_SRC2_CTRL_1 = decode_SRC2_CTRL;
   assign _zz_decode_SRC2_CTRL = _zz_decode_SRC2_CTRL_1;
-  assign when_Pipeline_l124_18 = (! execute_arbitration_isStuck);
+  assign when_Pipeline_l124_16 = (! execute_arbitration_isStuck);
   assign _zz_execute_SRC2_CTRL = decode_to_execute_SRC2_CTRL;
-  assign when_Pipeline_l124_19 = (! execute_arbitration_isStuck);
-  assign when_Pipeline_l124_20 = (! memory_arbitration_isStuck);
-  assign when_Pipeline_l124_21 = (! writeBack_arbitration_isStuck);
-  assign when_Pipeline_l124_22 = (! execute_arbitration_isStuck);
+  assign when_Pipeline_l124_17 = (! execute_arbitration_isStuck);
+  assign when_Pipeline_l124_18 = (! memory_arbitration_isStuck);
+  assign when_Pipeline_l124_19 = (! writeBack_arbitration_isStuck);
+  assign when_Pipeline_l124_20 = (! execute_arbitration_isStuck);
+  assign when_Pipeline_l124_21 = (! execute_arbitration_isStuck);
+  assign when_Pipeline_l124_22 = (! memory_arbitration_isStuck);
   assign when_Pipeline_l124_23 = (! execute_arbitration_isStuck);
   assign when_Pipeline_l124_24 = (! memory_arbitration_isStuck);
-  assign when_Pipeline_l124_25 = (! execute_arbitration_isStuck);
-  assign when_Pipeline_l124_26 = (! memory_arbitration_isStuck);
-  assign when_Pipeline_l124_27 = (! writeBack_arbitration_isStuck);
+  assign when_Pipeline_l124_25 = (! writeBack_arbitration_isStuck);
+  assign when_Pipeline_l124_26 = (! execute_arbitration_isStuck);
+  assign when_Pipeline_l124_27 = (! execute_arbitration_isStuck);
   assign when_Pipeline_l124_28 = (! execute_arbitration_isStuck);
-  assign when_Pipeline_l124_29 = (! execute_arbitration_isStuck);
-  assign when_Pipeline_l124_30 = (! execute_arbitration_isStuck);
   assign _zz_decode_to_execute_ALU_BITWISE_CTRL_1 = decode_ALU_BITWISE_CTRL;
   assign _zz_decode_ALU_BITWISE_CTRL = _zz_decode_ALU_BITWISE_CTRL_1;
-  assign when_Pipeline_l124_31 = (! execute_arbitration_isStuck);
+  assign when_Pipeline_l124_29 = (! execute_arbitration_isStuck);
   assign _zz_execute_ALU_BITWISE_CTRL = decode_to_execute_ALU_BITWISE_CTRL;
   assign _zz_decode_to_execute_SHIFT_CTRL_1 = decode_SHIFT_CTRL;
   assign _zz_execute_to_memory_SHIFT_CTRL_1 = execute_SHIFT_CTRL;
   assign _zz_decode_SHIFT_CTRL = _zz_decode_SHIFT_CTRL_1;
-  assign when_Pipeline_l124_32 = (! execute_arbitration_isStuck);
+  assign when_Pipeline_l124_30 = (! execute_arbitration_isStuck);
   assign _zz_execute_SHIFT_CTRL = decode_to_execute_SHIFT_CTRL;
-  assign when_Pipeline_l124_33 = (! memory_arbitration_isStuck);
+  assign when_Pipeline_l124_31 = (! memory_arbitration_isStuck);
   assign _zz_memory_SHIFT_CTRL = execute_to_memory_SHIFT_CTRL;
-  assign when_Pipeline_l124_34 = (! execute_arbitration_isStuck);
-  assign when_Pipeline_l124_35 = (! memory_arbitration_isStuck);
-  assign when_Pipeline_l124_36 = (! writeBack_arbitration_isStuck);
+  assign when_Pipeline_l124_32 = (! execute_arbitration_isStuck);
+  assign when_Pipeline_l124_33 = (! memory_arbitration_isStuck);
+  assign when_Pipeline_l124_34 = (! writeBack_arbitration_isStuck);
+  assign when_Pipeline_l124_35 = (! execute_arbitration_isStuck);
+  assign when_Pipeline_l124_36 = (! memory_arbitration_isStuck);
   assign when_Pipeline_l124_37 = (! execute_arbitration_isStuck);
-  assign when_Pipeline_l124_38 = (! memory_arbitration_isStuck);
+  assign when_Pipeline_l124_38 = (! execute_arbitration_isStuck);
   assign when_Pipeline_l124_39 = (! execute_arbitration_isStuck);
-  assign when_Pipeline_l124_40 = (! execute_arbitration_isStuck);
-  assign when_Pipeline_l124_41 = (! execute_arbitration_isStuck);
   assign _zz_decode_to_execute_ENV_CTRL_1 = decode_ENV_CTRL;
   assign _zz_execute_to_memory_ENV_CTRL_1 = execute_ENV_CTRL;
   assign _zz_memory_to_writeBack_ENV_CTRL_1 = memory_ENV_CTRL;
   assign _zz_decode_ENV_CTRL = _zz_decode_ENV_CTRL_1;
-  assign when_Pipeline_l124_42 = (! execute_arbitration_isStuck);
+  assign when_Pipeline_l124_40 = (! execute_arbitration_isStuck);
   assign _zz_execute_ENV_CTRL = decode_to_execute_ENV_CTRL;
-  assign when_Pipeline_l124_43 = (! memory_arbitration_isStuck);
+  assign when_Pipeline_l124_41 = (! memory_arbitration_isStuck);
   assign _zz_memory_ENV_CTRL = execute_to_memory_ENV_CTRL;
-  assign when_Pipeline_l124_44 = (! writeBack_arbitration_isStuck);
+  assign when_Pipeline_l124_42 = (! writeBack_arbitration_isStuck);
   assign _zz_writeBack_ENV_CTRL = memory_to_writeBack_ENV_CTRL;
   assign _zz_decode_to_execute_BRANCH_CTRL_1 = decode_BRANCH_CTRL;
-  assign _zz_execute_to_memory_BRANCH_CTRL_1 = execute_BRANCH_CTRL;
   assign _zz_decode_BRANCH_CTRL_1 = _zz_decode_BRANCH_CTRL;
-  assign when_Pipeline_l124_45 = (! execute_arbitration_isStuck);
+  assign when_Pipeline_l124_43 = (! execute_arbitration_isStuck);
   assign _zz_execute_BRANCH_CTRL = decode_to_execute_BRANCH_CTRL;
-  assign when_Pipeline_l124_46 = (! memory_arbitration_isStuck);
-  assign _zz_memory_BRANCH_CTRL = execute_to_memory_BRANCH_CTRL;
+  assign when_Pipeline_l124_44 = (! execute_arbitration_isStuck);
+  assign when_Pipeline_l124_45 = (! memory_arbitration_isStuck);
+  assign when_Pipeline_l124_46 = (! writeBack_arbitration_isStuck);
   assign when_Pipeline_l124_47 = (! execute_arbitration_isStuck);
   assign when_Pipeline_l124_48 = (! memory_arbitration_isStuck);
   assign when_Pipeline_l124_49 = (! writeBack_arbitration_isStuck);
-  assign when_Pipeline_l124_50 = (! execute_arbitration_isStuck);
-  assign when_Pipeline_l124_51 = (! memory_arbitration_isStuck);
-  assign when_Pipeline_l124_52 = (! writeBack_arbitration_isStuck);
   assign _zz_decode_to_execute_FPU_OPCODE_1 = decode_FPU_OPCODE;
   assign _zz_execute_to_memory_FPU_OPCODE_1 = execute_FPU_OPCODE;
   assign _zz_memory_to_writeBack_FPU_OPCODE_1 = memory_FPU_OPCODE;
   assign _zz_decode_FPU_OPCODE = _zz_decode_FPU_OPCODE_1;
-  assign when_Pipeline_l124_53 = (! execute_arbitration_isStuck);
+  assign when_Pipeline_l124_50 = (! execute_arbitration_isStuck);
   assign _zz_execute_FPU_OPCODE = decode_to_execute_FPU_OPCODE;
-  assign when_Pipeline_l124_54 = (! memory_arbitration_isStuck);
+  assign when_Pipeline_l124_51 = (! memory_arbitration_isStuck);
   assign _zz_memory_FPU_OPCODE = execute_to_memory_FPU_OPCODE;
-  assign when_Pipeline_l124_55 = (! writeBack_arbitration_isStuck);
+  assign when_Pipeline_l124_52 = (! writeBack_arbitration_isStuck);
   assign _zz_writeBack_FPU_OPCODE = memory_to_writeBack_FPU_OPCODE;
+  assign when_Pipeline_l124_53 = (! execute_arbitration_isStuck);
+  assign when_Pipeline_l124_54 = (! memory_arbitration_isStuck);
+  assign when_Pipeline_l124_55 = (! writeBack_arbitration_isStuck);
   assign when_Pipeline_l124_56 = (! execute_arbitration_isStuck);
-  assign when_Pipeline_l124_57 = (! memory_arbitration_isStuck);
-  assign when_Pipeline_l124_58 = (! writeBack_arbitration_isStuck);
+  assign when_Pipeline_l124_57 = (! execute_arbitration_isStuck);
+  assign when_Pipeline_l124_58 = (! execute_arbitration_isStuck);
   assign when_Pipeline_l124_59 = (! execute_arbitration_isStuck);
   assign when_Pipeline_l124_60 = (! execute_arbitration_isStuck);
   assign when_Pipeline_l124_61 = (! execute_arbitration_isStuck);
   assign when_Pipeline_l124_62 = (! execute_arbitration_isStuck);
-  assign when_Pipeline_l124_63 = (! execute_arbitration_isStuck);
-  assign when_Pipeline_l124_64 = (! execute_arbitration_isStuck);
+  assign when_Pipeline_l124_63 = (! memory_arbitration_isStuck);
+  assign when_Pipeline_l124_64 = (! writeBack_arbitration_isStuck);
   assign when_Pipeline_l124_65 = (! execute_arbitration_isStuck);
   assign when_Pipeline_l124_66 = (! memory_arbitration_isStuck);
   assign when_Pipeline_l124_67 = (! writeBack_arbitration_isStuck);
-  assign when_Pipeline_l124_68 = (! execute_arbitration_isStuck);
-  assign when_Pipeline_l124_69 = (! memory_arbitration_isStuck);
-  assign when_Pipeline_l124_70 = (! writeBack_arbitration_isStuck);
-  assign when_Pipeline_l124_71 = (! memory_arbitration_isStuck);
-  assign when_Pipeline_l124_72 = (! writeBack_arbitration_isStuck);
-  assign when_Pipeline_l124_73 = (! memory_arbitration_isStuck);
-  assign when_Pipeline_l124_74 = (! writeBack_arbitration_isStuck);
+  assign when_Pipeline_l124_68 = (! memory_arbitration_isStuck);
+  assign when_Pipeline_l124_69 = (! writeBack_arbitration_isStuck);
+  assign when_Pipeline_l124_70 = (! memory_arbitration_isStuck);
+  assign when_Pipeline_l124_71 = (! writeBack_arbitration_isStuck);
+  assign when_Pipeline_l124_72 = (! memory_arbitration_isStuck);
+  assign when_Pipeline_l124_73 = (! writeBack_arbitration_isStuck);
+  assign when_Pipeline_l124_74 = (! memory_arbitration_isStuck);
   assign when_Pipeline_l124_75 = (! memory_arbitration_isStuck);
-  assign when_Pipeline_l124_76 = (! writeBack_arbitration_isStuck);
+  assign when_Pipeline_l124_76 = (! memory_arbitration_isStuck);
   assign when_Pipeline_l124_77 = (! memory_arbitration_isStuck);
   assign when_Pipeline_l124_78 = (! memory_arbitration_isStuck);
-  assign when_Pipeline_l124_79 = (! memory_arbitration_isStuck);
+  assign when_Pipeline_l124_79 = (! writeBack_arbitration_isStuck);
   assign when_Pipeline_l124_80 = (! memory_arbitration_isStuck);
   assign when_Pipeline_l124_81 = (! memory_arbitration_isStuck);
   assign when_Pipeline_l124_82 = (! writeBack_arbitration_isStuck);
-  assign when_Pipeline_l124_83 = (! memory_arbitration_isStuck);
-  assign when_Pipeline_l124_84 = (! memory_arbitration_isStuck);
-  assign when_Pipeline_l124_85 = (! writeBack_arbitration_isStuck);
   assign decode_arbitration_isFlushed = ((|{writeBack_arbitration_flushNext,{memory_arbitration_flushNext,execute_arbitration_flushNext}}) || (|{writeBack_arbitration_flushIt,{memory_arbitration_flushIt,{execute_arbitration_flushIt,decode_arbitration_flushIt}}}));
   assign execute_arbitration_isFlushed = ((|{writeBack_arbitration_flushNext,memory_arbitration_flushNext}) || (|{writeBack_arbitration_flushIt,{memory_arbitration_flushIt,execute_arbitration_flushIt}}));
   assign memory_arbitration_isFlushed = ((|writeBack_arbitration_flushNext) || (|{writeBack_arbitration_flushIt,memory_arbitration_flushIt}));
@@ -7189,14 +7089,14 @@ module VexRiscvAxi4 (
   assign dBus_cmd_haltWhen_fork2_outputs_1_fire = (dBus_cmd_haltWhen_fork2_outputs_1_valid && dBus_cmd_haltWhen_fork2_outputs_1_ready);
   always @(*) begin
     dBus_cmd_haltWhen_fork2_outputs_0_throwWhen_valid = dBus_cmd_haltWhen_fork2_outputs_0_valid;
-    if(_zz_15) begin
+    if(_zz_11) begin
       dBus_cmd_haltWhen_fork2_outputs_0_throwWhen_valid = 1'b0;
     end
   end
 
   always @(*) begin
     dBus_cmd_haltWhen_fork2_outputs_0_ready = dBus_cmd_haltWhen_fork2_outputs_0_throwWhen_ready;
-    if(_zz_15) begin
+    if(_zz_11) begin
       dBus_cmd_haltWhen_fork2_outputs_0_ready = 1'b1;
     end
   end
@@ -7284,13 +7184,13 @@ module VexRiscvAxi4 (
   assign dBusAxi_aw_payload_prot = dbus_axi_arw_payload_prot;
   assign dBusAxi_w_valid = dbus_axi_w_valid;
   assign dBusAxi_w_payload_data = dbus_axi_w_payload_data;
-  assign dBusAxi_w_payload_strb = dbus_axi_ẞw_payload_strb;
+  assign dBusAxi_w_payload_strb = dbus_axi_w_payload_strb;
   assign dBusAxi_w_payload_last = dbus_axi_w_payload_last;
   assign dBusAxi_r_ready = dbus_axi_r_ready;
   assign dBusAxi_b_ready = dbus_axi_b_ready;
   always @(posedge clk or posedge reset) begin
     if(reset) begin
-      IBusCachedPlugin_fetchPc_pcReg <= 32'h80000000; //PC RESET????ẞ
+      IBusCachedPlugin_fetchPc_pcReg <= PROGADDR_RESET;
       IBusCachedPlugin_fetchPc_correctionReg <= 1'b0;
       IBusCachedPlugin_fetchPc_booted <= 1'b0;
       IBusCachedPlugin_fetchPc_inc <= 1'b0;
@@ -7321,7 +7221,7 @@ module VexRiscvAxi4 (
       MmuPlugin_ports_1_entryToReplace_value <= 3'b000;
       MmuPlugin_shared_state_1 <= MmuPlugin_shared_State_IDLE;
       MmuPlugin_shared_dBusRspStaged_valid <= 1'b0;
-      _zz_14 <= 1'b1;
+      _zz_10 <= 1'b1;
       HazardSimplePlugin_writeBackBuffer_valid <= 1'b0;
       memory_DivPlugin_div_counter_value <= 6'h0;
       CsrPlugin_mstatus_MIE <= 1'b0;
@@ -7364,7 +7264,7 @@ module VexRiscvAxi4 (
       _zz_dBus_cmd_ready <= 3'b000;
       dBus_cmd_haltWhen_fork2_logic_linkEnable_0 <= 1'b1;
       dBus_cmd_haltWhen_fork2_logic_linkEnable_1 <= 1'b1;
-      _zz_15 <= 1'b0;
+      _zz_11 <= 1'b0;
     end else begin
       if(IBusCachedPlugin_fetchPc_correction) begin
         IBusCachedPlugin_fetchPc_correctionReg <= 1'b1;
@@ -7569,7 +7469,7 @@ module VexRiscvAxi4 (
         MmuPlugin_ports_1_cache_4_valid <= 1'b0;
         MmuPlugin_ports_1_cache_5_valid <= 1'b0;
       end
-      _zz_14 <= 1'b0;
+      _zz_10 <= 1'b0;
       HazardSimplePlugin_writeBackBuffer_valid <= HazardSimplePlugin_writeBackWrites_valid;
       memory_DivPlugin_div_counter_value <= memory_DivPlugin_div_counter_valueNext;
       CsrPlugin_mcycle <= (CsrPlugin_mcycle + 64'h0000000000000001);
@@ -7702,19 +7602,19 @@ module VexRiscvAxi4 (
       if(writeBack_FpuPlugin_commit_s2mPipe_ready) begin
         writeBack_FpuPlugin_commit_rValidN <= 1'b1;
       end
-      if(when_Pipeline_l124_65) begin
+      if(when_Pipeline_l124_62) begin
         decode_to_execute_FPU_FORKED <= _zz_decode_to_execute_FPU_FORKED;
       end
-      if(when_Pipeline_l124_66) begin
+      if(when_Pipeline_l124_63) begin
         execute_to_memory_FPU_FORKED <= _zz_execute_to_memory_FPU_FORKED;
       end
-      if(when_Pipeline_l124_67) begin
+      if(when_Pipeline_l124_64) begin
         memory_to_writeBack_FPU_FORKED <= _zz_memory_to_writeBack_FPU_FORKED;
       end
-      if(when_Pipeline_l124_73) begin
+      if(when_Pipeline_l124_70) begin
         execute_to_memory_IS_DBUS_SHARING <= execute_IS_DBUS_SHARING;
       end
-      if(when_Pipeline_l124_74) begin
+      if(when_Pipeline_l124_71) begin
         memory_to_writeBack_IS_DBUS_SHARING <= memory_IS_DBUS_SHARING;
       end
       if(when_Pipeline_l151) begin
@@ -7847,7 +7747,7 @@ module VexRiscvAxi4 (
         dBus_cmd_haltWhen_fork2_logic_linkEnable_1 <= 1'b1;
       end
       if(dBus_cmd_haltWhen_fork2_outputs_0_fire) begin
-        _zz_15 <= (! dBus_cmd_haltWhen_fork2_outputs_0_payload_last);
+        _zz_11 <= (! dBus_cmd_haltWhen_fork2_outputs_0_payload_last);
       end
     end
   end
@@ -7855,14 +7755,6 @@ module VexRiscvAxi4 (
   always @(posedge clk) begin
     if(IBusCachedPlugin_iBusRsp_stages_1_output_ready) begin
       _zz_IBusCachedPlugin_iBusRsp_stages_1_output_m2sPipe_payload <= IBusCachedPlugin_iBusRsp_stages_1_output_payload;
-    end
-    if(IBusCachedPlugin_iBusRsp_stages_0_output_ready) begin
-      _zz_decode_PREDICTION_CONTEXT_hazard_2 <= _zz_decode_PREDICTION_CONTEXT_hazard;
-      _zz_decode_PREDICTION_CONTEXT_hazard_3 <= _zz_decode_PREDICTION_CONTEXT_hazard_1;
-    end
-    if(IBusCachedPlugin_iBusRsp_stages_1_output_ready) begin
-      _zz_decode_PREDICTION_CONTEXT_hazard_4 <= (_zz_decode_PREDICTION_CONTEXT_hazard_2 && (_zz_decode_PREDICTION_CONTEXT_hazard_3 == _zz__zz_decode_PREDICTION_CONTEXT_hazard_4));
-      _zz_decode_PREDICTION_CONTEXT_line_history_2 <= _zz_3_spinal_port1[1 : 0];
     end
     if(IBusCachedPlugin_iBusRsp_stages_1_input_ready) begin
       IBusCachedPlugin_s1_tightlyCoupledHit <= IBusCachedPlugin_s0_tightlyCoupledHit;
@@ -8131,221 +8023,210 @@ module VexRiscvAxi4 (
       memory_to_writeBack_FORMAL_PC_NEXT <= _zz_memory_to_writeBack_FORMAL_PC_NEXT;
     end
     if(when_Pipeline_l124_9) begin
-      decode_to_execute_PREDICTION_CONTEXT_hazard <= decode_PREDICTION_CONTEXT_hazard;
-      decode_to_execute_PREDICTION_CONTEXT_line_history <= decode_PREDICTION_CONTEXT_line_history;
-    end
-    if(when_Pipeline_l124_10) begin
-      execute_to_memory_PREDICTION_CONTEXT_hazard <= execute_PREDICTION_CONTEXT_hazard;
-      execute_to_memory_PREDICTION_CONTEXT_line_history <= execute_PREDICTION_CONTEXT_line_history;
-    end
-    if(when_Pipeline_l124_11) begin
       decode_to_execute_MEMORY_FORCE_CONSTISTENCY <= decode_MEMORY_FORCE_CONSTISTENCY;
     end
-    if(when_Pipeline_l124_12) begin
+    if(when_Pipeline_l124_10) begin
       decode_to_execute_SRC1_CTRL <= _zz_decode_to_execute_SRC1_CTRL;
     end
-    if(when_Pipeline_l124_13) begin
+    if(when_Pipeline_l124_11) begin
       decode_to_execute_SRC_USE_SUB_LESS <= decode_SRC_USE_SUB_LESS;
     end
-    if(when_Pipeline_l124_14) begin
+    if(when_Pipeline_l124_12) begin
       decode_to_execute_MEMORY_ENABLE <= decode_MEMORY_ENABLE;
     end
-    if(when_Pipeline_l124_15) begin
+    if(when_Pipeline_l124_13) begin
       execute_to_memory_MEMORY_ENABLE <= execute_MEMORY_ENABLE;
     end
-    if(when_Pipeline_l124_16) begin
+    if(when_Pipeline_l124_14) begin
       memory_to_writeBack_MEMORY_ENABLE <= memory_MEMORY_ENABLE;
     end
-    if(when_Pipeline_l124_17) begin
+    if(when_Pipeline_l124_15) begin
       decode_to_execute_ALU_CTRL <= _zz_decode_to_execute_ALU_CTRL;
     end
-    if(when_Pipeline_l124_18) begin
+    if(when_Pipeline_l124_16) begin
       decode_to_execute_SRC2_CTRL <= _zz_decode_to_execute_SRC2_CTRL;
     end
-    if(when_Pipeline_l124_19) begin
+    if(when_Pipeline_l124_17) begin
       decode_to_execute_REGFILE_WRITE_VALID <= decode_REGFILE_WRITE_VALID;
     end
-    if(when_Pipeline_l124_20) begin
+    if(when_Pipeline_l124_18) begin
       execute_to_memory_REGFILE_WRITE_VALID <= execute_REGFILE_WRITE_VALID;
     end
-    if(when_Pipeline_l124_21) begin
+    if(when_Pipeline_l124_19) begin
       memory_to_writeBack_REGFILE_WRITE_VALID <= memory_REGFILE_WRITE_VALID;
     end
-    if(when_Pipeline_l124_22) begin
+    if(when_Pipeline_l124_20) begin
       decode_to_execute_BYPASSABLE_EXECUTE_STAGE <= decode_BYPASSABLE_EXECUTE_STAGE;
     end
-    if(when_Pipeline_l124_23) begin
+    if(when_Pipeline_l124_21) begin
       decode_to_execute_BYPASSABLE_MEMORY_STAGE <= decode_BYPASSABLE_MEMORY_STAGE;
     end
-    if(when_Pipeline_l124_24) begin
+    if(when_Pipeline_l124_22) begin
       execute_to_memory_BYPASSABLE_MEMORY_STAGE <= execute_BYPASSABLE_MEMORY_STAGE;
     end
-    if(when_Pipeline_l124_25) begin
+    if(when_Pipeline_l124_23) begin
       decode_to_execute_MEMORY_WR <= decode_MEMORY_WR;
     end
-    if(when_Pipeline_l124_26) begin
+    if(when_Pipeline_l124_24) begin
       execute_to_memory_MEMORY_WR <= execute_MEMORY_WR;
     end
-    if(when_Pipeline_l124_27) begin
+    if(when_Pipeline_l124_25) begin
       memory_to_writeBack_MEMORY_WR <= memory_MEMORY_WR;
     end
-    if(when_Pipeline_l124_28) begin
+    if(when_Pipeline_l124_26) begin
       decode_to_execute_MEMORY_MANAGMENT <= decode_MEMORY_MANAGMENT;
     end
-    if(when_Pipeline_l124_29) begin
+    if(when_Pipeline_l124_27) begin
       decode_to_execute_IS_SFENCE_VMA2 <= decode_IS_SFENCE_VMA2;
     end
-    if(when_Pipeline_l124_30) begin
+    if(when_Pipeline_l124_28) begin
       decode_to_execute_SRC_LESS_UNSIGNED <= decode_SRC_LESS_UNSIGNED;
     end
-    if(when_Pipeline_l124_31) begin
+    if(when_Pipeline_l124_29) begin
       decode_to_execute_ALU_BITWISE_CTRL <= _zz_decode_to_execute_ALU_BITWISE_CTRL;
     end
-    if(when_Pipeline_l124_32) begin
+    if(when_Pipeline_l124_30) begin
       decode_to_execute_SHIFT_CTRL <= _zz_decode_to_execute_SHIFT_CTRL;
     end
-    if(when_Pipeline_l124_33) begin
+    if(when_Pipeline_l124_31) begin
       execute_to_memory_SHIFT_CTRL <= _zz_execute_to_memory_SHIFT_CTRL;
     end
-    if(when_Pipeline_l124_34) begin
+    if(when_Pipeline_l124_32) begin
       decode_to_execute_IS_MUL <= decode_IS_MUL;
     end
-    if(when_Pipeline_l124_35) begin
+    if(when_Pipeline_l124_33) begin
       execute_to_memory_IS_MUL <= execute_IS_MUL;
     end
-    if(when_Pipeline_l124_36) begin
+    if(when_Pipeline_l124_34) begin
       memory_to_writeBack_IS_MUL <= memory_IS_MUL;
     end
-    if(when_Pipeline_l124_37) begin
+    if(when_Pipeline_l124_35) begin
       decode_to_execute_IS_DIV <= decode_IS_DIV;
     end
-    if(when_Pipeline_l124_38) begin
+    if(when_Pipeline_l124_36) begin
       execute_to_memory_IS_DIV <= execute_IS_DIV;
     end
-    if(when_Pipeline_l124_39) begin
+    if(when_Pipeline_l124_37) begin
       decode_to_execute_IS_RS1_SIGNED <= decode_IS_RS1_SIGNED;
     end
-    if(when_Pipeline_l124_40) begin
+    if(when_Pipeline_l124_38) begin
       decode_to_execute_IS_RS2_SIGNED <= decode_IS_RS2_SIGNED;
     end
-    if(when_Pipeline_l124_41) begin
+    if(when_Pipeline_l124_39) begin
       decode_to_execute_IS_CSR <= decode_IS_CSR;
     end
-    if(when_Pipeline_l124_42) begin
+    if(when_Pipeline_l124_40) begin
       decode_to_execute_ENV_CTRL <= _zz_decode_to_execute_ENV_CTRL;
     end
-    if(when_Pipeline_l124_43) begin
+    if(when_Pipeline_l124_41) begin
       execute_to_memory_ENV_CTRL <= _zz_execute_to_memory_ENV_CTRL;
     end
-    if(when_Pipeline_l124_44) begin
+    if(when_Pipeline_l124_42) begin
       memory_to_writeBack_ENV_CTRL <= _zz_memory_to_writeBack_ENV_CTRL;
     end
-    if(when_Pipeline_l124_45) begin
+    if(when_Pipeline_l124_43) begin
       decode_to_execute_BRANCH_CTRL <= _zz_decode_to_execute_BRANCH_CTRL;
     end
-    if(when_Pipeline_l124_46) begin
-      execute_to_memory_BRANCH_CTRL <= _zz_execute_to_memory_BRANCH_CTRL;
-    end
-    if(when_Pipeline_l124_47) begin
+    if(when_Pipeline_l124_44) begin
       decode_to_execute_FPU_COMMIT <= decode_FPU_COMMIT;
     end
-    if(when_Pipeline_l124_48) begin
+    if(when_Pipeline_l124_45) begin
       execute_to_memory_FPU_COMMIT <= execute_FPU_COMMIT;
     end
-    if(when_Pipeline_l124_49) begin
+    if(when_Pipeline_l124_46) begin
       memory_to_writeBack_FPU_COMMIT <= memory_FPU_COMMIT;
     end
-    if(when_Pipeline_l124_50) begin
+    if(when_Pipeline_l124_47) begin
       decode_to_execute_FPU_RSP <= decode_FPU_RSP;
     end
-    if(when_Pipeline_l124_51) begin
+    if(when_Pipeline_l124_48) begin
       execute_to_memory_FPU_RSP <= execute_FPU_RSP;
     end
-    if(when_Pipeline_l124_52) begin
+    if(when_Pipeline_l124_49) begin
       memory_to_writeBack_FPU_RSP <= memory_FPU_RSP;
     end
-    if(when_Pipeline_l124_53) begin
+    if(when_Pipeline_l124_50) begin
       decode_to_execute_FPU_OPCODE <= _zz_decode_to_execute_FPU_OPCODE;
     end
-    if(when_Pipeline_l124_54) begin
+    if(when_Pipeline_l124_51) begin
       execute_to_memory_FPU_OPCODE <= _zz_execute_to_memory_FPU_OPCODE;
     end
-    if(when_Pipeline_l124_55) begin
+    if(when_Pipeline_l124_52) begin
       memory_to_writeBack_FPU_OPCODE <= _zz_memory_to_writeBack_FPU_OPCODE;
     end
-    if(when_Pipeline_l124_56) begin
+    if(when_Pipeline_l124_53) begin
       decode_to_execute_RS1 <= decode_RS1;
     end
-    if(when_Pipeline_l124_57) begin
+    if(when_Pipeline_l124_54) begin
       execute_to_memory_RS1 <= _zz_execute_to_memory_RS1;
     end
-    if(when_Pipeline_l124_58) begin
+    if(when_Pipeline_l124_55) begin
       memory_to_writeBack_RS1 <= memory_RS1;
     end
-    if(when_Pipeline_l124_59) begin
+    if(when_Pipeline_l124_56) begin
       decode_to_execute_RS2 <= decode_RS2;
     end
-    if(when_Pipeline_l124_60) begin
+    if(when_Pipeline_l124_57) begin
       decode_to_execute_SRC2_FORCE_ZERO <= decode_SRC2_FORCE_ZERO;
     end
-    if(when_Pipeline_l124_61) begin
+    if(when_Pipeline_l124_58) begin
       decode_to_execute_CSR_WRITE_OPCODE <= decode_CSR_WRITE_OPCODE;
     end
-    if(when_Pipeline_l124_62) begin
+    if(when_Pipeline_l124_59) begin
       decode_to_execute_CSR_READ_OPCODE <= decode_CSR_READ_OPCODE;
     end
-    if(when_Pipeline_l124_63) begin
+    if(when_Pipeline_l124_60) begin
       decode_to_execute_DO_EBREAK <= decode_DO_EBREAK;
     end
-    if(when_Pipeline_l124_64) begin
+    if(when_Pipeline_l124_61) begin
       decode_to_execute_PREDICTION_HAD_BRANCHED1 <= decode_PREDICTION_HAD_BRANCHED1;
     end
-    if(when_Pipeline_l124_68) begin
+    if(when_Pipeline_l124_65) begin
       decode_to_execute_FPU_COMMIT_LOAD <= decode_FPU_COMMIT_LOAD;
     end
-    if(when_Pipeline_l124_69) begin
+    if(when_Pipeline_l124_66) begin
       execute_to_memory_FPU_COMMIT_LOAD <= execute_FPU_COMMIT_LOAD;
     end
-    if(when_Pipeline_l124_70) begin
+    if(when_Pipeline_l124_67) begin
       memory_to_writeBack_FPU_COMMIT_LOAD <= memory_FPU_COMMIT_LOAD;
     end
-    if(when_Pipeline_l124_71) begin
+    if(when_Pipeline_l124_68) begin
       execute_to_memory_MEMORY_STORE_DATA_RF <= execute_MEMORY_STORE_DATA_RF;
     end
-    if(when_Pipeline_l124_72) begin
+    if(when_Pipeline_l124_69) begin
       memory_to_writeBack_MEMORY_STORE_DATA_RF <= memory_MEMORY_STORE_DATA_RF;
     end
-    if(when_Pipeline_l124_75) begin
+    if(when_Pipeline_l124_72) begin
       execute_to_memory_REGFILE_WRITE_DATA <= _zz_decode_RS2;
     end
-    if(when_Pipeline_l124_76) begin
+    if(when_Pipeline_l124_73) begin
       memory_to_writeBack_REGFILE_WRITE_DATA <= _zz_decode_RS2_1;
     end
-    if(when_Pipeline_l124_77) begin
+    if(when_Pipeline_l124_74) begin
       execute_to_memory_SHIFT_RIGHT <= execute_SHIFT_RIGHT;
     end
-    if(when_Pipeline_l124_78) begin
+    if(when_Pipeline_l124_75) begin
       execute_to_memory_MUL_LL <= execute_MUL_LL;
     end
-    if(when_Pipeline_l124_79) begin
+    if(when_Pipeline_l124_76) begin
       execute_to_memory_MUL_LH <= execute_MUL_LH;
     end
-    if(when_Pipeline_l124_80) begin
+    if(when_Pipeline_l124_77) begin
       execute_to_memory_MUL_HL <= execute_MUL_HL;
     end
-    if(when_Pipeline_l124_81) begin
+    if(when_Pipeline_l124_78) begin
       execute_to_memory_MUL_HH <= execute_MUL_HH;
     end
-    if(when_Pipeline_l124_82) begin
+    if(when_Pipeline_l124_79) begin
       memory_to_writeBack_MUL_HH <= memory_MUL_HH;
     end
-    if(when_Pipeline_l124_83) begin
+    if(when_Pipeline_l124_80) begin
       execute_to_memory_BRANCH_DO <= execute_BRANCH_DO;
     end
-    if(when_Pipeline_l124_84) begin
+    if(when_Pipeline_l124_81) begin
       execute_to_memory_BRANCH_CALC <= execute_BRANCH_CALC;
     end
-    if(when_Pipeline_l124_85) begin
+    if(when_Pipeline_l124_82) begin
       memory_to_writeBack_MUL_LOW <= memory_MUL_LOW;
     end
     if(when_CsrPlugin_l1669) begin
