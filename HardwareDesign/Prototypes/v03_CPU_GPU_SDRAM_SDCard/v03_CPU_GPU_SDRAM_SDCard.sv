@@ -151,6 +151,7 @@ VexRiscvAxiLite #(
 	.d_m_axil_rready(CPU_d_axil_rready)
 );
 
+/*
 `define DEBUGREGS
 picorv32_axi #(
 	.COMPRESSED_ISA(1),
@@ -194,7 +195,7 @@ picorv32_axi #(
 	.trace_valid(CPU_trace_valid),
 	.trace_data(CPU_trace_data)
 );
-
+*/
 
 logic[ADDR_WIDTH-1:0]  SDRAM_s_axil_awaddr;
 logic[2:0]             SDRAM_s_axil_awprot;
