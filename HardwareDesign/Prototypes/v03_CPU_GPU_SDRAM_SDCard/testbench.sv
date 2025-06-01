@@ -65,7 +65,7 @@ initial begin
 	end
 	$dumpvars(0, testbench);  
 
-	#4000000
+	#1000000
 	$finish;
 end
 

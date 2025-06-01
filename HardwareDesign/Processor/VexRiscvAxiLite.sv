@@ -85,7 +85,9 @@ logic                        i_s_axi_rlast;
 logic                        i_s_axi_rvalid;
 logic                        i_s_axi_rready;
 
-axi_axil_adapter IAdapter 
+axi_axil_adapter #(
+    .AXI_ID_WIDTH(ID_WIDTH)
+) IAdapter 
 (
     .clk(aclk),
     .rst(!aresetn), //Does this need to be negated???
@@ -184,8 +186,9 @@ logic                        d_s_axi_rlast;
 logic                        d_s_axi_rvalid;
 logic                        d_s_axi_rready;
 
-axi_axil_adapter DAdapter 
-(
+axi_axil_adapter #(
+    .AXI_ID_WIDTH(ID_WIDTH)
+) DAdapter (
     .clk(aclk),
     .rst(!aresetn), //Does this need to be negated???
     
@@ -225,36 +228,36 @@ axi_axil_adapter DAdapter
     .s_axi_rvalid(d_s_axi_rvalid),
     .s_axi_rready(d_s_axi_rready),
     
-    .m_axil_awaddr(i_m_axil_awaddr),
-    .m_axil_awprot(i_m_axil_awprot),
-    .m_axil_awvalid(i_m_axil_awvalid),
-    .m_axil_awready(i_m_axil_awready),
-    .m_axil_wdata(i_m_axil_wdata),
-    .m_axil_wstrb(i_m_axil_wstrb),
-    .m_axil_wvalid(i_m_axil_wvalid),
-    .m_axil_wready(i_m_axil_wready),
-    .m_axil_bresp(i_m_axil_bresp),
-    .m_axil_bvalid(i_m_axil_bvalid),
-    .m_axil_bready(i_m_axil_bready),
-    .m_axil_araddr(i_m_axil_araddr),
-    .m_axil_arprot(i_m_axil_arprot),
-    .m_axil_arvalid(i_m_axil_arvalid),
-    .m_axil_arready(i_m_axil_arready),
-    .m_axil_rdata(i_m_axil_rdata),
-    .m_axil_rresp(i_m_axil_rresp),
-    .m_axil_rvalid(i_m_axil_rvalid),
-    .m_axil_rready(i_m_axil_rready)
+    .m_axil_awaddr(d_m_axil_awaddr),
+    .m_axil_awprot(d_m_axil_awprot),
+    .m_axil_awvalid(d_m_axil_awvalid),
+    .m_axil_awready(d_m_axil_awready),
+    .m_axil_wdata(d_m_axil_wdata),
+    .m_axil_wstrb(d_m_axil_wstrb),
+    .m_axil_wvalid(d_m_axil_wvalid),
+    .m_axil_wready(d_m_axil_wready),
+    .m_axil_bresp(d_m_axil_bresp),
+    .m_axil_bvalid(d_m_axil_bvalid),
+    .m_axil_bready(d_m_axil_bready),
+    .m_axil_araddr(d_m_axil_araddr),
+    .m_axil_arprot(d_m_axil_arprot),
+    .m_axil_arvalid(d_m_axil_arvalid),
+    .m_axil_arready(d_m_axil_arready),
+    .m_axil_rdata(d_m_axil_rdata),
+    .m_axil_rresp(d_m_axil_rresp),
+    .m_axil_rvalid(d_m_axil_rvalid),
+    .m_axil_rready(d_m_axil_rready)
 );
 
 VexRiscvAxi4 #(
     .PROGADDR_RESET(PROGADDR_RESET)
 ) VexCPU (
-    .timerInterrupt(0),
-    .externalInterrupt(0),
-    .softwareInterrupt(0),
-    .debug_bus_cmd_valid(0),
-    .debug_bus_cmd_payload_wr(0),
-    .debug_bus_cmd_payload_address(0),
+    .timerInterrupt(1'b0),
+    .externalInterrupt(1'b0),
+    .softwareInterrupt(1'b0),
+    .debug_bus_cmd_valid(1'b0),
+    .debug_bus_cmd_payload_wr(1'b0),
+    .debug_bus_cmd_payload_address(8'b0),
     
     .iBusAxi_ar_valid(i_s_axi_arvalid),
     .iBusAxi_ar_ready(i_s_axi_arready),
@@ -310,7 +313,7 @@ VexRiscvAxi4 #(
     .dBusAxi_r_payload_last(d_s_axi_rlast),
     .clk(aclk),
     .reset(!aresetn),
-    .debugReset(0)
+    .debugReset(1'b0)
 );
     
 endmodule
