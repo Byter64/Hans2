@@ -1,4 +1,5 @@
 module VexRiscvAxiLite #(
+    parameter PROGADDR_RESET = 32'h0201_0000,
     parameter ADDR_WIDTH = 32,
     parameter DATA_WIDTH = 32,
     parameter STRB_WIDTH = ADDR_WIDTH / 8
@@ -87,7 +88,7 @@ logic                        i_s_axi_rready;
 axi_axil_adapter IAdapter 
 (
     .clk(aclk),
-    .rst(aresetn), //Does this need to be negated???
+    .rst(!aresetn), //Does this need to be negated???
     
     .s_axi_awid(i_s_axi_awid),
     .s_axi_awaddr(i_s_axi_awaddr),
@@ -186,7 +187,7 @@ logic                        d_s_axi_rready;
 axi_axil_adapter DAdapter 
 (
     .clk(aclk),
-    .rst(aresetn), //Does this need to be negated???
+    .rst(!aresetn), //Does this need to be negated???
     
     .s_axi_awid(d_s_axi_awid),
     .s_axi_awaddr(d_s_axi_awaddr),
@@ -246,18 +247,14 @@ axi_axil_adapter DAdapter
 );
 
 VexRiscvAxi4 #(
-    .PROGADDR_RESET(32'h0201_0000)
+    .PROGADDR_RESET(PROGADDR_RESET)
 ) VexCPU (
-    .timerInterrupt(?),
-    .externalInterrupt(?),
-    .softwareInterrupt(?),
-    .debug_bus_cmd_valid(?),
-    .debug_bus_cmd_ready(?),
-    .debug_bus_cmd_payload_wr(?),
-    .debug_bus_cmd_payload_address(?),
-    .debug_bus_cmd_payload_data(?),
-    .debug_bus_rsp_data(?),
-    .debug_resetOut(?),
+    .timerInterrupt(0),
+    .externalInterrupt(0),
+    .softwareInterrupt(0),
+    .debug_bus_cmd_valid(0),
+    .debug_bus_cmd_payload_wr(0),
+    .debug_bus_cmd_payload_address(0),
     
     .iBusAxi_ar_valid(i_s_axi_arvalid),
     .iBusAxi_ar_ready(i_s_axi_arready),
@@ -312,8 +309,8 @@ VexRiscvAxi4 #(
     .dBusAxi_r_payload_resp(d_s_axi_rresp),
     .dBusAxi_r_payload_last(d_s_axi_rlast),
     .clk(aclk),
-    .reset(aresetn),
-    .debugReset()
+    .reset(!aresetn),
+    .debugReset(0)
 );
     
 endmodule
