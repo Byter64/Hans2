@@ -1,4 +1,5 @@
 #pragma once
+#include "ff.h"
 
 #define USE_STARTUP_SCREEN
 
@@ -19,4 +20,5 @@ void ScreenPrintByte(unsigned char byte);
 void ScreenPrintHWord(unsigned short hword);
 void ScreenPrintWord(unsigned int word);
 
+const char* FRESULTToString(FRESULT fResult);
 const char* ByteToHex(unsigned char byte, char* buffer);

@@ -355,7 +355,7 @@ AXILiteMemory #(
     .ADDR_WIDTH(ADDR_WIDTH),
     .DATA_WIDTH(DATA_WIDTH), 
     .STRB_WIDTH(STRB_WIDTH),
-    .MEMORY_DEPTH(12288) //In 32-Bit words
+    .MEMORY_DEPTH(8192) //In 32-Bit words   
 ) Bootloader (
     .aclk(clk_50mhz), 
     .aresetn(resetn),

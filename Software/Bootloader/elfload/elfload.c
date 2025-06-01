@@ -13,8 +13,8 @@
  * PERFORMANCE OF THIS SOFTWARE.
  */
 #include "elfload.h"
-#include <string.h>
 #include "DebugHelper.h"
+#include <string.h>
 
 el_status el_pread(el_ctx *ctx, void *def, size_t nb, size_t offset)
 {

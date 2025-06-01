@@ -61,8 +61,6 @@ int _read(int fd, char *ptr, int len) {
     UINT bytesRead = 0;
     FRESULT result = f_read(&fd_data[fd-3].fp, ptr, len, &bytesRead);
     ScreenPrint("_read");
-    ScreenPrintHWord(len);
-    ScreenPrintHWord(bytesRead);
     return bytesRead;
   }
 
@@ -83,13 +81,13 @@ void *_sbrk(int incr) {
     heap += incr;
   }
 
-  ScreenPrint("sbrk");
+  ScreenPrint("_sbrk");
   return prev_heap;
 }
 
 int _fstat([[maybe_unused]] int fd, struct stat *st) {
   st->st_mode = S_IFREG;
-  ScreenPrint("fstat");
+  ScreenPrint("_fstat");
   return 0;
 }
 
