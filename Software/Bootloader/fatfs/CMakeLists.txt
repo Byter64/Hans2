@@ -14,3 +14,10 @@ add_library(fatfs STATIC
   ff.c
   ffunicode.c
 )
+
+target_link_libraries(fatfs
+  ${CMAKE_CURRENT_SOURCE_DIR}/../newlib/libc.a
+  ${CMAKE_CURRENT_SOURCE_DIR}/../newlib/libg.a
+  ${CMAKE_CURRENT_SOURCE_DIR}/../newlib/libgloss.a
+  ${CMAKE_CURRENT_SOURCE_DIR}/../newlib/libm.a
+)

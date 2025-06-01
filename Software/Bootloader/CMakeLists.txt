@@ -62,5 +62,5 @@ add_custom_command(TARGET Bootloader.elf POST_BUILD
 	COMMAND objcopy ARGS -O verilog Bootloader.elf Bootloader.hex)
 
 add_custom_command(TARGET Bootloader.elf POST_BUILD
-	COMMAND python ARGS ../hex8tohex32.py Bootloader.hex > Bootloader32.hex
+	COMMAND python ARGS ${CMAKE_CURRENT_SOURCE_DIR}/hex8tohex32.py Bootloader.hex > Bootloader32.hex
 )
