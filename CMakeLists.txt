@@ -6,6 +6,7 @@ cmake_minimum_required(VERSION 3.24.0)
 #set(CMAKE_LINKER "${COMPILER_PATH}riscv32-unknown-elf-ld")
 #set(CMAKE_OBJDUMP "${COMPILER_PATH}riscv32-unknown-elf-objdump")
 #set(CMAKE_OBJCOPY "${COMPILER_PATH}riscv32-unknown-elf-objcopy")
+set(CMAKE_TOOLCHAIN_FILE ${CMAKE_CURRENT_SOURCE_DIR}/cmake/toolchain.cmake)
 
 project("Hans2")
 
