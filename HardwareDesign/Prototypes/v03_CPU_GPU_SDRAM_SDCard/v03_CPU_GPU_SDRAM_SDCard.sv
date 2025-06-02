@@ -151,7 +151,7 @@ logic[DATA_WIDTH-1:0]  SDRAM_s_axil_rdata;
 logic[1:0]             SDRAM_s_axil_rresp;
 logic                  SDRAM_s_axil_rvalid;
 logic                  SDRAM_s_axil_rready;
- 
+  
 AXILite_SDRAM SDRAM 
 (
 	.sdram_clk(sdram_clk),
@@ -378,7 +378,7 @@ AXILiteMemory #(
     .s_axil_rvalid(BOOT_s_axil_rvalid),
     .s_axil_rready(BOOT_s_axil_rready)
 );
-
+ 
 logic[S_COUNT*ADDR_WIDTH-1:0] AXI_s_axil_awaddr;
 logic[S_COUNT*3-1:0]          AXI_s_axil_awprot;
 logic[S_COUNT-1:0]            AXI_s_axil_awvalid;

@@ -4,6 +4,10 @@
 #include "Assets/include/sprites/SproutLands/Objects/Boats.h"
 #include "printf/printf.h"
 
+extern "C"
+{
+#include "DebugHelper.h"
+}
 #ifndef _DEBUG
 #pragma comment(linker, "/SUBSYSTEM:windows /ENTRY:mainCRTStartup")
 #endif
@@ -30,11 +34,21 @@ int main() {
         
         for (int y = 0; y < 240; y += 16) {
             for (int x = 0; x < 400; x += 16) {
-                Hapi::Draw(water, water_frame_x, 0, x, y, 16, 16, 48);
+                //Hapi::Draw(water, water_frame_x, 0, x, y, 16, 16, 48);
             }
         }
-        //Hapi::Clear((Hapi::Color(128, 255, 255, 1)));
+        Hapi::Clear((Hapi::Color(128, 255, 255, 1)));
+        
+        unsigned short* base = (unsigned short*)SproutLands::Boats;
+        for(int i = 0; i < 512; i++)
+        {
 
+            char buffer[32];
+            sprintf(buffer, "%u", *(base + i));
+            ScreenPrint(buffer);
+        }
+        
+        /*
         Hapi::Draw(boat, 0, 0, left_boat_x, left_boat_y, 48, 32, 48);
 		boat_pos += boat_speed;
 		left_boat_x = 50 + (boat_pos % 200);
@@ -42,6 +56,7 @@ int main() {
 
         Hapi::Draw((Hapi::Image)Hapi::defaultFont.fontSheet, 0, 0, 250, 10, 120, 15, 120);
         updateAnimation(water_ticks, water_frame_x, 16, 48);
+        */
         Hapi::EndDrawing();
     }
     
