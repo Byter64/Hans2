@@ -14,6 +14,11 @@ extern "C"
 
 void updateAnimation(int& ticks, int& frame_x, int frame_width, int max_frame);
 
+uint16_t test1[8] = { 0x0001, 0xFFFF, 0x0001, 0xFFFF, 0x0001, 0xFFFF, 0x0001, 0xFFFF};
+uint16_t test2[8] = { 0xFFFF, 0x0001, 0xFFFF, 0x0001, 0xFFFF, 0x0001, 0xFFFF, 0x0001};
+uint16_t test3[8] = { 0x0001, 0x0001, 0x0001, 0x0001, 0x0001, 0x0001, 0x0001, 0x0001};
+uint16_t test4[8] = { 0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF};
+
 int main() {
     int water_ticks = 20, water_frame_x = 0;
     int left_boat_x = 10, left_boat_y = 100;
@@ -39,14 +44,11 @@ int main() {
         }
         Hapi::Clear((Hapi::Color(128, 255, 255, 1)));
         
-        unsigned short* base = (unsigned short*)SproutLands::Boats;
-        for(int i = 0; i < 512; i++)
-        {
-
-            char buffer[32];
-            sprintf(buffer, "%u", *(base + i));
-            ScreenPrint(buffer);
-        }
+        Hapi::Draw((Hapi::Image)test1, 0, 0, 20, 90, 2, 2, 2);
+        Hapi::Draw((Hapi::Image)test2, 0, 0, 40, 90, 2, 2, 2);
+        Hapi::Draw((Hapi::Image)test3, 0, 0, 60, 90, 2, 2, 2);
+        Hapi::Draw((Hapi::Image)test4, 0, 0, 80, 90, 2, 2, 2);
+        
         
         /*
         Hapi::Draw(boat, 0, 0, left_boat_x, left_boat_y, 48, 32, 48);

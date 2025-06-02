@@ -3,7 +3,6 @@ project ("Bootloader")
 enable_language(C CXX ASM)
 
 add_compile_definitions("__riscv32__")
-#add_compile_definitions("DEBUG")
 
 add_compile_options(
 	-fno-exceptions

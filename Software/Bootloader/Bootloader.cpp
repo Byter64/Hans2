@@ -47,26 +47,40 @@ int main()
 
 	Hapi::Init();
 	FRESULT fatfsResult;
+	#ifndef SIMULATION
 	WaitFrame(120);
-	
+	#endif
+
+	#ifndef SIMULATION
 	SetStatus("Mounting SD-Card...", 0, 20);
+	#endif
 	fatfsResult = f_mount(&FatFs, "", 0);
     is_mounted = 1;
 
+	#ifdef SIMULATION
+	*(int*)0x01FFFFC = fatfsResult;
+	#endif
 	if(fatfsResult)
 	{
 		ScreenPrint("Error:");
 		ScreenPrint(FRESULTToString(fatfsResult));
 		while(true);
 	}
+	#ifndef SIMULATION
 	SetStatus(FRESULTToString(fatfsResult), 10, 10);
+	#endif
 
 	//Find main program to load
+	#ifndef SIMULATION
 	SetStatus("Searching *.elf...", 15, 15);
+	#endif
 	DIR directory;
 	FILINFO fileInfo;
 	fatfsResult = f_findfirst(&directory, &fileInfo, "/", "*.elf");
 
+	#ifdef SIMULATION
+	*(int*)0x01FFFFC = fatfsResult;
+	#endif
 	if(fileInfo.fname[0] == '\0' || fatfsResult)
 	{
 		ScreenPrint("Error:");
@@ -91,7 +105,9 @@ int main()
 	debugMessage[i + 10] = '.';
 	debugMessage[i + 11] = '\0';
 	
+	#ifndef SIMULATION
 	SetStatus(debugMessage, 25, 10);
+	#endif
 	fatfsResult = f_open(&elfFile, elfFilePath, FA_READ);
 
 	if(fatfsResult)
@@ -101,30 +117,39 @@ int main()
 		SetStatus("Open failed", 20, 0);
 		while(true);
 	}
+	#ifndef SIMULATION
 	SetStatus("Open succeeded", 30, 20);
-	
+	#endif
+
 	el_ctx ctx;
 	ctx.pread = fileRead;
 	
+	#ifndef SIMULATION
 	SetStatus("Initialising elfloader...", 35, 20);
+	#endif
 	el_status result = el_init(&ctx);
 	check(result, "Init FAILED!");
 	
 	ctx.base_load_vaddr = (uintptr_t)loadAddress;
 	ctx.base_load_paddr = (uintptr_t)loadAddress;
 	
+	#ifndef SIMULATION
 	SetStatus("Loading .elf file...", 40, 120);
+	#endif
 	result = el_load(&ctx, memoryAllocation);
 	check(result, "Load FAILED!");
-	
 
+	#ifndef SIMULATION
 	SetStatus("Resolving relocations...", 80, 120);
+	#endif
 	result = el_relocate(&ctx);
 	check(result, "Relocs FAILED!");
-	
+
 	uintptr_t entryPoint = ctx.ehdr.e_entry + (uintptr_t)loadAddress;
 
+	#ifndef SIMULATION
 	SetStatus("Succeeded. What a journey man, Have fun :)", 100, 120);
+	#endif
 	int (*loadedMain)() = (int (*)())entryPoint;
 	loadedMain();
 
