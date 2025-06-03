@@ -19,7 +19,24 @@ uint16_t test2[8] = { 0xFFFF, 0x0001, 0xFFFF, 0x0001, 0xFFFF, 0x0001, 0xFFFF, 0x
 uint16_t test3[8] = { 0x0001, 0x0001, 0x0001, 0x0001, 0x0001, 0x0001, 0x0001, 0x0001};
 uint16_t test4[8] = { 0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF};
 
+
+volatile unsigned short* x = (unsigned short*)(0x2010000 + 32768 - 4);
 int main() {
+    volatile unsigned short* base = (unsigned short*)0x10000;
+    for (int i = 0; i < 512; i++)
+    {
+        *(base + i) = i;
+    }
+
+    for (int i = 0; i < 512; i++)
+    {
+        *x = *(base + i);
+    }
+    
+
+    while (true);
+    
+    /*
     int water_ticks = 20, water_frame_x = 0;
     int left_boat_x = 10, left_boat_y = 100;
     int right_boat_x = 350, right_boat_y = 100;
@@ -59,10 +76,10 @@ int main() {
         Hapi::Draw((Hapi::Image)Hapi::defaultFont.fontSheet, 0, 0, 250, 10, 120, 15, 120);
         updateAnimation(water_ticks, water_frame_x, 16, 48);
         */
-        Hapi::EndDrawing();
+        /*Hapi::EndDrawing();
     }
-    
     Hapi::Terminate();
+    */
     return 0;
 }
 

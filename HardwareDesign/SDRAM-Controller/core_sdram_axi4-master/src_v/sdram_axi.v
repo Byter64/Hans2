@@ -95,6 +95,7 @@ parameter SDRAM_COL_W           = 9;
 parameter SDRAM_READ_LATENCY    = 3; //This does not change the settings on the SDRAM, but rather how long the Controller will wait. It seems that, for some reason, in our setting 2 cycles are not enough
 `else
 parameter SDRAM_READ_LATENCY    = 2;
+`endif
 
 //-----------------------------------------------------------------
 // AXI Interface
