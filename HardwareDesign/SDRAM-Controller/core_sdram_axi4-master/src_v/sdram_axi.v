@@ -91,7 +91,10 @@ module sdram_axi
 parameter SDRAM_MHZ             = 50;
 parameter SDRAM_ADDR_W          = 24;
 parameter SDRAM_COL_W           = 9;
+`ifdef SYNTHESIS
 parameter SDRAM_READ_LATENCY    = 3; //This does not change the settings on the SDRAM, but rather how long the Controller will wait. It seems that, for some reason, in our setting 2 cycles are not enough
+`else
+parameter SDRAM_READ_LATENCY    = 2;
 
 //-----------------------------------------------------------------
 // AXI Interface
