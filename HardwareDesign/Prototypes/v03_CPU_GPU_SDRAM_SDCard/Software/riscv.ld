@@ -7,10 +7,9 @@
 OUTPUT_FORMAT("elf32-littleriscv", "elf32-littleriscv",
 	      "elf32-littleriscv")
 OUTPUT_ARCH(riscv)
-ENTRY(_start)
 SECTIONS
 {
-  . = 0x00000000;
+  . = 0x2010000;
   .text           :
   {
     *(.text.startSection)
