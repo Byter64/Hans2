@@ -371,6 +371,7 @@ Controller Controller
 (
 	.clk(CONT_clk),
 	.aclk(clk_50mhz),
+	.aresetn(resetn),
 	.s_axil_rdata(CONT_s_axil_rdata),
 	.s_axil_rresp(CONT_s_axil_rresp),
 	.s_axil_rvalid(CONT_s_axil_rvalid),

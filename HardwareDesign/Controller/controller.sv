@@ -2,6 +2,7 @@ module Controller (
     input  logic clk,
 
     input  logic                                aclk,
+    input  logic                                aresetn,
     output logic [31:0]                         s_axil_rdata,
     output logic [1:0]                          s_axil_rresp,
     output logic                                s_axil_rvalid,
@@ -13,7 +14,7 @@ module Controller (
 
     input  logic cont1_data,
     output logic cont1_clk = 0,
-    output logic cont1_activate,
+    output logic cont1_activate
 );
 
 assign s_axil_rresp = 0;
@@ -21,12 +22,12 @@ assign s_axil_rresp = 0;
 logic[15:0] controller0_btns;
 logic[15:0] controller1_btns;
 
-logic[15:0] cont0_state = 0;
-logic[15:0] cont1_state = 0;
-logic[10:0] state = START;
 localparam START = 0;
 localparam DATA_START = 3;
 localparam DATA_END = 3 + 2 * 16; //16 states, each 2 fast clock cycles
+logic[15:0] cont0_state = 0;
+logic[15:0] cont1_state = 0;
+logic[10:0] state = START;
 
 
 /////////////////// R /////////////////////

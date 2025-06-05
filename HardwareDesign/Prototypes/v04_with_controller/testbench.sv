@@ -68,7 +68,7 @@ initial begin
 	$dumpvars(0, Top.GraphicSystem);
 	$dumpvars(0, Top.Processor);
 
-	#40000000
+	#4000000
 	$finish;
 end
 
