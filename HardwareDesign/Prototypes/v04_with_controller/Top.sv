@@ -1,3 +1,4 @@
+`define NO_CONTROLLER_ATTACHED
 module Top
 (
     input logic  clk_25mhz,
@@ -24,7 +25,10 @@ module Top
 	input  logic		c1data,
 	output logic		c2clock,
 	output logic		c2latch,
-	input  logic		c2data
+	input  logic		c2data,
+
+	//Buttons for debug
+	input logic[6:0]	btn
 );        
      
 logic canBeDeleted;   
@@ -354,6 +358,13 @@ logic[31:0] CONT_s_axil_araddr;
 logic[1:0] 	CONT_s_axil_arprot;
 logic 		CONT_s_axil_arvalid;
 
+logic[31:0] CONT_true_rdata;
+`ifdef NO_CONTROLLER_ATTACHED
+assign CONT_true_rdata = {btn[2], btn[6], btn[5], btn[4], btn[3], 3'b0, btn[1]};
+`else
+assign CONT_true_rdata = CONT_true_rdata;
+`endif
+
 //This should be replaced by the Audiosystems' 32 kHz clock
 logic[8:0] 	CONT_clkdiv;
 logic 		CONT_clk;
@@ -511,7 +522,7 @@ assign 							{SDRAM_s_axil_araddr, 	GS_s_axil_araddr, 	BOOT_s_axil_araddr, 	CON
 assign 							{SDRAM_s_axil_arprot, 	GS_s_axil_arprot, 	BOOT_s_axil_arprot, 	CONT_s_axil_arprot,	SDC_s_axil_arprot} = AXI_m_axil_arprot;
 assign 							{SDRAM_s_axil_arvalid,	GS_s_axil_arvalid, 	BOOT_s_axil_arvalid,	CONT_s_axil_arvalid,SDC_s_axil_arvalid} = AXI_m_axil_arvalid;
 assign AXI_m_axil_arready 	= 	{SDRAM_s_axil_arready, 	GS_s_axil_arready, 	BOOT_s_axil_arready,	1'b1,				SDC_s_axil_arready};
-assign AXI_m_axil_rdata 	= 	{SDRAM_s_axil_rdata, 	GS_s_axil_rdata, 	BOOT_s_axil_rdata, 		CONT_s_axil_rdata, 	SDC_s_axil_rdata};
+assign AXI_m_axil_rdata 	= 	{SDRAM_s_axil_rdata, 	GS_s_axil_rdata, 	BOOT_s_axil_rdata, 		CONT_true_rdata, 	SDC_s_axil_rdata};
 assign AXI_m_axil_rresp 	= 	{SDRAM_s_axil_rresp, 	GS_s_axil_rresp, 	BOOT_s_axil_rresp, 		CONT_s_axil_rresp, 	SDC_s_axil_rresp};
 assign AXI_m_axil_rvalid 	= 	{SDRAM_s_axil_rvalid, 	GS_s_axil_rvalid, 	BOOT_s_axil_rvalid, 	CONT_s_axil_rvalid, SDC_s_axil_rvalid};
 assign 							{SDRAM_s_axil_rready, 	GS_s_axil_rready, 	BOOT_s_axil_rready, 	CONT_s_axil_rready, SDC_s_axil_rready} = AXI_m_axil_rready;
