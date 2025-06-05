@@ -32,7 +32,10 @@ module Audiosystem (
     //I²S Interface
     output logic           audio_bclk,
     output logic           audio_lrclk,
-    output logic           audio_dout
+    output logic           audio_dout,
+
+    //Clock
+    output logic           clk_32khz
 );
 
 typedef enum logic[3:0] {
@@ -65,8 +68,10 @@ ClockGenerator ClockGenerator
     .clk_25mhz(clk_25mhz),
     .clk_1024khz(bitclk),
     .clk_64khz(clk_64khz),
-    .clk_32khz(sampleClk)
+    .clk_32khz(clk_32khz)
 );
+assign sampleClk = clk_32khz;
+
 
 logic old_bitclk;
 logic old_clk_64khz;

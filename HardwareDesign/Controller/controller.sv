@@ -1,10 +1,11 @@
 module Controller (
     input  logic clk,
 
-    output logic [31:0]                       s_axil_rdata,
-    output logic [1:0]                        s_axil_rresp,
-    output logic                              s_axil_rvalid,
-    input  logic                              s_axil_rready,
+    input  logic                                aclk,
+    output logic [31:0]                         s_axil_rdata,
+    output logic [1:0]                          s_axil_rresp,
+    output logic                                s_axil_rvalid,
+    input  logic                                s_axil_rready,
 
     input  logic cont0_data,
     output logic cont0_clk = 0,

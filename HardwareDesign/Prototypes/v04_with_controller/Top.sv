@@ -354,9 +354,23 @@ logic[31:0] CONT_s_axil_araddr;
 logic[1:0] 	CONT_s_axil_arprot;
 logic 		CONT_s_axil_arvalid;
 
+//This should be replaced by the Audiosystems' 32 kHz clock
+logic[9:0] 	CONT_clkdiv;
+logic 		CONT_clk;
+assign 		CONT_clk = CONT_clkdiv[9];
+always_ff @(posedge clk_50mhz) begin
+	CONT_clkdiv <= CONT_clkdiv + 1;
+
+	if(!resetn) begin
+		CONT_clkdiv <= 0;
+	end
+end
+
+
 Controller Controller 
 (
-	.clk(clk_50mhz), //DIE MUSS NIEDRIGER SEIN (Audioclock?)
+	.clk(CONT_clk),
+	.aclk(clk_50mhz),
 	.s_axil_rdata(CONT_s_axil_rdata),
 	.s_axil_rresp(CONT_s_axil_rresp),
 	.s_axil_rvalid(CONT_s_axil_rvalid),
@@ -483,7 +497,7 @@ assign AXI_s_axil_rready 	= 	{CPU_mem_axi_rready, GS_m_axil_rready};
 //{SDRAM, Graphicsystem, Bootloader, Controrller, SDCard}
 assign 							{SDRAM_s_axil_awaddr, 	GS_s_axil_awaddr, 	BOOT_s_axil_awaddr,		CONT_s_axil_awaddr, SDC_s_axil_awaddr} = AXI_m_axil_awaddr;
 assign 							{SDRAM_s_axil_awprot, 	GS_s_axil_awprot, 	BOOT_s_axil_awprot, 	CONT_s_axil_awprot,	SDC_s_axil_awprot} = AXI_m_axil_awprot;
-assign 							{SDRAM_s_axil_awvalid, 	GS_s_axil_awvalid, 	BOOT_s_axil_awvalid,	CONT_s_axil_wvalid,	SDC_s_axil_awvalid} = AXI_m_axil_awvalid;
+assign 							{SDRAM_s_axil_awvalid, 	GS_s_axil_awvalid, 	BOOT_s_axil_awvalid,	CONT_s_axil_awvalid,SDC_s_axil_awvalid} = AXI_m_axil_awvalid;
 assign AXI_m_axil_awready 	= 	{SDRAM_s_axil_awready, 	GS_s_axil_awready, 	BOOT_s_axil_awready,	1'b0,				SDC_s_axil_awready};
 assign 							{SDRAM_s_axil_wdata, 	GS_s_axil_wdata, 	BOOT_s_axil_wdata, 		CONT_s_axil_wdata,	SDC_s_axil_wdata} = AXI_m_axil_wdata;
 assign 							{SDRAM_s_axil_wstrb, 	GS_s_axil_wstrb, 	BOOT_s_axil_wstrb, 		CONT_s_axil_wstrb,	SDC_s_axil_wstrb} = AXI_m_axil_wstrb;
@@ -494,8 +508,8 @@ assign AXI_m_axil_bvalid 	= 	{SDRAM_s_axil_bvalid, 	GS_s_axil_bvalid, 	BOOT_s_ax
 assign 							{SDRAM_s_axil_bready, 	GS_s_axil_bready, 	BOOT_s_axil_bready, 	CONT_s_axil_bready,	SDC_s_axil_bready} = AXI_m_axil_bready;
 assign 							{SDRAM_s_axil_araddr, 	GS_s_axil_araddr, 	BOOT_s_axil_araddr, 	CONT_s_axil_araddr,	SDC_s_axil_araddr} = AXI_m_axil_araddr;
 assign 							{SDRAM_s_axil_arprot, 	GS_s_axil_arprot, 	BOOT_s_axil_arprot, 	CONT_s_axil_arprot,	SDC_s_axil_arprot} = AXI_m_axil_arprot;
-assign 							{SDRAM_s_axil_arvalid,	GS_s_axil_arvalid, 	BOOT_s_axil_arvalid,	CONT_s_axil_rvalid,	SDC_s_axil_arvalid} = AXI_m_axil_arvalid;
-assign AXI_m_axil_arready 	= 	{SDRAM_s_axil_arready, 	GS_s_axil_arready, 	BOOT_s_axil_arready,	CONT_s_axil_rready,	SDC_s_axil_arready};
+assign 							{SDRAM_s_axil_arvalid,	GS_s_axil_arvalid, 	BOOT_s_axil_arvalid,	CONT_s_axil_arvalid,SDC_s_axil_arvalid} = AXI_m_axil_arvalid;
+assign AXI_m_axil_arready 	= 	{SDRAM_s_axil_arready, 	GS_s_axil_arready, 	BOOT_s_axil_arready,	CONT_s_axil_arready,SDC_s_axil_arready};
 assign AXI_m_axil_rdata 	= 	{SDRAM_s_axil_rdata, 	GS_s_axil_rdata, 	BOOT_s_axil_rdata, 		CONT_s_axil_rdata, 	SDC_s_axil_rdata};
 assign AXI_m_axil_rresp 	= 	{SDRAM_s_axil_rresp, 	GS_s_axil_rresp, 	BOOT_s_axil_rresp, 		CONT_s_axil_rresp, 	SDC_s_axil_rresp};
 assign AXI_m_axil_rvalid 	= 	{SDRAM_s_axil_rvalid, 	GS_s_axil_rvalid, 	BOOT_s_axil_rvalid, 	CONT_s_axil_rvalid, SDC_s_axil_rvalid};
