@@ -17,13 +17,13 @@ module CPU_with_GPU_SDRAM_SDCard
     output logic        sd_clk,
     output logic        sd_cmd,
     inout  logic [3:0]  sd_d
-);      
+);        
    
 logic canBeDeleted;   
-       
+        
 logic hdmi_pixClk;   
 logic resetn = 0;    
-logic trap; 
+logic trap;        
 logic [7:0] reset_counter = 0;
 always_ff @(posedge hdmi_pixClk) begin
     if(reset_counter != 255)
