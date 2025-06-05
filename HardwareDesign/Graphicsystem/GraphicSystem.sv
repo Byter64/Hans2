@@ -254,12 +254,12 @@ wire[15:0]  fb2_dataOutB;
 wire[15:0]  fb1_dataOutA;
 wire[15:0]  fb1_dataOutB;
 wire[16:0] gpu_fbAddress = gpu_FbX + gpu_FbY * SCREEN_WIDTH;
-`define ROTATE_FRAME_BUFFER
-`ifdef ROTATE_FRAME_BUFFER
-wire[16:0] hdmi_fbAddress = SCREEN_WIDTH - (hdmi_nextX / 2) + ((SCREEN_HEIGHT - (hdmi_nextY / 2)) * SCREEN_WIDTH); //this halves the resoluton from 480x800 to 240x400
-`else
+//`define ROTATE_FRAME_BUFFER
+//`ifdef ROTATE_FRAME_BUFFER
+//wire[16:0] hdmi_fbAddress = SCREEN_WIDTH - (hdmi_nextX / 2) + ((SCREEN_HEIGHT - (hdmi_nextY / 2)) * SCREEN_WIDTH); //this halves the resoluton from 480x800 to 240x400
+//`else 
 wire[16:0] hdmi_fbAddress = (hdmi_nextX / 2) + ((hdmi_nextY / 2) * SCREEN_WIDTH); //this halves the resoluton from 480x800 to 240x400
-`endif
+//`endif
 wire[15:0] hdmi_color = bfCont_fbHDMI == 0 ? fb1_dataOutB : fb2_dataOutB;
 
 BufferController bfCont(
