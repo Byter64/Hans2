@@ -18,7 +18,7 @@ module CPU_with_GPU_SDRAM_SDCard
     output logic        sd_cmd,
     inout  logic [3:0]  sd_d
 );      
-  
+   
 logic canBeDeleted;   
        
 logic hdmi_pixClk;   
@@ -97,7 +97,7 @@ picorv32_axi #(
 	.ENABLE_IRQ(1),
 	.MASKED_IRQ(32'h0000_0000), //1 == disable this IRQ
 	.LATCHED_IRQ(32'hFFFF_FFFF), //1 == interrupt is edge triggered, 0 == interrupt is level triggered
-	.PROGADDR_RESET(0), //Start address of the bootloader
+	.PROGADDR_RESET(BOOTLOADER_START), //Start address of the bootloader
 	.PROGADDR_IRQ(32'h0000_0010) //Start address of the interrupt handler
 
 ) Processor  
