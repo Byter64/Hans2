@@ -65,7 +65,7 @@ initial begin
 		//$dumpvars(0, SDRAM.Bank0[i]);
 	end
 	$dumpvars(1, testbench);
-	$dumpvars(0, Top.GraphicSystem);
+	$dumpvars(0, Top.Controller);
 	$dumpvars(0, Top.Processor);
 
 	#4000000

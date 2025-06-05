@@ -28,7 +28,7 @@ module Top
 );        
      
 logic canBeDeleted;   
-        
+         
 logic hdmi_pixClk;   
 logic resetn = 0;    
 logic trap;        
@@ -355,9 +355,9 @@ logic[1:0] 	CONT_s_axil_arprot;
 logic 		CONT_s_axil_arvalid;
 
 //This should be replaced by the Audiosystems' 32 kHz clock
-logic[9:0] 	CONT_clkdiv;
+logic[8:0] 	CONT_clkdiv;
 logic 		CONT_clk;
-assign 		CONT_clk = CONT_clkdiv[9];
+assign 		CONT_clk = CONT_clkdiv[8];
 always_ff @(posedge clk_50mhz) begin
 	CONT_clkdiv <= CONT_clkdiv + 1;
 
