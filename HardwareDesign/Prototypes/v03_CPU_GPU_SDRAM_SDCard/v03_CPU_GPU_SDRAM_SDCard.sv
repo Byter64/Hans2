@@ -18,7 +18,7 @@ module CPU_with_GPU_SDRAM_SDCard
     output logic        sd_cmd,
     inout  logic [3:0]  sd_d
 );        
-   
+     
 logic canBeDeleted;   
         
 logic hdmi_pixClk;   
