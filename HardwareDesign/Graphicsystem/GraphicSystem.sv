@@ -159,10 +159,16 @@ end
 
 //Read
 logic[DATA_WIDTH-1:0] next_rdata;
+logic old_s_ar_handshake;
+
+always_ff @(posedge aclk) begin
+    old_s_ar_handshake <= s_axil_arvalid && s_axil_arready;
+end
+
 assign s_axil_rresp = 1;
 
 //This is not AXI compliant, but I could not think of a better way to invalidate s_axil_rdata if address is written at the sime time as data is read
-assign s_axil_rvalid = !aresetn ? 0 : !(s_axil_arvalid && s_axil_arready);
+assign s_axil_rvalid = !aresetn ? 0 : (!(s_axil_arvalid && s_axil_arready) && !old_s_ar_handshake);
 
 always_comb begin
     case (activeReadDataIndex)
