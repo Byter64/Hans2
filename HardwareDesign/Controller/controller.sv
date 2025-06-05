@@ -1,10 +1,10 @@
 module Controller (
     input  logic clk,
 
-    input logic [31:0]                       s_axil_rdata,
-    input logic [1:0]                        s_axil_rresp,
-    input logic                              s_axil_rvalid,
-    output logic                             s_axil_rready,
+    output logic [31:0]                       s_axil_rdata,
+    output logic [1:0]                        s_axil_rresp,
+    output logic                              s_axil_rvalid,
+    input  logic                              s_axil_rready,
 
     input  logic cont0_data,
     output logic cont0_clk = 0,
@@ -15,8 +15,10 @@ module Controller (
     output logic cont1_activate,
 );
 
-logic[11:0] controller0_btns;
-logic[11:0] controller1_btns;
+assign s_axil_rresp = 0;
+
+logic[15:0] controller0_btns;
+logic[15:0] controller1_btns;
 
 logic[15:0] cont0_state = 0;
 logic[15:0] cont1_state = 0;
@@ -44,8 +46,7 @@ always_ff @(posedge aclk) begin
     if (!aresetn)
         s_axil_rdata <= 0;
     else begin
-        s_axil_rdata[11:0] <= next_rData;
-        s_axil_rdata[31:12] <= 0;
+        s_axil_rdata <= next_rData;
     end
 end
 ///////////// AXI LITE END ////////////////////
