@@ -14,9 +14,9 @@ module Framebuffer #(
     input writeEnableB,
     output reg[WIDTH-1:0] dataOutB
 );
-
+ 
 reg[WIDTH-1:0] memory[DEPTH-1];
-initial $readmemh("C:/Users/Yanni/Documents/Hans2/HardwareDesign/Graphicsystem/StartScreen.hex", memory);
+initial $readmemh("C:/Users/Yanni/Desktop/Hans2/HardwareDesign/Graphicsystem/StartScreen.hex", memory);
 
 always @(posedge clkA) begin
     if(writeEnableA)

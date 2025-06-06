@@ -1,10 +1,12 @@
 module Controller (
     input  logic clk,
 
-    input logic [31:0]                       s_axil_rdata,
-    input logic [1:0]                        s_axil_rresp,
-    input logic                              s_axil_rvalid,
-    output logic                             s_axil_rready,
+    input  logic                                aclk,
+    input  logic                                aresetn,
+    output logic [31:0]                         s_axil_rdata,
+    output logic [1:0]                          s_axil_rresp,
+    output logic                                s_axil_rvalid,
+    input  logic                                s_axil_rready,
 
     input  logic cont0_data,
     output logic cont0_clk = 0,
@@ -15,15 +17,17 @@ module Controller (
     output logic cont1_activate
 );
 
-logic[11:0] controller0_btns;
-logic[11:0] controller1_btns;
+assign s_axil_rresp = 0;
 
-logic[15:0] cont0_state = 0;
-logic[15:0] cont1_state = 0;
-logic[10:0] state = START;
+logic[15:0] controller0_btns;
+logic[15:0] controller1_btns;
+
 localparam START = 0;
 localparam DATA_START = 3;
 localparam DATA_END = 3 + 2 * 16; //16 states, each 2 fast clock cycles
+logic[15:0] cont0_state = 0;
+logic[15:0] cont1_state = 0;
+logic[10:0] state = START;
 
 
 /////////////////// R /////////////////////
@@ -44,8 +48,7 @@ always_ff @(posedge aclk) begin
     if (!aresetn)
         s_axil_rdata <= 0;
     else begin
-        s_axil_rdata[11:0] <= next_rData;
-        s_axil_rdata[31:12] <= 0;
+        s_axil_rdata <= next_rData;
     end
 end
 ///////////// AXI LITE END ////////////////////

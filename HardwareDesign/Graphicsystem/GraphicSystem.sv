@@ -84,10 +84,10 @@ logic[31:0]  gpu_Address;
 logic[15:0]  gpu_AddressX;
 logic[15:0]  gpu_AddressY;
 logic[15:0]  gpu_ImageWidth;
-logic[10:0]  gpu_Width;
-logic[9:0]   gpu_Height;
-logic[10:0]  gpu_X;
-logic[9:0]   gpu_Y;
+logic[15:0]  gpu_Width;
+logic[15:0]  gpu_Height;
+logic[15:0]  gpu_X;
+logic[15:0]  gpu_Y;
 logic[15:0]  gpu_ClearColor;
 logic        gpu_Draw = 0;
 logic        gpu_Clear = 0;
@@ -159,10 +159,16 @@ end
 
 //Read
 logic[DATA_WIDTH-1:0] next_rdata;
+logic old_s_ar_handshake;
+
+always_ff @(posedge aclk) begin
+    old_s_ar_handshake <= s_axil_arvalid && s_axil_arready;
+end
+
 assign s_axil_rresp = 1;
 
 //This is not AXI compliant, but I could not think of a better way to invalidate s_axil_rdata if address is written at the sime time as data is read
-assign s_axil_rvalid = !aresetn ? 0 : !(s_axil_arvalid && s_axil_arready);
+assign s_axil_rvalid = !aresetn ? 0 : (!(s_axil_arvalid && s_axil_arready) && !old_s_ar_handshake);
 
 always_comb begin
     case (activeReadDataIndex)
@@ -254,7 +260,12 @@ wire[15:0]  fb2_dataOutB;
 wire[15:0]  fb1_dataOutA;
 wire[15:0]  fb1_dataOutB;
 wire[16:0] gpu_fbAddress = gpu_FbX + gpu_FbY * SCREEN_WIDTH;
-wire[16:0] hdmi_fbAddress = ((hdmi_nextX >> 1) + (hdmi_nextY >> 1) * SCREEN_WIDTH); //this halves the resoluton from 480x800 to 240x400
+`define ROTATE_FRAME_BUFFER
+`ifdef ROTATE_FRAME_BUFFER
+wire[16:0] hdmi_fbAddress = SCREEN_WIDTH - (hdmi_nextX / 2) + ((SCREEN_HEIGHT - (hdmi_nextY / 2)) * SCREEN_WIDTH); //this halves the resoluton from 480x800 to 240x400
+`else 
+wire[16:0] hdmi_fbAddress = (hdmi_nextX / 2) + ((hdmi_nextY / 2) * SCREEN_WIDTH); //this halves the resoluton from 480x800 to 240x400
+`endif
 wire[15:0] hdmi_color = bfCont_fbHDMI == 0 ? fb1_dataOutB : fb2_dataOutB;
 
 BufferController bfCont(

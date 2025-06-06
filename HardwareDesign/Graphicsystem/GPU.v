@@ -20,10 +20,10 @@ module gpu #
     input  [15:0] ctrl_address_x,//The x axis offset to the base address in Bytes
     input  [15:0] ctrl_address_y,//The y axis offset to the base address in Bytes
     input  [15:0] ctrl_image_width,//The width of the image
-    input  [$clog2(FB_WIDTH)+1:0]  ctrl_width,    //The width of the excerpt to be drawn
-    input  [$clog2(FB_HEIGHT)+1:0] ctrl_height,   //The height of the excerpt to be drawn
-    input  [$clog2(FB_WIDTH)+1:0]  ctrl_x,        //Left position of the excerpt to be drawn on the screen
-    input  [$clog2(FB_HEIGHT)+1:0] ctrl_y,        //Top position of the excerpt to be drawn on the screen
+    input  [15:0] ctrl_width,    //The width of the excerpt to be drawn
+    input  [15:0] ctrl_height,   //The height of the excerpt to be drawn
+    input  [15:0] ctrl_x,        //Left position of the excerpt to be drawn on the screen
+    input  [15:0] ctrl_y,        //Top position of the excerpt to be drawn on the screen
     input         ctrl_draw,     //Tells the GPU to execute a draw call
     
     //CONTROL INTERFACE: Clear
@@ -34,8 +34,8 @@ module gpu #
     output        crtl_busy,     //Tells the controller that the gpu is busy and not open for new commands
 
     //FRAMEBUFFER INTERFACE
-    output reg[$clog2(FB_WIDTH):0]    fb_x,     //The x coordinate
-    output reg[$clog2(FB_HEIGHT):0]   fb_y,     //The y coordinate
+    output reg[15:0]    fb_x,     //The x coordinate
+    output reg[15:0]   fb_y,     //The y coordinate
     output reg[15:0]  fb_color, //The color
     output reg    fb_write  //Tells the frame buffer to write color to (fb_x, fb_y)
 );
@@ -87,14 +87,14 @@ always @(posedge clk) begin
     end
 end
 
-wire[$clog2(FB_WIDTH)+1:0] max_x = state[I_CLEAR] ? FB_WIDTH : ctrl_width;
-wire[$clog2(FB_HEIGHT)+1:0] max_y = state[I_CLEAR] ? FB_HEIGHT : ctrl_height;
-reg[$clog2(FB_WIDTH)+1:0] pos_x = 0;
-reg[$clog2(FB_HEIGHT)+1:0] pos_y = 0;
-wire[$clog2(FB_WIDTH)+1:0] pos_x_1 = pos_x + 1;
-wire[$clog2(FB_HEIGHT)+1:0] pos_y_1 = pos_y + 1;
-wire[$clog2(FB_WIDTH)+1:0] next_pos_x = drawing ? (pos_x_1 == max_x ? 0 : pos_x_1) : 0;
-wire[$clog2(FB_HEIGHT)+1:0] next_pos_y = drawing ? (pos_x_1 == max_x ? pos_y_1 : pos_y) : 0;
+wire[15:0] max_x = state[I_CLEAR] ? FB_WIDTH : ctrl_width;
+wire[15:0] max_y = state[I_CLEAR] ? FB_HEIGHT : ctrl_height;
+reg[15:0] pos_x = 0;
+reg[15:0] pos_y = 0;
+wire[15:0] pos_x_1 = pos_x + 1;
+wire[15:0] pos_y_1 = pos_y + 1;
+wire[15:0] next_pos_x = drawing ? (pos_x_1 == max_x ? 0 : pos_x_1) : 0;
+wire[15:0] next_pos_y = drawing ? (pos_x_1 == max_x ? pos_y_1 : pos_y) : 0;
 assign next_drawing = (pos_y < max_y) && drawing;
 
 always @(posedge clk) begin
