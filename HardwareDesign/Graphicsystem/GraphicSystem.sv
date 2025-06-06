@@ -246,12 +246,12 @@ end
 localparam SCREEN_WIDTH = 400;
 localparam SCREEN_HEIGHT = 240;
 
-wire[9:0]   gpu_FbX;
-wire[8:0]   gpu_FbY;
+wire[15:0]   gpu_FbX;
+wire[15:0]   gpu_FbY;
 wire[15:0]  gpu_FbColor;
 wire        gpu_FbWrite;
-wire[10:0]  hdmi_nextX;
-wire[10:0]  hdmi_nextY;
+wire[15:0]  hdmi_nextX;
+wire[15:0]  hdmi_nextY;
 wire        hdmi_hSync;
 wire bfCont_fbGPU;
 wire bfCont_fbHDMI;
