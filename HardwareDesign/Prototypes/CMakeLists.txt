@@ -1,5 +1,5 @@
 add_subdirectory("v01_CPU_GPU")
 add_subdirectory("v02_CPU_GPU_SDRAM")
 add_subdirectory("v03_CPU_GPU_SDRAM_SDCard")
-add_subdirectory("v04_with_Controller")
+add_subdirectory("v04_with_controller")
 add_subdirectory("v05_with_Vex")

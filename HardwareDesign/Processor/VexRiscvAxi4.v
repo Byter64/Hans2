@@ -5,7 +5,7 @@
 `timescale 1ns/1ps
 
 module VexRiscvAxi4 #(
-  parameter PROGADDR_RESET = 0
+  parameter PROGADDR_RESET = 32'h02010000
 )
 (
   input  wire          timerInterrupt,

@@ -62,11 +62,11 @@ Top Top
 integer i; 
 initial begin
 	$dumpvars(1, testbench);
-	$dumpvars(0, Top.Controller);
 	$dumpvars(0, Top.Processor);
-	$dumpvars(1, Top.GraphicSystem.gpu);
+	$dumpvars(1, Top);
+	$dumpvars(0, Top.AxiCrossbar);
 
-	#40000000
+	#100000
 	$finish;
 end
 

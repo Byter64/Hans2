@@ -2,45 +2,34 @@ module VexRiscvAxiLite (
     input aclk,
     input aresetn,
 
-    output logic[31:0]             i_m_axil_awaddr,
-    output logic[2:0]                        i_m_axil_awprot,
-    output logic                             i_m_axil_awvalid,
-    input logic                              i_m_axil_awready,
-    output logic[31:0]             i_m_axil_wdata,
-    output logic[7:0]             i_m_axil_wstrb,
-    output logic                             i_m_axil_wvalid,
-    input logic                              i_m_axil_wready,
-    input logic [1:0]                        i_m_axil_bresp,
-    input logic                              i_m_axil_bvalid,
-    output logic                             i_m_axil_bready,
     output logic[31:0]             i_m_axil_araddr,
-    output logic[2:0]                        i_m_axil_arprot,
-    output logic                             i_m_axil_arvalid,
-    input logic                              i_m_axil_arready,
+    output logic[2:0]              i_m_axil_arprot,
+    output logic                   i_m_axil_arvalid,
+    input logic                    i_m_axil_arready,
     input logic [31:0]             i_m_axil_rdata,
-    input logic [1:0]                        i_m_axil_rresp,
-    input logic                              i_m_axil_rvalid,
-    output logic                             i_m_axil_rready,
+    input logic [1:0]              i_m_axil_rresp,
+    input logic                    i_m_axil_rvalid,
+    output logic                   i_m_axil_rready,
 
     output logic[31:0]             d_m_axil_awaddr,
-    output logic[2:0]                        d_m_axil_awprot,
-    output logic                             d_m_axil_awvalid,
-    input logic                              d_m_axil_awready,
+    output logic[2:0]              d_m_axil_awprot,
+    output logic                   d_m_axil_awvalid,
+    input logic                    d_m_axil_awready,
     output logic[31:0]             d_m_axil_wdata,
-    output logic[3:0]             d_m_axil_wstrb,
-    output logic                             d_m_axil_wvalid,
-    input logic                              d_m_axil_wready,
-    input logic [1:0]                        d_m_axil_bresp,
-    input logic                              d_m_axil_bvalid,
-    output logic                             d_m_axil_bready,
+    output logic[3:0]              d_m_axil_wstrb,
+    output logic                   d_m_axil_wvalid,
+    input logic                    d_m_axil_wready,
+    input logic [1:0]              d_m_axil_bresp,
+    input logic                    d_m_axil_bvalid,
+    output logic                   d_m_axil_bready,
     output logic[31:0]             d_m_axil_araddr,
-    output logic[2:0]                        d_m_axil_arprot,
-    output logic                             d_m_axil_arvalid,
-    input logic                              d_m_axil_arready,
+    output logic[2:0]              d_m_axil_arprot,
+    output logic                   d_m_axil_arvalid,
+    input logic                    d_m_axil_arready,
     input logic [31:0]             d_m_axil_rdata,
-    input logic [1:0]                        d_m_axil_rresp,
-    input logic                              d_m_axil_rvalid,
-    output logic                             d_m_axil_rready
+    input logic [1:0]              d_m_axil_rresp,
+    input logic                    d_m_axil_rvalid,
+    output logic                   d_m_axil_rready
 );
 
     // Instruction AXI4 signals
@@ -194,7 +183,7 @@ axi_axil_adapter DAdapter
 
     // VexRiscvAxi4 instance
     VexRiscvAxi4 #(
-        .PROGADDR_RESET(32'h0)
+        .PROGADDR_RESET(32'h02010000)
     ) VexCPU (
         // Instruction AXI4
         .iBusAxi_ar_valid(i_axi_ar_valid),
