@@ -33,9 +33,10 @@ module VexRiscvAxiLite (
 );
 
     // Instruction AXI4 signals
-    logic        i_axi_ar_valid, i_axi_ar_ready;
+    logic        i_axi_ar_valid;
+    logic        i_axi_ar_ready;
     logic [31:0] i_axi_ar_addr;
-    logic  [7:0] i_axi_ar_id;
+    logic  [0:0] i_axi_ar_id;
     logic  [3:0] i_axi_ar_region;
     logic  [7:0] i_axi_ar_len;
     logic  [2:0] i_axi_ar_size;
@@ -44,50 +45,59 @@ module VexRiscvAxiLite (
     logic  [3:0] i_axi_ar_cache;
     logic  [3:0] i_axi_ar_qos;
     logic  [2:0] i_axi_ar_prot;
-    logic        i_axi_r_valid, i_axi_r_ready;
+    logic        i_axi_r_valid;
+    logic        i_axi_r_ready;
     logic [31:0] i_axi_r_data;
-    logic  [7:0] i_axi_r_id;
+    logic  [0:0] i_axi_r_id;
     logic  [1:0] i_axi_r_resp;
     logic        i_axi_r_last;
 
     // Data AXI4 signals
-    logic        d_axi_ar_valid, d_axi_ar_ready;
+    logic        d_axi_ar_valid
+    logic        d_axi_ar_ready;
     logic [31:0] d_axi_ar_addr;
-    logic  [7:0] d_axi_ar_id;
-    logic  [7:0] d_axi_ar_region;
+    logic        d_axi_ar_id;
+    logic  [3:0] d_axi_ar_region;
     logic  [7:0] d_axi_ar_len;
     logic  [2:0] d_axi_ar_size;
     logic  [1:0] d_axi_ar_burst;
     logic        d_axi_ar_lock;
     logic  [3:0] d_axi_ar_cache;
-    logic  [7:0] d_axi_ar_qos;
+    logic  [3:0] d_axi_ar_qos;
     logic  [2:0] d_axi_ar_prot;
-    logic        d_axi_r_valid, d_axi_r_ready;
+    logic        d_axi_r_valid;
+    logic        d_axi_r_ready;
     logic [31:0] d_axi_r_data;
     logic        d_axi_r_id;
     logic  [1:0] d_axi_r_resp;
     logic        d_axi_r_last;
 
-    logic        d_axi_aw_valid, d_axi_aw_ready;
+    logic        d_axi_aw_valid;
+    logic        d_axi_aw_ready;
     logic [31:0] d_axi_aw_addr;
-    logic  [7:0] d_axi_aw_id;
-    logic  [7:0] d_axi_aw_region;
+    logic  [0:0] d_axi_aw_id;
+    logic  [3:0] d_axi_aw_region;
     logic  [7:0] d_axi_aw_len;
     logic  [2:0] d_axi_aw_size;
     logic  [1:0] d_axi_aw_burst;
     logic        d_axi_aw_lock;
     logic  [3:0] d_axi_aw_cache;
-    logic  [7:0] d_axi_aw_qos;
+    logic  [3:0] d_axi_aw_qos;
     logic  [2:0] d_axi_aw_prot;
-    logic        d_axi_w_valid, d_axi_w_ready;
+    logic        d_axi_w_valid;
+    logic        d_axi_w_ready;
     logic [31:0] d_axi_w_data;
     logic  [3:0] d_axi_w_strb;
     logic        d_axi_w_last;
-    logic        d_axi_b_valid, d_axi_b_ready;
-    logic  [7:0] d_axi_b_id;
+    logic        d_axi_b_valid;
+    logic        d_axi_b_ready;
+    logic  [0:0] d_axi_b_id;
     logic  [1:0] d_axi_b_resp;
 
-axi_axil_adapter_rd IAdapter 
+axi_axil_adapter_rd #(
+    AXI_ID_WIDTH(1)
+)
+IAdapter 
 (
     .clk(aclk),
     .rst(~aresetn),
@@ -119,7 +129,10 @@ axi_axil_adapter_rd IAdapter
     .m_axil_rready(i_m_axil_rready)
 );
 
-axi_axil_adapter DAdapter 
+axi_axil_adapter #(
+    AXI_ID_WIDTH(1)
+)
+DAdapter 
 (
     .clk(aclk),
     .rst(~aresetn),
