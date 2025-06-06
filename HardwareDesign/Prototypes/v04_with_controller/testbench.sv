@@ -61,14 +61,12 @@ Top Top
     
 integer i; 
 initial begin
-	for(i = 65536; i < 65536 + 512; i++) begin
-		//$dumpvars(0, SDRAM.Bank0[i]);
-	end
 	$dumpvars(1, testbench);
 	$dumpvars(0, Top.Controller);
 	$dumpvars(0, Top.Processor);
+	$dumpvars(1, Top.GraphicSystem.gpu);
 
-	#4000000
+	#40000000
 	$finish;
 end
 

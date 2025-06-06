@@ -13,7 +13,7 @@ module Top
 	output logic[12:0]  sdram_a,
 	output logic[1:0]   sdram_ba,
 	output logic[1:0]   sdram_dqm,
-	inout  logic[15:0]  sdram_d,
+	inout  logic[15:0]  sdram_d, 
 
     output logic        sd_clk,
     output logic        sd_cmd,
