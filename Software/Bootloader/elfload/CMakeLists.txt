@@ -17,7 +17,7 @@ add_library("elfload" STATIC
 #add_executable("elfloader" "elfloader.c")
 #target_link_libraries("elfloader" "elfload")
 
-#add_executable("sample" "sample.c")
+add_executable("sample" "sample.c")
 
 if (CMAKE_COMPILER_IS_GNUCC)
 	set_target_properties("sample" PROPERTIES COMPILE_OPTIONS "-nostartfiles")

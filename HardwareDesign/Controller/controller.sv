@@ -12,7 +12,7 @@ module Controller (
 
     input  logic cont1_data,
     output logic cont1_clk = 0,
-    output logic cont1_activate,
+    output logic cont1_activate
 );
 
 logic[11:0] controller0_btns;
