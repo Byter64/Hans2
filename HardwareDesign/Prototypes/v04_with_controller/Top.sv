@@ -1,4 +1,4 @@
-`define NO_CONTROLLER_ATTACHED
+//`define NO_CONTROLLER_ATTACHED
 module Top
 (
     input logic  clk_25mhz,
@@ -362,7 +362,7 @@ logic[31:0] CONT_true_rdata;
 `ifdef NO_CONTROLLER_ATTACHED
 assign CONT_true_rdata = {btn[2], btn[6], btn[5], btn[4], btn[3], 3'b0, btn[1]};
 `else
-assign CONT_true_rdata = CONT_true_rdata;
+assign CONT_true_rdata = CONT_s_axil_rdata;
 `endif
 
 //This should be replaced by the Audiosystems' 32 kHz clock
