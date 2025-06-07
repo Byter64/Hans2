@@ -206,7 +206,7 @@ end
 logic next_arvalid;
 logic[DATA_WIDTH-1:0] next_ardata;
 assign next_arvalid = gpu_MemRead;
-assign next_ardata = gpu_MemAddr;
+assign next_ardata = {gpu_MemAddr[31:2], 2'b00};
 
 always_ff @(posedge aclk) begin
 	if (!aresetn)
@@ -236,7 +236,7 @@ end
 always_ff @(posedge aclk) begin
 	gpu_MemValid <= 0;
     if (m_axil_rvalid && m_axil_rready) begin
-		gpu_MemData <= m_axil_rdata;
+		gpu_MemData <= gpu_MemAddr[1] ? m_axil_rdata[31:16] : m_axil_rdata[15:0];
         gpu_MemValid <= 1;
     end
 end
