@@ -53,7 +53,7 @@ module VexRiscvAxiLite (
     logic        i_axi_r_last;
 
     // Data AXI4 signals
-    logic        d_axi_ar_valid
+    logic        d_axi_ar_valid;
     logic        d_axi_ar_ready;
     logic [31:0] d_axi_ar_addr;
     logic        d_axi_ar_id;
@@ -95,7 +95,7 @@ module VexRiscvAxiLite (
     logic  [1:0] d_axi_b_resp;
 
 axi_axil_adapter_rd #(
-    AXI_ID_WIDTH(1)
+    .AXI_ID_WIDTH(1)
 )
 IAdapter 
 (
@@ -130,7 +130,7 @@ IAdapter
 );
 
 axi_axil_adapter #(
-    AXI_ID_WIDTH(1)
+    .AXI_ID_WIDTH(1)
 )
 DAdapter 
 (
