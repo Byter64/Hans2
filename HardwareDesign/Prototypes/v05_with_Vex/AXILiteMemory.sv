@@ -36,7 +36,7 @@ module AXILiteMemory #(
 
 bit[ADDR_WIDTH-1:0] memory[MEMORY_DEPTH];
 //initial $readmemh("C:/Hans2/HardwareDesign/Prototypes/v03_CPU_GPU_SDRAM_SDCard/Software/firmware32.hex", memory);
-initial $readmemh("/home/timo/git-projects/Hans2/HardwareDesign/Prototypes/v03_CPU_GPU_SDRAM_SDCard/Software/firmware32.hex", memory);
+initial $readmemh("C:/Users/Yanni/Documents/Hans2/HardwareDesign/Prototypes/v05_with_Vex/Software/firmware32.hex", memory);
 
 //Address Write
 logic[ADDR_WIDTH-1:0] aw_address = 'b0;
@@ -57,14 +57,17 @@ always @(posedge aclk) begin
 		s_axil_wready <= 1;
 end
 
-
+logic write_happened = 0;
 always @(posedge aclk) begin
 	if (s_axil_wvalid && s_axil_wready) begin //Never add any other conditions. This is likely to break axi
     if(s_axil_wstrb[0]) memory[aw_address_real[31:2]][7 -: 8] <= s_axil_wdata[7 -: 8];
     if(s_axil_wstrb[1]) memory[aw_address_real[31:2]][15 -: 8] <= s_axil_wdata[15 -: 8];
     if(s_axil_wstrb[2]) memory[aw_address_real[31:2]][23 -: 8] <= s_axil_wdata[23 -: 8];
     if(s_axil_wstrb[3]) memory[aw_address_real[31:2]][31 -: 8] <= s_axil_wdata[31 -: 8];
+    write_happened <= 1;
   end
+  if(s_axil_bvalid && s_axil_bready)
+    write_happened <= 0;
 end
 
 //Write response
@@ -72,7 +75,11 @@ always @(posedge aclk) begin
 	if (!aresetn)
 		s_axil_bvalid <= 0;
 	else if (!s_axil_bvalid || s_axil_bready) begin
-		s_axil_bvalid <= 1;
+		if(write_happened) begin
+      s_axil_bvalid <= 1;
+    end
+    if(s_axil_bvalid & s_axil_bready)
+      s_axil_bvalid <= 0;
   end
 end
 
