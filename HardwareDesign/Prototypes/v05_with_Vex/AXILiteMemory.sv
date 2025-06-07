@@ -36,7 +36,9 @@ module AXILiteMemory #(
 
 bit[ADDR_WIDTH-1:0] memory[MEMORY_DEPTH];
 //initial $readmemh("C:/Hans2/HardwareDesign/Prototypes/v03_CPU_GPU_SDRAM_SDCard/Software/firmware32.hex", memory);
-initial $readmemh("C:/Users/Yanni/Documents/Hans2/HardwareDesign/Prototypes/v05_with_Vex/Software/firmware32.hex", memory);
+//initial $readmemh("C:/Users/Yanni/Documents/Hans2/HardwareDesign/Prototypes/v05_with_Vex/Software/firmware32.hex", memory);
+initial $readmemh("C:/Users/Yanni/Desktop/Praesigame/build/code/game32.hex", memory);
+
 
 //Address Write
 logic[ADDR_WIDTH-1:0] aw_address = 'b0;
@@ -78,7 +80,7 @@ always @(posedge aclk) begin
 		if(write_happened) begin
       s_axil_bvalid <= 1;
     end
-    if(s_axil_bvalid & s_axil_bready)
+    if(s_axil_bvalid && s_axil_bready)
       s_axil_bvalid <= 0;
   end
 end
@@ -86,6 +88,7 @@ end
 //Address Read
 logic[ADDR_WIDTH-1:0] ar_address = 'b0;
 logic[31:0] ar_address_real;
+logic read_registered = 0;
 assign ar_address_real = (s_axil_arvalid && s_axil_arready ? s_axil_araddr : ar_address) - OFFSET;
 always @(posedge aclk) begin
 		s_axil_arready <= 1;
@@ -94,25 +97,31 @@ end
 always @(posedge aclk) begin
 	if (s_axil_arvalid && s_axil_arready) begin //Never add any other conditions. This is likely to break axi
 		ar_address <= s_axil_araddr;
-    end
+    read_registered <= 1;
+  end
+  else if(s_axil_rready && s_axil_rvalid)
+    read_registered <= 0;
 end
 
 //Read
 //This is not AXI compliant, but I could not think of a better way to invalidate s_axil_rdata if address is written at the sime time as data is read
-assign s_axil_rvalid = !aresetn ? 0 : !(s_axil_arvalid && s_axil_arready);
+logic next_rvalid; //Assign your valid logic to this signal
+assign next_rvalid = (s_axil_rvalid && s_axil_rready) ? 0 : read_registered ? 1 : s_axil_rvalid;
 
-logic[31:0] read_data;
-always @(*) begin
-  s_axil_rdata = read_data;
+always_ff @(posedge aclk) begin
+	if (!aresetn)
+		s_axil_rvalid <= 0;
+	else if (!s_axil_rvalid || s_axil_rready) begin
+		s_axil_rvalid <= next_rvalid;
+    end
 end
 
-
-always @(posedge aclk) begin
+always_ff @(posedge aclk) begin
 	if (!aresetn)
-		read_data <= 0;
+		s_axil_rdata <= 0;
 	else if (!s_axil_rvalid || s_axil_rready)
 	begin
-    read_data <= memory[ar_address_real[31:2]];
+		s_axil_rdata <= memory[ar_address_real[31:2]];
 	end
 end
 endmodule
