@@ -195,9 +195,9 @@ end
 always_ff @(posedge aclk) begin
 	if (m_axil_rvalid && m_axil_rready) begin
         if(next_m_araddr[1])
-            i_sample <= {m_axil_rdata[23:16], m_axil_rdata[31:24]};
-        else
             i_sample <= {m_axil_rdata[7:0], m_axil_rdata[15:8]};
+        else
+            i_sample <= {m_axil_rdata[23:16], m_axil_rdata[31:24]};
     end
 end
 

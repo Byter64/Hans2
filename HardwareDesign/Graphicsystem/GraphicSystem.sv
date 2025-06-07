@@ -236,7 +236,7 @@ end
 always_ff @(posedge aclk) begin
 	gpu_MemValid <= 0;
     if (m_axil_rvalid && m_axil_rready) begin
-		gpu_MemData <= gpu_MemAddr[1] ? m_axil_rdata[31:16] : m_axil_rdata[15:0];
+		gpu_MemData <= gpu_MemAddr[1] ? m_axil_rdata[15:0] : m_axil_rdata[31:16];
         gpu_MemValid <= 1;
     end
 end
