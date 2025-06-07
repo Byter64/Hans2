@@ -44,7 +44,6 @@ always_ff @(posedge hdmi_pixClk) begin
 	resetn <= reset_counter == 255;
 end
   
-wire clk_7mhz;  
 wire clk_50mhz;
 wire clk_130mhz;
 ecp5pll #(
