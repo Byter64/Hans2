@@ -154,6 +154,22 @@ always_ff @(posedge aclk) loadingState <= nextLoadingState;
 //###############################################
 //AXI MASTER
 //AXI ADDRESS READ
+logic[31:0] next_m_araddr;
+
+always_comb begin :
+    case (nextChannelState)
+        0: next_m_araddr        = o_nextSampleAddress[0];
+        1: next_m_araddr        = o_nextSampleAddress[1];
+        2: next_m_araddr        = o_nextSampleAddress[2];
+        3: next_m_araddr        = o_nextSampleAddress[3];
+        4: next_m_araddr        = o_nextSampleAddress[4];
+        5: next_m_araddr        = o_nextSampleAddress[5];
+        6: next_m_araddr        = o_nextSampleAddress[6];
+        7: next_m_araddr        = o_nextSampleAddress[7];
+        default: next_m_araddr  = o_nextSampleAddress[0];
+    endcase
+end
+
 always_ff @(posedge aclk) begin
 	if (!aresetn)
 		m_axil_arvalid <= 0;
@@ -166,17 +182,7 @@ always_ff @(posedge aclk) begin
 		m_axil_araddr <= 0;
 	else if (!m_axil_arvalid || m_axil_arready)
 	begin
-		case (nextChannelState)
-            0: m_axil_araddr <= o_nextSampleAddress[0];
-            1: m_axil_araddr <= o_nextSampleAddress[1];
-            2: m_axil_araddr <= o_nextSampleAddress[2];
-            3: m_axil_araddr <= o_nextSampleAddress[3];
-            4: m_axil_araddr <= o_nextSampleAddress[4];
-            5: m_axil_araddr <= o_nextSampleAddress[5];
-            6: m_axil_araddr <= o_nextSampleAddress[6];
-            7: m_axil_araddr <= o_nextSampleAddress[7];
-            default: m_axil_araddr <= o_nextSampleAddress[0];
-        endcase
+		m_axil_araddr <= { next_m_araddr, 2'b00 };
     end
 end
 // AXI ADDRESS READ END
@@ -188,7 +194,10 @@ end
 
 always_ff @(posedge aclk) begin
 	if (m_axil_rvalid && m_axil_rready) begin
-        i_sample <= {m_axil_rdata[7:0], m_axil_rdata[15:8]};
+        if(next_m_araddr[1])
+            i_sample <= {m_axil_rdata[23:16], m_axil_rdata[31:24]};
+        else
+            i_sample <= {m_axil_rdata[7:0], m_axil_rdata[15:8]};
     end
 end
 
