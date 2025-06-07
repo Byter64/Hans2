@@ -13,11 +13,13 @@ module Controller (
     output logic cont0_activate,
 
     input  logic cont1_data,
-    output logic cont1_clk = 0,
+    output logic cont1_clk,
     output logic cont1_activate
 );
 
 assign s_axil_rresp = 0;
+assign cont1_clk = cont0_clk;
+assign cont1_activate = cont0_activate;
 
 logic[15:0] controller0_btns;
 logic[15:0] controller1_btns;
