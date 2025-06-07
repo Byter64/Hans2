@@ -34,10 +34,12 @@ module AXILiteMemory #(
     input  logic                         s_axil_rready
 );
 
+assign s_axil_rresp = 0;
+
 bit[ADDR_WIDTH-1:0] memory[MEMORY_DEPTH];
 //initial $readmemh("C:/Hans2/HardwareDesign/Prototypes/v03_CPU_GPU_SDRAM_SDCard/Software/firmware32.hex", memory);
-//initial $readmemh("C:/Users/Yanni/Documents/Hans2/HardwareDesign/Prototypes/v05_with_Vex/Software/firmware32.hex", memory);
-initial $readmemh("C:/Users/Yanni/Desktop/Praesigame/build/code/game32.hex", memory);
+initial $readmemh("C:/Users/Yanni/Documents/Hans2/HardwareDesign/Prototypes/v05_with_Vex/Software/firmware32.hex", memory);
+//initial $readmemh("C:/Users/Yanni/Desktop/Praesigame/build/code/game32.hex", memory);
 
 
 //Address Write
