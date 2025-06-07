@@ -1948,7 +1948,7 @@ module VexRiscvAxi4 #(
   wire                when_Utils_l716;
   wire                dbus_axi_b_fire;
   reg                 _zz_when_Utils_l751;
-  reg                 _zz_when_Utils_l751_1;
+  reg                 _zz_when_Utils_l751_1 = 0;
   reg        [2:0]    _zz_dBus_cmd_ready;
   reg        [2:0]    _zz_dBus_cmd_ready_1;
   wire                when_Utils_l751;
