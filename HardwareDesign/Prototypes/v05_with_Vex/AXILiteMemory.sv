@@ -96,12 +96,7 @@ assign s_axil_rvalid = !aresetn ? 0 : !(s_axil_arvalid && s_axil_arready);
 
 logic[31:0] read_data;
 always @(*) begin
-    case (ar_address_real[1:0])
-      2'b00: s_axil_rdata = (read_data >>  0) & 'hFFFFFFFF;
-      2'b01: s_axil_rdata = (read_data >>  8) & 'hFF;
-      2'b10: s_axil_rdata = (read_data >> 16) & 'hFFFF;
-      2'b11: s_axil_rdata = (read_data >> 24) & 'hFF;
-    endcase
+  s_axil_rdata = read_data;
 end
 
 
