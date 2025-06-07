@@ -33,7 +33,7 @@ static void check(el_status stat, const char* text)
 	{
 		ScreenPrint("Error:");
 		ScreenPrintByte(stat);
-		//SetStatus(text, -1, 20);
+		SetStatus(text, -1, 20);
 		while(true);
 	}
 }
