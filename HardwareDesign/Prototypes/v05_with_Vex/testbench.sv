@@ -65,6 +65,7 @@ initial begin
 	$dumpvars(0, Top.Processor);
 	$dumpvars(1, Top);
 	$dumpvars(0, Top.AxiCrossbar);
+	$dumpvars(0, Top.Bootloader);
 
 	#100000
 	$finish;
