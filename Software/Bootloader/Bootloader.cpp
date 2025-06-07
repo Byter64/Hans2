@@ -52,7 +52,7 @@ int main()
 	#endif
 
 	#ifndef SIMULATION
-	SetStatus("Mounting SD-Card...", 0, 20);
+	SetStatus("Mounting SD-Card...", 0, 15);
 	#endif
 	fatfsResult = f_mount(&FatFs, "", 0);
     is_mounted = 1;
@@ -134,13 +134,13 @@ int main()
 	ctx.base_load_paddr = (uintptr_t)loadAddress;
 	
 	#ifndef SIMULATION
-	SetStatus("Loading .elf file...", 40, 120);
+	SetStatus("Loading .elf file...", 40, 55);
 	#endif
 	result = el_load(&ctx, memoryAllocation);
 	check(result, "Load FAILED!");
 
 	#ifndef SIMULATION
-	SetStatus("Resolving relocations...", 80, 120);
+	SetStatus("Resolving relocations...", 80, 15);
 	#endif
 	result = el_relocate(&ctx);
 	check(result, "Relocs FAILED!");
@@ -148,7 +148,7 @@ int main()
 	uintptr_t entryPoint = ctx.ehdr.e_entry + (uintptr_t)loadAddress;
 
 	#ifndef SIMULATION
-	SetStatus("Succeeded. What a journey man, Have fun :)", 100, 120);
+	SetStatus("Succeeded. What a journey man, Have fun :)", 100, 40);
 	#endif
 	int (*loadedMain)() = (int (*)())entryPoint;
 	loadedMain();
