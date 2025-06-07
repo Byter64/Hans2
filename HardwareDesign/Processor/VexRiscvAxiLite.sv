@@ -187,7 +187,7 @@ DAdapter
     .m_axil_araddr(d_m_axil_araddr),
     .m_axil_arprot(d_m_axil_arprot),
     .m_axil_arvalid(d_m_axil_arvalid),
-    .m_axil_arready(d_m_axil_rready),
+    .m_axil_arready(d_m_axil_arready),
     .m_axil_rdata(d_m_axil_rdata),
     .m_axil_rresp(d_m_axil_rresp),
     .m_axil_rvalid(d_m_axil_rvalid),
