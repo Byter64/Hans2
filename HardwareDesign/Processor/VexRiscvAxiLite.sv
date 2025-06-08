@@ -94,105 +94,144 @@ module VexRiscvAxiLite (
     logic  [0:0] d_axi_b_id;
     logic  [1:0] d_axi_b_resp;
 
-axi_axil_adapter_rd #(
-    .AXI_ID_WIDTH(1)
-)
-IAdapter 
-(
-    .clk(aclk),
-    .rst(~aresetn),
+    // Remove the axi_axil_adapter instantiations and replace with mkaxi2axil_bridge
 
-    .s_axi_arid(i_axi_ar_id),
-    .s_axi_araddr(i_axi_ar_addr),
-    .s_axi_arlen(i_axi_ar_len),
-    .s_axi_arsize(i_axi_ar_size),
-    .s_axi_arburst(i_axi_ar_burst),
-    .s_axi_arlock(i_axi_ar_lock),
-    .s_axi_arcache(i_axi_ar_cache),
-    .s_axi_arprot(i_axi_ar_prot),
-    .s_axi_arvalid(i_axi_ar_valid),
-    .s_axi_arready(i_axi_ar_ready),
-    .s_axi_rid(i_axi_r_id),
-    .s_axi_rdata(i_axi_r_data),
-    .s_axi_rresp(i_axi_r_resp),
-    .s_axi_rlast(i_axi_r_last),
-    .s_axi_rvalid(i_axi_r_valid),
-    .s_axi_rready(i_axi_r_ready),
+    // Instruction AXI4 to AXI4-Lite Bridge
+    mkaxi2axil_bridge IBridge (
+        .CLK(aclk),
+        .RST_N(aresetn),
 
-    .m_axil_araddr(i_m_axil_araddr),
-    .m_axil_arprot(i_m_axil_arprot),
-    .m_axil_arvalid(i_m_axil_arvalid),
-    .m_axil_arready(i_m_axil_arready),
-    .m_axil_rdata(i_m_axil_rdata),
-    .m_axil_rresp(i_m_axil_rresp),
-    .m_axil_rvalid(i_m_axil_rvalid),
-    .m_axil_rready(i_m_axil_rready)
-);
+        // AXI4 Instruction (from VexRiscv)
+        .AXI4_ARVALID(i_axi_ar_valid),
+        .AXI4_ARADDR(i_axi_ar_addr),
+        .AXI4_ARLEN(i_axi_ar_len),
+        .AXI4_ARSIZE(i_axi_ar_size),
+        .AXI4_ARBURST(i_axi_ar_burst),
+        .AXI4_ARLOCK(i_axi_ar_lock),
+        .AXI4_ARCACHE(i_axi_ar_cache),
+        .AXI4_ARPROT(i_axi_ar_prot),
+        .AXI4_ARQOS(i_axi_ar_qos),
+        .AXI4_ARREGION(i_axi_ar_region),
+        .AXI4_ARREADY(i_axi_ar_ready),
 
-axi_axil_adapter #(
-    .AXI_ID_WIDTH(1)
-)
-DAdapter 
-(
-    .clk(aclk),
-    .rst(~aresetn),
+        .AXI4_RVALID(i_axi_r_valid),
+        .AXI4_RDATA(i_axi_r_data),
+        .AXI4_RRESP(i_axi_r_resp),
+        .AXI4_RLAST(i_axi_r_last),
+        .AXI4_RREADY(i_axi_r_ready),
 
-    .s_axi_awid(d_axi_aw_id),
-    .s_axi_awaddr(d_axi_aw_addr),
-    .s_axi_awlen(d_axi_aw_len),
-    .s_axi_awsize(d_axi_aw_size),
-    .s_axi_awburst(d_axi_aw_burst),
-    .s_axi_awlock(d_axi_aw_lock),
-    .s_axi_awcache(d_axi_aw_cache),
-    .s_axi_awprot(d_axi_aw_prot),
-    .s_axi_awvalid(d_axi_aw_valid),
-    .s_axi_awready(d_axi_aw_ready),
-    .s_axi_wdata(d_axi_w_data),
-    .s_axi_wstrb(d_axi_w_strb),
-    .s_axi_wlast(d_axi_w_last),
-    .s_axi_wvalid(d_axi_w_valid),
-    .s_axi_wready(d_axi_w_ready),
-    .s_axi_bid(d_axi_b_id),
-    .s_axi_bresp(d_axi_b_resp),
-    .s_axi_bvalid(d_axi_b_valid),
-    .s_axi_bready(d_axi_b_ready),
-    .s_axi_arid(d_axi_ar_id),
-    .s_axi_araddr(d_axi_ar_addr),
-    .s_axi_arlen(d_axi_ar_len),
-    .s_axi_arsize(d_axi_ar_size),
-    .s_axi_arburst(d_axi_ar_burst),
-    .s_axi_arlock(d_axi_ar_lock),
-    .s_axi_arcache(d_axi_ar_cache),
-    .s_axi_arprot(d_axi_ar_prot),
-    .s_axi_arvalid(d_axi_ar_valid),
-    .s_axi_arready(d_axi_ar_ready),
-    .s_axi_rid(d_axi_r_id),
-    .s_axi_rdata(d_axi_r_data),
-    .s_axi_rresp(d_axi_r_resp),
-    .s_axi_rlast(d_axi_r_last),
-    .s_axi_rvalid(d_axi_r_valid),
-    .s_axi_rready(d_axi_r_ready),
+        .AXI4_AWVALID(), // Not used for instruction
+        .AXI4_AWADDR(32'b0),
+        .AXI4_AWLEN(8'b0),
+        .AXI4_AWSIZE(3'b0),
+        .AXI4_AWBURST(2'b0),
+        .AXI4_AWLOCK(1'b0),
+        .AXI4_AWCACHE(4'b0),
+        .AXI4_AWPROT(3'b0),
+        .AXI4_AWQOS(4'b0),
+        .AXI4_AWREGION(4'b0),
+        .AXI4_AWREADY(),
 
-    .m_axil_awaddr(d_m_axil_awaddr),
-    .m_axil_awprot(d_m_axil_awprot),
-    .m_axil_awvalid(d_m_axil_awvalid),
-    .m_axil_awready(d_m_axil_awready),
-    .m_axil_wdata(d_m_axil_wdata),
-    .m_axil_wstrb(d_m_axil_wstrb),
-    .m_axil_wvalid(d_m_axil_wvalid),
-    .m_axil_wready(d_m_axil_wready),
-    .m_axil_bresp(d_m_axil_bresp),
-    .m_axil_bvalid(d_m_axil_bvalid),
-    .m_axil_bready(d_m_axil_bready),
-    .m_axil_araddr(d_m_axil_araddr),
-    .m_axil_arprot(d_m_axil_arprot),
-    .m_axil_arvalid(d_m_axil_arvalid),
-    .m_axil_arready(d_m_axil_arready),
-    .m_axil_rdata(d_m_axil_rdata),
-    .m_axil_rresp(d_m_axil_rresp),
-    .m_axil_rvalid(d_m_axil_rvalid),
-    .m_axil_rready(d_m_axil_rready)
-);
+        .AXI4_WVALID(1'b0),
+        .AXI4_WDATA(32'b0),
+        .AXI4_WSTRB(4'b0),
+        .AXI4_WLAST(1'b0),
+        .AXI4_WREADY(),
+
+        .AXI4_BVALID(),
+        .AXI4_BRESP(),
+        .AXI4_BREADY(1'b0),
+
+        // AXI4-Lite Master (Instruction)
+        .AXI4L_ARVALID(i_m_axil_arvalid),
+        .AXI4L_ARADDR(i_m_axil_araddr),
+        .AXI4L_ARPROT(i_m_axil_arprot),
+        .AXI4L_ARREADY(i_m_axil_arready),
+        .AXI4L_RVALID(i_m_axil_rvalid),
+        .AXI4L_RRESP(i_m_axil_rresp),
+        .AXI4L_RDATA(i_m_axil_rdata),
+        .AXI4L_RREADY(i_m_axil_rready),
+
+        .AXI4L_AWVALID(),
+        .AXI4L_AWADDR(),
+        .AXI4L_AWPROT(),
+        .AXI4L_AWREADY(),
+        .AXI4L_WVALID(),
+        .AXI4L_WDATA(),
+        .AXI4L_WSTRB(),
+        .AXI4L_WREADY(),
+        .AXI4L_BVALID(),
+        .AXI4L_BRESP(),
+        .AXI4L_BREADY()
+    );
+
+    // Data AXI4 to AXI4-Lite Bridge
+    mkaxi2axil_bridge DBridge (
+        .CLK(aclk),
+        .RST_N(aresetn),
+
+        // AXI4 Data (from VexRiscv)
+        .AXI4_AWVALID(d_axi_aw_valid),
+        .AXI4_AWADDR(d_axi_aw_addr),
+        .AXI4_AWLEN(d_axi_aw_len),
+        .AXI4_AWSIZE(d_axi_aw_size),
+        .AXI4_AWBURST(d_axi_aw_burst),
+        .AXI4_AWLOCK(d_axi_aw_lock),
+        .AXI4_AWCACHE(d_axi_aw_cache),
+        .AXI4_AWPROT(d_axi_aw_prot),
+        .AXI4_AWQOS(d_axi_aw_qos),
+        .AXI4_AWREGION(d_axi_aw_region),
+        .AXI4_AWREADY(d_axi_aw_ready),
+
+        .AXI4_WVALID(d_axi_w_valid),
+        .AXI4_WDATA(d_axi_w_data),
+        .AXI4_WSTRB(d_axi_w_strb),
+        .AXI4_WLAST(d_axi_w_last),
+        .AXI4_WREADY(d_axi_w_ready),
+
+        .AXI4_BVALID(d_axi_b_valid),
+        .AXI4_BRESP(d_axi_b_resp),
+        .AXI4_BREADY(d_axi_b_ready),
+
+        .AXI4_ARVALID(d_axi_ar_valid),
+        .AXI4_ARADDR(d_axi_ar_addr),
+        .AXI4_ARLEN(d_axi_ar_len),
+        .AXI4_ARSIZE(d_axi_ar_size),
+        .AXI4_ARBURST(d_axi_ar_burst),
+        .AXI4_ARLOCK(d_axi_ar_lock),
+        .AXI4_ARCACHE(d_axi_ar_cache),
+        .AXI4_ARPROT(d_axi_ar_prot),
+        .AXI4_ARQOS(d_axi_ar_qos),
+        .AXI4_ARREGION(d_axi_ar_region),
+        .AXI4_ARREADY(d_axi_ar_ready),
+
+        .AXI4_RVALID(d_axi_r_valid),
+        .AXI4_RDATA(d_axi_r_data),
+        .AXI4_RRESP(d_axi_r_resp),
+        .AXI4_RLAST(d_axi_r_last),
+        .AXI4_RREADY(d_axi_r_ready),
+
+        // AXI4-Lite Master (Data)
+        .AXI4L_AWVALID(d_m_axil_awvalid),
+        .AXI4L_AWADDR(d_m_axil_awaddr),
+        .AXI4L_AWPROT(d_m_axil_awprot),
+        .AXI4L_AWREADY(d_m_axil_awready),
+        .AXI4L_WVALID(d_m_axil_wvalid),
+        .AXI4L_WDATA(d_m_axil_wdata),
+        .AXI4L_WSTRB(d_m_axil_wstrb),
+        .AXI4L_WREADY(d_m_axil_wready),
+        .AXI4L_BVALID(d_m_axil_bvalid),
+        .AXI4L_BRESP(d_m_axil_bresp),
+        .AXI4L_BREADY(d_m_axil_bready),
+        .AXI4L_ARVALID(d_m_axil_arvalid),
+        .AXI4L_ARADDR(d_m_axil_araddr),
+        .AXI4L_ARPROT(d_m_axil_arprot),
+        .AXI4L_ARREADY(d_m_axil_arready),
+        .AXI4L_RVALID(d_m_axil_rvalid),
+        .AXI4L_RRESP(d_m_axil_rresp),
+        .AXI4L_RDATA(d_m_axil_rdata),
+        .AXI4L_RREADY(d_m_axil_rready)
+    );
 
     // VexRiscvAxi4 instance
     VexRiscvAxi4 #(
