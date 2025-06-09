@@ -26,7 +26,7 @@ object GenFullAXI{
       //CPU configuration
       val cpuConfig = VexRiscvConfig(
         plugins = List(
-          new IBusCachedPlugin(
+        new IBusCachedPlugin(
         resetVector = 0x2010000,
         prediction = STATIC,
         config = InstructionCacheConfig(
@@ -39,8 +39,8 @@ object GenFullAXI{
           catchIllegalAccess = false,
           catchAccessFault = false,
           asyncTagMemory = false,
-          twoCycleRam = true,
-          twoCycleCache = true
+          twoCycleRam = false,
+          twoCycleCache = false
         )
       ),
       new DBusCachedPlugin(
@@ -56,8 +56,11 @@ object GenFullAXI{
           catchUnaligned    = false
         )
       ),
+      new StaticMemoryTranslatorPlugin(
+        ioRange  = (addr:UInt) => addr >= 0x02000000 && addr < 0x2010000
+      ),
       new DecoderSimplePlugin(
-        catchIllegalInstruction = true
+        catchIllegalInstruction = false
       ),
       new RegFilePlugin(
         regFileReadyKind = plugin.SYNC,
@@ -79,20 +82,21 @@ object GenFullAXI{
         pessimisticAddressMatch = false
       ),
       new MulPlugin,
-      new DivPlugin,
-      new StaticMemoryTranslatorPlugin(
-        ioRange  = (addr:UInt) => addr >= 0x02000000 && addr < 0x2010000
+      new MulDivIterativePlugin(
+        genMul = false,
+        genDiv = true,
+        divUnrollFactor = 8
       ),
-      new DebugPlugin(ClockDomain.current.clone(reset = Bool().setName("debugReset"))),
       new BranchPlugin(
         earlyBranch = false,
-        catchAddressMisaligned = true
+        catchAddressMisaligned = false
       ),
-          new YamlPlugin("cpu0.yaml"),
+      new YamlPlugin("cpu0.yaml"),
 			new FpuPlugin(
 				externalFpu = false,
-				p = new FpuParameter(withDouble = false, asyncRegFile = false, mulWidthA = 18, mulWidthB = 18)
+				p = new FpuParameter(withDouble = false, asyncRegFile = true, mulWidthA = 18, mulWidthB = 18)
 			),
+      new CsrPlugin(CsrPluginConfig.smallest(0x7FFF0000)),
         )
       )
 
