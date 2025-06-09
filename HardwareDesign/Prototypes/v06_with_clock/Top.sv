@@ -73,7 +73,7 @@ localparam STRB_WIDTH = 4;
 localparam BOOTLOADER_START = 32'h0201_0000;
 //						  {SDRAM, Graphicsystem, Bootloader, 	  Controller,	Counter,		SDCARD}
 localparam M_BASE_ADDR  = {32'h0, 32'h200_0000, BOOTLOADER_START, 32'h02000200, 32'h02000300, 	32'h8000_0000};
-localparam M_ADDR_WIDTH = {32'd25, 32'd8,		32'd16,			  32'd2,		32'd3,			32'd31};
+localparam M_ADDR_WIDTH = {32'd25, 32'd8,		32'd16,			  32'd2,		32'd8,			32'd31};
            
 logic         DCPU_mem_axi_awvalid;
 logic         DCPU_mem_axi_awready;

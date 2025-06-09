@@ -26,7 +26,7 @@ module counter #(
 
     logic[DATA_WIDTH-1:0] next_rData; //Assign the data here
     logic[63:0] counter = 0;
-    logic[ADDR_WIDTH-1:0] address;
+    logic[7:0] address;
 
     always_ff @(posedge aclk) begin      
         counter <= counter + 1;
@@ -36,7 +36,7 @@ module counter #(
     end
 
     always @* begin
-        case (address[31:2]) //So that the CPU can stick to address alignment
+        case (address) //So that the CPU can stick to address alignment
             0: next_rData = counter[63:32];
             1: next_rData = counter[55:24];
             2: next_rData = counter[47:16];
@@ -76,7 +76,7 @@ module counter #(
     always_ff @(posedge aclk) begin
         if (s_axil_arvalid && s_axil_arready) begin //Never add any other conditions. This is likely to break axi
             // Do something
-            address <=  s_axil_araddr;
+            address <=  s_axil_araddr[7:2];
         end
     end
 
