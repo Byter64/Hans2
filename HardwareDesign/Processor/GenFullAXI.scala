@@ -63,8 +63,8 @@ object GenFullAXI{
         )
       ),
       new MmuPlugin(
-        virtualRange = _(31 downto 28) === 0xC,
-        ioRange      = _(31 downto 28) === 0xF
+        virtualRange = (addr:UInt) => !(addr >= 0x02000000 && addr < 0x2010000),
+        ioRange      = (addr:UInt) => addr >= 0x02000000 && addr < 0x2010000
       ),
       new DecoderSimplePlugin(
         catchIllegalInstruction = true
@@ -90,7 +90,9 @@ object GenFullAXI{
       ),
       new MulPlugin,
       new DivPlugin,
-      new CsrPlugin(CsrPluginConfig.small(0x80000020l)),
+      new StaticMemoryTranslatorPlugin(
+        ioRange  = (addr:UInt) => addr >= 0x02000000 && addr < 0x2010000
+      ),
       new DebugPlugin(ClockDomain.current.clone(reset = Bool().setName("debugReset"))),
       new BranchPlugin(
         earlyBranch = false,
