@@ -543,7 +543,7 @@ assign 							{ICPU_mem_axi_rdata		, DCPU_mem_axi_rdata	, GS_m_axil_rdata} 		= A
 assign 							{ICPU_mem_axi_rresp		, DCPU_mem_axi_rresp	, GS_m_axil_rresp} 		= AXI_s_axil_rresp;
 assign 							{ICPU_mem_axi_rvalid	, DCPU_mem_axi_rvalid	, GS_m_axil_rvalid} 	= AXI_s_axil_rvalid;
 assign AXI_s_axil_rready 	= 	{ICPU_mem_axi_rready	, DCPU_mem_axi_rready	, GS_m_axil_rready}	;
-
+ 
 //SLAVE MAP
 //{SDRAM, Graphicsystem, Bootloader, Controrller, SDCard}
 assign 							{SDRAM_s_axil_awaddr, 	GS_s_axil_awaddr, 	BOOT_s_axil_awaddr,		CONT_s_axil_awaddr, SCLK_s_axil_awaddr, SDC_s_axil_awaddr} = AXI_m_axil_awaddr;
