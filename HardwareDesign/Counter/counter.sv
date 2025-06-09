@@ -10,7 +10,6 @@ module counter #(
      * AXI lite slave interfaces
      */
     input  [ADDR_WIDTH-1:0]             s_axil_araddr,
-    input  [2:0]                        s_axil_arprot,
     input                               s_axil_arvalid,
     output                              s_axil_arready,
     output [DATA_WIDTH-1:0]             s_axil_rdata,
@@ -18,6 +17,9 @@ module counter #(
     output                              s_axil_rvalid,
     input                               s_axil_rready
 );
+
+    assign s_axil_rresp = 0;
+
     initial begin 
         assert (DATA_WIDTH > 0); 
     end
