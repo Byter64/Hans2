@@ -36,14 +36,11 @@ object GenFullAXI{
           addressWidth = 32,
           cpuDataWidth = 32,
           memDataWidth = 32,
-          catchIllegalAccess = true,
-          catchAccessFault = true,
+          catchIllegalAccess = false,
+          catchAccessFault = false,
           asyncTagMemory = false,
           twoCycleRam = true,
           twoCycleCache = true
-        ),
-        memoryTranslatorPortConfig = MmuPortConfig(
-          portTlbSize = 4
         )
       ),
       new DBusCachedPlugin(
@@ -54,17 +51,10 @@ object GenFullAXI{
           addressWidth      = 32,
           cpuDataWidth      = 32,
           memDataWidth      = 32,
-          catchAccessError  = true,
-          catchIllegal      = true,
-          catchUnaligned    = true
-        ),
-        memoryTranslatorPortConfig = MmuPortConfig(
-          portTlbSize = 6
+          catchAccessError  = false,
+          catchIllegal      = false,
+          catchUnaligned    = false
         )
-      ),
-      new MmuPlugin(
-        virtualRange = (addr:UInt) => !(addr >= 0x02000000 && addr < 0x2010000),
-        ioRange      = (addr:UInt) => addr >= 0x02000000 && addr < 0x2010000
       ),
       new DecoderSimplePlugin(
         catchIllegalInstruction = true
