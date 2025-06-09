@@ -7,3 +7,4 @@ build/*
 !build/code
 build/code/*
 !build/code/game.elf
+!build/code/game32.hex
