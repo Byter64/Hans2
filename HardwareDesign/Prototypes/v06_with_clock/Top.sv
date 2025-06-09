@@ -561,7 +561,7 @@ assign 							{SDRAM_s_axil_araddr, 	GS_s_axil_araddr, 	BOOT_s_axil_araddr, 	CON
 assign 							{SDRAM_s_axil_arprot, 	GS_s_axil_arprot, 	BOOT_s_axil_arprot, 	CONT_s_axil_arprot,	SCLK_s_axil_arprot,	SDC_s_axil_arprot} = AXI_m_axil_arprot;
 assign 							{SDRAM_s_axil_arvalid,	GS_s_axil_arvalid, 	BOOT_s_axil_arvalid,	CONT_s_axil_arvalid,SCLK_s_axil_arvalid,SDC_s_axil_arvalid} = AXI_m_axil_arvalid;
 assign AXI_m_axil_arready 	= 	{SDRAM_s_axil_arready, 	GS_s_axil_arready, 	BOOT_s_axil_arready,	1'b1,				SCLK_s_axil_arready,SDC_s_axil_arready};
-assign AXI_m_axil_rdata 	= 	{SDRAM_s_axil_rdata, 	GS_s_axil_rdata, 	BOOT_s_axil_rdata, 		CONT_true_rdata, 	SCLK_true_rdata, 	SDC_s_axil_rdata};
+assign AXI_m_axil_rdata 	= 	{SDRAM_s_axil_rdata, 	GS_s_axil_rdata, 	BOOT_s_axil_rdata, 		CONT_true_rdata, 	SCLK_s_axil_rdata, 	SDC_s_axil_rdata};
 assign AXI_m_axil_rresp 	= 	{SDRAM_s_axil_rresp, 	GS_s_axil_rresp, 	BOOT_s_axil_rresp, 		CONT_s_axil_rresp, 	SCLK_s_axil_rresp, 	SDC_s_axil_rresp};
 assign AXI_m_axil_rvalid 	= 	{SDRAM_s_axil_rvalid, 	GS_s_axil_rvalid, 	BOOT_s_axil_rvalid, 	CONT_s_axil_rvalid, SCLK_s_axil_rvalid, SDC_s_axil_rvalid};
 assign 							{SDRAM_s_axil_rready, 	GS_s_axil_rready, 	BOOT_s_axil_rready, 	CONT_s_axil_rready, SCLK_s_axil_rready, SDC_s_axil_rready} = AXI_m_axil_rready;

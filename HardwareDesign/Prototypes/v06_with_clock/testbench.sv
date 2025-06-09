@@ -63,7 +63,7 @@ integer i;
 initial begin
 	$dumpvars(1, testbench);
 	$dumpvars(0, Top.Processor);
-	$dumpvars(1, Top);
+	$dumpvars(0, Top);
 	$dumpvars(0, Top.AxiCrossbar);
 	$dumpvars(0, Top.Bootloader);
 

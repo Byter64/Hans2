@@ -1,21 +1,21 @@
 module counter #(
     parameter DATA_WIDTH = 32,
-    parameter ADDR_WIDTH = 3,
+    parameter ADDR_WIDTH = 32,
     parameter STRB_WIDTH = 4
 ) (
-    input                               aclk,
-    input                               aresetn,
+    input logic                              aclk,
+    input logic                              aresetn,
 
     /*
      * AXI lite slave interfaces
      */
-    input  [ADDR_WIDTH-1:0]             s_axil_araddr,
-    input                               s_axil_arvalid,
-    output                              s_axil_arready,
-    output [DATA_WIDTH-1:0]             s_axil_rdata,
-    output [1:0]                        s_axil_rresp,
-    output                              s_axil_rvalid,
-    input                               s_axil_rready
+    input logic[ADDR_WIDTH-1:0]             s_axil_araddr,
+    input logic                              s_axil_arvalid,
+    output logic                             s_axil_arready,
+    output logic[DATA_WIDTH-1:0]             s_axil_rdata,
+    output logic[1:0]                        s_axil_rresp,
+    output logic                             s_axil_rvalid,
+    input logic                              s_axil_rready
 );
 
     assign s_axil_rresp = 0;
@@ -35,7 +35,7 @@ module counter #(
         end
     end
 
-    always_comb begin : next_rData
+    always @* begin
         case (address[31:2]) //So that the CPU can stick to address alignment
             0: next_rData = counter[63:32];
             1: next_rData = counter[55:24];
