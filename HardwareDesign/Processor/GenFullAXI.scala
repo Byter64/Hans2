@@ -32,7 +32,7 @@ object GenFullAXI{
         config = InstructionCacheConfig(
           cacheSize = 4096,
           bytePerLine =32,
-          wayCount = 1,
+          wayCount = 4,
           addressWidth = 32,
           cpuDataWidth = 32,
           memDataWidth = 32,
@@ -47,7 +47,7 @@ object GenFullAXI{
         config = new DataCacheConfig(
           cacheSize         = 4096,
           bytePerLine       = 32,
-          wayCount          = 1,
+          wayCount          = 4,
           addressWidth      = 32,
           cpuDataWidth      = 32,
           memDataWidth      = 32,
