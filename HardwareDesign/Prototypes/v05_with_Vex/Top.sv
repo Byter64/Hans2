@@ -31,10 +31,7 @@ module Top
 	input logic[6:0]	btn
 );        
      
-logic canBeDeleted;
-logic canBeDeleted2;
-logic canBeDeleted3;
-logic canBeDeleted4;
+logic canBeDeleted;   
          
 logic hdmi_pixClk;   
 logic resetn = 0;    
