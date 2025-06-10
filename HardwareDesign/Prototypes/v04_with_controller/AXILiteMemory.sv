@@ -35,8 +35,7 @@ module AXILiteMemory #(
 );
 
 bit[ADDR_WIDTH-1:0] memory[MEMORY_DEPTH];
-initial $readmemh("C:/Users/Yanni/Documents/Hans2/build/Software/Bootloader/Bootloader32.hex", memory);
-//initial $readmemh("C:/Users/Yanni/Desktop/Praesigame/build/code/game32.hex", memory);
+initial $readmemh("C:/Users/Yanni/Documents/Hans2/Software/CowShooter/build/code/game32.hex", memory);
 
 //Address Write
 logic[ADDR_WIDTH-1:0] aw_address = 'b0;
