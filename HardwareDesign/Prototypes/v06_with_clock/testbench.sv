@@ -17,7 +17,7 @@ inout logic[15:0]  sdram_d;
 
 always #20 clk_25mhz <= ~clk_25mhz;
 
-//initial $readmemh("C:/Users/Yanni/Documents/Hans2/HardwareDesign/Prototypes/v03_CPU_GPU_SDRAM_SDCard/Software/firmware32.hex", SDRAM.Bank0);
+initial $readmemh("C:/Users/Yanni/Documents/Hans2/HardwareDesign/Prototypes/v06_CPU_GPU_SDRAM_SDCard/Software/firmware16.hex", SDRAM.Bank0);
 
 
 IS42S16160 SDRAM 

@@ -31,7 +31,8 @@ module Top
 	input logic[6:0]	btn
 );        
      
-logic canBeDeleted;   
+logic canBeDeleted;
+logic canBeDeleted2n;
          
 logic hdmi_pixClk;   
 logic resetn = 0;    
@@ -116,8 +117,10 @@ logic         ICPU_mem_axi_bvalid;
 logic         ICPU_mem_axi_bready;
 assign 		  ICPU_mem_axi_bready = 0;
 logic [ 1:0]  ICPU_mem_axi_bresp;
-
-VexRiscvAxiLite Processor (
+ 
+VexRiscvAxiLite #(
+        .PROGADDR_RESET(32'h2010000)
+) Processor (
 	.aclk(clk_50mhz),
 	.aresetn(resetn),
 

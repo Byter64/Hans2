@@ -6,12 +6,16 @@
 #include "BulletManager.h"
 #include "EnemyManager.h"
 #include "GameManager.h"
+#include "Grass_Tile_Layers.h"
+#include <stdlib.h>
 
 Player player1{22, 100, 0};
 Player player2{22, 100, 1};
 BulletManager bulletManager;
 EnemyManager enemyManager;
 GameManager gameManager;
+
+char tileIDs[400 * 240];
 
 int main() {
 	player1 = Player(22, 100, 0);
@@ -20,10 +24,21 @@ int main() {
 	enemyManager = EnemyManager();
 	gameManager = GameManager();
 
+	for(int y = 0; y < 240; y += 16)
+		for(int x = 0; x < 400; x += 16)
+		{
+			tileIDs[x + y * 400] = rand() % 13;
+		}
+
 	Text::Init();
 	while(true)
-	{
-		Hall::Clear(0b0000001000010001);
+	{  
+		for(int y = 0; y < 240; y += 16)
+			for(int x = 0; x < 400; x += 16)
+			{
+				while(Hall::GetIsGPUBusy());
+				Hall::Draw(Grass_Tile_Layers, tileIDs[x + y * 400] * 16, 0, x, y, 16, 16, GRASS_TILE_LAYERS_WIDTH);
+			}
 		
 		gameManager.Update();
 		bulletManager.Update();

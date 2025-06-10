@@ -10,7 +10,7 @@ OUTPUT_FORMAT("elf32-littleriscv", "elf32-littleriscv",
 OUTPUT_ARCH(riscv)
 SECTIONS
 {
-  . = 0x00000;
+  . = 0x0;
   .startSection   :
   {
     KEEP(*(.text.startSection))
