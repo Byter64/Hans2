@@ -140,7 +140,7 @@ logic isReading = 0;
 always_ff @(posedge aclk) begin
     if(cont_accept_o && cont_rd_o)
         isReading <= 1;
-    if(cont_ack_o)
+    else if(cont_ack_o) //if no other access was requested
         isReading <= 0;
 end
 

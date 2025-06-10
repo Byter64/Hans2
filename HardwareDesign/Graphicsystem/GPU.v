@@ -13,7 +13,7 @@ module gpu #
     input       [15:0] mem_data,    //The data that was read
     input              mem_valid,   //High, if mem_data is valid
     output      [31:0] mem_addr,    //The address of the memory
-    output             mem_read,    //High, If data should be read
+    output reg         mem_read = 0,    //High, If data should be read
 
     //CONTROL INTERFACE: Draw
     input  [31:0] ctrl_address,  //The base address to take the pixel data for the excerpt from
@@ -119,8 +119,16 @@ always @(posedge clk) begin
 end
 
 reg[31:0] base_address = 0;
-assign mem_read = next_state[I_DRAW];
 assign mem_addr = base_address + ((next_pos_x) << 1) + ((ctrl_image_width * next_pos_y) << 1);
+
+always @(posedge clk) begin
+    if(!mem_read && next_state[I_DRAW]) begin
+        mem_read <= 1;
+    end
+    else if(mem_read && mem_valid) begin
+        mem_read <= 0;
+    end
+end
 
 always @(posedge clk) begin
     base_address <= ctrl_address + 2 * (ctrl_address_x + ctrl_image_width * ctrl_address_y);

@@ -37,8 +37,8 @@ module AXILiteMemory #(
 assign s_axil_rresp = 0;
 
 bit[ADDR_WIDTH-1:0] memory[MEMORY_DEPTH];
-initial $readmemh("C:/Users/Yanni/Documents/Hans2/HardwareDesign/Prototypes/v06_with_clock/Software/firmware32.hex", memory);
-//initial $readmemh("C:/Users/Yanni/Documents/Hans2/Software/CowShooter/build/code/game32.hex", memory);
+//initial $readmemh("C:/Users/Yanni/Desktop/Hans2/build/Software/Bootloader/Bootloader32.hex", memory);
+initial $readmemh("C:/Users/Yanni/Desktop/Softwaretest/build/code/game32.hex", memory);
 
 
 //Address Write

@@ -205,7 +205,7 @@ end
 //Address read
 logic next_arvalid;
 logic[DATA_WIDTH-1:0] next_ardata;
-assign next_arvalid = gpu_MemRead;
+assign next_arvalid = m_axil_arvalid && m_axil_arready ? 0 : gpu_MemRead;
 assign next_ardata = {gpu_MemAddr[31:2], 2'b00};
 
 always_ff @(posedge aclk) begin
@@ -219,12 +219,8 @@ end
 always_ff @(posedge aclk) begin
 	if (!aresetn)
 		m_axil_araddr <= 0;
-	else if (!m_axil_arvalid || m_axil_arready)
-	begin
+	else if (!m_axil_arvalid || m_axil_arready) begin
 		m_axil_araddr <= next_ardata;
-
-		if (!next_arvalid)
-			m_axil_araddr <= 0;
 	end
 end
 

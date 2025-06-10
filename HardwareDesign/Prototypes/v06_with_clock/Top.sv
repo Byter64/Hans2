@@ -30,9 +30,9 @@ module Top
 	//Buttons for debug
 	input logic[6:0]	btn
 );        
-     
+      
 logic canBeDeleted;
-logic canBeDeleted2n;
+//logic canBeDeleted2n;
          
 logic hdmi_pixClk;   
 logic resetn = 0;    
