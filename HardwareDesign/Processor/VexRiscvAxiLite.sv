@@ -1,4 +1,6 @@
-module VexRiscvAxiLite (
+module VexRiscvAxiLite #(
+    parameter PROGADDR_RESET = 32'h02010000
+) (
     input aclk,
     input aresetn,
 
@@ -235,7 +237,7 @@ module VexRiscvAxiLite (
 
     // VexRiscvAxi4 instance
     VexRiscvAxi4 #(
-        .PROGADDR_RESET(32'h02010000)
+        .PROGADDR_RESET(PROGADDR_RESET)
     ) VexCPU (
         // Instruction AXI4
         .iBusAxi_ar_valid(i_axi_ar_valid),

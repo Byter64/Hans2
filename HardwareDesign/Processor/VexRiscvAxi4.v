@@ -5746,7 +5746,7 @@ module VexRiscvAxi4 #(
   assign dBusAxi_b_ready = dbus_axi_b_ready;
   always @(posedge clk or posedge reset) begin
     if(reset) begin
-      IBusCachedPlugin_fetchPc_pcReg <= 32'h02010000;
+      IBusCachedPlugin_fetchPc_pcReg <= PROGADDR_RESET;
       IBusCachedPlugin_fetchPc_correctionReg <= 1'b0;
       IBusCachedPlugin_fetchPc_booted <= 1'b0;
       IBusCachedPlugin_fetchPc_inc <= 1'b0;
