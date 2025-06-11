@@ -202,38 +202,65 @@ end
 
 //START - AXI MASTER 
 
-//Address read
-logic next_arvalid;
-logic[DATA_WIDTH-1:0] next_ardata;
-assign next_arvalid = m_axil_arvalid && m_axil_arready ? 0 : gpu_MemRead;
-assign next_ardata = {gpu_MemAddr[31:2], 2'b00};
+// Address read channel
+typedef enum logic [1:0] {
+    AR_IDLE,
+    AR_WAIT_READY,
+    AR_WAIT_DATA
+} ar_state_t;
 
+ar_state_t ar_state;
+logic ar_done;
 always_ff @(posedge aclk) begin
-	if (!aresetn)
-		m_axil_arvalid <= 0;
-	else if (!m_axil_arvalid || m_axil_arready) begin
-		m_axil_arvalid <= next_arvalid;
+    if (!aresetn) begin
+        ar_state <= AR_IDLE;
+        m_axil_arvalid <= 1'b0;
+        m_axil_araddr <= '0;
+        ar_done <= 1'b0;
+    end else begin
+        case (ar_state)
+            AR_IDLE: begin
+                if (gpu_MemRead && !ar_done) begin
+                    m_axil_arvalid <= 1'b1;
+                    m_axil_araddr <= {gpu_MemAddr[31:2], 2'b00};
+                    ar_state <= AR_WAIT_READY;
+                end
+            end
+
+            AR_WAIT_READY: begin
+                if (m_axil_arready && m_axil_arvalid) begin
+                    m_axil_arvalid <= 1'b0;
+                    ar_done <= 1'b1;
+                    ar_state <= AR_WAIT_DATA;
+                end
+            end
+
+            AR_WAIT_DATA: begin
+                if (m_axil_rvalid && m_axil_rready) begin
+                    ar_done <= 1'b0;
+                    ar_state <= AR_IDLE;
+                end
+            end
+
+            default: ar_state <= AR_IDLE;
+        endcase
     end
 end
 
+// Read data channel
 always_ff @(posedge aclk) begin
-	if (!aresetn)
-		m_axil_araddr <= 0;
-	else if (!m_axil_arvalid || m_axil_arready) begin
-		m_axil_araddr <= next_ardata;
-	end
-end
+    if (!aresetn) begin
+        m_axil_rready <= 1'b0;
+        gpu_MemValid <= 1'b0;
+        gpu_MemData <= '0;
+    end else begin
+        m_axil_rready <= ar_done;
+        gpu_MemValid <= 1'b0;
 
-//Read
-always_ff @(posedge aclk) begin
-	m_axil_rready <= 1;
-end
-
-always_ff @(posedge aclk) begin
-	gpu_MemValid <= 0;
-    if (m_axil_rvalid && m_axil_rready) begin
-		gpu_MemData <= gpu_MemAddr[1] ? m_axil_rdata[15:0] : m_axil_rdata[31:16];
-        gpu_MemValid <= 1;
+        if (m_axil_rvalid && m_axil_rready) begin
+            gpu_MemData <= gpu_MemAddr[1] ? m_axil_rdata[15:0] : m_axil_rdata[31:16];
+            gpu_MemValid <= 1'b1;
+        end
     end
 end
 
