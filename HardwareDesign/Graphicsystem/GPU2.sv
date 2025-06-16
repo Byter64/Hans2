@@ -210,7 +210,6 @@ always_comb begin
         BUF_FULL: dbg_state   = "BUF_FULL";
     endcase
 end
-
 `endif
 
 always_ff @(posedge clk) begin
@@ -273,23 +272,90 @@ module GPU_Pip3 (
     input  logic re_valid,
     output logic re_ready,
     input  logic[31:0] re_address,
-    
-    output logic[15:0] se_memory_address,
+
+    //axi lite slave read channels
+    input  logic       axi_arready,
+    output logic       axi_arvalid,
+    output logic[31:0] axi_araddr,
+    output logic       axi_rready,
+    output logic       axi_rvalid,
+    output logic[31:0] axi_rdata,
+
+    output logic[15:0] se_data, //this can be either a colour or an entry to a colour table
     output logic se_valid,
     input  logic se_ready
 );
 wire re_handshake = re_valid && re_ready;
 wire se_handshake = se_valid && se_ready;
+wire axi_ar_handshake = axi_arready && axi_arvalid;
+wire axi_r_handshake = axi_rready && axi_rvalid;
 
-logic[31:0] buffer;
-wire[31:0] result = re_base_address + ((re_x) << 1) + ((re_image_width * re_y) << 1);;
-
-//output_buffer
 enum logic[1:0] {
-    EMPTY,
-    FULL,
-    BUF_FULL
+    IDLE,
+    SET_ADDRESS,
+    GET_DATA,
 } State;
+
+State state;
+`ifndef SYNTHESIS
+logic[9 * 8 - 1: 0] dbg_state;
+always_comb begin
+    case (state)
+        IDLE: dbg_state = "IDLE";
+        SET_ADDRESS: dbg_state  = "SET_ADDRESS";
+        GET_DATA: dbg_state   = "GET_DATA";
+    endcase
+end
+`endif
+
+
+logic[31:0] cache_addr;
+logic[31:0] cache_data;
+//Implement cache use to prevent unnecessary memory accesses
+
+always_ff @(posedge clk) begin
+    case (state)
+        IDLE:  begin
+            re_ready <= 1;
+            se_valid <= 0;
+            axi_arvalid <= 0;
+            axi_rready <= 0;
+            if(re_handshake) begin
+                re_ready <= 0;
+                se_valid <= 0;
+                axi_araddr <= {re_address[31:2], 2'b00};
+                cache_addr <= {re_address[31:2], 2'b00};
+                axi_arvalid <= 1;
+                state <= SET_ADDRESS;
+            end
+        end
+        SET_ADDRESS: begin
+            re_ready <= 0;
+            se_valid <= 0;
+            if(axi_ar_handshake) begin
+                axi_arvalid <= 0;
+                axi_rready <= 1;
+                state <= GET_DATA;
+            end
+        end
+        GET_DATA: begin
+            if(axi_r_handshake) begin
+                se_valid <= 1;
+                axi_rready <= 0;
+                se_data <= axi_rdata[15:0];
+                cache_data <= axi_rdata;
+            end
+
+            if(se_handshake) begin
+                se_valid <= 0;
+                re_ready <= 1;
+                state <= IDLE;
+            end
+        end
+        default: 
+    endcase
+end
+
 endmodule
 
 /*
