@@ -79,7 +79,9 @@ always_ff @(posedge clk) begin
 	end
 	GENERATING: begin
 		if(scale_type_x == UPSCALE) begin
-			sub_x <= sub_x + 1;
+            if(se_handshake) begin 
+			    sub_x <= sub_x + 1;
+            end
 
 			if(sub_x == max_sub_x) begin
                 sub_x <= 0;
@@ -87,7 +89,9 @@ always_ff @(posedge clk) begin
             end
 		end
         else if(scale_type_x == DOWNSCALE) begin
-            ss_x <= ss_x + scale_x;
+            if(se_handshake) begin
+                ss_x <= ss_x + scale_x;
+            end
         end
 
         if(scale_type_y == UPSCALE) begin
@@ -132,8 +136,8 @@ always_ff @(posedge clk) begin
 			scale_y <= 		$signed(re_scale_y) < $signed(0) ? -re_scale_y : re_scale_y;
 			scale_type_x <= $signed(re_scale_x) < $signed(0) ? DOWNSCALE : UPSCALE;
 			scale_type_y <= $signed(re_scale_y) < $signed(0) ? DOWNSCALE : UPSCALE;
-			mirror_x <= 	re_mirror_x;
-			mirror_y <= 	re_mirror_y;
+			mirror_x     <= re_mirror_x;
+			mirror_y     <= re_mirror_y;
 
             x <= 0;
             y <= 0;
@@ -142,7 +146,9 @@ always_ff @(posedge clk) begin
         end
     end
     GENERATING: begin
-        x <= x + 1;
+        if(se_handshake) begin
+            x <= x + 1;
+        end
         
         if(x == max_x) begin
             x <= 0;
