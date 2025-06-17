@@ -294,6 +294,7 @@ enum logic[1:0] {
     IDLE,
     SET_ADDRESS,
     GET_DATA,
+    DATA_READY
 } State;
 
 State state;
@@ -302,8 +303,9 @@ logic[9 * 8 - 1: 0] dbg_state;
 always_comb begin
     case (state)
         IDLE: dbg_state = "IDLE";
-        SET_ADDRESS: dbg_state  = "SET_ADDRESS";
-        GET_DATA: dbg_state   = "GET_DATA";
+        SET_ADDRESS: dbg_state = "SET_ADDRESS";
+        GET_DATA: dbg_state = "GET_DATA";
+        DATA_READY: dbg_state = "DATA_READY";
     endcase
 end
 `endif
@@ -311,22 +313,29 @@ end
 
 logic[31:0] cache_addr;
 logic[31:0] cache_data;
-//Implement cache use to prevent unnecessary memory accesses
 
 always_ff @(posedge clk) begin
     case (state)
-        IDLE:  begin
+        IDLE: begin
             re_ready <= 1;
             se_valid <= 0;
             axi_arvalid <= 0;
             axi_rready <= 0;
             if(re_handshake) begin
                 re_ready <= 0;
-                se_valid <= 0;
                 axi_araddr <= {re_address[31:2], 2'b00};
-                cache_addr <= {re_address[31:2], 2'b00};
-                axi_arvalid <= 1;
-                state <= SET_ADDRESS;
+                cache_addr <= re_address;
+                
+                if(cache_addr[31:2] == re_address[31:2]) begin
+                    state <= DATA_READY;
+                    se_valid <= 1;
+                    se_data <= cache_addr[1] ? cache_data[15:0] : cache_data[31:16];
+                end
+                else begin
+                    state <= SET_ADDRESS;
+                    axi_arvalid <= 1;
+                    se_valid <= 0;
+                end
             end
         end
         SET_ADDRESS: begin
@@ -342,17 +351,20 @@ always_ff @(posedge clk) begin
             if(axi_r_handshake) begin
                 se_valid <= 1;
                 axi_rready <= 0;
-                se_data <= axi_rdata[15:0];
+                se_data <= cache_addr[1] ? axi_rdata[15:0] : axi_rdata[31:16];
                 cache_data <= axi_rdata;
+                state <= DATA_READY;
             end
-
+        end
+        DATA_READY: begin
+            se_valid <= 1;
+            re_ready <= 0;
             if(se_handshake) begin
                 se_valid <= 0;
                 re_ready <= 1;
                 state <= IDLE;
             end
         end
-        default: 
     endcase
 end
 
@@ -361,7 +373,7 @@ endmodule
 /*
 1. Spritesheetposition und Screeposition (skalierung und spiegelung!) generieren - pip1
 2. Speicheradresse berechnen            - pip2
-3. Pixel lesen
+3. Pixel lesen                          - pip3
 4. (Optional) Color table auflösen
 5. Pixelschreiben
 */
