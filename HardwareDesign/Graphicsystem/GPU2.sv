@@ -95,6 +95,18 @@ module GPU (
     output logic[15:0] fb_colour,
     output logic       fb_write,
 );
+
+logic st1_rect_re_ready;
+GPU_1_Rectangle Stage1_Rect 
+(
+    .clk(clk),
+    .rst(rst),
+    
+    .re_valid(),
+    .re_ready(st1_rect_re_ready),
+    .re_start_x() //what does this even do?!?!?
+);
+
     
 endmodule
 
