@@ -11,6 +11,23 @@ enum logic[4:0] {
     BIT_16 = 4'd16, //This is special, because it needs a left shift instead of a right shift
 } CTType; //Colour table type
 
+module GPU (
+    input logic clk,
+    input logic rst,
+
+    //AXI-L MASTER
+    output logic[31:0]                       m_axil_araddr,
+    output logic[2:0]                        m_axil_arprot,
+    output logic                             m_axil_arvalid,
+    input logic                              m_axil_arready,
+    input logic [31:0]                       m_axil_rdata,
+    input logic [1:0]                        m_axil_rresp,
+    input logic                              m_axil_rvalid,
+    output logic                             m_axil_rready
+);
+    
+endmodule
+
 module GPU_1_Rectangle (
     input logic clk,
     input logic rst,
@@ -536,6 +553,5 @@ Rechteck zeichnen
 Linie zeichnen
 
 TODO: Set ct_type to BIT_16, if use_ct == false
-TODO: Implement a reset in all stages
 TODO: ct_base_address, ct_offset, use_ct, and ct_type have to be stored in the GPU module itself!
 */
