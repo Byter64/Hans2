@@ -190,12 +190,13 @@ module GPU_2_Address (
     input  logic[15:0] re_image_width,
     input  logic[15:0] re_height,
     input  CTType      re_ct_type,
-    input  logic       re_use_ct,
+    input  logic[15:0] re_framebuffer_x,
+    input  logic[15:0] re_framebuffer_y,
     
     output logic[31:0] se_memory_address,
     output logic[31:0] se_sprite_sheet_address,
-    output CTType      se_ct_type,
-    output logic       se_use_ct,
+    output logic[15:0] se_framebuffer_x,
+    output logic[15:0] se_framebuffer_y,
     output logic se_valid,
     input  logic se_ready
 );
@@ -204,8 +205,8 @@ wire se_handshake = se_valid && se_ready;
 
 logic[31:0] buffer_memory_address;
 logic[31:0] buffer_ss_address;
-CTType      buffer_ct_type;
-logic       buffer_use_ct;
+logic[15:0] buffer_framebuffer_x;
+logic[15:0] buffer_framebuffer_y;
 
 //This is a long path. Maybe split it up into two cycles???
 wire[31:0] ss_address = re_x + re_image_width * re_y; //1D sprite sheet address
@@ -242,6 +243,8 @@ always_ff @(posedge clk) begin
             state <= FULL;
             se_memory_address <= result;
             se_ct_type <= re_ct_type;
+            se_framebuffer_x <= re_framebuffer_x;
+            se_framebuffer_y <= re_framebuffer_y;
         end
     end
     FULL: begin
@@ -251,10 +254,10 @@ always_ff @(posedge clk) begin
             re_ready <= 0;
             se_valid <= 1;
             state <= BUF_FULL;
-            buffer_memory_address <= result;
-            buffer_ss_address =< ss_address;
-            buffer_ct_type <= re_ct_type;
-            buffer_use_ct <= re_use_ct;
+            buffer_memory_address <= se_memory_address;
+            buffer_ss_address <= se_sprite_sheet_address;
+            buffer_framebuffer_x <= se_framebuffer_x;
+            buffer_framebuffer_y <= se_framebuffer_y;
         end
         else if(!re_handshake && se_handshake) begin
             re_ready <= 1;
@@ -267,20 +270,20 @@ always_ff @(posedge clk) begin
             state <= FULL;
             se_memory_address <= result;
             se_sprite_sheet_address <= ss_address;
-            se_ct_type <= re_ct_type;
-            se_use_ct <= re_use_ct;
+            se_framebuffer_x <= re_framebuffer_x;
+            se_framebuffer_y <= re_framebuffer_y;
         end
     BUF_FULL: begin
         re_ready <= 0;
         se_valid <= 1;
         if(se_handshake) begin
-            re_ready <= 1;
+            re_ready <= 0;
             se_valid <= 1;
             state <= FULL;
             se_memory_address <= buffer_memory_address;
             se_sprite_sheet_address <= buffer_ss_address;
-            se_ct_type <= buffer_ct_type;
-            se_use_ct <= buffer_use_ct;
+            se_framebuffer_x <= buffer_framebuffer_x;
+            se_framebuffer_y <= buffer_framebuffer_y;
         end
     end
     end
@@ -294,6 +297,7 @@ always_ff @(posedge clk) begin
 end
 endmodule
 
+
 module GPU_3_Memory (
     input logic clk,
     input logic rst,
@@ -303,7 +307,8 @@ module GPU_3_Memory (
     input  logic[31:0] re_address,
     input  logic[31:0] re_sprite_sheet_address,
     input  CTType      re_ct_type,
-    input  logic       re_use_ct,
+    input  logic[15:0] re_framebuffer_x,
+    input  logic[15:0] re_framebuffer_y,
 
     //axi lite slave read channels
     input  logic       axi_arready,
@@ -314,7 +319,8 @@ module GPU_3_Memory (
     output logic[31:0] axi_rdata,
 
     output logic[15:0] se_data, //this can be either a colour or an entry to a colour table
-    output logic       se_use_ct,
+    output logic[15:0] se_framebuffer_x,
+    output logic[15:0] se_framebuffer_y,
     output logic se_valid,
     input  logic se_ready
 );
@@ -348,6 +354,8 @@ logic[31:0] cache_ss_addr;
 CTType      cache_ct_type;
 logic       cache_use_ct;
 logic[31:0] cache_data;
+logic[15:0] cache_framebuffer_x;
+logic[15:0] cache_framebuffer_y;
 
 //This is a long path. Maybe split it up into two cycles???
 wire[15:0] bitmask = (1 << re_ct_type) - 1;
@@ -369,12 +377,16 @@ always_ff @(posedge clk) begin
                 cache_ss_addr <= re_sprite_sheet_address;
                 cache_ct_type <= re_ct_type;
                 cache_use_ct <= re_use_ct;
+                cache_framebuffer_x <= re_framebuffer_x;
+                cache_framebuffer_y <= re_framebuffer_y;
                 
                 if(cache_addr[31:2] == re_address[31:2]) begin
                     state <= DATA_READY;
                     se_valid <= 1;
                     se_data <= quick_result;
                     se_use_ct <= re_use_ct;
+                    se_framebuffer_x <= re_framebuffer_x;
+                    se_framebuffer_y <= re_framebuffer_y;
                 end
                 else begin
                     state <= SET_ADDRESS;
@@ -399,6 +411,8 @@ always_ff @(posedge clk) begin
                 se_data <= axi_result;
                 se_use_ct <= cache_use_ct;
                 cache_data <= axi_rdata;
+                se_framebuffer_x <= re_framebuffer_x;
+                se_framebuffer_y <= re_framebuffer_y;
                 state <= DATA_READY;
             end
         end
@@ -425,12 +439,16 @@ module GPU_4_ColourTable (
     output logic re_ready,
     input  logic[15:0] re_ct_base_address,
     input  logic[15:0] re_ct_offset,
+    input  logic[15:0] re_framebuffer_x,
+    input  logic[15:0] re_framebuffer_y,
 
     //This memory must have the data ready after one clock cycle!!!
     output logic[15:0] mem_address,
     input  logic[15:0] mem_data,
 
     output logic[15:0] se_colour,
+    output logic[15:0] se_framebuffer_x,
+    output logic[15:0] se_framebuffer_y,
     output logic se_valid,
     input  logic se_ready
 );
@@ -443,6 +461,8 @@ assign se_colour = mem_data;
 always_ff @(posedge clk) begin
     if(re_handshake) begin
         mem_address <= re_base_address + re_ct_offset;
+        se_framebuffer_x <= re_framebuffer_x;
+        se_framebuffer_y <= re_framebuffer_y;
         se_valid <= 1;
     end
     else begin
@@ -500,7 +520,8 @@ color table
 Rechteck zeichnen
 Linie zeichnen
 
+TODO: Pass-through all data until it is not needed anymore
 TODO: Set ct_type to BIT_16, if use_ct == false
 TODO: Implement a reset in all stages
-TODO: Pass-through all data until it is not needed anymore
+TODO: ct_base_address, ct_offset, use_ct, and ct_type have to be stored in the GPU module itself!
 */
