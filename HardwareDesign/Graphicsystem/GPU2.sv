@@ -426,6 +426,10 @@ module GPU_4_ColourTable (
     input  logic[15:0] re_ct_base_address,
     input  logic[15:0] re_ct_offset,
 
+    //This memory must have the data ready after one clock cycle!!!
+    output logic[15:0] mem_address,
+    input  logic[15:0] mem_data,
+
     output logic[15:0] se_colour,
     output logic se_valid,
     input  logic se_ready
@@ -433,26 +437,18 @@ module GPU_4_ColourTable (
 wire re_handshake = re_valid && re_ready;
 wire se_handshake = se_valid && se_ready;
 
+assign re_ready = 1;
+assign se_colour = mem_data;
 
-enum logic[1:0] {
-    IDLE,
-    SET_ADDRESS,
-    GET_DATA,
-    DATA_READY
-} State;
-
-State state;
-`ifndef SYNTHESIS
-logic[9 * 8 - 1: 0] dbg_state;
-always_comb begin
-    case (state)
-        IDLE: dbg_state = "IDLE";
-        SET_ADDRESS: dbg_state = "SET_ADDRESS";
-        GET_DATA: dbg_state = "GET_DATA";
-        DATA_READY: dbg_state = "DATA_READY";
-    endcase
+always_ff @(posedge clk) begin
+    if(re_handshake) begin
+        mem_address <= re_base_address + re_ct_offset;
+        se_valid <= 1;
+    end
+    else begin
+        se_valid <= 0;
+    end
 end
-`endif
 
 endmodule
 
@@ -473,4 +469,5 @@ Rechteck zeichnen
 Linie zeichnen
 
 TODO: Set ct_type to BIT_16, if use_ct == false
+TODO: Implement a reset in all stages
 */
