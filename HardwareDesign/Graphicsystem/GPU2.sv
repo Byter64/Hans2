@@ -242,7 +242,6 @@ always_ff @(posedge clk) begin
             se_valid <= 1;
             state <= FULL;
             se_memory_address <= result;
-            se_ct_type <= re_ct_type;
             se_framebuffer_x <= re_framebuffer_x;
             se_framebuffer_y <= re_framebuffer_y;
         end
@@ -351,8 +350,6 @@ end
 
 logic[31:0] cache_addr;
 logic[31:0] cache_ss_addr;
-CTType      cache_ct_type;
-logic       cache_use_ct;
 logic[31:0] cache_data;
 logic[15:0] cache_framebuffer_x;
 logic[15:0] cache_framebuffer_y;
@@ -375,8 +372,6 @@ always_ff @(posedge clk) begin
                 axi_araddr <= {re_address[31:2], 2'b00};
                 cache_addr <= re_address;
                 cache_ss_addr <= re_sprite_sheet_address;
-                cache_ct_type <= re_ct_type;
-                cache_use_ct <= re_use_ct;
                 cache_framebuffer_x <= re_framebuffer_x;
                 cache_framebuffer_y <= re_framebuffer_y;
                 
@@ -384,7 +379,6 @@ always_ff @(posedge clk) begin
                     state <= DATA_READY;
                     se_valid <= 1;
                     se_data <= quick_result;
-                    se_use_ct <= re_use_ct;
                     se_framebuffer_x <= re_framebuffer_x;
                     se_framebuffer_y <= re_framebuffer_y;
                 end
@@ -409,7 +403,6 @@ always_ff @(posedge clk) begin
                 se_valid <= 1;
                 axi_rready <= 0;
                 se_data <= axi_result;
-                se_use_ct <= cache_use_ct;
                 cache_data <= axi_rdata;
                 se_framebuffer_x <= re_framebuffer_x;
                 se_framebuffer_y <= re_framebuffer_y;
