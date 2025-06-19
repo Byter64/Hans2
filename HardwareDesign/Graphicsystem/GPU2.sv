@@ -11,9 +11,69 @@ enum logic[4:0] {
     BIT_16 = 4'd16, //This is special, because it needs a left shift instead of a right shift
 } CTType; //Colour table type
 
+enum logic[3:0] {
+	RECTANGLE,
+	LINE
+} Shape;
+
+enum logic {
+	MEMORY,
+	COLOUR
+} ColourSource;
+
+enum logic[15:0] {
+    IMAGE                   = 0,
+    IMAGE_X                 = 4,
+    IMAGE_Y                 = 8,
+    IMAGE_WIDTH             = 12,
+    IMAGE_SCALE_X           = 16,
+    IMAGE_SCALE_Y           = 20,
+    IMAGE_FLIP_X            = 24,
+    IMAGE_FLIP_Y            = 28,
+    COLOUR_TABLE_TYPE       = 32,
+    COLOUR_TABLE_OFFSET     = 36,
+    EXCERPT_WIDTH           = 40,
+    EXCERPT_HEIGHT          = 44,
+    SCREEN_X                = 48,
+    SCREEN_Y                = 52,
+    DRAW_COLOUR             = 56,
+    DRAW_SHAPE              = 60,
+    DRAW_COLOUR_SOURCE      = 64,
+    COMMAND_DRAW            = 68,
+    IS_BUSY                 = 72,
+
+    VSYNC                   = 76,
+    HSYNC                   = 80,
+
+    COMMAND_SWAP_BUFFERS    = 84,
+    VSYNC_BUFFER_SWAP       = 88
+} DataIndex;
+
+
 module GPU (
     input logic clk,
     input logic rst,
+
+    input logic[31:0]   image,
+    input logic[15:0]   image_x,
+    input logic[15:0]   image_Y,
+    input logic[15:0]   image_width,
+    input logic[15:0]   image_scale_x,
+    input logic[15:0]   image_scale_y,
+    input logic         image_flip_x,
+    input logic         image_flip_y,
+    input CTType        ct_type,
+    input logic         ct_enable,
+    input logic[15:0]   ct_offset,
+    input logic[15:0]   excerpt_width,
+    input logic[15:0]   excerpt_height,
+    input logic[15:0]   screen_x,
+    input logic[15:0]   screen_y,
+    input logic[15:0]   draw_colour,
+    input Shape         draw_shape,
+    input ColourSource  draw_colour_source,
+    input logic         command_draw,
+    output logic        is_busy,
 
     //AXI-L MASTER
     output logic[31:0]                       m_axil_araddr,
@@ -24,6 +84,16 @@ module GPU (
     input logic [1:0]                        m_axil_rresp,
     input logic                              m_axil_rvalid,
     output logic                             m_axil_rready
+
+    //Colour Table memory
+    output logic[15:0] ct_address,
+    input  logic[15:0] ct_colour,
+
+    //Framebuffer
+    output logic[15:0] fb_x,
+    output logic[15:0] fb_y,
+    output logic[15:0] fb_colour,
+    output logic       fb_write,
 );
     
 endmodule
@@ -211,7 +281,6 @@ module GPU_2_Address (
     input  logic[15:0] re_x,
     input  logic[15:0] re_y,
     input  logic[15:0] re_image_width,
-    input  logic[15:0] re_height,
     input  CTType      re_ct_type,
     input  logic[15:0] re_framebuffer_x,
     input  logic[15:0] re_framebuffer_y,
