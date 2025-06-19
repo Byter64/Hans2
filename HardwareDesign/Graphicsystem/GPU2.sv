@@ -449,14 +449,13 @@ always_ff @(posedge clk) begin
         se_valid <= 0;
     end
 end
-
 endmodule
 
 /*
 1. Spritesheetposition und Screenposition (skalierung und spiegelung!) generieren - 1_Rectangle //TODO: add line
 2. Speicheradressen berechnen           - 2_Address
 3. Pixel/CT Index lesen                 - 3_Memory //TODO: add constant colour
-4. (Optional) Color table auflösen      - 4_ColourTable //TODO: implement this
+4. (Optional) Color table auflösen      - 4_ColourTable
 5. Pixelschreiben                       - 5_Framebuffer //TODO: implement this
 */
 
