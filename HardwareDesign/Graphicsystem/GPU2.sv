@@ -489,7 +489,7 @@ endmodule
 2. Speicheradressen berechnen           - 2_Address
 3. Pixel/CT Index lesen                 - 3_Memory //TODO: add constant colour
 4. (Optional) Color table auflösen      - 4_ColourTable
-5. Pixelschreiben                       - 5_Framebuffer //TODO: implement this
+5. Pixelschreiben                       - 5_Framebuffer
 */
 
 /*
@@ -502,4 +502,5 @@ Linie zeichnen
 
 TODO: Set ct_type to BIT_16, if use_ct == false
 TODO: Implement a reset in all stages
+TODO: Pass-through all data until it is not needed anymore
 */
