@@ -36,17 +36,6 @@ module GraphicSystem
     input logic                              s_axil_rready,
 
     //AXI-L MASTER
-    output logic[ADDR_WIDTH-1:0]             m_axil_awaddr = 0,
-    output logic[2:0]                        m_axil_awprot = 0,
-    output logic                             m_axil_awvalid = 0,
-    input logic                              m_axil_awready,
-    output logic[DATA_WIDTH-1:0]             m_axil_wdata = 0,
-    output logic[STRB_WIDTH-1:0]             m_axil_wstrb = 0,
-    output logic                             m_axil_wvalid = 0,
-    input logic                              m_axil_wready,
-    input logic [1:0]                        m_axil_bresp,
-    input logic                              m_axil_bvalid,
-    output logic                             m_axil_bready = 0,
     output logic[ADDR_WIDTH-1:0]             m_axil_araddr,
     output logic[2:0]                        m_axil_arprot,
     output logic                             m_axil_arvalid,
