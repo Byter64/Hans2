@@ -175,6 +175,12 @@ always_ff @(posedge clk) begin
         re_ready <= 0;
     end
     endcase
+
+    if(rst) begin
+        state <= IDLE;
+        re_ready <= 0;
+        se_valid <= 0;
+    end
 end
 endmodule
 
@@ -288,11 +294,11 @@ always_ff @(posedge clk) begin
     end
     endcase
 
-    else if(se_handshake) begin
+    if(rst) begin
+        state <= EMPTY;
+        re_ready <= 0;
         se_valid <= 0;
     end
-
-    if(se_handshake || se_valid == 0)
 end
 endmodule
 
@@ -419,6 +425,12 @@ always_ff @(posedge clk) begin
             end
         end
     endcase
+
+    if(rst) begin
+        state <= IDLE;
+        re_ready <= 0;
+        se_valid <= 0;
+    end
 end
 
 endmodule
@@ -461,6 +473,11 @@ always_ff @(posedge clk) begin
     else begin
         se_valid <= 0;
     end
+
+    if(rst) begin
+        re_ready <= 0;
+        se_valid <= 0;
+    end
 end
 endmodule
 
@@ -494,6 +511,11 @@ always_ff @(posedge clk) begin
     else begin
         fb_write <= 0;
     end
+
+    if(rst) begin
+        re_ready <= 0;
+        fb_write <= 0;
+    end
 end
 endmodule
 
@@ -513,7 +535,6 @@ color table
 Rechteck zeichnen
 Linie zeichnen
 
-TODO: Pass-through all data until it is not needed anymore
 TODO: Set ct_type to BIT_16, if use_ct == false
 TODO: Implement a reset in all stages
 TODO: ct_base_address, ct_offset, use_ct, and ct_type have to be stored in the GPU module itself!
