@@ -451,6 +451,39 @@ always_ff @(posedge clk) begin
 end
 endmodule
 
+
+module GPU_5_Framebuffer (
+    input logic clk,
+    input logic rst,
+
+    input  logic re_valid,
+    output logic re_ready,
+    input  logic[15:0] re_x,
+    input  logic[15:0] re_y,
+    input  logic[15:0] re_colour,
+
+    output logic[15:0] fb_x,
+    output logic[15:0] fb_y,
+    output logic[15:0] fb_colour,
+    output logic       fb_write
+);
+wire re_handshake = re_valid && re_ready;
+
+assign re_ready = 1;
+
+always_ff @(posedge clk) begin
+    if(re_handshake) begin
+        fb_x <= re_x;
+        fb_y <= re_y;
+        fb_colour <= fb_write;
+        fb_write <= 1;
+    end
+    else begin
+        fb_write <= 0;
+    end
+end
+endmodule
+
 /*
 1. Spritesheetposition und Screenposition (skalierung und spiegelung!) generieren - 1_Rectangle //TODO: add line
 2. Speicheradressen berechnen           - 2_Address
