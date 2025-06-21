@@ -43,53 +43,67 @@ module GraphicSystem
     input logic [DATA_WIDTH-1:0]             m_axil_rdata,
     input logic [1:0]                        m_axil_rresp,
     input logic                              m_axil_rvalid,
-    output logic                             m_axil_rready
+    output logic                             m_axil_rready,
+
+    output logic[15:0] ct_address,
+    input  logic[15:0] ct_colour
 );
 
-typedef enum logic[15:0] {
-    ADDRESS                 = 0,
-    ADDRESS_X               = 4,
-    ADDRESS_Y               = 8,
+typedef enum logic[7:0] {
+    IMAGE_START             = 0,
+    IMAGE_X                 = 4,
+    IMAGE_Y                 = 8,
     IMAGE_WIDTH             = 12,
-    WIDTH                   = 16,
-    HEIGHT                  = 20,
-    X                       = 24,
-    Y                       = 28,
-    CLEAR_COLOR             = 32,
-    COMMAND_DRAW            = 36,
-    COMMAND_CLEAR           = 40,
-    IS_BUSY                 = 44,
+    IMAGE_SCALE_X           = 16,
+    IMAGE_SCALE_Y           = 20,
+    IMAGE_FLIP_X            = 24,
+    IMAGE_FLIP_Y            = 28,
+    COLOUR_TABLE_TYPE       = 32,
+    COLOUR_TABLE_OFFSET     = 36,
+    EXCERPT_WIDTH           = 40,
+    EXCERPT_HEIGHT          = 44,
+    SCREEN_X                = 48,
+    SCREEN_Y                = 52,
+    DRAW_COLOUR             = 56,
+    DRAW_SHAPE              = 60,
+    DRAW_COLOUR_SOURCE      = 64,
+    COMMAND_DRAW            = 68,
+    IS_BUSY                 = 72,
 
-    VSYNC                   = 48,
-    HSYNC                   = 52,
+    VSYNC                   = 76,
+    HSYNC                   = 80,
 
-    COMMAND_SWAP_BUFFERS    = 56,
-    VSYNC_BUFFER_SWAP       = 60
+    COMMAND_SWAP_BUFFERS    = 84,
+    VSYNC_BUFFER_SWAP       = 88
 } DataIndex;
 
 DataIndex activeWriteDataIndex;
 DataIndex activeReadDataIndex;
-logic[31:0]  gpu_Address;
-logic[15:0]  gpu_AddressX;
-logic[15:0]  gpu_AddressY;
-logic[15:0]  gpu_ImageWidth;
-logic[15:0]  gpu_Width;
-logic[15:0]  gpu_Height;
-logic[15:0]  gpu_X;
-logic[15:0]  gpu_Y;
-logic[15:0]  gpu_ClearColor;
-logic        gpu_Draw = 0;
-logic        gpu_Clear = 0;
-logic        gpu_IsBusy;
+
+logic[31:0]  image_start;
+logic[15:0]  image_x;
+logic[15:0]  image_Y;
+logic[15:0]  image_width;
+logic[15:0]  image_scale_x;
+logic[15:0]  image_scale_y;
+logic        image_flip_x;
+logic        image_flip_y;
+CTType       ct_type;
+logic        ct_enable;
+logic[15:0]  ct_offset;
+logic[15:0]  excerpt_width;
+logic[15:0]  excerpt_height;
+logic[15:0]  screen_x;
+logic[15:0]  screen_y;
+logic[15:0]  draw_colour;
+Shape        draw_shape;
+ColourSource draw_colour_source;
+logic        command_draw;
+logic        is_busy;
 logic        vSync;
 logic        hSync;
-logic        swapBuffers = 0;
+logic        swapBuffers;
 logic        vSyncBufferSwap;
-
-logic[15:0]  gpu_MemData;
-logic        gpu_MemValid;
-logic[31:0]  gpu_MemAddr;
-logic        gpu_MemRead;
 
 //START - AXI SLAVE IMPLEMENTATION
 
@@ -105,25 +119,31 @@ end
 always_ff @(posedge aclk) s_axil_wready <= 1;
 
 always_ff @(posedge aclk) begin
-    gpu_Draw <= 0;
-    gpu_Clear <= 0;
+    command_draw <= 0;
     swapBuffers <= 0;
 
 	if (s_axil_wvalid && s_axil_wready) begin
 		case (activeWriteDataIndex)
-            ADDRESS: gpu_Address <= s_axil_wdata;
-            ADDRESS_X: gpu_AddressX <= s_axil_wdata;
-            ADDRESS_Y: gpu_AddressY <= s_axil_wdata;
-            IMAGE_WIDTH: gpu_ImageWidth <= s_axil_wdata;
-            WIDTH: gpu_Width <= s_axil_wdata;
-            HEIGHT: gpu_Height <= s_axil_wdata;
-            X: gpu_X <= s_axil_wdata;
-            Y: gpu_Y <= s_axil_wdata;
-            CLEAR_COLOR: gpu_ClearColor <= s_axil_wdata;
-            COMMAND_DRAW: gpu_Draw <= s_axil_wdata;
-            COMMAND_CLEAR: gpu_Clear <= s_axil_wdata;
+            IMAGE_START         : image_start <= s_axil_wdata;
+            IMAGE_X             : image_x <= s_axil_wdata;
+            IMAGE_Y             : image_Y <= s_axil_wdata;
+            IMAGE_WIDTH         : image_width <= s_axil_wdata;
+            IMAGE_SCALE_X       : image_scale_x <= s_axil_wdata;
+            IMAGE_SCALE_Y       : image_scale_y <= s_axil_wdata;
+            IMAGE_FLIP_X        : image_flip_x <= s_axil_wdata;
+            IMAGE_FLIP_Y        : image_flip_y <= s_axil_wdata;
+            COLOUR_TABLE_TYPE   : {ct_enable, ct_type} <= s_axil_wdata;
+            COLOUR_TABLE_OFFSET : ct_offset <= s_axil_wdata;
+            EXCERPT_WIDTH       : excerpt_width <= s_axil_wdata;
+            EXCERPT_HEIGHT      : excerpt_height <= s_axil_wdata;
+            SCREEN_X            : screen_x <= s_axil_wdata;
+            SCREEN_Y            : screen_y <= s_axil_wdata;
+            DRAW_COLOUR         : draw_colour <= s_axil_wdata;
+            DRAW_SHAPE          : draw_shape <= s_axil_wdata;
+            DRAW_COLOUR_SOURCE  : draw_colour_source <= s_axil_wdata;
+            COMMAND_DRAW        : command_draw <= s_axil_wdata;
             COMMAND_SWAP_BUFFERS: swapBuffers <= s_axil_wdata;
-            VSYNC_BUFFER_SWAP: vSyncBufferSwap <= s_axil_wdata;
+            VSYNC_BUFFER_SWAP   : vSyncBufferSwap <= s_axil_wdata;
         endcase
     end
 end
@@ -161,19 +181,30 @@ assign s_axil_rvalid = !aresetn ? 0 : (!(s_axil_arvalid && s_axil_arready) && !o
 
 always_comb begin
     case (activeReadDataIndex)
-        ADDRESS: next_rdata = gpu_Address;
-        ADDRESS_X: next_rdata = gpu_AddressX;
-        ADDRESS_Y: next_rdata = gpu_AddressY;
-        IMAGE_WIDTH: next_rdata = gpu_ImageWidth;
-        WIDTH: next_rdata = gpu_Width;
-        HEIGHT: next_rdata = gpu_Height;
-        X: next_rdata = gpu_X;
-        Y: next_rdata = gpu_Y;
-        CLEAR_COLOR: next_rdata = gpu_ClearColor;
-        IS_BUSY: next_rdata = gpu_IsBusy;
-
+        IMAGE_START         : next_rdata = image_start;
+        IMAGE_X             : next_rdata = image_x;
+        IMAGE_Y             : next_rdata = image_Y;
+        IMAGE_WIDTH         : next_rdata = image_width;
+        IMAGE_SCALE_X       : next_rdata = image_scale_x;
+        IMAGE_SCALE_Y       : next_rdata = image_scale_y;
+        IMAGE_FLIP_X        : next_rdata = image_flip_x;
+        IMAGE_FLIP_Y        : next_rdata = image_flip_y;
+        COLOUR_TABLE_TYPE   : next_rdata = {ct_enable, ct_type};
+        COLOUR_TABLE_OFFSET : next_rdata = ct_offset;
+        EXCERPT_WIDTH       : next_rdata = excerpt_width;
+        EXCERPT_HEIGHT      : next_rdata = excerpt_height;
+        SCREEN_X            : next_rdata = screen_x;
+        SCREEN_Y            : next_rdata = screen_y;
+        DRAW_COLOUR         : next_rdata = draw_colour;
+        DRAW_SHAPE          : next_rdata = draw_shape;
+        DRAW_COLOUR_SOURCE  : next_rdata = draw_colour_source;
+        IS_BUSY             : next_rdata = is_busy;
+        
         VSYNC: next_rdata = vSync;
         HSYNC: next_rdata = hSync;
+        
+        VSYNC_BUFFER_SWAP   : next_rdata = vSyncBufferSwap;
+
         VSYNC_BUFFER_SWAP: next_rdata = vSyncBufferSwap;
         default: next_rdata = 0;
     endcase
@@ -189,79 +220,13 @@ always_ff @(posedge aclk) begin
 end
 //END - AXI SLAVE IMPLEMENTATION
 
-//START - AXI MASTER 
-
-// Address read channel
-typedef enum logic [1:0] {
-    AR_IDLE,
-    AR_WAIT_READY,
-    AR_WAIT_DATA
-} ar_state_t;
-
-ar_state_t ar_state;
-logic ar_done;
-always_ff @(posedge aclk) begin
-    if (!aresetn) begin
-        ar_state <= AR_IDLE;
-        m_axil_arvalid <= 1'b0;
-        m_axil_araddr <= '0;
-        ar_done <= 1'b0;
-    end else begin
-        case (ar_state)
-            AR_IDLE: begin
-                if (gpu_MemRead && !ar_done) begin
-                    m_axil_arvalid <= 1'b1;
-                    m_axil_araddr <= {gpu_MemAddr[31:2], 2'b00};
-                    ar_state <= AR_WAIT_READY;
-                end
-            end
-
-            AR_WAIT_READY: begin
-                if (m_axil_arready && m_axil_arvalid) begin
-                    m_axil_arvalid <= 1'b0;
-                    ar_done <= 1'b1;
-                    ar_state <= AR_WAIT_DATA;
-                end
-            end
-
-            AR_WAIT_DATA: begin
-                if (m_axil_rvalid && m_axil_rready) begin
-                    ar_done <= 1'b0;
-                    ar_state <= AR_IDLE;
-                end
-            end
-
-            default: ar_state <= AR_IDLE;
-        endcase
-    end
-end
-
-// Read data channel
-always_ff @(posedge aclk) begin
-    if (!aresetn) begin
-        m_axil_rready <= 1'b0;
-        gpu_MemValid <= 1'b0;
-        gpu_MemData <= '0;
-    end else begin
-        m_axil_rready <= ar_done;
-        gpu_MemValid <= 1'b0;
-
-        if (m_axil_rvalid && m_axil_rready) begin
-            gpu_MemData <= gpu_MemAddr[1] ? m_axil_rdata[15:0] : m_axil_rdata[31:16];
-            gpu_MemValid <= 1'b1;
-        end
-    end
-end
-
-//END - AXI MASTER IMPLEMENTATION
-
 localparam SCREEN_WIDTH = 400;
 localparam SCREEN_HEIGHT = 240;
 
-wire[15:0]   gpu_FbX;
-wire[15:0]   gpu_FbY;
-wire[15:0]  gpu_FbColor;
-wire        gpu_FbWrite;
+wire[15:0]   gpu_fb_x;
+wire[15:0]   gpu_fb_y;
+wire[15:0]  gpu_fb_colour;
+wire        gpu_fb_write;
 wire[15:0]  hdmi_nextX;
 wire[15:0]  hdmi_nextY;
 wire        hdmi_hSync;
@@ -271,7 +236,7 @@ wire[15:0]  fb2_dataOutA;
 wire[15:0]  fb2_dataOutB;
 wire[15:0]  fb1_dataOutA;
 wire[15:0]  fb1_dataOutB;
-wire[16:0] gpu_fbAddress = gpu_FbX + gpu_FbY * SCREEN_WIDTH;
+wire[16:0] gpu_fbAddress = gpu_fb_x + gpu_fb_y * SCREEN_WIDTH;
 `define ROTATE_FRAME_BUFFER
 `ifdef ROTATE_FRAME_BUFFER
 wire[16:0] hdmi_fbAddress = SCREEN_WIDTH - (hdmi_nextX / 2) + ((SCREEN_HEIGHT - (hdmi_nextY / 2)) * SCREEN_WIDTH); //this halves the resoluton from 480x800 to 240x400
@@ -296,9 +261,9 @@ Framebuffer #(
     .DEPTH(SCREEN_HEIGHT * SCREEN_WIDTH)
 ) fb1 (
     .clkA(cpuClk),
-    .dataInA(gpu_FbColor),
+    .dataInA(gpu_fb_colour),
     .addressA(gpu_fbAddress),
-    .writeEnableA(bfCont_fbGPU == 1'b0 ? gpu_FbWrite : 1'b0),
+    .writeEnableA(bfCont_fbGPU == 1'b0 ? gpu_fb_write : 1'b0),
 
     .clkB(hdmi_pixClk),
     .dataInB(16'b0),
@@ -314,9 +279,9 @@ Framebuffer #(
     .DEPTH(SCREEN_HEIGHT * SCREEN_WIDTH)
 ) fb2 (
     .clkA(cpuClk),
-    .dataInA(gpu_FbColor),
+    .dataInA(gpu_fb_colour),
     .addressA(gpu_fbAddress),
-    .writeEnableA(bfCont_fbGPU == 1'b1 ? gpu_FbWrite : 1'b0),
+    .writeEnableA(bfCont_fbGPU == 1'b1 ? gpu_fb_write : 1'b0),
 
     .clkB(hdmi_pixClk),
     .dataInB(16'b0),
@@ -327,38 +292,50 @@ Framebuffer #(
     .dataOutB(fb2_dataOutB)
 );
 
-
-/*The gpu_mem... and gpu_Ctrl... signals are direct in-/outputs on the GraphicSystem*/
 gpu #(
     .FB_WIDTH(SCREEN_WIDTH),
     .FB_HEIGHT(SCREEN_HEIGHT)
 ) gpu (
     .clk(cpuClk),
-    .reset(reset),
-    //MEM INTERFACE
-    .mem_data(gpu_MemData),
-    .mem_valid(gpu_MemValid),
-    .mem_addr(gpu_MemAddr),
-    .mem_read(gpu_MemRead),
-    //CONTROL INTERFACE: Draw
-    .ctrl_address(gpu_Address),
-    .ctrl_address_x(gpu_AddressX),
-    .ctrl_address_y(gpu_AddressY),
-    .ctrl_image_width(gpu_ImageWidth),
-    .ctrl_width(gpu_Width),
-    .ctrl_height(gpu_Height),
-    .ctrl_x(gpu_X),
-    .ctrl_y(gpu_Y),
-    .ctrl_draw(gpu_Draw),
-    //CONTROL INTERFACE: Clear
-    .ctrl_clear_color(gpu_ClearColor),
-    .ctrl_clear(gpu_Clear),
-    .crtl_busy(gpu_IsBusy),
-    //FRAMEBUFFER INTERFACE
-    .fb_x(gpu_FbX),
-    .fb_y(gpu_FbY),
-    .fb_color(gpu_FbColor),
-    .fb_write(gpu_FbWrite)
+    .rst(reset),
+    
+    .image_start(image_start),
+    .image_x(image_x),
+    .image_Y(image_Y),
+    .image_width(image_width),
+    .image_scale_x(image_scale_x),
+    .image_scale_y(image_scale_y),
+    .image_flip_x(image_flip_x),
+    .image_flip_y(image_flip_y),
+    .ct_type(ct_type),
+    .ct_enable(ct_enable),
+    .ct_offset(ct_offset),
+    .excerpt_width(excerpt_width),
+    .excerpt_height(excerpt_height),
+    .screen_x(screen_x),
+    .screen_y(screen_y),
+    .draw_colour(draw_colour),
+    .draw_shape(draw_shape),
+    .draw_colour_source(draw_colour_source),
+    .command_draw(command_draw),
+    .is_busy(is_busy),
+
+    .m_axil_araddr(m_axil_araddr),
+    .m_axil_arprot(m_axil_arprot),
+    .m_axil_arvalid(m_axil_arvalid),
+    .m_axil_arready(m_axil_arready),
+    .m_axil_rdata(m_axil_rdata),
+    .m_axil_rresp(m_axil_rresp),
+    .m_axil_rvalid(m_axil_rvalid),
+    .m_axil_rready(m_axil_rready),
+
+    .ct_address(ct_address),
+    .ct_colour(ct_colour),
+
+    .fb_x(gpu_fb_x),
+    .fb_y(gpu_fb_y),
+    .fb_colour(gpu_fb_colour),
+    .fb_write(gpu_fb_write)
 );
 
 
