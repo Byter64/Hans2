@@ -121,6 +121,6 @@ always_ff @(posedge aclk) begin
 end
 
 always_ff @(posedge aclk) begin
-  portb_data <= memory[portb_address[15:1]];
+  portb_data <= memory[(portb_address - OFFSET) >> 1];
 end
 endmodule
