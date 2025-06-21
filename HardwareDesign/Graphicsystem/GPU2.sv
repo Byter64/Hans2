@@ -673,7 +673,7 @@ assign se_colour = mem_data;
 
 always_ff @(posedge clk) begin
     if(re_handshake) begin
-        mem_address <= re_ct_address + re_ct_offset;
+        mem_address <= (re_ct_address << 1) + re_ct_offset;
         se_framebuffer_x <= re_framebuffer_x;
         se_framebuffer_y <= re_framebuffer_y;
         se_valid <= 1;

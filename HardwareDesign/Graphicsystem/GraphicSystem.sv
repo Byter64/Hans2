@@ -155,7 +155,7 @@ always_ff @(posedge aclk) begin
     if(reset) begin
         ct_enable <= 0;
         ct_type <= 0;
-        ct_offset <= 0;
+        ct_offset <= 'h2000;
         draw_shape <= RECTANGLE;
         draw_colour_source <= MEMORY;
         image_flip_x <= 0;
