@@ -8,7 +8,7 @@ typedef enum logic[4:0] {
     BIT_2 = 5'd2,
     BIT_4 = 5'd4,
     BIT_8 = 5'd8,
-    BIT_16 = 5'd16, //This is special, because it needs a left shift instead of a right shift
+    BIT_16 = 5'd16 //This is special, because it needs a left shift instead of a right shift
 } CTType; //Colour table type
 
 typedef enum logic[3:0] {
@@ -23,7 +23,7 @@ typedef enum logic {
 
 module GPU #(
     parameter FB_WIDTH = 400,
-    parameter FB_HEIGHT = 240,
+    parameter FB_HEIGHT = 240
 ) (
     input logic clk,
     input logic rst,
@@ -67,7 +67,7 @@ module GPU #(
     output logic[15:0] fb_x,
     output logic[15:0] fb_y,
     output logic[15:0] fb_colour,
-    output logic       fb_write,
+    output logic       fb_write
 );
 
 logic       st1_rect_re_ready;

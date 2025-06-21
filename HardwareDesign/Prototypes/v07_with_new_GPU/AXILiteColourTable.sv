@@ -31,7 +31,7 @@ module AXILiteColourTable #(
     input  logic                         s_axil_rready,
 
     input  logic[ADDR_WIDTH-1:0]         portb_address,
-    output logic[DATA_WIDTH-1:0]         portb_data,
+    output logic[DATA_WIDTH-1:0]         portb_data
 );
 
 assign s_axil_rresp = 0;
