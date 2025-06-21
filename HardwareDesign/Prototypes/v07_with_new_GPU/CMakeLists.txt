@@ -7,6 +7,7 @@ set(testbench "testbench")
 list(APPEND sources_all
   ${CMAKE_CURRENT_SOURCE_DIR}/Top.sv
   ${CMAKE_CURRENT_SOURCE_DIR}/AXILiteMemory.sv
+  ${CMAKE_CURRENT_SOURCE_DIR}/AXILiteColourTable.sv
   ${CMAKE_CURRENT_SOURCE_DIR}/../../AXI/mkaxi2axil_bridge.v
   ${CMAKE_CURRENT_SOURCE_DIR}/../../AXI/FIFO2.v
   ${CMAKE_CURRENT_SOURCE_DIR}/../../AXI/verilog-axi-master/rtl/axil_crossbar.v

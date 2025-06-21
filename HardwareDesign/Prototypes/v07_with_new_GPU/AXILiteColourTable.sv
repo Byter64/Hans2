@@ -27,7 +27,10 @@ module AXILiteColourTable #(
     output logic[DATA_WIDTH-1:0]         s_axil_rdata,
     output logic[1:0]                    s_axil_rresp,
     output logic                         s_axil_rvalid,
-    input  logic                         s_axil_rready
+    input  logic                         s_axil_rready,
+
+    input  logic[ADDR_WIDTH-1:0]         portb_address,
+    output logic[DATA_WIDTH-1:0]         portb_data,
 );
 
 assign s_axil_rresp = 0;
@@ -114,5 +117,9 @@ always_ff @(posedge aclk) begin
 	begin
 		s_axil_rdata <= memory[ar_address_real[15:1]];
 	end
+end
+
+always_ff @(posedge aclk) begin
+  portb_data <= memory[portb_address[15:1]];
 end
 endmodule
