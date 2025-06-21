@@ -21,40 +21,14 @@ typedef enum logic {
 	COLOUR
 } ColourSource;
 
-typedef enum logic[15:0] {
-    IMAGE                   = 0,
-    IMAGE_X                 = 4,
-    IMAGE_Y                 = 8,
-    IMAGE_WIDTH             = 12,
-    IMAGE_SCALE_X           = 16,
-    IMAGE_SCALE_Y           = 20,
-    IMAGE_FLIP_X            = 24,
-    IMAGE_FLIP_Y            = 28,
-    COLOUR_TABLE_TYPE       = 32,
-    COLOUR_TABLE_OFFSET     = 36,
-    EXCERPT_WIDTH           = 40,
-    EXCERPT_HEIGHT          = 44,
-    SCREEN_X                = 48,
-    SCREEN_Y                = 52,
-    DRAW_COLOUR             = 56,
-    DRAW_SHAPE              = 60,
-    DRAW_COLOUR_SOURCE      = 64,
-    COMMAND_DRAW            = 68,
-    IS_BUSY                 = 72,
-
-    VSYNC                   = 76,
-    HSYNC                   = 80,
-
-    COMMAND_SWAP_BUFFERS    = 84,
-    VSYNC_BUFFER_SWAP       = 88
-} DataIndex;
-
-
-module GPU (
+module GPU #(
+    parameter FB_WIDTH = 400,
+    parameter FB_HEIGHT = 240,
+) (
     input logic clk,
     input logic rst,
 
-    input logic[31:0]   image,
+    input logic[31:0]   image_start,
     input logic[15:0]   image_x,
     input logic[15:0]   image_Y,
     input logic[15:0]   image_width,
@@ -145,7 +119,7 @@ GPU_2_Address Stage2
 
     .re_valid(st1_rect_se_valid),
     .re_ready(st2_re_ready),
-    .re_base_address(image),
+    .re_base_address(image_start),
     .re_x(st1_rect_sprite_sheet_x),
     .re_y(st1_rect_sprite_sheet_y),
     .re_image_width(image_width),
@@ -394,6 +368,12 @@ always_ff @(posedge clk) begin
             y <= y + 1;
         end
         if(y == max_y) begin
+            re_ready <= 1;
+            se_valid <= 0;
+            state <= IDLE;
+        end
+
+        if(se_screen_x >= FB_WIDTH || se_screen_y >= FB_HEIGHT) begin
             re_ready <= 1;
             se_valid <= 0;
             state <= IDLE;
@@ -753,5 +733,4 @@ endmodule
 
 
 TODO: Set ct_type to BIT_16, if use_ct == false
-TODO: shift_amount in stage 3 might be wrong when sprite sheet starts at an address with 0xXXXXX10
 */
