@@ -1,27 +1,27 @@
-enum logic { 
+typedef enum logic { 
 	UPSCALE, 
 	DOWNSCALE
 } ScaleType;
 
-enum logic[4:0] {
-    BIT_1 = 4'd1,
-    BIT_2 = 4'd2,
-    BIT_4 = 4'd4,
-    BIT_8 = 4'd8,
-    BIT_16 = 4'd16, //This is special, because it needs a left shift instead of a right shift
+typedef enum logic[4:0] {
+    BIT_1 = 5'd1,
+    BIT_2 = 5'd2,
+    BIT_4 = 5'd4,
+    BIT_8 = 5'd8,
+    BIT_16 = 5'd16, //This is special, because it needs a left shift instead of a right shift
 } CTType; //Colour table type
 
-enum logic[3:0] {
+typedef enum logic[3:0] {
 	RECTANGLE,
 	LINE
 } Shape;
 
-enum logic {
+typedef enum logic {
 	MEMORY,
 	COLOUR
 } ColourSource;
 
-enum logic[15:0] {
+typedef enum logic[15:0] {
     IMAGE                   = 0,
     IMAGE_X                 = 4,
     IMAGE_Y                 = 8,
@@ -83,7 +83,7 @@ module GPU (
     input logic [31:0]                       m_axil_rdata,
     input logic [1:0]                        m_axil_rresp,
     input logic                              m_axil_rvalid,
-    output logic                             m_axil_rready
+    output logic                             m_axil_rready,
 
     //Colour Table memory
     output logic[15:0] ct_address,
@@ -147,7 +147,7 @@ GPU_2_Address Stage2
     .re_ready(st2_re_ready),
     .re_base_address(image),
     .re_x(st1_rect_sprite_sheet_x),
-    .re_y(st1_rect_sprite_sheet_y) 
+    .re_y(st1_rect_sprite_sheet_y),
     .re_image_width(image_width),
     .re_ct_type(ct_type),
     .re_framebuffer_x(st1_rect_screen_x),
@@ -238,7 +238,6 @@ GPU_5_Framebuffer Stage5
     .fb_colour(fb_colour),
     .fb_write(fb_write)
 );
-    
 endmodule
 
 module GPU_1_Rectangle (
@@ -265,9 +264,9 @@ module GPU_1_Rectangle (
     output logic[15:0] se_screen_y,
     output logic se_valid,
     input  logic se_ready
-)
+);
 
-enum logic {
+typedef enum logic {
     IDLE,
     GENERATING
 } State;
@@ -400,12 +399,6 @@ always_ff @(posedge clk) begin
             state <= IDLE;
         end
     end
-    
-    if (rst) begin
-        state <= IDLE;
-        se_valid <= 0;
-        re_ready <= 0;
-    end
     endcase
 
     if(rst) begin
@@ -450,7 +443,7 @@ wire[31:0] ss_address = re_x + re_image_width * re_y; //1D sprite sheet address
 wire[31:0] result = re_base_address + (ss_address * re_ct_type >> 3);
 
 //output_buffer
-enum logic[1:0] {
+typedef enum logic[1:0] {
     EMPTY,
     FULL,
     BUF_FULL
@@ -509,6 +502,7 @@ always_ff @(posedge clk) begin
             se_framebuffer_x <= re_framebuffer_x;
             se_framebuffer_y <= re_framebuffer_y;
         end
+    end
     BUF_FULL: begin
         re_ready <= 0;
         se_valid <= 1;
@@ -521,7 +515,6 @@ always_ff @(posedge clk) begin
             se_framebuffer_x <= buffer_framebuffer_x;
             se_framebuffer_y <= buffer_framebuffer_y;
         end
-    end
     end
     endcase
 
@@ -565,7 +558,7 @@ wire se_handshake = se_valid && se_ready;
 wire axi_ar_handshake = axi_arready && axi_arvalid;
 wire axi_r_handshake = axi_rready && axi_rvalid;
 
-enum logic[1:0] {
+typedef enum logic[1:0] {
     IDLE,
     SET_ADDRESS,
     GET_DATA,
@@ -593,7 +586,8 @@ logic[15:0] cache_framebuffer_y;
 
 //This is a long path. Maybe split it up into two cycles???
 wire[15:0] bitmask = (1 << re_ct_type) - 1;
-wire[15:0] shift_amount = 31 - (re_sprite_sheet_address * re_ct_type)[4:0] + (re_ct_type - 1);
+wire[31:0] bit_address = re_sprite_sheet_address * re_ct_type;
+wire[15:0] shift_amount = 31 - bit_address[4:0] + (re_ct_type - 1);
 wire[15:0] quick_result = (cache_data >> shift_amount) & bitmask;
 wire[15:0] axi_result   = (axi_rdata >> shift_amount) & bitmask;
 
