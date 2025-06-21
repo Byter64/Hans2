@@ -292,10 +292,10 @@ Framebuffer #(
     .dataOutB(fb2_dataOutB)
 );
 
-gpu #(
+GPU #(
     .FB_WIDTH(SCREEN_WIDTH),
     .FB_HEIGHT(SCREEN_HEIGHT)
-) gpu (
+) GPU (
     .clk(cpuClk),
     .rst(reset),
     
