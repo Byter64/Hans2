@@ -284,6 +284,7 @@ logic                  	CT_s_axil_rready;
 logic[15:0]				CT_portb_address;
 logic[15:0]				CT_portb_data;
 AXILiteColourTable #(
+	.OFFSET('h2000)
     .ADDR_WIDTH(16),
     .DATA_WIDTH(16), 
     .MEMORY_DEPTH(4096) //In 16-Bit words   

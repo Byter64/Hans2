@@ -1,4 +1,5 @@
 module AXILiteColourTable #(
+    parameter OFFSET = 0,
     parameter ADDR_WIDTH = 16,
     parameter DATA_WIDTH = 16, //This is equivalent to 4 BRAMS on ecp5
     parameter MEMORY_DEPTH = 4096 //This is equivalent to 4 BRAMS on ecp5
@@ -40,7 +41,7 @@ bit[ADDR_WIDTH-1:0] memory[MEMORY_DEPTH];
 //Address Write
 logic[ADDR_WIDTH-1:0] aw_address = 'b0;
 logic[31:0] aw_address_real;
-assign aw_address_real = (s_axil_awvalid && s_axil_awready ? s_axil_awaddr : aw_address);
+assign aw_address_real = (s_axil_awvalid && s_axil_awready ? s_axil_awaddr : aw_address) - OFFSET;
 always @(posedge aclk) begin
 		s_axil_awready <= 1;
 end
@@ -83,7 +84,7 @@ end
 logic[ADDR_WIDTH-1:0] ar_address = 'b0;
 logic[31:0] ar_address_real;
 logic read_registered = 0;
-assign ar_address_real = (s_axil_arvalid && s_axil_arready ? s_axil_araddr : ar_address);
+assign ar_address_real = (s_axil_arvalid && s_axil_arready ? s_axil_araddr : ar_address) - OFFSET;
 always @(posedge aclk) begin
 		s_axil_arready <= 1;
 end
