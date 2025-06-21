@@ -72,7 +72,7 @@ initial begin
 	$dumpvars(0, Top.AxiCrossbar);
 	$dumpvars(0, Top.Bootloader);
 
-	#1000000
+	#10000000
 	$finish;
 end
 
