@@ -735,5 +735,5 @@ endmodule
 5. Pixelschreiben                       - 5_Framebuffer
 
 
-TODO: Set ct_type to BIT_16, if use_ct == false
+TODO: If coloursorce is color, stages 2 to 4 should be skipped!!!
 */

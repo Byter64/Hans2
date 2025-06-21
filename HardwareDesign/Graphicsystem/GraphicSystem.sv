@@ -132,7 +132,12 @@ always_ff @(posedge aclk) begin
             IMAGE_SCALE_Y       : image_scale_y <= s_axil_wdata;
             IMAGE_FLIP_X        : image_flip_x <= s_axil_wdata;
             IMAGE_FLIP_Y        : image_flip_y <= s_axil_wdata;
-            COLOUR_TABLE_TYPE   : {ct_enable, ct_type} <= s_axil_wdata;
+            COLOUR_TABLE_TYPE   : begin
+                if(!s_axil_wdata[5])
+                    {ct_enable, ct_type} <= {1'b0, BIT_16};
+                else
+                    {ct_enable, ct_type} <= s_axil_wdata;
+            end
             COLOUR_TABLE_OFFSET : ct_offset <= s_axil_wdata;
             EXCERPT_WIDTH       : excerpt_width <= s_axil_wdata;
             EXCERPT_HEIGHT      : excerpt_height <= s_axil_wdata;
