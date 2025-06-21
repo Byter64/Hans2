@@ -144,8 +144,8 @@ always_ff @(posedge aclk) begin
             SCREEN_X            : screen_x <= s_axil_wdata;
             SCREEN_Y            : screen_y <= s_axil_wdata;
             DRAW_COLOUR         : draw_colour <= s_axil_wdata;
-            DRAW_SHAPE          : draw_shape <= s_axil_wdata;
-            DRAW_COLOUR_SOURCE  : draw_colour_source <= s_axil_wdata;
+            DRAW_SHAPE          : draw_shape <= Shape'(s_axil_wdata);
+            DRAW_COLOUR_SOURCE  : draw_colour_source <= ColourSource'(s_axil_wdata);
             COMMAND_DRAW        : command_draw <= s_axil_wdata;
             COMMAND_SWAP_BUFFERS: swapBuffers <= s_axil_wdata;
             VSYNC_BUFFER_SWAP   : vSyncBufferSwap <= s_axil_wdata;
@@ -154,7 +154,7 @@ always_ff @(posedge aclk) begin
 
     if(reset) begin
         ct_enable <= 0;
-        ct_type <= 0;
+        ct_type <= BIT_16;
         ct_offset <= 'h2000;
         draw_shape <= RECTANGLE;
         draw_colour_source <= MEMORY;
@@ -366,8 +366,8 @@ HDMI_Out hdmi_Out
 
     //Out
     .pixclk(hdmi_pixClk),
-    .nextX(hdmi_nextX),
-    .nextY(hdmi_nextY),
+    .nextX(hdmi_nextX[10:0]),
+    .nextY(hdmi_nextY[10:0]),
     .hSync(hSync),
     .vSync(vSync),
     .gpdi_dp(gpdiDp)

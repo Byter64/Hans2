@@ -13,7 +13,7 @@ module AXILiteColourTable #(
     output logic                         s_axil_awready,
 
     input  logic[DATA_WIDTH-1:0]         s_axil_wdata,
-    input  logic[STRB_WIDTH-1:0]         s_axil_wstrb,
+    input  logic[1:0]                    s_axil_wstrb,
     input  logic                         s_axil_wvalid,
     output logic                         s_axil_wready,
 

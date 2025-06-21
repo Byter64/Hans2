@@ -53,10 +53,10 @@ module GPU #(
     output logic[31:0]                       m_axil_araddr,
     output logic[2:0]                        m_axil_arprot,
     output logic                             m_axil_arvalid,
-    input  logic                              m_axil_arready,
-    input  logic [31:0]                       m_axil_rdata,
-    input  logic [1:0]                        m_axil_rresp,
-    input  logic                              m_axil_rvalid,
+    input  logic                             m_axil_arready,
+    input  logic [31:0]                      m_axil_rdata,
+    input  logic [1:0]                       m_axil_rresp,
+    input  logic                             m_axil_rvalid,
     output logic                             m_axil_rready,
 
     //Colour Table memory
@@ -71,17 +71,37 @@ module GPU #(
 );
 
 logic       st1_rect_re_ready;
-logic[31:0] st1_rect_sprite_sheet_x;
-logic[31:0] st1_rect_sprite_sheet_y;
+logic[15:0] st1_rect_sprite_sheet_x;
+logic[15:0] st1_rect_sprite_sheet_y;
 logic[15:0] st1_rect_screen_x;
 logic[15:0] st1_rect_screen_y;
 logic       st1_rect_se_valid;
 logic       st2_re_ready;
+logic[31:0] st2_memory_address;
+logic[31:0] st2_sprite_sheet_address;
+logic[15:0] st2_framebuffer_x;
+logic[15:0] st2_framebuffer_y;
+logic       st2_se_valid;
+logic       st3_re_ready;
+logic[15:0] st3_data;
+logic[15:0] st3_framebuffer_x;
+logic[15:0] st3_framebuffer_y;
+logic       st3_se_valid;
+logic       st4_re_ready;
+wire        st3_se_ready;
+logic[15:0] st4_colour;
+logic[15:0] st4_framebuffer_x;
+logic[15:0] st4_framebuffer_y;
+logic       st4_se_valid;
+logic       st5_re_ready;
 
+assign st3_se_ready = ct_enable ? st4_re_ready : st5_re_ready;
 assign is_busy = st1_rect_re_ready;
 
-GPU_1_Rectangle Stage1_Rect 
-(
+GPU_1_Rectangle #(
+    .FB_WIDTH(FB_WIDTH),
+    .FB_HEIGHT(FB_HEIGHT)
+) Stage1_Rect (
     .clk(clk),
     .rst(rst),
     
@@ -106,12 +126,6 @@ GPU_1_Rectangle Stage1_Rect
     .se_ready(st2_re_ready)
 );
 
-logic[31:0] st2_memory_address;
-logic[31:0] st2_sprite_sheet_address;
-logic[15:0] st2_framebuffer_x;
-logic[15:0] st2_framebuffer_y;
-logic       st2_se_valid;
-logic       st3_re_ready;
 GPU_2_Address Stage2 
 (
     .clk(clk),
@@ -134,12 +148,6 @@ GPU_2_Address Stage2
     .se_valid(st2_se_valid),
     .se_ready(st3_re_ready)
 );
-
-logic[15:0] st3_data;
-logic[15:0] st3_framebuffer_x;
-logic[15:0] st3_framebuffer_y;
-logic       st3_se_valid;
-logic       st4_re_ready;
 
 GPU_3_Memory Stage3 
 (
@@ -165,14 +173,9 @@ GPU_3_Memory Stage3
     .se_framebuffer_x(st3_framebuffer_x),
     .se_framebuffer_y(st3_framebuffer_y),
     .se_valid(st3_se_valid),
-    .se_ready(ct_enable ? st4_re_ready : st5_re_ready)
+    .se_ready(st3_se_ready)
 );
 
-logic[15:0] st4_colour;
-logic[15:0] st4_framebuffer_x;
-logic[15:0] st4_framebuffer_y;
-logic       st4_se_valid;
-logic       st5_re_ready;
 
 GPU_4_ColourTable Stage4 
 (
@@ -214,7 +217,10 @@ GPU_5_Framebuffer Stage5
 );
 endmodule
 
-module GPU_1_Rectangle (
+module GPU_1_Rectangle #(
+    parameter FB_WIDTH,
+    parameter FB_HEIGHT
+) (
     input logic clk,
     input logic rst,
 
@@ -231,9 +237,8 @@ module GPU_1_Rectangle (
 	input  logic	   re_mirror_x,
 	input  logic	   re_mirror_y,
     
-	//These vectors are quite large because I am afraid of overflows
-    output logic[31:0] se_sprite_sheet_x,
-    output logic[31:0] se_sprite_sheet_y,
+    output logic[15:0] se_sprite_sheet_x,
+    output logic[15:0] se_sprite_sheet_y,
 	output logic[15:0] se_screen_x,
     output logic[15:0] se_screen_y,
     output logic se_valid,
@@ -283,9 +288,7 @@ always_ff @(posedge clk) begin
 			sub_y <= 0;
 			ss_x <= re_sprite_sheet_x;
 			ss_y <= re_sprite_sheet_y;
-			max_ss_x  <= $signed(re_scale_x) < $signed(0) ? (-re_scale_x - 1) : (re_scale_x - 1);
-			max_ss_y  <= $signed(re_scale_y) < $signed(0) ? (-re_scale_y - 1) : (re_scale_y - 1);
-
+			
             max_sub_x <= $signed(re_scale_x) < $signed(0) ? (-re_scale_x - 1) : (re_scale_x - 1);
             max_sub_y <= $signed(re_scale_y) < $signed(0) ? (-re_scale_y - 1) : (re_scale_y - 1);
 		end
@@ -347,8 +350,8 @@ always_ff @(posedge clk) begin
 			height <= 		re_height;
 			scale_x <= 		$signed(re_scale_x) < $signed(0) ? -re_scale_x : re_scale_x;
 			scale_y <= 		$signed(re_scale_y) < $signed(0) ? -re_scale_y : re_scale_y;
-			scale_type_x <= $signed(re_scale_x) < $signed(0) ? DOWNSCALE : UPSCALE;
-			scale_type_y <= $signed(re_scale_y) < $signed(0) ? DOWNSCALE : UPSCALE;
+			scale_type_x <= ScaleType'($signed(re_scale_x) < $signed(0) ? DOWNSCALE : UPSCALE);
+			scale_type_y <= ScaleType'($signed(re_scale_y) < $signed(0) ? DOWNSCALE : UPSCALE);
 			mirror_x     <= re_mirror_x;
 			mirror_y     <= re_mirror_y;
 
@@ -527,8 +530,8 @@ module GPU_3_Memory (
     output logic       axi_arvalid,
     output logic[31:0] axi_araddr,
     output logic       axi_rready,
-    output logic       axi_rvalid,
-    output logic[31:0] axi_rdata,
+    input  logic       axi_rvalid,
+    input  logic[31:0] axi_rdata,
 
     output logic[15:0] se_data, //this can be either a colour or an entry to a colour table
     output logic[15:0] se_framebuffer_x,
@@ -668,10 +671,12 @@ module GPU_4_ColourTable (
 wire re_handshake = re_valid && re_ready;
 wire se_handshake = se_valid && se_ready;
 
-assign re_ready = 1;
 assign se_colour = mem_data;
 
 always_ff @(posedge clk) begin
+    re_ready <= 1;
+
+
     if(re_handshake) begin
         mem_address <= (re_ct_address << 1) + re_ct_offset;
         se_framebuffer_x <= re_framebuffer_x;
@@ -707,9 +712,9 @@ module GPU_5_Framebuffer (
 );
 wire re_handshake = re_valid && re_ready;
 
-assign re_ready = 1;
-
 always_ff @(posedge clk) begin
+    re_ready <= 1;
+
     if(re_handshake) begin
         fb_x <= re_x;
         fb_y <= re_y;
