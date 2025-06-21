@@ -146,6 +146,18 @@ always_ff @(posedge aclk) begin
             VSYNC_BUFFER_SWAP   : vSyncBufferSwap <= s_axil_wdata;
         endcase
     end
+
+    if(reset) begin
+        ct_enable <= 0;
+        ct_type <= 0;
+        ct_offset <= 0;
+        draw_shape <= RECTANGLE;
+        draw_colour_source <= MEMORY;
+        image_flip_x <= 0;
+        image_flip_y <= 0;
+        image_scale_x <= 1;
+        image_scale_y <= 1;
+    end
 end
 
 //Write response

@@ -356,6 +356,9 @@ always_ff @(posedge clk) begin
             y <= 0;
             max_x <= re_width - 1;
             max_y <= re_height - 1;
+
+            if(re_scale_x == 0 || re_scale_y == 0)
+                state <= IDLE;
         end
     end
     GENERATING: begin
