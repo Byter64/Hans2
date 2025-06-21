@@ -96,17 +96,148 @@ module GPU (
     output logic       fb_write,
 );
 
-logic st1_rect_re_ready;
+logic       st1_rect_re_ready;
+logic[31:0] st1_rect_sprite_sheet_x;
+logic[31:0] st1_rect_sprite_sheet_y;
+logic[15:0] st1_rect_screen_x;
+logic[15:0] st1_rect_screen_y;
+logic       st1_rect_se_valid;
+logic       st2_re_ready;
+
+assign is_busy = st1_rect_re_ready;
+
 GPU_1_Rectangle Stage1_Rect 
 (
     .clk(clk),
     .rst(rst),
     
-    .re_valid(),
+    .re_valid(command_draw),
     .re_ready(st1_rect_re_ready),
-    .re_start_x() //what does this even do?!?!?
+    .re_sprite_sheet_x(image_x),
+    .re_sprite_sheet_y(image_Y),
+    .re_screen_x(screen_x),
+    .re_screen_y(screen_y),
+    .re_width(excerpt_width),
+    .re_height(excerpt_height),
+    .re_scale_x(image_scale_x),
+    .re_scale_y(image_scale_y),
+    .re_mirror_x(image_flip_x),
+    .re_mirror_y(image_flip_y),
+
+    .se_sprite_sheet_x(st1_rect_sprite_sheet_x),
+    .se_sprite_sheet_y(st1_rect_sprite_sheet_y),
+    .se_screen_x(st1_rect_screen_x),
+    .se_screen_y(st1_rect_screen_y),
+    .se_valid(st1_rect_se_valid),
+    .se_ready(st2_re_ready)
 );
 
+logic[31:0] st2_memory_address;
+logic[31:0] st2_sprite_sheet_address;
+logic[15:0] st2_framebuffer_x;
+logic[15:0] st2_framebuffer_y;
+logic       st2_se_valid;
+logic       st3_re_ready;
+GPU_2_Address Stage2 
+(
+    .clk(clk),
+    .rst(rst),
+
+    .re_valid(st1_rect_se_valid),
+    .re_ready(st2_re_ready),
+    .re_base_address(image),
+    .re_x(st1_rect_sprite_sheet_x),
+    .re_y(st1_rect_sprite_sheet_y) 
+    .re_image_width(image_width),
+    .re_ct_type(ct_type),
+    .re_framebuffer_x(st1_rect_screen_x),
+    .re_framebuffer_y(st1_rect_screen_y),
+
+    .se_memory_address(st2_memory_address),
+    .se_sprite_sheet_address(st2_sprite_sheet_address),
+    .se_framebuffer_x(st2_framebuffer_x),
+    .se_framebuffer_y(st2_framebuffer_y),
+    .se_valid(st2_se_valid),
+    .se_ready(st3_re_ready)
+);
+
+logic[15:0] st3_data;
+logic[15:0] st3_framebuffer_x;
+logic[15:0] st3_framebuffer_y;
+logic       st3_se_valid;
+logic       st4_re_ready;
+
+GPU_3_Memory Stage3 
+(
+    .clk(clk),
+    .rst(rst),
+
+    .re_valid(st2_se_valid),
+    .re_ready(st3_re_ready),
+    .re_address(st2_memory_address),
+    .re_sprite_sheet_address(st2_sprite_sheet_address),
+    .re_ct_type(ct_type),
+    .re_framebuffer_x(st2_framebuffer_x),
+    .re_framebuffer_y(st2_framebuffer_y),
+
+    .axi_arready(m_axil_arready),
+    .axi_arvalid(m_axil_arvalid),
+    .axi_araddr(m_axil_araddr),
+    .axi_rready(m_axil_rready),
+    .axi_rvalid(m_axil_rvalid),
+    .axi_rdata(m_axil_rdata),
+
+    .se_data(st3_data),
+    .se_framebuffer_x(st3_framebuffer_x),
+    .se_framebuffer_y(st3_framebuffer_y),
+    .se_valid(st3_se_valid),
+    .se_ready(ct_enable ? st4_re_ready : st5_re_ready)
+);
+
+logic[15:0] st4_colour;
+logic[15:0] st4_framebuffer_x;
+logic[15:0] st4_framebuffer_y;
+logic       st4_se_valid;
+logic       st5_re_ready;
+
+GPU_4_ColourTable Stage4 
+(
+    .clk(clk),
+    .rst(rst),
+
+    .re_valid(st3_se_valid && ct_enable),
+    .re_ready(st4_re_ready),
+    .re_ct_address(st3_data),
+    .re_ct_offset(ct_offset),
+    .re_framebuffer_x(st3_framebuffer_x),
+    .re_framebuffer_y(st3_framebuffer_y),
+
+    .mem_address(ct_address),
+    .mem_data(ct_colour),
+
+    .se_colour(st4_colour),
+    .se_framebuffer_x(st4_framebuffer_x),
+    .se_framebuffer_y(st4_framebuffer_y),
+    .se_valid(st4_se_valid),
+    .se_ready(st5_re_ready)
+);
+
+GPU_5_Framebuffer Stage5 
+(
+    .clk(clk),
+    .rst(rst),
+
+    .re_valid(ct_enable ? st4_se_valid : st3_se_valid),
+    .re_ready(st5_re_ready),
+    .re_x(ct_enable ? st4_framebuffer_x : st3_framebuffer_x),
+    .re_y(ct_enable ? st4_framebuffer_y : st3_framebuffer_y),
+    .re_colour(draw_colour_source == COLOUR ? draw_colour : ct_enable ? st4_colour : st3_data),
+
+    .fb_x(fb_x),
+    .fb_y(fb_y),
+    .fb_colour(fb_colour),
+    .fb_write(fb_write)
+);
     
 endmodule
 
@@ -116,8 +247,10 @@ module GPU_1_Rectangle (
 
     input  logic re_valid,
     output logic re_ready,
-    input  logic[15:0] re_start_x,
-    input  logic[15:0] re_start_y,
+    input  logic[15:0] re_sprite_sheet_x,
+    input  logic[15:0] re_sprite_sheet_y,
+    input  logic[15:0] re_screen_x,
+    input  logic[15:0] re_screen_y,
     input  logic[15:0] re_width,
     input  logic[15:0] re_height,
 	input  logic[15:0] re_scale_x, //signed
@@ -175,8 +308,8 @@ always_ff @(posedge clk) begin
 		if(re_handshake) begin
 			sub_x <= 0;
 			sub_y <= 0;
-			ss_x <= re_start_x;
-			ss_y <= re_start_y;
+			ss_x <= re_sprite_sheet_x;
+			ss_y <= re_sprite_sheet_y;
 			max_ss_x  <= $signed(re_scale_x) < $signed(0) ? (-re_scale_x - 1) : (re_scale_x - 1);
 			max_ss_y  <= $signed(re_scale_y) < $signed(0) ? (-re_scale_y - 1) : (re_scale_y - 1);
 
@@ -235,8 +368,8 @@ always_ff @(posedge clk) begin
             re_ready <= 0;
             se_valid <= 1;
 
-			start_x <= 		re_start_x;
-			start_y <= 		re_start_y;
+			start_x <= 		re_screen_x;
+			start_y <= 		re_screen_y;
 			width <= 		re_width;
 			height <= 		re_height;
 			scale_x <= 		$signed(re_scale_x) < $signed(0) ? -re_scale_x : re_scale_x;
@@ -413,7 +546,7 @@ module GPU_3_Memory (
     input  logic[15:0] re_framebuffer_x,
     input  logic[15:0] re_framebuffer_y,
 
-    //axi lite slave read channels
+    //axi lite master read channels
     input  logic       axi_arready,
     output logic       axi_arvalid,
     output logic[31:0] axi_araddr,
@@ -540,7 +673,7 @@ module GPU_4_ColourTable (
 
     input  logic re_valid,
     output logic re_ready,
-    input  logic[15:0] re_ct_base_address,
+    input  logic[15:0] re_ct_address,
     input  logic[15:0] re_ct_offset,
     input  logic[15:0] re_framebuffer_x,
     input  logic[15:0] re_framebuffer_y,
@@ -563,7 +696,7 @@ assign se_colour = mem_data;
 
 always_ff @(posedge clk) begin
     if(re_handshake) begin
-        mem_address <= re_base_address + re_ct_offset;
+        mem_address <= re_ct_address + re_ct_offset;
         se_framebuffer_x <= re_framebuffer_x;
         se_framebuffer_y <= re_framebuffer_y;
         se_valid <= 1;
@@ -620,19 +753,11 @@ endmodule
 /*
 1. Spritesheetposition und Screenposition (skalierung und spiegelung!) generieren - 1_Rectangle //TODO: add line
 2. Speicheradressen berechnen           - 2_Address
-3. Pixel/CT Index lesen                 - 3_Memory //TODO: add constant colour
+3. Pixel/CT Index lesen                 - 3_Memory
 4. (Optional) Color table auflösen      - 4_ColourTable
 5. Pixelschreiben                       - 5_Framebuffer
-*/
 
-/*
-Skalieren
-Spiegeln
-color table
-
-Rechteck zeichnen
-Linie zeichnen
 
 TODO: Set ct_type to BIT_16, if use_ct == false
-TODO: ct_base_address, ct_offset, use_ct, and ct_type have to be stored in the GPU module itself!
+TODO: shift_amount in stage 3 might be wrong when sprite sheet starts at an address with 0xXXXXX10
 */
