@@ -123,7 +123,7 @@ GPU_1_Rectangle #(
     .se_screen_x(st1_rect_screen_x),
     .se_screen_y(st1_rect_screen_y),
     .se_valid(st1_rect_se_valid),
-    .se_ready(st2_re_ready)
+    .se_ready(draw_colour_source == COLOUR ? st5_re_ready : st2_re_ready)
 );
 
 GPU_2_Address Stage2 
@@ -131,7 +131,7 @@ GPU_2_Address Stage2
     .clk(clk),
     .rst(rst),
 
-    .re_valid(st1_rect_se_valid),
+    .re_valid(draw_colour_source == COLOUR ? 1'b0 : st1_rect_se_valid),
     .re_ready(st2_re_ready),
     .re_base_address(image_start),
     .re_x(st1_rect_sprite_sheet_x),
@@ -159,6 +159,7 @@ GPU_3_Memory Stage3
     .re_address(st2_memory_address),
     .re_sprite_sheet_address(st2_sprite_sheet_address),
     .re_ct_type(ct_type),
+    .re_ct_enable(ct_enable),
     .re_framebuffer_x(st2_framebuffer_x),
     .re_framebuffer_y(st2_framebuffer_y),
 
@@ -182,7 +183,7 @@ GPU_4_ColourTable Stage4
     .clk(clk),
     .rst(rst),
 
-    .re_valid(st3_se_valid && ct_enable),
+    .re_valid(ct_enable ? st3_se_valid : 1'b0),
     .re_ready(st4_re_ready),
     .re_ct_address(st3_data),
     .re_ct_offset(ct_offset),
@@ -204,10 +205,10 @@ GPU_5_Framebuffer Stage5
     .clk(clk),
     .rst(rst),
 
-    .re_valid(ct_enable ? st4_se_valid : st3_se_valid),
+    .re_valid(draw_colour_source == COLOUR ? st1_rect_se_valid : ct_enable ? st4_se_valid : st3_se_valid),
     .re_ready(st5_re_ready),
-    .re_x(ct_enable ? st4_framebuffer_x : st3_framebuffer_x),
-    .re_y(ct_enable ? st4_framebuffer_y : st3_framebuffer_y),
+    .re_x(draw_colour_source == COLOUR ? st1_rect_screen_x : ct_enable ? st4_framebuffer_x : st3_framebuffer_x),
+    .re_y(draw_colour_source == COLOUR ? st1_rect_screen_y : ct_enable ? st4_framebuffer_y : st3_framebuffer_y),
     .re_colour(draw_colour_source == COLOUR ? draw_colour : ct_enable ? st4_colour : st3_data),
 
     .fb_x(fb_x),
@@ -529,6 +530,7 @@ module GPU_3_Memory (
     input  logic[31:0] re_address,
     input  logic[31:0] re_sprite_sheet_address,
     input  CTType      re_ct_type,
+    input  logic       re_ct_enable,
     input  logic[15:0] re_framebuffer_x,
     input  logic[15:0] re_framebuffer_y,
 
@@ -602,7 +604,10 @@ always_ff @(posedge clk) begin
                 cache_framebuffer_x <= re_framebuffer_x;
                 cache_framebuffer_y <= re_framebuffer_y;
                 bitmask <= (1 << re_ct_type) - 1;
-                shift_amount <= 31 - (bit_address[4:0] + (re_ct_type - 1));
+                if(!re_ct_enable)
+                    shift_amount <= bit_address[4:0];
+                else
+                    shift_amount <= 32 - (bit_address[4:0] + re_ct_type);
                 
                 if(cache_addr[31:2] == re_address[31:2]) begin
                     state <= DATA_QUICK;
@@ -753,12 +758,6 @@ end
 endmodule
 
 /*
-1. Spritesheetposition und Screenposition (skalierung und spiegelung!) generieren - 1_Rectangle //TODO: add line
-2. Speicheradressen berechnen           - 2_Address
-3. Pixel/CT Index lesen                 - 3_Memory
-4. (Optional) Color table auflösen      - 4_ColourTable
-5. Pixelschreiben                       - 5_Framebuffer
-
-
-TODO: If coloursorce is color, stages 2 to 4 should be skipped!!!
+TODO: Add line and circle in stage 1
+TODO: Rules for ct indices: always use 32-Bit. MSB contains index 0
 */
