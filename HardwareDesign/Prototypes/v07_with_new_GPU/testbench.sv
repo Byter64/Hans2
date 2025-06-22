@@ -65,12 +65,18 @@ initial begin
 		$dumpvars(1, Top.Bootloader.memory[i]);
 	end
 
+	for(i = 0; i < 1024; i++) begin
+		$dumpvars(1, Top.ColourTable.memory[i]);
+	end
+
 	//$dumpvars(1, SDRAM);
 	//$dumpvars(1, testbench);
-	//$dumpvars(0, Top.Processor);
-	$dumpvars(0, Top);
+	$dumpvars(0, Top.Processor);
+	$dumpvars(1, Top);
 	//$dumpvars(0, Top.AxiCrossbar);
-	//$dumpvars(0, Top.Bootloader);
+	$dumpvars(0, Top.Bootloader);
+	$dumpvars(0, Top.GraphicSystem);
+	$dumpvars(0, Top.ColourTable);
 
 	#100000
 	$finish;
