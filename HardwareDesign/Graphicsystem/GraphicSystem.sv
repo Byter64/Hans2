@@ -82,7 +82,7 @@ DataIndex activeReadDataIndex;
 
 logic[31:0]  image_start;
 logic[15:0]  image_x;
-logic[15:0]  image_Y;
+logic[15:0]  image_y;
 logic[15:0]  image_width;
 logic[15:0]  image_scale_x;
 logic[15:0]  image_scale_y;
@@ -126,7 +126,7 @@ always_ff @(posedge aclk) begin
 		case (activeWriteDataIndex)
             IMAGE_START         : image_start <= s_axil_wdata;
             IMAGE_X             : image_x <= s_axil_wdata;
-            IMAGE_Y             : image_Y <= s_axil_wdata;
+            IMAGE_Y             : image_y <= s_axil_wdata;
             IMAGE_WIDTH         : image_width <= s_axil_wdata;
             IMAGE_SCALE_X       : image_scale_x <= s_axil_wdata;
             IMAGE_SCALE_Y       : image_scale_y <= s_axil_wdata;
@@ -158,10 +158,14 @@ always_ff @(posedge aclk) begin
         ct_offset <= 'h2000;
         draw_shape <= RECTANGLE;
         draw_colour_source <= MEMORY;
+        image_width <= 1;
+        image_start <= 'h2010000;
         image_flip_x <= 0;
         image_flip_y <= 0;
         image_scale_x <= 1;
         image_scale_y <= 1;
+        image_x <= 0;
+        image_y <= 0;
     end
 end
 
@@ -200,7 +204,7 @@ always_comb begin
     case (activeReadDataIndex)
         IMAGE_START         : next_rdata = image_start;
         IMAGE_X             : next_rdata = image_x;
-        IMAGE_Y             : next_rdata = image_Y;
+        IMAGE_Y             : next_rdata = image_y;
         IMAGE_WIDTH         : next_rdata = image_width;
         IMAGE_SCALE_X       : next_rdata = image_scale_x;
         IMAGE_SCALE_Y       : next_rdata = image_scale_y;
@@ -318,7 +322,7 @@ GPU #(
     
     .image_start(image_start),
     .image_x(image_x),
-    .image_Y(image_Y),
+    .image_y(image_y),
     .image_width(image_width),
     .image_scale_x(image_scale_x),
     .image_scale_y(image_scale_y),

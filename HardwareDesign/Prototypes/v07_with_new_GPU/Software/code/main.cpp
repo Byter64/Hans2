@@ -19,6 +19,8 @@ int main()
 		while (Hall::GetIsGPUBusy());
 
 		//YOu still need to test the color tables!!!
+		//YOu still need to test the scaling!!!
+		//YOu still need to test the mirroring!!!
 
 		bool vSync = false;
 		bool newVSync = false;

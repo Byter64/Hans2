@@ -30,7 +30,7 @@ module GPU #(
 
     input  logic[31:0]  image_start,
     input  logic[15:0]  image_x,
-    input  logic[15:0]  image_Y,
+    input  logic[15:0]  image_y,
     input  logic[15:0]  image_width,
     input  logic[15:0]  image_scale_x,
     input  logic[15:0]  image_scale_y,
@@ -96,7 +96,7 @@ logic       st4_se_valid;
 logic       st5_re_ready;
 
 assign st3_se_ready = ct_enable ? st4_re_ready : st5_re_ready;
-assign is_busy = st1_rect_re_ready;
+assign is_busy = !(st1_rect_re_ready && st2_re_ready && st3_re_ready && st4_re_ready && st5_re_ready);
 
 GPU_1_Rectangle #(
     .FB_WIDTH(FB_WIDTH),
@@ -108,7 +108,7 @@ GPU_1_Rectangle #(
     .re_valid(command_draw),
     .re_ready(st1_rect_re_ready),
     .re_sprite_sheet_x(image_x),
-    .re_sprite_sheet_y(image_Y),
+    .re_sprite_sheet_y(image_y),
     .re_screen_x(screen_x),
     .re_screen_y(screen_y),
     .re_width(excerpt_width),
@@ -254,8 +254,10 @@ State state = IDLE;
 wire re_handshake = re_valid && re_ready;
 wire se_handshake = se_valid && se_ready;
 
-logic[15:0] start_x;
-logic[15:0] start_y;
+logic[15:0] start_screen_x;
+logic[15:0] start_screen_y;
+logic[15:0] start_ss_x;
+logic[15:0] start_ss_y;
 logic[15:0] width;
 logic[15:0] height;
 logic[15:0] scale_x;
@@ -271,8 +273,8 @@ logic[15:0] max_x; //inclusive
 logic[15:0] max_y; //inclusive
 logic[15:0] sub_x; //subcounter for scaling
 logic[15:0] sub_y; //subcounter for scaling
-logic[31:0] ss_x;  //sprite_sheet_x  (quite large)
-logic[31:0] ss_y;  //sprite_sheet_y  (quite large)
+logic[15:0] ss_x;
+logic[15:0] ss_y;
 
 logic[15:0] max_sub_x;  //inclusive (used for UPSCALE)
 logic[15:0] max_sub_y;  //inclusive (used for UPSCALE)
@@ -297,11 +299,11 @@ always_ff @(posedge clk) begin
 		if(scale_type_x == UPSCALE) begin
             if(se_handshake) begin 
 			    sub_x <= sub_x + 1;
-            end
 
-			if(sub_x == max_sub_x) begin
-                sub_x <= 0;
-                ss_x <= ss_x + 1;
+			    if(sub_x == max_sub_x) begin
+                    sub_x <= 0;
+                    ss_x <= ss_x + 1;
+                end
             end
 		end
         else if(scale_type_x == DOWNSCALE) begin
@@ -310,14 +312,18 @@ always_ff @(posedge clk) begin
             end
         end
 
+        if(x == max_x) begin
+            ss_x <= start_ss_x;
+        end
+
         if(scale_type_y == UPSCALE) begin
             if(x == max_x) begin
                 sub_y <= sub_y + 1;
-            end
 
-			if(sub_y == max_sub_y) begin
-                sub_y <= 0;
-                ss_y <= ss_y + 1;
+			    if(sub_y == max_sub_y) begin
+                    sub_y <= 0;
+                    ss_y <= ss_y + 1;
+                end
             end
 		end
         else if(scale_type_x == DOWNSCALE) begin
@@ -330,10 +336,8 @@ always_ff @(posedge clk) begin
 	endcase
 end
 
-always_ff @(posedge clk) begin
-	se_screen_x <= mirror_x ? (start_x + (width - 1) - x) : (start_x + x);
-	se_screen_y <= mirror_y ? (start_y + (height - 1) - y) : (start_y + y);
-end
+assign se_screen_x = mirror_x ? (start_screen_x + (width - 1) - x) : (start_screen_x + x);
+assign se_screen_y = mirror_y ? (start_screen_y + (height - 1) - y) : (start_screen_y + y);
 
 always_ff @(posedge clk) begin
     case(state)
@@ -344,8 +348,10 @@ always_ff @(posedge clk) begin
             re_ready <= 0;
             se_valid <= 1;
 
-			start_x <= 		re_screen_x;
-			start_y <= 		re_screen_y;
+			start_screen_x <= 		re_screen_x;
+			start_screen_y <= 		re_screen_y;
+			start_ss_x		<=		re_sprite_sheet_x;
+			start_ss_y		<=		re_sprite_sheet_y;
 			width <= 		re_width;
 			height <= 		re_height;
 			scale_x <= 		$signed(re_scale_x) < $signed(0) ? -re_scale_x : re_scale_x;
@@ -458,6 +464,7 @@ always_ff @(posedge clk) begin
             se_valid <= 1;
             state <= FULL;
             se_memory_address <= result;
+            se_sprite_sheet_address <= ss_address;
             se_framebuffer_x <= re_framebuffer_x;
             se_framebuffer_y <= re_framebuffer_y;
         end
@@ -469,10 +476,10 @@ always_ff @(posedge clk) begin
             re_ready <= 0;
             se_valid <= 1;
             state <= BUF_FULL;
-            buffer_memory_address <= se_memory_address;
-            buffer_ss_address <= se_sprite_sheet_address;
-            buffer_framebuffer_x <= se_framebuffer_x;
-            buffer_framebuffer_y <= se_framebuffer_y;
+            buffer_memory_address <= result;
+            buffer_ss_address <= ss_address;
+            buffer_framebuffer_x <= re_framebuffer_x;
+            buffer_framebuffer_y <= re_framebuffer_y;
         end
         else if(!re_handshake && se_handshake) begin
             re_ready <= 1;
@@ -553,7 +560,7 @@ typedef enum logic[1:0] {
 
 State state;
 `ifndef SYNTHESIS
-logic[9 * 8 - 1: 0] dbg_state;
+logic[11 * 8 - 1: 0] dbg_state;
 always_comb begin
     case (state)
         IDLE: dbg_state = "IDLE";

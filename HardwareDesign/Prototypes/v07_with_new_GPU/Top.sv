@@ -263,21 +263,21 @@ sd_card_reader #(
 );
 
 //Colour Table
-logic[15:0]  			CT_s_axil_awaddr;
+logic[31:0]  			CT_s_axil_awaddr;
 logic[2:0]             	CT_s_axil_awprot;
 logic                  	CT_s_axil_awvalid;
 logic                  	CT_s_axil_awready;
-logic[15:0]  			CT_s_axil_wdata;
-logic[1:0]  			CT_s_axil_wstrb;
+logic[31:0]  			CT_s_axil_wdata;
+logic[3:0]  			CT_s_axil_wstrb;
 logic                  	CT_s_axil_wvalid;
 logic                  	CT_s_axil_wready;
 logic                  	CT_s_axil_bvalid;
 logic                  	CT_s_axil_bready;
-logic[15:0]  			CT_s_axil_araddr;
+logic[31:0]  			CT_s_axil_araddr;
 logic[2:0]             	CT_s_axil_arprot;
 logic                  	CT_s_axil_arvalid;
 logic                  	CT_s_axil_arready;
-logic[15:0]  			CT_s_axil_rdata;
+logic[31:0]  			CT_s_axil_rdata;
 logic[1:0]             	CT_s_axil_rresp;     
 logic                  	CT_s_axil_rvalid;
 logic                  	CT_s_axil_rready;
@@ -291,21 +291,21 @@ AXILiteColourTable #(
 ) ColourTable (
     .aclk(clk_50mhz),  
     .aresetn(resetn),
-    .s_axil_awaddr(CT_s_axil_awaddr),
+    .s_axil_awaddr(CT_s_axil_awaddr[15:0]),
     .s_axil_awprot(CT_s_axil_awprot),
     .s_axil_awvalid(CT_s_axil_awvalid),
     .s_axil_awready(CT_s_axil_awready),
-    .s_axil_wdata(CT_s_axil_wdata),
-    .s_axil_wstrb(CT_s_axil_wstrb),
+    .s_axil_wdata(CT_s_axil_wdata[15:0]),
+    .s_axil_wstrb(CT_s_axil_wstrb[1:0]),
     .s_axil_wvalid(CT_s_axil_wvalid),
     .s_axil_wready(CT_s_axil_wready),
     .s_axil_bvalid(CT_s_axil_bvalid),
     .s_axil_bready(CT_s_axil_bready),
-    .s_axil_araddr(CT_s_axil_araddr),
+    .s_axil_araddr(CT_s_axil_araddr[15:0]),
     .s_axil_arprot(CT_s_axil_arprot),
     .s_axil_arvalid(CT_s_axil_arvalid),
     .s_axil_arready(CT_s_axil_arready),
-    .s_axil_rdata(CT_s_axil_rdata),
+    .s_axil_rdata(CT_s_axil_rdata[15:0]),
     .s_axil_rresp(CT_s_axil_rresp),
     .s_axil_rvalid(CT_s_axil_rvalid),
     .s_axil_rready(CT_s_axil_rready),
