@@ -269,8 +269,8 @@ logic	    mirror_y;
 
 logic[15:0] x;
 logic[15:0] y;
-logic[15:0] max_x; //inclusive
-logic[15:0] max_y; //inclusive
+logic[15:0] max_x; //exclusive
+logic[15:0] max_y; //exclusive
 logic[15:0] sub_x; //subcounter for scaling
 logic[15:0] sub_y; //subcounter for scaling
 logic[15:0] ss_x;
@@ -363,8 +363,8 @@ always_ff @(posedge clk) begin
 
             x <= 0;
             y <= 0;
-            max_x <= re_width - 1;
-            max_y <= re_height - 1;
+            max_x <= re_width;
+            max_y <= re_height;
 
             if(re_scale_x == 0 || re_scale_y == 0)
                 state <= IDLE;
@@ -738,7 +738,7 @@ always_ff @(posedge clk) begin
     if(re_handshake) begin
         fb_x <= re_x;
         fb_y <= re_y;
-        fb_colour <= fb_write;
+        fb_colour <= re_colour;
         fb_write <= 1;
     end
     else begin
