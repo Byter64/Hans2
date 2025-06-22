@@ -551,11 +551,12 @@ wire se_handshake = se_valid && se_ready;
 wire axi_ar_handshake = axi_arready && axi_arvalid;
 wire axi_r_handshake = axi_rready && axi_rvalid;
 
-typedef enum logic[1:0] {
+typedef enum logic[2:0] {
     IDLE,
     SET_ADDRESS,
     GET_DATA,
-    DATA_READY
+    DATA_READY,
+    DATA_QUICK
 } State;
 
 State state;
@@ -567,6 +568,7 @@ always_comb begin
         SET_ADDRESS: dbg_state = "SET_ADDRESS";
         GET_DATA: dbg_state = "GET_DATA";
         DATA_READY: dbg_state = "DATA_READY";
+        DATA_QUICK: dbg_state = "DATA_QUICK";
     endcase
 end
 `endif
@@ -577,10 +579,11 @@ logic[31:0] cache_data;
 logic[15:0] cache_framebuffer_x;
 logic[15:0] cache_framebuffer_y;
 
-//This is a long path. Maybe split it up into two cycles???
-wire[15:0] bitmask = (1 << re_ct_type) - 1;
+logic[15:0] bitmask;
 wire[31:0] bit_address = re_sprite_sheet_address * re_ct_type;
-wire[15:0] shift_amount = 31 - bit_address[4:0] + (re_ct_type - 1);
+logic[15:0] shift_amount;
+
+//This is a long path. Maybe split it up into two cycles???
 wire[15:0] quick_result = (cache_data >> shift_amount) & bitmask;
 wire[15:0] axi_result   = (axi_rdata >> shift_amount) & bitmask;
 
@@ -598,11 +601,11 @@ always_ff @(posedge clk) begin
                 cache_ss_addr <= re_sprite_sheet_address;
                 cache_framebuffer_x <= re_framebuffer_x;
                 cache_framebuffer_y <= re_framebuffer_y;
+                bitmask <= (1 << re_ct_type) - 1;
+                shift_amount <= 31 - (bit_address[4:0] + (re_ct_type - 1));
                 
                 if(cache_addr[31:2] == re_address[31:2]) begin
-                    state <= DATA_READY;
-                    se_valid <= 1;
-                    se_data <= quick_result;
+                    state <= DATA_QUICK;
                     se_framebuffer_x <= re_framebuffer_x;
                     se_framebuffer_y <= re_framebuffer_y;
                 end
@@ -628,14 +631,24 @@ always_ff @(posedge clk) begin
                 axi_rready <= 0;
                 se_data <= axi_result;
                 cache_data <= axi_rdata;
-                se_framebuffer_x <= re_framebuffer_x;
-                se_framebuffer_y <= re_framebuffer_y;
+                se_framebuffer_x <= cache_framebuffer_x;
+                se_framebuffer_y <= cache_framebuffer_y;
                 state <= DATA_READY;
             end
         end
         DATA_READY: begin
             se_valid <= 1;
             re_ready <= 0;
+            if(se_handshake) begin
+                se_valid <= 0;
+                re_ready <= 1;
+                state <= IDLE;
+            end
+        end
+        DATA_QUICK: begin
+            se_valid <= 1;
+            re_ready <= 0;
+            se_data <= quick_result;
             if(se_handshake) begin
                 se_valid <= 0;
                 re_ready <= 1;
