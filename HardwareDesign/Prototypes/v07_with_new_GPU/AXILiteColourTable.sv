@@ -39,6 +39,7 @@ module AXILiteColourTable #(
 
 assign s_axil_rresp = 0;
 
+(* ram_style = "block" *)
 bit[15:0] memory[MEMORY_DEPTH];
 
 //Address Write
@@ -63,8 +64,8 @@ end
 logic write_happened = 0;
 always @(posedge aclk) begin
 	if (s_axil_wvalid && s_axil_wready) begin //Never add any other conditions. This is likely to break axi
-    if(s_axil_wstrb[0]) memory[{aw_address_real[31:2], 1'b0}]     <= s_axil_wdata[15 -: 16];
-    if(s_axil_wstrb[1]) memory[{aw_address_real[31:2], 1'b0} + 1] <= s_axil_wdata[31 -: 16];
+    if(s_axil_wstrb[0]) memory[{aw_address_real[31:2], 1'b0}] <= s_axil_wdata[15 -: 16];
+    if(s_axil_wstrb[1]) memory[{aw_address_real[31:2], 1'b1}] <= s_axil_wdata[31 -: 16];
     write_happened <= 1;
   end
   if(s_axil_bvalid && s_axil_bready)
@@ -125,7 +126,7 @@ always_ff @(posedge aclk) begin
 end
 
 always_ff @(posedge aclk) begin
-  portb_data <= memory[(portb_address - OFFSET) >> 1];
+  //portb_data <= memory[(portb_address - OFFSET) >> 1];
 end
 
 endmodule
