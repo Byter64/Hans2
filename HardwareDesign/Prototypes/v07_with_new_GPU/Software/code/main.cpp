@@ -1,6 +1,8 @@
 #include <Hall/Hall.h>
 
 #include "Assets/include/sprites/SproutLands/Objects/Boats.h"
+#include "Assets/Checkerboard.h"
+#include "Assets/Arrow.h"
 
 // 4x4 square
 Hall::IndexContainer ct_8[] = {0x00010203, 0x04050607, 0x08090A0B, 0x0C0D0E0F}; 
@@ -14,18 +16,18 @@ int main()
 	while(true) 
 	{
 		
-		//Hall::SetRectangle(0, 0, Hall::SCREEN_WIDTH, Hall::SCREEN_HEIGHT);
-		//Hall::SetColorSource(Hall::COLOR);
-		//Hall::SetColor(0b0100001000000001);
-		//Hall::Draw();
-		//while (Hall::GetIsGPUBusy());
+		Hall::SetRectangle(0, 0, Hall::SCREEN_WIDTH, Hall::SCREEN_HEIGHT);
+		Hall::SetColorSource(Hall::COLOR);
+		Hall::SetColor(0b0100001000000001);
+		Hall::Draw();
+		while (Hall::GetIsGPUBusy());
 
 		//Draw image without ct
-		//Hall::SetImage(SproutLands::Boats, 48);
-		//Hall::SetExcerpt(0, 0, 48, 32);
-		//Hall::SetColorSource(Hall::MEMORY);
-		//Hall::Draw();
-		//while (Hall::GetIsGPUBusy());
+		Hall::SetImage(SproutLands::Boats, 48);
+		Hall::SetExcerpt(0, 0, 48, 32);
+		Hall::SetColorSource(Hall::MEMORY);
+		Hall::Draw();
+		while (Hall::GetIsGPUBusy());
 
 		//Draw image with ct_8
 		Hall::SetImage(ct_8, 4);
@@ -77,8 +79,71 @@ int main()
 		Hall::Draw();
 		while (Hall::GetIsGPUBusy());
 
-		//YOu still need to test the scaling!!!
-		//YOu still need to test the mirroring!!!
+		//Scale test
+		Hall::SetImage(Checkerboard, 8);
+		Hall::SetExcerpt(0, 0, 8, 8);
+		Hall::SetScreenPosition(0, 20);
+		Hall::SetColorSource(Hall::MEMORY);
+		Hall::SetColorTable(Hall::NONE);
+		Hall::SetScale(2, 1);
+		Hall::Draw();
+
+		while (Hall::GetIsGPUBusy());
+		Hall::SetScale(1, 2);
+		Hall::SetScreenPosition(20, 20);
+		Hall::Draw();
+
+		while (Hall::GetIsGPUBusy());
+		Hall::SetScale(2, 2);
+		Hall::SetScreenPosition(40, 20);
+		Hall::Draw();
+
+		Hall::SetScreenPosition(60, 20);
+		Hall::SetScale(-2, 1);
+		Hall::Draw();
+
+		while (Hall::GetIsGPUBusy());
+		Hall::SetScale(1, -2);
+		Hall::SetScreenPosition(80, 20);
+		Hall::Draw();
+
+		while (Hall::GetIsGPUBusy());
+		Hall::SetScale(-2, -2);
+		Hall::SetScreenPosition(100, 20);
+		Hall::Draw();
+		
+		//Mirror test
+		while (Hall::GetIsGPUBusy());
+		Hall::SetImage(Arrow, 32);
+		Hall::SetExcerpt(0, 0, 32, 32);
+		Hall::SetScale(1, 1);
+		Hall::SetFlip(false, false);
+		Hall::SetScreenPosition(0, 40);
+		Hall::Draw();
+
+		while (Hall::GetIsGPUBusy());
+		Hall::SetImage(Arrow, 32);
+		Hall::SetExcerpt(0, 0, 32, 32);
+		Hall::SetScale(1, 1);
+		Hall::SetFlip(true, false);
+		Hall::SetScreenPosition(40, 40);
+		Hall::Draw();
+
+		while (Hall::GetIsGPUBusy());
+		Hall::SetImage(Arrow, 32);
+		Hall::SetExcerpt(0, 0, 32, 32);
+		Hall::SetScale(1, 1);
+		Hall::SetFlip(false, true);
+		Hall::SetScreenPosition(80, 40);
+		Hall::Draw();
+
+		while (Hall::GetIsGPUBusy());
+		Hall::SetImage(Arrow, 32);
+		Hall::SetExcerpt(0, 0, 32, 32);
+		Hall::SetScale(1, 1);
+		Hall::SetFlip(true, true);
+		Hall::SetScreenPosition(120, 40);
+		Hall::Draw();
 
 		bool vSync = false;
 		bool newVSync = false;
