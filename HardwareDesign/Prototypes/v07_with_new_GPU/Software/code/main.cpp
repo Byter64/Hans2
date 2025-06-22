@@ -29,6 +29,7 @@ int main()
 
 		//Draw image with ct_8
 		Hall::SetImage(ct_8, 4);
+		Hall::SetScreenPosition(0, 0);
 		Hall::SetExcerpt(0, 0, 16, 1);
 		Hall::SetColorSource(Hall::MEMORY);
 		Hall::SetColorTable(Hall::BIT_8, Hall::COLOR_TABLE_MEMORY + 1);
@@ -53,6 +54,7 @@ int main()
 
 		//Draw image with ct_1
 		Hall::SetImage(ct_1, 5);
+		Hall::SetScreenPosition(10, 0);
 		Hall::SetExcerpt(0, 0, 5, 5);
 		Hall::SetColorSource(Hall::MEMORY);
 		Hall::SetColorTable(Hall::BIT_1, Hall::COLOR_TABLE_MEMORY + 15);

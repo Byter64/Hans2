@@ -696,17 +696,48 @@ module GPU_4_ColourTable (
 wire re_handshake = re_valid && re_ready;
 wire se_handshake = se_valid && se_ready;
 
+typedef enum logic[1:0] {
+    EMPTY,
+    FULL
+} State;
+
+State state;
+`ifndef SYNTHESIS
+logic[11 * 8 - 1: 0] dbg_state;
+always_comb begin
+    case (state)
+        EMPTY: dbg_state = "EMPTY";
+        FULL: dbg_state = "FULL";
+    endcase
+end
+`endif
+
+logic[15:0] buffer_framebuffer_x;
+logic[15:0] buffer_framebuffer_y;
+
 assign se_colour = mem_data;
 
 always_ff @(posedge clk) begin
     re_ready <= 1;
 
-
     if(re_handshake) begin
-        mem_address <= (re_ct_address << 1) + re_ct_offset;
-        se_framebuffer_x <= re_framebuffer_x;
-        se_framebuffer_y <= re_framebuffer_y;
-        se_valid <= 1;
+        case (state)
+            EMPTY: begin
+                mem_address <= (re_ct_address << 1) + re_ct_offset;
+                buffer_framebuffer_x <= re_framebuffer_x;
+                buffer_framebuffer_y <= re_framebuffer_y;
+                state <= FULL;
+            end
+            FULL: begin
+                mem_address <= (re_ct_address << 1) + re_ct_offset;
+                buffer_framebuffer_x <= re_framebuffer_x;
+                buffer_framebuffer_y <= re_framebuffer_y;
+                state <= FULL;
+                se_framebuffer_x <= buffer_framebuffer_x;
+                se_framebuffer_y <= buffer_framebuffer_y;
+                se_valid <= 1;
+            end
+        endcase
     end
     else begin
         se_valid <= 0;
@@ -715,6 +746,7 @@ always_ff @(posedge clk) begin
     if(rst) begin
         re_ready <= 0;
         se_valid <= 0;
+        state <= EMPTY;
     end
 end
 endmodule

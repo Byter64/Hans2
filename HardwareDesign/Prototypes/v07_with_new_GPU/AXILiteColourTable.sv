@@ -1,8 +1,11 @@
+//This memory does not use s_axil_wstrb!! You can't mask the writing data
+//EDIT: uses s_axil_wstrb now :)
 module AXILiteColourTable #(
-    parameter OFFSET = 0,
-    parameter ADDR_WIDTH = 16,
-    parameter DATA_WIDTH = 16, //This is equivalent to 4 BRAMS on ecp5
-    parameter MEMORY_DEPTH = 4096 //This is equivalent to 4 BRAMS on ecp5
+    parameter OFFSET = 0, //The address of the first byte in the bootloader
+    parameter ADDR_WIDTH = 32,
+    parameter DATA_WIDTH = 32,
+    parameter STRB_WIDTH = DATA_WIDTH / 8,
+    parameter MEMORY_DEPTH = 119808 //This is the whole available BRAM on the ecp5 85F
 ) (
     input  logic                         aclk,
     input  logic                         aresetn,
@@ -13,7 +16,7 @@ module AXILiteColourTable #(
     output logic                         s_axil_awready,
 
     input  logic[DATA_WIDTH-1:0]         s_axil_wdata,
-    input  logic[1:0]                    s_axil_wstrb,
+    input  logic[1:0]         s_axil_wstrb,
     input  logic                         s_axil_wvalid,
     output logic                         s_axil_wready,
 
@@ -30,13 +33,13 @@ module AXILiteColourTable #(
     output logic                         s_axil_rvalid,
     input  logic                         s_axil_rready,
 
-    input  logic[ADDR_WIDTH-1:0]         portb_address,
-    output logic[DATA_WIDTH-1:0]         portb_data
+    input  logic[15:0]         portb_address,
+    output logic[15:0]         portb_data
 );
 
 assign s_axil_rresp = 0;
 
-bit[ADDR_WIDTH-1:0] memory[MEMORY_DEPTH];
+bit[15:0] memory[MEMORY_DEPTH];
 
 //Address Write
 logic[ADDR_WIDTH-1:0] aw_address = 'b0;
@@ -60,7 +63,8 @@ end
 logic write_happened = 0;
 always @(posedge aclk) begin
 	if (s_axil_wvalid && s_axil_wready) begin //Never add any other conditions. This is likely to break axi
-    memory[aw_address_real[15:1]] <= s_axil_wdata;
+    if(s_axil_wstrb[0]) memory[{aw_address_real[31:2], 1'b0}]     <= s_axil_wdata[15 -: 16];
+    if(s_axil_wstrb[1]) memory[{aw_address_real[31:2], 1'b0} + 1] <= s_axil_wdata[31 -: 16];
     write_happened <= 1;
   end
   if(s_axil_bvalid && s_axil_bready)
@@ -116,11 +120,12 @@ always_ff @(posedge aclk) begin
 		s_axil_rdata <= 0;
 	else if (!s_axil_rvalid || s_axil_rready)
 	begin
-		s_axil_rdata <= memory[ar_address_real[15:1]];
+		s_axil_rdata <= memory[ar_address_real[31:1]];
 	end
 end
 
 always_ff @(posedge aclk) begin
   portb_data <= memory[(portb_address - OFFSET) >> 1];
 end
+
 endmodule

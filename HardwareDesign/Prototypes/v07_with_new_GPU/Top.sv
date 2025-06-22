@@ -286,7 +286,7 @@ logic[15:0]				CT_portb_data;
 AXILiteColourTable #(
 	.OFFSET('h2000),
     .ADDR_WIDTH(16),
-    .DATA_WIDTH(16), 
+    .DATA_WIDTH(32), 
     .MEMORY_DEPTH(4096) //In 16-Bit words   
 ) ColourTable (
     .aclk(clk_50mhz),  
@@ -295,8 +295,8 @@ AXILiteColourTable #(
     .s_axil_awprot(CT_s_axil_awprot),
     .s_axil_awvalid(CT_s_axil_awvalid),
     .s_axil_awready(CT_s_axil_awready),
-    .s_axil_wdata(CT_s_axil_wdata[15:0]),
-    .s_axil_wstrb(CT_s_axil_wstrb[1:0]),
+    .s_axil_wdata(CT_s_axil_wdata),
+    .s_axil_wstrb({CT_s_axil_wstrb[2], CT_s_axil_wstrb[0]}),
     .s_axil_wvalid(CT_s_axil_wvalid),
     .s_axil_wready(CT_s_axil_wready),
     .s_axil_bvalid(CT_s_axil_bvalid),
@@ -305,7 +305,7 @@ AXILiteColourTable #(
     .s_axil_arprot(CT_s_axil_arprot),
     .s_axil_arvalid(CT_s_axil_arvalid),
     .s_axil_arready(CT_s_axil_arready),
-    .s_axil_rdata(CT_s_axil_rdata[15:0]),
+    .s_axil_rdata(CT_s_axil_rdata),
     .s_axil_rresp(CT_s_axil_rresp),
     .s_axil_rvalid(CT_s_axil_rvalid),
     .s_axil_rready(CT_s_axil_rready),
