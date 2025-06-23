@@ -386,7 +386,7 @@ always_ff @(posedge clk) begin
             state <= IDLE;
         end
 
-        if(se_screen_x >= FB_WIDTH || se_screen_y >= FB_HEIGHT) begin
+        if(se_screen_x >= FB_WIDTH + 1 || se_screen_y >= FB_HEIGHT + 1) begin
             re_ready <= 1;
             se_valid <= 0;
             state <= IDLE;
