@@ -437,6 +437,7 @@ logic[31:0] buffer_ss_address;
 logic[15:0] buffer_framebuffer_x;
 logic[15:0] buffer_framebuffer_y;
 
+wire[31:0] ss_address = re_x + re_image_width * re_y; //1D sprite sheet address
 wire[31:0] result = re_base_address + (sprite_sheet_address * re_ct_type >> 3);
 
 //output_buffer
@@ -534,12 +535,6 @@ always_ff @(posedge clk) begin
             sprite_sheet_address <= ss_address;
             framebuffer_x <= re_framebuffer_x;
             framebuffer_y <= re_framebuffer_y;
-
-            //Stage 2
-            se_memory_address <= result;
-            se_sprite_sheet_address <= sprite_sheet_address;
-            se_framebuffer_x <= framebuffer_x;
-            se_framebuffer_y <= framebuffer_y;
         end
 
         if(re_handshake && !se_handshake) begin
@@ -548,18 +543,30 @@ always_ff @(posedge clk) begin
             state <= BUF_FULL;
 
             //Buffer
-            buffer_memory_address <= se_memory_address;
-            buffer_ss_address <= se_sprite_sheet_address;
-            buffer_framebuffer_x <= se_framebuffer_x;
-            buffer_framebuffer_y <= se_framebuffer_y;
+            buffer_memory_address <= result;
+            buffer_ss_address <= sprite_sheet_address;
+            buffer_framebuffer_x <= framebuffer_x;
+            buffer_framebuffer_y <= framebuffer_y;
         end else if(!re_handshake && se_handshake) begin
             re_ready <= 1;
             se_valid <= 1;
             state <= EMPTY_FULL;
+
+            //Stage 2
+            se_memory_address <= result;
+            se_sprite_sheet_address <= sprite_sheet_address;
+            se_framebuffer_x <= framebuffer_x;
+            se_framebuffer_y <= framebuffer_y;
         end else if(re_handshake && se_handshake) begin
             re_ready <= 1;
             se_valid <= 1;
             state <= FULL_FULL;
+
+            //Stage 2
+            se_memory_address <= result;
+            se_sprite_sheet_address <= sprite_sheet_address;
+            se_framebuffer_x <= framebuffer_x;
+            se_framebuffer_y <= framebuffer_y;
         end
     end
     BUF_FULL: begin
