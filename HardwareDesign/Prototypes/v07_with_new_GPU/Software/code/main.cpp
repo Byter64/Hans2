@@ -15,10 +15,13 @@ int main()
 	//This is your game loop. The program should never leave it.
 	while(true) 
 	{
-		
+		Hall::SetScale(1, 1);
+		Hall::SetFlip(false, false);
+		Hall::SetColorTable(Hall::NONE);
 		Hall::SetRectangle(0, 0, Hall::SCREEN_WIDTH, Hall::SCREEN_HEIGHT);
 		Hall::SetColorSource(Hall::COLOR);
-		Hall::SetColor(0b0000011111000001);
+		Hall::SetColor(0b0000001111000001);
+		Hall::SetShape(Hall::RECTANGLE);
 		Hall::Draw();
 		while (Hall::GetIsGPUBusy());
 
@@ -86,32 +89,37 @@ int main()
 		Hall::SetScreenPosition(0, 20);
 		Hall::SetColorSource(Hall::MEMORY);
 		Hall::SetColorTable(Hall::NONE);
+		Hall::SetScale(1, 1);
+		Hall::Draw();
+		while (Hall::GetIsGPUBusy());
+
 		Hall::SetScale(2, 1);
+		Hall::SetScreenPosition(20, 20);
 		Hall::Draw();
 		while (Hall::GetIsGPUBusy());
 
 		Hall::SetScale(1, 2);
-		Hall::SetScreenPosition(20, 20);
+		Hall::SetScreenPosition(40, 20);
 		Hall::Draw();
 		while (Hall::GetIsGPUBusy());
 		
 		Hall::SetScale(2, 2);
-		Hall::SetScreenPosition(40, 20);
+		Hall::SetScreenPosition(60, 20);
 		Hall::Draw();
 		while (Hall::GetIsGPUBusy());
 
-		Hall::SetScreenPosition(60, 20);
+		Hall::SetScreenPosition(80, 20);
 		Hall::SetScale(-2, 1);
 		Hall::Draw();
 		while (Hall::GetIsGPUBusy());
 
 		Hall::SetScale(1, -2);
-		Hall::SetScreenPosition(80, 20);
+		Hall::SetScreenPosition(100, 20);
 		Hall::Draw();
 		while (Hall::GetIsGPUBusy());
 
 		Hall::SetScale(-2, -2);
-		Hall::SetScreenPosition(100, 20);
+		Hall::SetScreenPosition(120, 20);
 		Hall::Draw();
 		
 		//Mirror test
