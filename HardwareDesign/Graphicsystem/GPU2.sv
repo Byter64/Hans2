@@ -455,7 +455,9 @@ logic[10 * 8 - 1: 0] dbg_state;
 always_comb begin
     case (state)
         EMPTY: dbg_state = "EMPTY";
-        FULL: dbg_state  = "FULL";
+        FULL_EMPTY: dbg_state  = "FULL_EMPTY";
+        EMPTY_FULL: dbg_state  = "EMPTY_FULL";
+        FULL_FULL: dbg_state  = "FULL_FULL";
         BUF_FULL: dbg_state   = "BUF_FULL";
     endcase
 end
@@ -524,13 +526,14 @@ always_ff @(posedge clk) begin
         end
     end
     FULL_FULL: begin
-        re_ready <= 0;
+        re_ready <= 1;
         se_valid <= 1;
-
-        if(se_handshake) begin
-            re_ready <= 1;
-            se_valid <= 1;
-            state <= EMPTY_FULL;
+        
+        if(re_handshake || se_handshake) begin
+            //Stage 1
+            sprite_sheet_address <= ss_address;
+            framebuffer_x <= re_framebuffer_x;
+            framebuffer_y <= re_framebuffer_y;
 
             //Stage 2
             se_memory_address <= result;
@@ -538,41 +541,34 @@ always_ff @(posedge clk) begin
             se_framebuffer_x <= framebuffer_x;
             se_framebuffer_y <= framebuffer_y;
         end
-    end
-    FULL: begin
-        re_ready <= 1;
-        se_valid <= 1;
+
         if(re_handshake && !se_handshake) begin
             re_ready <= 0;
             se_valid <= 1;
             state <= BUF_FULL;
-            buffer_memory_address <= result;
-            buffer_ss_address <= ss_address;
-            buffer_framebuffer_x <= re_framebuffer_x;
-            buffer_framebuffer_y <= re_framebuffer_y;
-        end
-        else if(!re_handshake && se_handshake) begin
-            re_ready <= 1;
-            se_valid <= 0;
-            state <= EMPTY;
-        end
-        else if(re_handshake && se_handshake) begin
+
+            //Buffer
+            buffer_memory_address <= se_memory_address;
+            buffer_ss_address <= se_sprite_sheet_address;
+            buffer_framebuffer_x <= se_framebuffer_x;
+            buffer_framebuffer_y <= se_framebuffer_y;
+        end else if(!re_handshake && se_handshake) begin
             re_ready <= 1;
             se_valid <= 1;
-            state <= FULL;
-            se_memory_address <= result;
-            se_sprite_sheet_address <= ss_address;
-            se_framebuffer_x <= re_framebuffer_x;
-            se_framebuffer_y <= re_framebuffer_y;
+            state <= EMPTY_FULL;
+        end else if(re_handshake && se_handshake) begin
+            re_ready <= 1;
+            se_valid <= 1;
+            state <= FULL_FULL;
         end
     end
     BUF_FULL: begin
         re_ready <= 0;
         se_valid <= 1;
         if(se_handshake) begin
-            re_ready <= 0;
+            re_ready <= 1;
             se_valid <= 1;
-            state <= FULL;
+            state <= FULL_FULL;
             se_memory_address <= buffer_memory_address;
             se_sprite_sheet_address <= buffer_ss_address;
             se_framebuffer_x <= buffer_framebuffer_x;
