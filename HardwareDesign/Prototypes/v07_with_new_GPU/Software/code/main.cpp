@@ -18,13 +18,13 @@ int main()
 		
 		Hall::SetRectangle(0, 0, Hall::SCREEN_WIDTH, Hall::SCREEN_HEIGHT);
 		Hall::SetColorSource(Hall::COLOR);
-		Hall::SetColor(0b0100001000000001);
+		Hall::SetColor(0b0000011111000001);
 		Hall::Draw();
 		while (Hall::GetIsGPUBusy());
 
 		//Draw image without ct
 		Hall::SetImage(SproutLands::Boats, 48);
-		Hall::SetExcerpt(0, 0, 48, 32);
+		Hall::SetExcerpt(200, 0, 48, 32);
 		Hall::SetColorSource(Hall::MEMORY);
 		Hall::Draw();
 		while (Hall::GetIsGPUBusy());
@@ -87,27 +87,28 @@ int main()
 		Hall::SetColorTable(Hall::NONE);
 		Hall::SetScale(2, 1);
 		Hall::Draw();
-
 		while (Hall::GetIsGPUBusy());
+
 		Hall::SetScale(1, 2);
 		Hall::SetScreenPosition(20, 20);
 		Hall::Draw();
-
 		while (Hall::GetIsGPUBusy());
+		
 		Hall::SetScale(2, 2);
 		Hall::SetScreenPosition(40, 20);
 		Hall::Draw();
+		while (Hall::GetIsGPUBusy());
 
 		Hall::SetScreenPosition(60, 20);
 		Hall::SetScale(-2, 1);
 		Hall::Draw();
-
 		while (Hall::GetIsGPUBusy());
+
 		Hall::SetScale(1, -2);
 		Hall::SetScreenPosition(80, 20);
 		Hall::Draw();
-
 		while (Hall::GetIsGPUBusy());
+
 		Hall::SetScale(-2, -2);
 		Hall::SetScreenPosition(100, 20);
 		Hall::Draw();
