@@ -260,7 +260,7 @@ wire[15:0]  fb1_dataOutB;
 wire[16:0] gpu_fbAddress = gpu_fb_x + gpu_fb_y * SCREEN_WIDTH;
 `define ROTATE_FRAME_BUFFER
 `ifdef ROTATE_FRAME_BUFFER
-wire[16:0] hdmi_fbAddress = SCREEN_WIDTH - (hdmi_nextX / 2) + ((SCREEN_HEIGHT - (hdmi_nextY / 2)) * SCREEN_WIDTH); //this halves the resoluton from 480x800 to 240x400
+wire[16:0] hdmi_fbAddress = SCREEN_WIDTH - 1 - (hdmi_nextX / 2) + ((SCREEN_HEIGHT - 1 - (hdmi_nextY / 2)) * SCREEN_WIDTH); //this halves the resoluton from 480x800 to 240x400
 `else 
 wire[16:0] hdmi_fbAddress = (hdmi_nextX / 2) + ((hdmi_nextY / 2) * SCREEN_WIDTH); //this halves the resoluton from 480x800 to 240x400
 `endif
@@ -360,6 +360,8 @@ GPU #(
 );
 
 
+assign hdmi_nextX[15:11] = 0;
+assign hdmi_nextY[15:11] = 0;
 HDMI_Out hdmi_Out
 (
     //In
