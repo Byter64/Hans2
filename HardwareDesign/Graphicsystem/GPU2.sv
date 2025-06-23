@@ -426,26 +426,32 @@ module GPU_2_Address (
 wire re_handshake = re_valid && re_ready;
 wire se_handshake = se_valid && se_ready;
 
+//Stage 2
+logic[31:0] sprite_sheet_address;
+logic[15:0] framebuffer_x;
+logic[15:0] framebuffer_y;
+
+//buffer 
 logic[31:0] buffer_memory_address;
 logic[31:0] buffer_ss_address;
 logic[15:0] buffer_framebuffer_x;
 logic[15:0] buffer_framebuffer_y;
 
-//This is a long path. Maybe split it up into two cycles???
-wire[31:0] ss_address = re_x + re_image_width * re_y; //1D sprite sheet address
-wire[31:0] result = re_base_address + (ss_address * re_ct_type >> 3);
+wire[31:0] result = re_base_address + (sprite_sheet_address * re_ct_type >> 3);
 
 //output_buffer
-typedef enum logic[1:0] {
-    EMPTY,
-    FULL,
-    BUF_FULL
+typedef enum logic[2:0] {
+    EMPTY      = 3'b000,
+    FULL_EMPTY = 3'b010,
+    EMPTY_FULL = 3'b001,
+    FULL_FULL  = 3'b011,
+    BUF_FULL   = 3'b111
 } State;
 
 State state = EMPTY;
 
 `ifndef SYNTHESIS
-logic[9 * 8 - 1: 0] dbg_state;
+logic[10 * 8 - 1: 0] dbg_state;
 always_comb begin
     case (state)
         EMPTY: dbg_state = "EMPTY";
@@ -462,12 +468,75 @@ always_ff @(posedge clk) begin
         se_valid <= 0;
         if(re_handshake) begin
             re_ready <= 1;
+            state <= FULL_EMPTY;
+            //Stage 1
+            sprite_sheet_address <= ss_address;
+            framebuffer_x <= re_framebuffer_x;
+            framebuffer_y <= re_framebuffer_y;
+        end
+    end
+    FULL_EMPTY: begin
+        se_valid <= 1;
+        if(re_handshake) begin
+            re_ready <= 0;
+            state <= FULL_FULL;
+        end
+        else begin
+            re_ready <= 1;
+            state <= EMPTY_FULL;
+        end
+
+        //Stage 1
+        sprite_sheet_address <= ss_address;
+        framebuffer_x <= re_framebuffer_x;
+        framebuffer_y <= re_framebuffer_y;
+        
+        //Stage 2
+        se_memory_address <= result;
+        se_sprite_sheet_address <= sprite_sheet_address;
+        se_framebuffer_x <= framebuffer_x;
+        se_framebuffer_y <= framebuffer_y;
+    end
+    EMPTY_FULL: begin
+        re_ready <= 1;
+        se_valid <= 1;
+        if(re_handshake) begin
+            //Stage 1
+            sprite_sheet_address <= ss_address;
+            framebuffer_x <= re_framebuffer_x;
+            framebuffer_y <= re_framebuffer_y;
+        end
+
+        if(se_handshake && !re_handshake) begin
+            re_ready <= 1;
+            se_valid <= 0;
+            state <= EMPTY;
+        end
+        if(!se_handshake && re_handshake) begin
+            re_ready <= 0;
             se_valid <= 1;
-            state <= FULL;
+            state <= FULL_FULL;
+        end
+        if(se_handshake && re_handshake) begin
+            re_ready <= 0;
+            se_valid <= 1;
+            state <= FULL_EMPTY;
+        end
+    end
+    FULL_FULL: begin
+        re_ready <= 0;
+        se_valid <= 1;
+
+        if(se_handshake) begin
+            re_ready <= 1;
+            se_valid <= 1;
+            state <= EMPTY_FULL;
+
+            //Stage 2
             se_memory_address <= result;
-            se_sprite_sheet_address <= ss_address;
-            se_framebuffer_x <= re_framebuffer_x;
-            se_framebuffer_y <= re_framebuffer_y;
+            se_sprite_sheet_address <= sprite_sheet_address;
+            se_framebuffer_x <= framebuffer_x;
+            se_framebuffer_y <= framebuffer_y;
         end
     end
     FULL: begin
