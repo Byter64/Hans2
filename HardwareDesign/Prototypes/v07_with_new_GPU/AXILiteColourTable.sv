@@ -38,6 +38,7 @@ module AXILiteColourTable #(
 );
 
 assign s_axil_rresp = 0;
+logic read_registered = 0;
 
 (* ram_style = "block" *)
 bit[15:0] memory[MEMORY_DEPTH];
@@ -58,14 +59,16 @@ end
 
 //Write
 always @(posedge aclk) begin
-		s_axil_wready <= 1;
+	s_axil_wready <= 1;
 end
 
 logic write_happened = 0;
+wire aw_address_real0 = {aw_address_real[31:2], 1'b0};
+wire aw_address_real1 = {aw_address_real[31:2], 1'b1};
 always @(posedge aclk) begin
 	if (s_axil_wvalid && s_axil_wready) begin //Never add any other conditions. This is likely to break axi
-    if(s_axil_wstrb[0]) memory[{aw_address_real[31:2], 1'b0}] <= s_axil_wdata[15 -: 16];
-    if(s_axil_wstrb[1]) memory[{aw_address_real[31:2], 1'b1}] <= s_axil_wdata[31 -: 16];
+    if(s_axil_wstrb[0]) memory[aw_address_real0] <= s_axil_wdata[15 -: 16];
+    if(s_axil_wstrb[1]) memory[aw_address_real1] <= s_axil_wdata[31 -: 16];
     write_happened <= 1;
   end
   if(s_axil_bvalid && s_axil_bready)
@@ -88,7 +91,6 @@ end
 //Address Read
 logic[ADDR_WIDTH-1:0] ar_address = 'b0;
 logic[31:0] ar_address_real;
-logic read_registered = 0;
 assign ar_address_real = (s_axil_arvalid && s_axil_arready ? s_axil_araddr : ar_address) - OFFSET;
 always @(posedge aclk) begin
 		s_axil_arready <= 1;
@@ -105,28 +107,33 @@ end
 
 //Read
 //This is not AXI compliant, but I could not think of a better way to invalidate s_axil_rdata if address is written at the sime time as data is read
+wire read_enable = !(s_axil_wvalid && s_axil_wready);
 logic next_rvalid; //Assign your valid logic to this signal
-assign next_rvalid = (s_axil_rvalid && s_axil_rready) ? 0 : read_registered ? 1 : s_axil_rvalid;
+assign next_rvalid = (s_axil_rvalid && s_axil_rready) || !read_enable ? 0 : read_registered ? 1 : s_axil_rvalid;
 
 always_ff @(posedge aclk) begin
 	if (!aresetn)
 		s_axil_rvalid <= 0;
 	else if (!s_axil_rvalid || s_axil_rready) begin
 		s_axil_rvalid <= next_rvalid;
-    end
+  end
 end
 
+wire ar_address_real2 = ar_address_real[31:1];
 always_ff @(posedge aclk) begin
 	if (!aresetn)
 		s_axil_rdata <= 0;
 	else if (!s_axil_rvalid || s_axil_rready)
 	begin
-		s_axil_rdata <= memory[ar_address_real[31:1]];
+		if(read_enable)
+			s_axil_rdata <= memory[ar_address_real2];
 	end
 end
 
+wire portb_address_real = (portb_address - OFFSET) >> 1;
+
 always_ff @(posedge aclk) begin
-  //portb_data <= memory[(portb_address - OFFSET) >> 1];
+  portb_data <= memory[portb_address_real];
 end
 
 endmodule
