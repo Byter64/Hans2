@@ -364,8 +364,8 @@ always_ff @(posedge clk) begin
 
             x <= 0;
             y <= 0;
-            max_x <= re_width;
-            max_y <= re_height;
+            max_x <= $signed(re_scale_x) < $signed(0) ? re_width : re_width * re_scale_x;
+            max_y <= $signed(re_scale_y) < $signed(0) ? re_width : re_height * re_scale_y;
 
             if(re_scale_x == 0 || re_scale_y == 0)
                 state <= IDLE;

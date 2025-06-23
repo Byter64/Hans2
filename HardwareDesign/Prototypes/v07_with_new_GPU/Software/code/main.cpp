@@ -24,7 +24,8 @@ int main()
 
 		//Draw image without ct
 		Hall::SetImage(SproutLands::Boats, 48);
-		Hall::SetExcerpt(200, 0, 48, 32);
+		Hall::SetExcerpt(0, 0, 48, 32);
+		Hall::SetScreenPosition(200, 0);
 		Hall::SetColorSource(Hall::MEMORY);
 		Hall::Draw();
 		while (Hall::GetIsGPUBusy());
