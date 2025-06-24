@@ -270,6 +270,8 @@ logic	    mirror_y;
 
 logic[15:0] x;
 logic[15:0] y;
+logic[15:0] downscale_x; //This is only a local counter
+logic[15:0] downscale_y; //This is only a local counter
 logic[15:0] max_x; //exclusive
 logic[15:0] max_y; //exclusive
 logic[15:0] sub_x; //subcounter for scaling
@@ -364,6 +366,8 @@ always_ff @(posedge clk) begin
 
             x <= 0;
             y <= 0;
+            downscale_x <= 0;
+            downscale_y <= 0;
             max_x <= $signed(re_scale_x) < $signed(0) ? re_width : re_width * re_scale_x;
             max_y <= $signed(re_scale_y) < $signed(0) ? re_width : re_height * re_scale_y;
 
@@ -374,13 +378,18 @@ always_ff @(posedge clk) begin
     GENERATING: begin
         if(se_handshake) begin
             x <= x + 1;
+            downscale_x <= downscale_x + scale_x;
         end
         
-        if(x == max_x) begin
+        if((scale_type_x == UPSCALE && x == max_x) || 
+           (scale_type_x == DOWNSCALE && downscale_x == max_x)) begin
             x <= 0;
             y <= y + 1;
+            downscale_x <= 0;
+            downscale_y <= downscale_y + scale_y;
         end
-        if(y == max_y) begin
+        if((scale_type_y == UPSCALE && y == max_y) ||
+           (scale_type_y == DOWNSCALE && downscale_y == max_y)) begin
             re_ready <= 1;
             se_valid <= 0;
             state <= IDLE;
