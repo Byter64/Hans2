@@ -431,16 +431,12 @@ logic[1:0]	AS_m_axil_arprot;
 logic[31:0]	AS_m_axil_awaddr;
 logic[1:0]	AS_m_axil_awprot;
 logic		AS_m_axil_awvalid;
-logic		AS_m_axil_awready;
 logic[31:0]	AS_m_axil_wdata;
 logic[3:0]	AS_m_axil_wstrb;
 logic		AS_m_axil_wvalid;
-logic		AS_m_axil_wready;
-logic[1:0]	AS_m_axil_bresp;
-logic		AS_m_axil_bvalid;
 logic		AS_m_axil_bready;
 
-Audiosystem AudiosSystem 
+Audiosystem AudioSystem 
 (
 	.clk(clk_50mhz),
 	.clk_25mhz(clk_25mhz),

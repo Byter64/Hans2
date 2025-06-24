@@ -210,6 +210,26 @@ logic[31:0] registerData;
 logic[3:0]  registerSelect; //s_axil_xdata[5:2]
 logic[7:0]  channelSelect;
 
+logic[20 * 8 -1:0] dbg_registerSelect;
+always_comb begin
+    case (registerSelect)
+        IDLE                : dbg_registerSelect = "IDLE";
+        SET_STARTADDRESS    : dbg_registerSelect = "SET_STARTADDRESS";
+        SET_SAMPLECOUNT     : dbg_registerSelect = "SET_SAMPLECOUNT";
+        SET_LOOPSTART       : dbg_registerSelect = "SET_LOOPSTART";
+        SET_LOOPEND         : dbg_registerSelect = "SET_LOOPEND";
+        SET_CURRENTPOSITION : dbg_registerSelect = "SET_CURRENTPOSITION";
+        SET_LASTSAMPLE      : dbg_registerSelect = "SET_LASTSAMPLE";
+        SET_VOLUME          : dbg_registerSelect = "SET_VOLUME";
+        SET_ISLOOPING       : dbg_registerSelect = "SET_ISLOOPING";
+        SET_ISPLAYING       : dbg_registerSelect = "SET_ISPLAYING";
+        SET_ISMONO          : dbg_registerSelect = "SET_ISMONO";
+        SET_ISRIGHT         : dbg_registerSelect = "SET_ISRIGHT";
+        SET_GLOBAL_VOLUME   : dbg_registerSelect = "SET_GLOBAL_VOLUME";
+        SET_CHANNEL_SELECT	: dbg_registerSelect = "SET_CHANNEL_SELECT";
+    endcase
+end
+
 //AW
 always_ff @(posedge aclk) s_axil_awready <= 1;
 
