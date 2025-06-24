@@ -84,12 +84,8 @@ always_ff @(posedge inv_cont_clk) begin
         cont0_state <= {~cont0_data, cont0_state[15:1]};
     end
     if(state == DATA_END) begin
-        controller0_btns <= controller0_btns | cont0_state[11:0];
+        controller0_btns <= cont0_state[11:0];
     end
-    if(s_axil_rready && s_axil_rvalid) begin
-        controller0_btns <= 0;
-    end
-
     if(state > DATA_END) begin
         cont0_state <= 0;
     end
@@ -100,10 +96,7 @@ always_ff @(posedge inv_cont_clk) begin
         cont1_state <= {~cont1_data, cont1_state[15:1]};
     end
     if(state == DATA_END) begin
-        controller1_btns <= controller1_btns | cont1_state[11:0];
-    end
-    if(s_axil_rready && s_axil_rvalid) begin
-        controller1_btns <= 0;
+        controller1_btns <= cont1_state[11:0];
     end
     if(state > DATA_END) begin
         cont1_state <= 0;
