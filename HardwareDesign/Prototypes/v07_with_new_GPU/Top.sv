@@ -31,7 +31,7 @@ module Top
 	input logic[6:0]	btn
 );        
        
-//logic canBeDeleted;
+logic canBeDeleted;
 //logic canBeDeleted2n;
          
 logic hdmi_pixClk;   
@@ -64,7 +64,7 @@ ecp5pll #(
 ) TopLevelPLL (
   .clk_i(clk_25mhz),  
   .clk_o({clk_50mhz, clk_130mhz})  
-); 
+);  
                   
 localparam S_COUNT = 3;
 localparam M_COUNT = 7;
@@ -74,7 +74,7 @@ localparam STRB_WIDTH = 4;
 localparam BOOTLOADER_START = 32'h0201_0000;
 //						  {SDRAM, Graphicsystem, Bootloader, 	  Colour Table,	Controller,		Counter,		SDCARD}
 localparam M_BASE_ADDR  = {32'h0, 32'h200_0000, BOOTLOADER_START, 32'h02002000,	32'h02000200,	32'h02000300, 	32'h8000_0000};
-localparam M_ADDR_WIDTH = {32'd25, 32'd8,		32'd16,			  32'd13,		32'd2,			32'd8,			32'd31};
+localparam M_ADDR_WIDTH = {32'd25, 32'd8,		32'd16,			  32'd12,		32'd2,			32'd8,			32'd31};
            
 logic         DCPU_mem_axi_awvalid;
 logic         DCPU_mem_axi_awready;
@@ -287,7 +287,7 @@ AXILiteColourTable #(
 	.OFFSET('h2000),
     .ADDR_WIDTH(16),
     .DATA_WIDTH(32), 
-    .MEMORY_DEPTH(4096) //In 16-Bit words   
+    .MEMORY_DEPTH(2048) //In 16-Bit words   
 ) ColourTable (
     .aclk(clk_50mhz),  
     .aresetn(resetn),
