@@ -130,7 +130,7 @@ always_ff @(posedge aclk) begin
 	end
 end
 
-wire portb_address_real = (portb_address - OFFSET) >> 1;
+wire[15:0] portb_address_real = (portb_address - OFFSET) >> 1;
 
 always_ff @(posedge aclk) begin
   portb_data <= memory[portb_address_real];
