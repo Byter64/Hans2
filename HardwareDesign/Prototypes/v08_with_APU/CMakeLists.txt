@@ -1,5 +1,5 @@
 # Define the name for the targets (must be unambiguous)
-set(name "prot7")
+set(name "prot8")
 
 # Defining variables for simulation
 set(testbench "testbench")
@@ -34,6 +34,10 @@ list(APPEND sources_all
   ${CMAKE_CURRENT_SOURCE_DIR}/../../Storage/sd_card_reader.sv
   ${CMAKE_CURRENT_SOURCE_DIR}/../../Controller/controller.sv
   ${CMAKE_CURRENT_SOURCE_DIR}/../../Counter/counter.sv
+  ${CMAKE_CURRENT_SOURCE_DIR}/../../Audiosystem/Audiosystem.sv
+  ${CMAKE_CURRENT_SOURCE_DIR}/../../Audiosystem/Channel.sv
+  ${CMAKE_CURRENT_SOURCE_DIR}/../../Audiosystem/ClockGenerator.sv
+  ${CMAKE_CURRENT_SOURCE_DIR}/../../Audiosystem/I2STransmitter.sv
   
 )
 

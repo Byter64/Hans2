@@ -156,7 +156,7 @@ always_ff @(posedge aclk) loadingState <= nextLoadingState;
 //AXI ADDRESS READ
 logic[31:0] next_m_araddr;
 
-always_comb begin :
+always_comb begin
     case (nextChannelState)
         0: next_m_araddr        = o_nextSampleAddress[0];
         1: next_m_araddr        = o_nextSampleAddress[1];

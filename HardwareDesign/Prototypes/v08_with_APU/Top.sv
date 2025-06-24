@@ -66,15 +66,15 @@ ecp5pll #(
   .clk_o({clk_50mhz, clk_130mhz})  
 );  
                   
-localparam S_COUNT = 3;
-localparam M_COUNT = 7;
+localparam S_COUNT = 4;
+localparam M_COUNT = 8;
 localparam ADDR_WIDTH = 32;
 localparam DATA_WIDTH = 32;
 localparam STRB_WIDTH = 4;
 localparam BOOTLOADER_START = 32'h0201_0000;
-//						  {SDRAM, Graphicsystem, Bootloader, 	  Colour Table,	Controller,		Counter,		SDCARD}
-localparam M_BASE_ADDR  = {32'h0, 32'h200_0000, BOOTLOADER_START, 32'h02002000,	32'h02000200,	32'h02000300, 	32'h8000_0000};
-localparam M_ADDR_WIDTH = {32'd25, 32'd8,		32'd16,			  32'd12,		32'd2,			32'd8,			32'd31};
+//						  {SDRAM, Graphicsystem,Audiosystem, 	Bootloader, 	  Colour Table,	Controller,		Counter,		SDCARD}
+localparam M_BASE_ADDR  = {32'h0, 32'h200_0000,	32'h200_0100,	BOOTLOADER_START, 32'h02002000,	32'h02000200,	32'h02000300, 	32'h8000_0000};
+localparam M_ADDR_WIDTH = {32'd25, 32'd8,		32'd8,			32'd16,			  32'd12,		32'd2,			32'd8,			32'd31};
            
 logic         DCPU_mem_axi_awvalid;
 logic         DCPU_mem_axi_awready;
@@ -396,6 +396,82 @@ GraphicSystem GraphicSystem
 );
 
 
+logic[31:0] AS_s_axil_awaddr;
+logic  		AS_s_axil_awvalid;
+logic  		AS_s_axil_awready;
+logic[31:0] AS_s_axil_wdata;
+logic[3:0]  AS_s_axil_wstrb;
+logic  		AS_s_axil_wvalid;
+logic  		AS_s_axil_wready;
+logic[1:0]	AS_s_axil_bresp;
+logic  		AS_s_axil_bvalid;
+logic  		AS_s_axil_bready;
+logic[1:0]  AS_s_axil_awprot;
+logic[31:0] AS_s_axil_araddr;
+logic[1:0] 	AS_s_axil_arprot;
+logic 	 	AS_s_axil_arvalid;
+logic 	 	AS_s_axil_arready;
+logic[31:0]	AS_s_axil_rdata;
+logic[1:0]	AS_s_axil_rresp;
+logic 		AS_s_axil_rvalid;
+logic 		AS_s_axil_rready;
+
+logic[31:0] AS_m_axil_araddr;
+logic 		AS_m_axil_arvalid;
+logic 		AS_m_axil_arready;
+logic[31:0] AS_m_axil_rdata;
+logic 		AS_m_axil_rvalid;
+logic 		AS_m_axil_rready;
+logic 		AS_m_axil_awready;
+logic		AS_m_axil_wready;
+logic[1:0]  AS_m_axil_bresp;
+logic		AS_m_axil_bvalid;
+logic		AS_m_axil_rresp;
+logic[1:0]	AS_m_axil_arprot;
+logic[31:0]	AS_m_axil_awaddr;
+logic[1:0]	AS_m_axil_awprot;
+logic		AS_m_axil_awvalid;
+logic		AS_m_axil_awready;
+logic[31:0]	AS_m_axil_wdata;
+logic[3:0]	AS_m_axil_wstrb;
+logic		AS_m_axil_wvalid;
+logic		AS_m_axil_wready;
+logic[1:0]	AS_m_axil_bresp;
+logic		AS_m_axil_bvalid;
+logic		AS_m_axil_bready;
+
+Audiosystem AudiosSystem 
+(
+	.clk(clk_50mhz),
+	.clk_25mhz(clk_25mhz),
+	.rst(~resetn),
+	.aclk(clk_50mhz),
+	.aresetn(resetn),
+
+	.s_axil_awaddr(AS_s_axil_awaddr),
+	.s_axil_awvalid(AS_s_axil_awvalid),
+	.s_axil_awready(AS_s_axil_awready),
+	.s_axil_wdata(AS_s_axil_wdata),
+	.s_axil_wstrb(AS_s_axil_wstrb),
+	.s_axil_wvalid(AS_s_axil_wvalid),
+	.s_axil_wready(AS_s_axil_wready),
+	.s_axil_bresp(AS_s_axil_bresp),
+	.s_axil_bvalid(AS_s_axil_bvalid),
+	.s_axil_bready(AS_s_axil_bready),
+
+	.m_axil_araddr(AS_m_axil_araddr),
+	.m_axil_arvalid(AS_m_axil_arvalid),
+	.m_axil_arready(AS_m_axil_arready),
+	.m_axil_rdata(AS_m_axil_rdata),
+	.m_axil_rvalid(AS_m_axil_rvalid),
+	.m_axil_rready(AS_m_axil_rready),
+
+	.audio_bclk(audio_bclk),
+	.audio_lrclk(audio_lrclk),
+	.audio_dout(audio_dout)
+);
+
+
 logic[31:0] CONT_s_axil_rdata;
 logic[1:0] 	CONT_s_axil_rresp;
 logic 		CONT_s_axil_rvalid;
@@ -569,48 +645,48 @@ logic[M_COUNT-1:0]            AXI_m_axil_rvalid;
 logic[M_COUNT-1:0]            AXI_m_axil_rready;
 
 //MASTER MAP
-//{ICPU, DCPU, Graphicsystem}
-assign AXI_s_axil_awaddr 	= 	{ICPU_mem_axi_awaddr	, DCPU_mem_axi_awaddr	, GS_m_axil_awaddr}	;
-assign AXI_s_axil_awprot 	= 	{ICPU_mem_axi_awprot	, DCPU_mem_axi_awprot	, GS_m_axil_awprot}	;
-assign AXI_s_axil_awvalid 	= 	{ICPU_mem_axi_awvalid	, DCPU_mem_axi_awvalid	, GS_m_axil_awvalid};
-assign 							{ICPU_mem_axi_awready	, DCPU_mem_axi_awready	, GS_m_axil_awready} 	= AXI_s_axil_awready;
-assign AXI_s_axil_wdata 	= 	{ICPU_mem_axi_wdata		, DCPU_mem_axi_wdata	, GS_m_axil_wdata}	;
-assign AXI_s_axil_wstrb 	= 	{ICPU_mem_axi_wstrb		, DCPU_mem_axi_wstrb	, GS_m_axil_wstrb}	;
-assign AXI_s_axil_wvalid 	= 	{ICPU_mem_axi_wvalid	, DCPU_mem_axi_wvalid	, GS_m_axil_wvalid}	;
-assign 							{ICPU_mem_axi_wready	, DCPU_mem_axi_wready	, GS_m_axil_wready} 	= AXI_s_axil_wready;
-assign 							{ICPU_mem_axi_bresp		, DCPU_mem_axi_bresp	, GS_m_axil_bresp} 		= AXI_s_axil_bresp;
-assign 							{ICPU_mem_axi_bvalid	, DCPU_mem_axi_bvalid	, GS_m_axil_bvalid} 	= AXI_s_axil_bvalid;
-assign AXI_s_axil_bready 	= 	{ICPU_mem_axi_bready	, DCPU_mem_axi_bready	, GS_m_axil_bready}	;
-assign AXI_s_axil_araddr 	= 	{ICPU_mem_axi_araddr	, DCPU_mem_axi_araddr	, GS_m_axil_araddr}	;
-assign AXI_s_axil_arprot 	= 	{ICPU_mem_axi_arprot	, DCPU_mem_axi_arprot	, GS_m_axil_arprot}	;
-assign AXI_s_axil_arvalid 	= 	{ICPU_mem_axi_arvalid	, DCPU_mem_axi_arvalid	, GS_m_axil_arvalid};
-assign 							{ICPU_mem_axi_arready	, DCPU_mem_axi_arready	, GS_m_axil_arready} 	= AXI_s_axil_arready;
-assign 							{ICPU_mem_axi_rdata		, DCPU_mem_axi_rdata	, GS_m_axil_rdata} 		= AXI_s_axil_rdata;
-assign 							{ICPU_mem_axi_rresp		, DCPU_mem_axi_rresp	, GS_m_axil_rresp} 		= AXI_s_axil_rresp;
-assign 							{ICPU_mem_axi_rvalid	, DCPU_mem_axi_rvalid	, GS_m_axil_rvalid} 	= AXI_s_axil_rvalid;
-assign AXI_s_axil_rready 	= 	{ICPU_mem_axi_rready	, DCPU_mem_axi_rready	, GS_m_axil_rready}	;
+//{ICPU, DCPU, Graphicsystem, Audiosystem}
+assign AXI_s_axil_awaddr 	= 	{ICPU_mem_axi_awaddr	,DCPU_mem_axi_awaddr	,GS_m_axil_awaddr	,AS_m_axil_awaddr	};
+assign AXI_s_axil_awprot 	= 	{ICPU_mem_axi_awprot	,DCPU_mem_axi_awprot	,GS_m_axil_awprot	,AS_m_axil_awprot	};
+assign AXI_s_axil_awvalid 	= 	{ICPU_mem_axi_awvalid	,DCPU_mem_axi_awvalid	,GS_m_axil_awvalid	,AS_m_axil_awvalid	};
+assign 							{ICPU_mem_axi_awready	,DCPU_mem_axi_awready	,GS_m_axil_awready	,AS_m_axil_awready	} = AXI_s_axil_awready;
+assign AXI_s_axil_wdata 	= 	{ICPU_mem_axi_wdata		,DCPU_mem_axi_wdata		,GS_m_axil_wdata	,AS_m_axil_wdata	};
+assign AXI_s_axil_wstrb 	= 	{ICPU_mem_axi_wstrb		,DCPU_mem_axi_wstrb		,GS_m_axil_wstrb	,AS_m_axil_wstrb	};
+assign AXI_s_axil_wvalid 	= 	{ICPU_mem_axi_wvalid	,DCPU_mem_axi_wvalid	,GS_m_axil_wvalid	,AS_m_axil_wvalid	};
+assign 							{ICPU_mem_axi_wready	,DCPU_mem_axi_wready	,GS_m_axil_wready	,AS_m_axil_wready	} 	= AXI_s_axil_wready;
+assign 							{ICPU_mem_axi_bresp		,DCPU_mem_axi_bresp		,GS_m_axil_bresp	,AS_m_axil_bresp	} 	= AXI_s_axil_bresp;
+assign 							{ICPU_mem_axi_bvalid	,DCPU_mem_axi_bvalid	,GS_m_axil_bvalid	,AS_m_axil_bvalid	} 	= AXI_s_axil_bvalid;
+assign AXI_s_axil_bready 	= 	{ICPU_mem_axi_bready	,DCPU_mem_axi_bready	,GS_m_axil_bready	,AS_m_axil_bready	};
+assign AXI_s_axil_araddr 	= 	{ICPU_mem_axi_araddr	,DCPU_mem_axi_araddr	,GS_m_axil_araddr	,AS_m_axil_araddr	};
+assign AXI_s_axil_arprot 	= 	{ICPU_mem_axi_arprot	,DCPU_mem_axi_arprot	,GS_m_axil_arprot	,AS_m_axil_arprot	};
+assign AXI_s_axil_arvalid 	= 	{ICPU_mem_axi_arvalid	,DCPU_mem_axi_arvalid	,GS_m_axil_arvalid	,AS_m_axil_arvalid	};
+assign 							{ICPU_mem_axi_arready	,DCPU_mem_axi_arready	,GS_m_axil_arready	,AS_m_axil_arready	} = AXI_s_axil_arready;
+assign 							{ICPU_mem_axi_rdata		,DCPU_mem_axi_rdata		,GS_m_axil_rdata	,AS_m_axil_rdata	} 	= AXI_s_axil_rdata;
+assign 							{ICPU_mem_axi_rresp		,DCPU_mem_axi_rresp		,GS_m_axil_rresp	,AS_m_axil_rresp	} 	= AXI_s_axil_rresp;
+assign 							{ICPU_mem_axi_rvalid	,DCPU_mem_axi_rvalid	,GS_m_axil_rvalid	,AS_m_axil_rvalid	} 	= AXI_s_axil_rvalid;
+assign AXI_s_axil_rready 	= 	{ICPU_mem_axi_rready	,DCPU_mem_axi_rready	,GS_m_axil_rready	,AS_m_axil_rready	};
  
 //SLAVE MAP
-//{SDRAM, Graphicsystem, Bootloader, Colour Table, Controrller, SDCard}
-assign 							{SDRAM_s_axil_awaddr, 	GS_s_axil_awaddr, 	BOOT_s_axil_awaddr,		CT_s_axil_awaddr,		CONT_s_axil_awaddr, SCLK_s_axil_awaddr, SDC_s_axil_awaddr} = AXI_m_axil_awaddr;
-assign 							{SDRAM_s_axil_awprot, 	GS_s_axil_awprot, 	BOOT_s_axil_awprot, 	CT_s_axil_awprot, 		CONT_s_axil_awprot,	SCLK_s_axil_awprot,	SDC_s_axil_awprot} = AXI_m_axil_awprot;
-assign 							{SDRAM_s_axil_awvalid, 	GS_s_axil_awvalid, 	BOOT_s_axil_awvalid,	CT_s_axil_awvalid,		CONT_s_axil_awvalid,SCLK_s_axil_awvalid,SDC_s_axil_awvalid} = AXI_m_axil_awvalid;
-assign AXI_m_axil_awready 	= 	{SDRAM_s_axil_awready, 	GS_s_axil_awready, 	BOOT_s_axil_awready,	CT_s_axil_awready,		1'b0,				1'b0,				SDC_s_axil_awready};
-assign 							{SDRAM_s_axil_wdata, 	GS_s_axil_wdata, 	BOOT_s_axil_wdata, 		CT_s_axil_wdata, 		CONT_s_axil_wdata,	SCLK_s_axil_wdata,	SDC_s_axil_wdata} = AXI_m_axil_wdata;
-assign 							{SDRAM_s_axil_wstrb, 	GS_s_axil_wstrb, 	BOOT_s_axil_wstrb, 		CT_s_axil_wstrb, 		CONT_s_axil_wstrb,	SCLK_s_axil_wstrb,	SDC_s_axil_wstrb} = AXI_m_axil_wstrb;
-assign 							{SDRAM_s_axil_wvalid, 	GS_s_axil_wvalid, 	BOOT_s_axil_wvalid, 	CT_s_axil_wvalid, 		CONT_s_axil_wvalid,	SCLK_s_axil_wvalid,	SDC_s_axil_wvalid} = AXI_m_axil_wvalid;
-assign AXI_m_axil_wready 	= 	{SDRAM_s_axil_wready, 	GS_s_axil_wready, 	BOOT_s_axil_wready, 	CT_s_axil_wready, 		1'b0,				1'b0,				SDC_s_axil_wready};
-assign AXI_m_axil_bresp	 	= 	{2'b0, 					GS_s_axil_bresp, 	2'b0, 					2'b0,					2'b0,				2'b0,				SDC_s_axil_bresp};
-assign AXI_m_axil_bvalid 	= 	{SDRAM_s_axil_bvalid, 	GS_s_axil_bvalid, 	BOOT_s_axil_bvalid, 	CT_s_axil_bvalid, 		1'b0,				1'b0,				SDC_s_axil_bvalid};
-assign 							{SDRAM_s_axil_bready, 	GS_s_axil_bready, 	BOOT_s_axil_bready, 	CT_s_axil_bready, 		CONT_s_axil_bready,	SCLK_s_axil_bready,	SDC_s_axil_bready} = AXI_m_axil_bready;
-assign 							{SDRAM_s_axil_araddr, 	GS_s_axil_araddr, 	BOOT_s_axil_araddr, 	CT_s_axil_araddr, 		CONT_s_axil_araddr,	SCLK_s_axil_araddr,	SDC_s_axil_araddr} = AXI_m_axil_araddr;
-assign 							{SDRAM_s_axil_arprot, 	GS_s_axil_arprot, 	BOOT_s_axil_arprot, 	CT_s_axil_arprot, 		CONT_s_axil_arprot,	SCLK_s_axil_arprot,	SDC_s_axil_arprot} = AXI_m_axil_arprot;
-assign 							{SDRAM_s_axil_arvalid,	GS_s_axil_arvalid, 	BOOT_s_axil_arvalid,	CT_s_axil_arvalid,		CONT_s_axil_arvalid,SCLK_s_axil_arvalid,SDC_s_axil_arvalid} = AXI_m_axil_arvalid;
-assign AXI_m_axil_arready 	= 	{SDRAM_s_axil_arready, 	GS_s_axil_arready, 	BOOT_s_axil_arready,	CT_s_axil_arready,		1'b1,				SCLK_s_axil_arready,SDC_s_axil_arready};
-assign AXI_m_axil_rdata 	= 	{SDRAM_s_axil_rdata, 	GS_s_axil_rdata, 	BOOT_s_axil_rdata, 		CT_s_axil_rdata, 		CONT_true_rdata, 	SCLK_s_axil_rdata, 	SDC_s_axil_rdata};
-assign AXI_m_axil_rresp 	= 	{SDRAM_s_axil_rresp, 	GS_s_axil_rresp, 	BOOT_s_axil_rresp, 		CT_s_axil_rresp, 		CONT_s_axil_rresp, 	SCLK_s_axil_rresp, 	SDC_s_axil_rresp};
-assign AXI_m_axil_rvalid 	= 	{SDRAM_s_axil_rvalid, 	GS_s_axil_rvalid, 	BOOT_s_axil_rvalid, 	CT_s_axil_rvalid, 		CONT_s_axil_rvalid, SCLK_s_axil_rvalid, SDC_s_axil_rvalid};
-assign 							{SDRAM_s_axil_rready, 	GS_s_axil_rready, 	BOOT_s_axil_rready, 	CT_s_axil_rready, 		CONT_s_axil_rready, SCLK_s_axil_rready, SDC_s_axil_rready} = AXI_m_axil_rready;
+//{SDRAM, Graphicsystem, Audiosystem, Bootloader, Colour Table, Controrller, SDCard}
+assign 							{SDRAM_s_axil_awaddr, 	GS_s_axil_awaddr, 	AS_s_axil_awaddr, 	BOOT_s_axil_awaddr,		CT_s_axil_awaddr,		CONT_s_axil_awaddr, SCLK_s_axil_awaddr, SDC_s_axil_awaddr} = AXI_m_axil_awaddr;
+assign 							{SDRAM_s_axil_awprot, 	GS_s_axil_awprot, 	AS_s_axil_awprot, 	BOOT_s_axil_awprot, 	CT_s_axil_awprot, 		CONT_s_axil_awprot,	SCLK_s_axil_awprot,	SDC_s_axil_awprot} = AXI_m_axil_awprot;
+assign 							{SDRAM_s_axil_awvalid, 	GS_s_axil_awvalid, 	AS_s_axil_awvalid, 	BOOT_s_axil_awvalid,	CT_s_axil_awvalid,		CONT_s_axil_awvalid,SCLK_s_axil_awvalid,SDC_s_axil_awvalid} = AXI_m_axil_awvalid;
+assign AXI_m_axil_awready 	= 	{SDRAM_s_axil_awready, 	GS_s_axil_awready, 	AS_s_axil_awready, 	BOOT_s_axil_awready,	CT_s_axil_awready,		1'b0,				1'b0,				SDC_s_axil_awready};
+assign 							{SDRAM_s_axil_wdata, 	GS_s_axil_wdata, 	AS_s_axil_wdata, 	BOOT_s_axil_wdata, 		CT_s_axil_wdata, 		CONT_s_axil_wdata,	SCLK_s_axil_wdata,	SDC_s_axil_wdata} = AXI_m_axil_wdata;
+assign 							{SDRAM_s_axil_wstrb, 	GS_s_axil_wstrb, 	AS_s_axil_wstrb, 	BOOT_s_axil_wstrb, 		CT_s_axil_wstrb, 		CONT_s_axil_wstrb,	SCLK_s_axil_wstrb,	SDC_s_axil_wstrb} = AXI_m_axil_wstrb;
+assign 							{SDRAM_s_axil_wvalid, 	GS_s_axil_wvalid, 	AS_s_axil_wvalid, 	BOOT_s_axil_wvalid, 	CT_s_axil_wvalid, 		CONT_s_axil_wvalid,	SCLK_s_axil_wvalid,	SDC_s_axil_wvalid} = AXI_m_axil_wvalid;
+assign AXI_m_axil_wready 	= 	{SDRAM_s_axil_wready, 	GS_s_axil_wready, 	AS_s_axil_wready, 	BOOT_s_axil_wready, 	CT_s_axil_wready, 		1'b0,				1'b0,				SDC_s_axil_wready};
+assign AXI_m_axil_bresp	 	= 	{2'b0, 					GS_s_axil_bresp, 	AS_s_axil_bresp, 	2'b0, 					2'b0,					2'b0,				2'b0,				SDC_s_axil_bresp};
+assign AXI_m_axil_bvalid 	= 	{SDRAM_s_axil_bvalid, 	GS_s_axil_bvalid, 	AS_s_axil_bvalid, 	BOOT_s_axil_bvalid, 	CT_s_axil_bvalid, 		1'b0,				1'b0,				SDC_s_axil_bvalid};
+assign 							{SDRAM_s_axil_bready, 	GS_s_axil_bready, 	AS_s_axil_bready, 	BOOT_s_axil_bready, 	CT_s_axil_bready, 		CONT_s_axil_bready,	SCLK_s_axil_bready,	SDC_s_axil_bready} = AXI_m_axil_bready;
+assign 							{SDRAM_s_axil_araddr, 	GS_s_axil_araddr, 	AS_s_axil_araddr, 	BOOT_s_axil_araddr, 	CT_s_axil_araddr, 		CONT_s_axil_araddr,	SCLK_s_axil_araddr,	SDC_s_axil_araddr} = AXI_m_axil_araddr;
+assign 							{SDRAM_s_axil_arprot, 	GS_s_axil_arprot, 	AS_s_axil_arprot, 	BOOT_s_axil_arprot, 	CT_s_axil_arprot, 		CONT_s_axil_arprot,	SCLK_s_axil_arprot,	SDC_s_axil_arprot} = AXI_m_axil_arprot;
+assign 							{SDRAM_s_axil_arvalid,	GS_s_axil_arvalid, 	AS_s_axil_arvalid, 	BOOT_s_axil_arvalid,	CT_s_axil_arvalid,		CONT_s_axil_arvalid,SCLK_s_axil_arvalid,SDC_s_axil_arvalid} = AXI_m_axil_arvalid;
+assign AXI_m_axil_arready 	= 	{SDRAM_s_axil_arready, 	GS_s_axil_arready, 	AS_s_axil_arready, 	BOOT_s_axil_arready,	CT_s_axil_arready,		1'b1,				SCLK_s_axil_arready,SDC_s_axil_arready};
+assign AXI_m_axil_rdata 	= 	{SDRAM_s_axil_rdata, 	GS_s_axil_rdata, 	AS_s_axil_rdata, 	BOOT_s_axil_rdata, 		CT_s_axil_rdata, 		CONT_true_rdata, 	SCLK_s_axil_rdata, 	SDC_s_axil_rdata};
+assign AXI_m_axil_rresp 	= 	{SDRAM_s_axil_rresp, 	GS_s_axil_rresp, 	AS_s_axil_rresp, 	BOOT_s_axil_rresp, 		CT_s_axil_rresp, 		CONT_s_axil_rresp, 	SCLK_s_axil_rresp, 	SDC_s_axil_rresp};
+assign AXI_m_axil_rvalid 	= 	{SDRAM_s_axil_rvalid, 	GS_s_axil_rvalid, 	AS_s_axil_rvalid, 	BOOT_s_axil_rvalid, 	CT_s_axil_rvalid, 		CONT_s_axil_rvalid, SCLK_s_axil_rvalid, SDC_s_axil_rvalid};
+assign 							{SDRAM_s_axil_rready, 	GS_s_axil_rready, 	AS_s_axil_rready, 	BOOT_s_axil_rready, 	CT_s_axil_rready, 		CONT_s_axil_rready, SCLK_s_axil_rready, SDC_s_axil_rready} = AXI_m_axil_rready;
    
 axil_crossbar #(
 	.S_COUNT(S_COUNT),
