@@ -63,8 +63,8 @@ always @(posedge aclk) begin
 end
 
 logic write_happened = 0;
-wire aw_address_real0 = {aw_address_real[31:2], 1'b0};
-wire aw_address_real1 = {aw_address_real[31:2], 1'b1};
+wire[31:0] aw_address_real0 = {1'b0, aw_address_real[31:2], 1'b0};
+wire[31:0] aw_address_real1 = {1'b0, aw_address_real[31:2], 1'b1};
 always @(posedge aclk) begin
 	if (s_axil_wvalid && s_axil_wready) begin //Never add any other conditions. This is likely to break axi
     if(s_axil_wstrb[0]) memory[aw_address_real0] <= s_axil_wdata[15 -: 16];
@@ -119,7 +119,7 @@ always_ff @(posedge aclk) begin
   end
 end
 
-wire ar_address_real2 = ar_address_real[31:1];
+wire[31:0] ar_address_real2 = {1'b0, ar_address_real[31:1]};
 always_ff @(posedge aclk) begin
 	if (!aresetn)
 		s_axil_rdata <= 0;
