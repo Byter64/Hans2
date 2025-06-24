@@ -826,7 +826,7 @@ always_ff @(posedge clk) begin
         fb_x <= re_x;
         fb_y <= re_y;
         fb_colour <= re_colour;
-        fb_write <= 1;
+        fb_write <= re_colour[0];
     end
     else begin
         fb_write <= 0;
