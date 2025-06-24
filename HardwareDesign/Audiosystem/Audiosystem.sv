@@ -210,6 +210,7 @@ logic[31:0] registerData;
 logic[3:0]  registerSelect; //s_axil_xdata[5:2]
 logic[7:0]  channelSelect;
 
+`ifndef SYNTHESIS
 logic[20 * 8 -1:0] dbg_registerSelect;
 always_comb begin
     case (registerSelect)
@@ -229,6 +230,7 @@ always_comb begin
         SET_CHANNEL_SELECT	: dbg_registerSelect = "SET_CHANNEL_SELECT";
     endcase
 end
+`endif
 
 //AW
 always_ff @(posedge aclk) s_axil_awready <= 1;

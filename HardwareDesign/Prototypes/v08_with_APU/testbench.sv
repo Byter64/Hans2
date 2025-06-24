@@ -72,14 +72,14 @@ initial begin
 	//$dumpvars(1, SDRAM);
 	//$dumpvars(1, testbench);
 	//$dumpvars(0, Top.Processor);
-	$dumpvars(1, Top);
+	//$dumpvars(1, Top);
 	$dumpvars(0, Top.AudioSystem);
 	//$dumpvars(0, Top.AxiCrossbar);
-	$dumpvars(0, Top.Bootloader);
+	//$dumpvars(0, Top.Bootloader);
 	//$dumpvars(0, Top.GraphicSystem);
 	//$dumpvars(0, Top.ColourTable);
 
-	#4000000
+	#80000000
 	$finish;
 end
 

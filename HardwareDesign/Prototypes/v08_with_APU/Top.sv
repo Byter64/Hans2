@@ -28,7 +28,12 @@ module Top
 	input  logic		c2data,
 
 	//Buttons for debug
-	input logic[6:0]	btn
+	input logic[6:0]	btn,
+
+	//Audio
+	output logic audio_bclk,
+	output logic audio_lrclk,
+	output logic audio_dout
 );        
        
 logic canBeDeleted;
