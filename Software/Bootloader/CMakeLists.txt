@@ -33,11 +33,13 @@ include_directories(Bootloader.elf
 	PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include
 	PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/fatfs
 	PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/Graphics/include
+	PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/Hall-main/include
 )
 
 add_subdirectory("elfload")
 add_subdirectory("fatfs")
 add_subdirectory("Graphics")
+add_subdirectory("Hall-main")
 
 add_executable (Bootloader.elf)
 
@@ -48,7 +50,8 @@ target_link_libraries(Bootloader.elf
 	${CMAKE_CURRENT_SOURCE_DIR}/newlib/libm.a
 	elfload
 	fatfs
-	Graphic_Hans_API)
+	Graphic_Hans_API
+	Hall)
 
 target_sources(Bootloader.elf PUBLIC
 	"syscall.c"
