@@ -6,7 +6,8 @@ Hall::IndexContainer ct_1[] = {0b11111100011010110001111110000000};
 
 int main() 
 {
-	Hall::SetupMono(1, (short *)sabre_dance_short, 12496, 0, 12495, 128);
+	//Hall::SetupMono(1, (short *)sabre_dance_short, 12496, 0, 12495, 128);
+	Hall::SetupMono(1, (short *)Hall::SD_CARD_START, 4742228, 96000, 4742228, 128);
 	Hall::Play(0b00000010);
 
 	*(Hall::COLOR_TABLE_MEMORY + 15) = 0b1111100000111101; //red + blue

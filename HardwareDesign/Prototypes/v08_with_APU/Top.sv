@@ -34,7 +34,7 @@ module Top
 	output logic audio_bclk,
 	output logic audio_lrclk,
 	output logic audio_dout
-);        
+);         
        
 logic canBeDeleted;
 //logic canBeDeleted2n;
