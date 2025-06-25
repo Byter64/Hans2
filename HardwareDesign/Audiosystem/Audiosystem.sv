@@ -145,7 +145,7 @@ always_comb begin
         default: nextLoadingState = loadingState;
     endcase
     if(!aresetn)
-        nextLoadingState = 0;
+        nextLoadingState = SKIP_CHANNEL;
 end
 
 
@@ -156,7 +156,7 @@ always_ff @(posedge aclk) loadingState <= nextLoadingState;
 //AXI ADDRESS READ
 logic[31:0] next_m_araddr;
 
-always_comb begin :
+always_comb begin
     case (nextChannelState)
         0: next_m_araddr        = o_nextSampleAddress[0];
         1: next_m_araddr        = o_nextSampleAddress[1];
@@ -182,7 +182,7 @@ always_ff @(posedge aclk) begin
 		m_axil_araddr <= 0;
 	else if (!m_axil_arvalid || m_axil_arready)
 	begin
-		m_axil_araddr <= { next_m_araddr, 2'b00 };
+		m_axil_araddr <= { next_m_araddr[31:2], 2'b00 };
     end
 end
 // AXI ADDRESS READ END
@@ -195,9 +195,9 @@ end
 always_ff @(posedge aclk) begin
 	if (m_axil_rvalid && m_axil_rready) begin
         if(next_m_araddr[1])
-            i_sample <= {m_axil_rdata[7:0], m_axil_rdata[15:8]};
+            i_sample <= m_axil_rdata[31:16];
         else
-            i_sample <= {m_axil_rdata[23:16], m_axil_rdata[31:24]};
+            i_sample <= m_axil_rdata[15:0];
     end
 end
 
@@ -209,6 +209,28 @@ end
 logic[31:0] registerData;
 logic[3:0]  registerSelect; //s_axil_xdata[5:2]
 logic[7:0]  channelSelect;
+
+`ifndef SYNTHESIS
+logic[20 * 8 -1:0] dbg_registerSelect;
+always_comb begin
+    case (registerSelect)
+        IDLE                : dbg_registerSelect = "IDLE";
+        SET_STARTADDRESS    : dbg_registerSelect = "SET_STARTADDRESS";
+        SET_SAMPLECOUNT     : dbg_registerSelect = "SET_SAMPLECOUNT";
+        SET_LOOPSTART       : dbg_registerSelect = "SET_LOOPSTART";
+        SET_LOOPEND         : dbg_registerSelect = "SET_LOOPEND";
+        SET_CURRENTPOSITION : dbg_registerSelect = "SET_CURRENTPOSITION";
+        SET_LASTSAMPLE      : dbg_registerSelect = "SET_LASTSAMPLE";
+        SET_VOLUME          : dbg_registerSelect = "SET_VOLUME";
+        SET_ISLOOPING       : dbg_registerSelect = "SET_ISLOOPING";
+        SET_ISPLAYING       : dbg_registerSelect = "SET_ISPLAYING";
+        SET_ISMONO          : dbg_registerSelect = "SET_ISMONO";
+        SET_ISRIGHT         : dbg_registerSelect = "SET_ISRIGHT";
+        SET_GLOBAL_VOLUME   : dbg_registerSelect = "SET_GLOBAL_VOLUME";
+        SET_CHANNEL_SELECT	: dbg_registerSelect = "SET_CHANNEL_SELECT";
+    endcase
+end
+`endif
 
 //AW
 always_ff @(posedge aclk) s_axil_awready <= 1;
@@ -222,12 +244,15 @@ end
 //W
 always_ff @(posedge aclk) s_axil_wready <= 1;
 
+logic write_happened;
 always_ff @(posedge aclk) begin
+    write_happened <= 0;
 	if (s_axil_wvalid && s_axil_wready) begin //Never add any other conditions. This is likely to break axi
 		if(registerSelect == SET_CHANNEL_SELECT)
 			channelSelect <= s_axil_wdata[7:0];
 		else
 			registerData <= s_axil_wdata;
+        write_happened <= 1;
     end
 end
 
@@ -267,7 +292,7 @@ generate
 
             .w_ChannelData(registerData),           //CPU Interface
             .w_selectChannelData(registerSelect),   //CPU Interface
-            .w_valid(channelSelect[i]),             //CPU Interface
+            .w_valid(channelSelect[i] && write_happened),//CPU Interface
 
             .i_ready(i_ready[i]),
             .i_sample(i_sample),

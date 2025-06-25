@@ -53,9 +53,9 @@ module Channel (
 
     logic [31:0] amplifiedSample;
 
-    assign nextDataAddressMono      = startDataAddress +  currentPosition       + 1;
-    assign nextDataAddressLeft      = startDataAddress + (currentPosition << 1) + 2;
-    assign nextDataAddressRight     = startDataAddress + (currentPosition << 1) + 3;
+    assign nextDataAddressMono      = startDataAddress +  ((currentPosition       + 1) << 1);
+    assign nextDataAddressLeft      = startDataAddress + (((currentPosition << 1) + 2) << 1);
+    assign nextDataAddressRight     = startDataAddress + (((currentPosition << 1) + 3) << 1);
 
     assign nextDataAddress          = rst ? 32'b0 : 
                                       (isMono) ? nextDataAddressMono : 

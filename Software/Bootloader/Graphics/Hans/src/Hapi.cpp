@@ -1,27 +1,7 @@
 #include "Hapi.h"
 #include "../../../Assets/include/fonts/minifont5x3.h"
 #include <stdlib.h>
-
-volatile char* GPU_BLOCK = (char*)0x02000000;
-volatile int* GPU_IMAGE_START = (int*)(GPU_BLOCK + 0);
-volatile int* GPU_IMAGE_X = (int*)(GPU_BLOCK + 4);
-volatile int* GPU_IMAGE_Y = (int*)(GPU_BLOCK + 8);
-volatile int* GPU_IMAGE_WIDTH = (int*)(GPU_BLOCK + 12);
-volatile int* GPU_EXCERPT_WIDTH = (int*)(GPU_BLOCK + 16);
-volatile int* GPU_EXCERPT_HEIGHT = (int*)(GPU_BLOCK + 20);
-volatile int* GPU_SCREEN_X = (int*)(GPU_BLOCK + 24);
-volatile int* GPU_SCREEN_Y = (int*)(GPU_BLOCK + 28);
-volatile int* GPU_CLEAR_COLOR = (int*)(GPU_BLOCK + 32);
-volatile int* GPU_COMMAND_DRAW = (int*)(GPU_BLOCK + 36);
-volatile int* GPU_COMMAND_CLEAR = (int*)(GPU_BLOCK + 40);
-volatile int* GPU_IS_BUSY = (int*)(GPU_BLOCK + 44);
-
-volatile int* GPU_VSYNC = (int*)(GPU_BLOCK + 48);
-volatile int* GPU_HSYNC = (int*)(GPU_BLOCK + 52);
-
-volatile int* GPU_COMMAND_SWAP_BUFFERS = (int*)(GPU_BLOCK + 56);
-volatile int* VSYNC_BUFFER_SWAP = (int*)(GPU_BLOCK + 60);
-
+#include "../../../Hall-main/include/Hall/Hall.h"
 
 static Hapi::FontAtlas atlas = {0};
 Hapi::Font Hapi::defaultFont;
@@ -118,29 +98,26 @@ void Hapi::StartDrawing()
 
 static void WaitForGPU()
 {
-	volatile int* isGPUBusy = (int*)(GPU_IS_BUSY);
-	while (*isGPUBusy);
+	while (Hall::GetIsGPUBusy());
 }
 
 void Hapi::EndDrawing()
 {
 	WaitForGPU();
-	*GPU_COMMAND_SWAP_BUFFERS = true;
-	while (!*GPU_VSYNC);
+	bool vSync = false;
+	bool newVSync = false;
+	while(!(!vSync && newVSync))
+	{
+		vSync = newVSync;
+		newVSync = Hall::GetVSync();
+	}
+	Hall::SetCommandSwapBuffers();
 }
 
 void Hapi::Draw(Image image, int ssX, int ssY, int x, int y, int width, int height, int image_width)
 {
 	WaitForGPU();
-	*GPU_IMAGE_START = image;
-	*GPU_IMAGE_X = ssX;
-	*GPU_IMAGE_Y = ssY;
-	*GPU_IMAGE_WIDTH = image_width;
-	*GPU_EXCERPT_WIDTH = width;
-	*GPU_EXCERPT_HEIGHT = height;
-	*GPU_SCREEN_X = x;
-	*GPU_SCREEN_Y = y;
-	*GPU_COMMAND_DRAW = true;
+	Hall::Draw((Hall::Color*)image, ssX, ssY, x, y, width, height, image_width);
 }
 
 void Hapi::DrawText(const char* text, Font font, int posX, int posY, unsigned int maxWidth)
@@ -182,8 +159,7 @@ void Hapi::Clear(Color color)
 {
 	WaitForGPU();
 
-	*GPU_CLEAR_COLOR = color.GetColor();
-	*GPU_COMMAND_CLEAR = true;
+	Hall::Clear(color.GetColor());
 }
 
 void Hapi::SetTargetFPS(int fps)
@@ -193,5 +169,6 @@ void Hapi::SetTargetFPS(int fps)
 
 void Hapi::SetVSync(bool vSync)
 {
-	*VSYNC_BUFFER_SWAP = vSync;
+	//We don't support this anymore
+	//*VSYNC_BUFFER_SWAP = vSync;
 }

@@ -38,7 +38,7 @@ assign s_axil_rresp = 0;
 
 bit[ADDR_WIDTH-1:0] memory[MEMORY_DEPTH];
 //initial $readmemh("C:/Users/Yanni/Desktop/Hans2/build/Software/Bootloader/Bootloader32.hex", memory);
-initial $readmemh("C:/Hans2/HardwareDesign/Prototypes/v07_with_new_GPU/Software/build/code/Game32.hex", memory);
+initial $readmemh("C:/Users/Yanni/Desktop/Hans2/HardwareDesign/Prototypes/v07_with_new_GPU/Software/build/code/Game32.hex", memory);
 
 
 //Address Write
