@@ -1,4 +1,4 @@
-/* Updated SD Card controller module with SDHC support */
+/* Updated SD Card controller module with SDHC support and correct write response handling */
 
 `timescale 1ns / 1ps
 
@@ -38,7 +38,7 @@ module sd_controller(
     end
 
     logic is_initialized = 0;
-    wire mul_clk = is_initialized ? clk_400khz_en : clk_400khz_en;
+    wire mul_clk = is_initialized ? clk : clk_400khz_en;
 
     parameter RST = 0;
     parameter INIT = 1;
@@ -60,7 +60,8 @@ module sd_controller(
     parameter WRITE_BLOCK_INIT = 17;
     parameter WRITE_BLOCK_DATA = 18;
     parameter WRITE_BLOCK_BYTE = 19;
-    parameter WRITE_BLOCK_WAIT = 20;
+    parameter WRITE_BLOCK_RESP = 20;
+    parameter WRITE_BLOCK_WAIT = 21;
 
     parameter WRITE_DATA_SIZE = 515;
 
@@ -76,6 +77,7 @@ module sd_controller(
     reg [9:0] byte_counter;
     reg [9:0] bit_counter;
     reg [26:0] boot_counter = 27'd10_000_000;
+    reg [31:0] sector_address;
 
     always @(posedge mul_clk) begin
         if (reset == 1) begin
@@ -116,13 +118,12 @@ module sd_controller(
                     state <= SEND_CMD;
                 end
                 CMD8: begin
-                    cmd_out <= 56'hFF_48_00_00_01_AA_87; // CMD8 with check pattern 0x1AA
+                    cmd_out <= 56'hFF_48_00_00_01_AA_87;
                     bit_counter <= 55;
                     return_state <= CMD8_RESP;
                     state <= SEND_CMD;
                 end
                 CMD8_RESP: begin
-                    // Ignore CMD8 response contents, continue to CMD55
                     state <= CMD55;
                 end
                 CMD55: begin
@@ -132,7 +133,7 @@ module sd_controller(
                     state <= SEND_CMD;
                 end
                 CMD41: begin
-                    cmd_out <= 56'hFF_69_40_00_00_00_01; // HCS = 1 for SDHC support
+                    cmd_out <= 56'hFF_69_40_00_00_00_01;
                     bit_counter <= 55;
                     return_state <= POLL_CMD;
                     state <= SEND_CMD;
@@ -146,6 +147,7 @@ module sd_controller(
                 end
                 IDLE: begin
                     is_initialized <= 1;
+                    if (rd || wr) sector_address <= address >> 9;
                     if (rd == 1) begin
                         state <= READ_BLOCK;
                     end else if (wr == 1) begin
@@ -155,7 +157,9 @@ module sd_controller(
                     end
                 end
                 READ_BLOCK: begin
-                    cmd_out <= {16'hFF_51, address, 8'hFF};
+                    cmd_out <= {8'hFF, 8'h51,
+                                sector_address[31:24], sector_address[23:16],
+                                sector_address[15:8], sector_address[7:0], 8'hFF};
                     bit_counter <= 55;
                     return_state <= READ_BLOCK_WAIT;
                     state <= SEND_CMD;
@@ -222,7 +226,9 @@ module sd_controller(
                     sclk_sig <= ~sclk_sig;
                 end
                 WRITE_BLOCK_CMD: begin
-                    cmd_out <= {16'hFF_58, address, 8'hFF};
+                    cmd_out <= {8'hFF, 8'h58,
+                                sector_address[31:24], sector_address[23:16],
+                                sector_address[15:8], sector_address[7:0], 8'hFF};
                     bit_counter <= 55;
                     return_state <= WRITE_BLOCK_INIT;
                     state <= SEND_CMD;
@@ -236,8 +242,9 @@ module sd_controller(
                 end
                 WRITE_BLOCK_DATA: begin
                     if (byte_counter == 0) begin
-                        state <= RECEIVE_BYTE_WAIT;
-                        return_state <= WRITE_BLOCK_WAIT;
+                        bit_counter <= 7;
+                        return_state <= WRITE_BLOCK_RESP;
+                        state <= RECEIVE_BYTE;
                     end else begin
                         if ((byte_counter == 2) || (byte_counter == 1)) begin
                             data_sig <= 8'hFF;
@@ -264,6 +271,13 @@ module sd_controller(
                     end
                     sclk_sig <= ~sclk_sig;
                 end
+                WRITE_BLOCK_RESP: begin
+                    if ((recv_data[4:0] == 5'b00101)) begin // 0x05 = Data accepted
+                        state <= WRITE_BLOCK_WAIT;
+                    end else begin
+                        state <= IDLE; // Error: treat as write failure
+                    end
+                end
                 WRITE_BLOCK_WAIT: begin
                     if (sclk_sig == 1) begin
                         if (miso == 1) begin
@@ -271,7 +285,7 @@ module sd_controller(
                             cmd_mode <= 1;
                         end
                     end
-                    sclk_sig = ~sclk_sig;
+                    sclk_sig <= ~sclk_sig;
                 end
             endcase
         end

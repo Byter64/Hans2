@@ -160,7 +160,7 @@ module sd_card_reader #(
     logic pending_write_answer = 0;
     logic next_bvalid; //Assign your valid logic to this signal
     logic[1:0] next_bresp; //Assign the data here
-    assign next_bvalid = pending_write_answer && (state == Idle && tag == data_addr_write[31:9] && ~write_data);
+    assign next_bvalid = pending_write_answer && (state == Idle && ~write_data);
     assign next_bresp = 0;
 
     always_ff @(posedge aclk) begin

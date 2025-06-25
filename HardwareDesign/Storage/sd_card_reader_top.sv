@@ -72,7 +72,7 @@ module top_ulx3s_sd_mem (
         IDLE: begin
           // Start writing to first sector
           awaddr  <= sector * 512 + word_idx * 4;
-          wdata   <= word_idx + 32'h12340000;
+          wdata   <= word_idx + 32'h34120000;
           awvalid <= 1;
           wvalid  <= 1;
           state   <= WRITE;
