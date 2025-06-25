@@ -3,7 +3,6 @@ module sd_card_reader #(
 ) (
     input aclk,
     input aresetn,
-
     /*
     * AXI lite slave interfaces
     */
@@ -73,7 +72,7 @@ module sd_card_reader #(
     
     ControllerState state = Initialize;
 
-    (* ram_style = "logic" *)
+    //(* ram_style = "logic" *)
     logic [31:0] ram[0:127];
 
     logic [6:0] ram_waddr;
@@ -110,7 +109,7 @@ module sd_card_reader #(
     logic sd_card_byte_available;   // byte can be read
     logic sd_card_ready_for_next_byte; // byte can be written
     logic sd_card_ready;
-    logic [31:0] sd_card_sector_address;
+    logic [22:0] sd_card_sector_address;
 
     // SD CARD LOGIC
     logic [8:0] byte_counter = 0;
@@ -216,16 +215,25 @@ module sd_card_reader #(
     end
     ///////////////////AXI-LITE END///////////////////
 
-    // Connections to sdcontroller
+    // CDC for control signals going to SD controller (aclk -> sdclk[1])
+    localparam SD_CDC_DEPTH = 63;
+    logic [SD_CDC_DEPTH-1:0] sd_card_read_cdc;
+    logic [SD_CDC_DEPTH-1:0] sd_card_write_cdc;
+
+    always @(posedge aclk) begin
+        sd_card_read_cdc <= {sd_card_read_cdc[SD_CDC_DEPTH-2:0], sd_card_read};
+        sd_card_write_cdc <= {sd_card_write_cdc[SD_CDC_DEPTH-2:0], sd_card_write};
+    end
+
     sd_controller sd1 (
         .cs(cs),
         .mosi(mosi),
         .miso(miso),
         .sclk(sclk),
-        .rd(sd_card_read),
+        .rd(|sd_card_read_cdc),
         .dout(sd_card_dout),
         .byte_available(sd_card_byte_available),
-        .wr(sd_card_write),
+        .wr(|sd_card_write_cdc),
         .din(sd_card_din),
         .ready_for_next_byte(sd_card_ready_for_next_byte),
         .ready(sd_card_ready),
@@ -305,7 +313,7 @@ module sd_card_reader #(
                 end
                 
                 WaitSDCard: begin
-                    sd_card_sector_address <= {data_addr[31:9],9'b0};
+                    sd_card_sector_address <= data_addr[31:9];
                     ram_raddr <= 0;
                     if(sd_card_ready) begin
                         // RAM dirty, Write into SD card, Read from SD Card
@@ -352,7 +360,7 @@ module sd_card_reader #(
                 end
                 
                 ReadSDCard: begin
-                    tag <= sd_card_sector_address[31:9];
+                    tag <= sd_card_sector_address;
                     if(sd_card_byte_available_strobe) begin
                         byte_counter <= byte_counter + 1;
                         

@@ -21,10 +21,10 @@ module top;
         for (idx = 0; idx < 128; idx++) begin
         $dumpvars(0,top.dut.sd_inst.ram[idx]); 
         end
-        for (idx = 0; idx < 2048; idx++) begin
+        for (idx = 0; idx < 1024; idx++) begin
         $dumpvars(0,top.dut.sd_inst.sd1.ram[idx]); 
         end
-        #1000000
+        #4000000
         $finish;
     end
 endmodule

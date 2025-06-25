@@ -35,6 +35,22 @@ module sd_controller(
 
     logic [7:0] ram [65536];
 
+reg [6:0] clk_div_counter = 0;
+reg clk_400khz_en = 0;
+
+always @(posedge clk) begin
+    if (clk_div_counter == 62) begin // 50MHz / (2*400kHz) = 62.5
+        clk_div_counter <= 0;
+        clk_400khz_en <= 1;
+    end else begin
+        clk_div_counter <= clk_div_counter + 1;
+        clk_400khz_en <= 0;
+    end
+end
+logic is_initialized;
+logic mul_clk;
+assign mul_clk = is_initialized ? clk : clk_400khz_en;
+
     parameter RST = 0;
     parameter INIT = 1;
     parameter CMD0 = 2;
@@ -77,11 +93,12 @@ module sd_controller(
 
     assign byte_address = (address) + 31'(address_counter);
 
-    always @(posedge clk) begin
+    always @(posedge mul_clk) begin
         if(reset == 1) begin
             state <= RST;
             sclk_sig <= 0;
             boot_counter <= 27'd10;
+            is_initialized <= 0;
         end
         else begin
             case(state)
@@ -139,6 +156,7 @@ module sd_controller(
                     end
                 end
                 IDLE: begin
+                    is_initialized <= 1;
                     address_counter <= 0;
                     if(rd == 1) begin
                         state <= READ_BLOCK;
