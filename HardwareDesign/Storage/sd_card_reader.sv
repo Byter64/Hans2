@@ -72,7 +72,7 @@ module sd_card_reader #(
     
     ControllerState state = Initialize;
 
-    (* ram_style = "distributed" *)
+    (* ram_style = "logic" *)
     logic [31:0] ram[0:127];
 
     logic [6:0] ram_waddr;

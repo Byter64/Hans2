@@ -280,11 +280,7 @@ module sd_controller(
                     sclk_sig <= ~sclk_sig;
                 end
                 WRITE_BLOCK_RESP: begin
-                    if ((recv_data[4:0] == 5'b00101)) begin // 0x05 = Data accepted
-                        state <= WRITE_BLOCK_WAIT;
-                    end else begin
-                        state <= IDLE; // Error: treat as write failure
-                    end
+                    state <= WRITE_BLOCK_WAIT;
                 end
                 WRITE_BLOCK_WAIT: begin
                     if (sclk_sig == 1) begin
