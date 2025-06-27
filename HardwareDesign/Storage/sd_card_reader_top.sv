@@ -72,7 +72,7 @@ module top_ulx3s_sd_mem (
         IDLE: begin
           // Start writing to first sector
           awaddr  <= sector * 512 + word_idx * 4;
-          wdata   <= word_idx + 32'h34120000;
+          wdata   <= word_idx + 32'h44442200;
           awvalid <= 1;
           wvalid  <= 1;
           state   <= WRITE;
@@ -92,10 +92,10 @@ module top_ulx3s_sd_mem (
 
         WAIT_WRITE_DONE: begin
           if (bvalid) begin
-            if (word_idx < 128) begin
+            if (word_idx < 9) begin
               word_idx <= word_idx + 1;
               state    <= IDLE;
-            end else if (sector < 3) begin
+            end else if (sector < 10) begin
               word_idx <= 0;
               sector   <= sector + 1;
               state    <= IDLE;

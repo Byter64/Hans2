@@ -36,9 +36,17 @@ module sd_controller(
             clk_400khz_en <= 0;
         end
     end
+    
+        // Clock divider for 400kHz during init
+    logic clk_25mhz_en = 0;
+
+    always @(posedge clk) begin
+        clk_25mhz_en <= ~clk_25mhz_en;
+    end
 
     logic is_initialized = 0;
-    wire mul_clk = is_initialized ? clk : clk_400khz_en;
+    logic mul_clk;
+    assign mul_clk = is_initialized ? clk_25mhz_en : clk_400khz_en;
 
     parameter RST = 0;
     parameter INIT = 1;
