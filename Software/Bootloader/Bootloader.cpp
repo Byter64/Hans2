@@ -46,6 +46,9 @@ int main()
 {
 
 	Hapi::Init();
+
+	ScreenPrint("Can you read?");
+
 	FRESULT fatfsResult;
 	#ifndef SIMULATION
 	WaitFrame(120);
