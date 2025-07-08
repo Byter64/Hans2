@@ -5,13 +5,13 @@ namespace Hapi
 	struct Rectangle
 	{
 		//Left boundary
-		int x;
+		short x;
 
 		//Right boundary
-		int y;
+		short y;
 
-		int width;
+		short width;
 
-		int height;
+		short height;
 	};
 }

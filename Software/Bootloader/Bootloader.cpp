@@ -41,28 +41,25 @@ static void check(el_status stat, const char* text)
 extern FATFS FatFs;
 extern BYTE is_mounted;
 
-volatile int* x = (int*)0x2010000;
 int main()
 {
 
 	Hapi::Init();
-
+	
 	ScreenPrint("Can you read?");
-
+	
 	FRESULT fatfsResult;
 	#ifndef SIMULATION
 	WaitFrame(120);
 	#endif
-
+	
 	#ifndef SIMULATION
 	SetStatus("Mounting SD-Card...", 0, 15);
 	#endif
+	
 	fatfsResult = f_mount(&FatFs, "", 0);
     is_mounted = 1;
-
-	#ifdef SIMULATION
-	*(int*)0x01FFFFC = fatfsResult;
-	#endif
+	
 	if(fatfsResult)
 	{
 		ScreenPrint("Error:");
@@ -81,9 +78,6 @@ int main()
 	FILINFO fileInfo;
 	fatfsResult = f_findfirst(&directory, &fileInfo, "/", "*.elf");
 
-	#ifdef SIMULATION
-	*(int*)0x01FFFFC = fatfsResult;
-	#endif
 	if(fileInfo.fname[0] == '\0' || fatfsResult)
 	{
 		ScreenPrint("Error:");
@@ -108,6 +102,7 @@ int main()
 	debugMessage[i + 10] = '.';
 	debugMessage[i + 11] = '\0';
 	
+
 	#ifndef SIMULATION
 	SetStatus(debugMessage, 25, 10);
 	#endif
@@ -123,7 +118,7 @@ int main()
 	#ifndef SIMULATION
 	SetStatus("Open succeeded", 30, 20);
 	#endif
-
+	
 	el_ctx ctx;
 	ctx.pread = fileRead;
 	
