@@ -216,25 +216,16 @@ module sd_card_reader #(
     end
     ///////////////////AXI-LITE END///////////////////
 
-    // CDC for control signals going to SD controller (aclk -> sdclk[1])
-    localparam SD_CDC_DEPTH = 63;
-    logic [SD_CDC_DEPTH-1:0] sd_card_read_cdc;
-    logic [SD_CDC_DEPTH-1:0] sd_card_write_cdc;
-
-    always @(posedge aclk) begin
-        sd_card_read_cdc <= {sd_card_read_cdc[SD_CDC_DEPTH-2:0], sd_card_read};
-        sd_card_write_cdc <= {sd_card_write_cdc[SD_CDC_DEPTH-2:0], sd_card_write};
-    end
-
+    // Connections to sdcontroller
     sd_controller sd1 (
         .cs(cs),
         .mosi(mosi),
         .miso(miso),
         .sclk(sclk),
-        .rd(|sd_card_read_cdc),
+        .rd(sd_card_read),
         .dout(sd_card_dout),
         .byte_available(sd_card_byte_available),
-        .wr(|sd_card_write_cdc),
+        .wr(sd_card_write),
         .din(sd_card_din),
         .ready_for_next_byte(sd_card_ready_for_next_byte),
         .ready(sd_card_ready),
