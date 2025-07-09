@@ -10,11 +10,6 @@ OUTPUT_ARCH(riscv)
 ENTRY(_start)
 SECTIONS
 {
-  /*The bootloader should be able to use the highest 2 megabyte as heap*/
-  . = 0x01E00000;
-  PROVIDE(heap_begin = .);
-
-
   . = 0x02010000;
   .text           :
   {
@@ -203,4 +198,6 @@ SECTIONS
   .debug_addr     0 : { *(.debug_addr) }
   .gnu.attributes 0 : { KEEP (*(.gnu.attributes)) }
   /DISCARD/ : { *(.note.GNU-stack) *(.gnu_debuglink) *(.gnu.lto_*) }
+
+  PROVIDE(heap_begin = .);
 }
