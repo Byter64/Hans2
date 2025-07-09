@@ -106,6 +106,7 @@ int main()
 	#ifndef SIMULATION
 	SetStatus(debugMessage, 25, 10);
 	#endif
+
 	fatfsResult = f_open(&elfFile, elfFilePath, FA_READ);
 
 	if(fatfsResult)
