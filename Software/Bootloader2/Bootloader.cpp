@@ -12,7 +12,8 @@ extern "C"
 struct Rect
 {
 	unsigned char x, y;
-	unsigned char width, height;
+	static const unsigned char width = 3;
+	static const unsigned char height = 5;
 };
 
 Rect glyphs[128];
@@ -23,41 +24,41 @@ static void InitGlyphs()
 {
 	for(int i = 0; i < 128; i++)
 	{
-		glyphs[i] = {104, 5, 3, 5}; //This draws a '.' for unkown glyphs
+		glyphs[i] = {104, 5}; //This draws a '.' for unkown glyphs
 	}
 
 	for(unsigned char i = 0; i < 26; i++)
-		glyphs['a' + i] = {(unsigned char)(i * 4), 0, 3, 5};
+		glyphs['a' + i] = {(unsigned char)(i * 4), 0};
 	for(unsigned char i = 0; i < 26; i++)
-		glyphs['A' + i] = {(unsigned char)(i * 4), 0, 3, 5};
+		glyphs['A' + i] = {(unsigned char)(i * 4), 0};
 	for(unsigned char i = 0; i < 9; i++)
-		glyphs['1' + i] = {(unsigned char)(i * 4), 5, 3, 5};
-	glyphs['0'] = {40, 5, 3, 5};
+		glyphs['1' + i] = {(unsigned char)(i * 4), 5};
+	glyphs['0'] = {40, 5};
 
-   glyphs['\\'] = {104, 0, 3, 5};
-	glyphs['/'] = {108, 0, 3, 5};
-	glyphs['<'] = {112, 0, 3, 5};
-	glyphs['>'] = {116, 0, 3, 5};
+   glyphs['\\'] = {104, 0};
+	glyphs['/'] = {108, 0};
+	glyphs['<'] = {112, 0};
+	glyphs['>'] = {116, 0};
 
-	glyphs['!'] = {44, 5, 3, 5};
-	glyphs['"'] = {48, 5, 3, 5};
-	glyphs['$'] = {52, 5, 3, 5};
-	glyphs['%'] = {56, 5, 3, 5};
-	glyphs['^'] = {60, 5, 3, 5};
-	glyphs['*'] = {64, 5, 3, 5};
-	glyphs['('] = {68, 5, 3, 5};
-	glyphs['`'] = {72, 5, 3, 5};
-   glyphs['\''] = {76, 5, 3, 5};
-	glyphs['-'] = {80, 5, 3, 5};
-	glyphs['='] = {84, 5, 3, 5};
-	glyphs['_'] = {88, 5, 3, 5};
-	glyphs['+'] = {92, 5, 3, 5};
-	glyphs['?'] = {96, 5, 3, 5};
-	glyphs['|'] = {100, 5, 3, 5};
-	glyphs['.'] = {104, 5, 3, 5};
-	glyphs[','] = {108, 5, 3, 5};
-	glyphs[':'] = {112, 5, 3, 5};
-	glyphs[';'] = {116, 5, 3, 5};
+	glyphs['!'] = {44, 5};
+	glyphs['"'] = {48, 5};
+	glyphs['$'] = {52, 5};
+	glyphs['%'] = {56, 5};
+	glyphs['^'] = {60, 5};
+	glyphs['*'] = {64, 5};
+	glyphs['('] = {68, 5};
+	glyphs['`'] = {72, 5};
+   glyphs['\''] = {76, 5};
+	glyphs['-'] = {80, 5};
+	glyphs['='] = {84, 5};
+	glyphs['_'] = {88, 5};
+	glyphs['+'] = {92, 5};
+	glyphs['?'] = {96, 5};
+	glyphs['|'] = {100, 5};
+	glyphs['.'] = {104, 5};
+	glyphs[','] = {108, 5};
+	glyphs[':'] = {112, 5};
+	glyphs[';'] = {116, 5};
 }
 
 static void DrawText(const char* text, int x, int y)
