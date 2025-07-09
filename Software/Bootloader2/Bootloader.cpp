@@ -146,6 +146,9 @@ static void* memoryAllocation(el_ctx* ctx, Elf_Addr physicalAddress, Elf_Addr vi
 	return (void*)physicalAddress;
 }
 
+int testNumber;
+int testNumber2 = 313445;
+
 int main()
 {
 	Hall::Init();
@@ -160,11 +163,11 @@ int main()
 	DrawText("Hallo!\n>> Ich bin ein anderer Text :D\n>> Kannst du mich lesen?", 10, 120);
 
 	char buffer[32];
-	char* number = ToString(12345678, buffer, 32);
+	char* number = ToString(-988776655, buffer, 32);
 	DrawText(number, 150, 10);
-	number = ToString(-988776655, buffer, 32);
+	number = ToString(testNumber, buffer, 32);
 	DrawText(number, 150, 20);
-	number = ToString(0, buffer, 32);
+	number = ToString(testNumber2, buffer, 32);
 	DrawText(number, 150, 30);
 
 	while(Hall::GetIsGPUBusy());
