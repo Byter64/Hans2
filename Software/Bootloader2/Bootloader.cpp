@@ -3,6 +3,12 @@
 #include <Hall/Hall.h>
 #include "Assets/include/fonts/minifont5x3.h"
 
+extern "C" 
+{
+	#include "elfload/elfload.h"
+}
+#include "ff.h"
+
 struct Rect
 {
 	unsigned char x, y;
@@ -10,6 +16,8 @@ struct Rect
 };
 
 Rect glyphs[128];
+FIL elfFile;
+void* loadAddress = 0;
 
 static void InitGlyphs()
 {
@@ -18,12 +26,12 @@ static void InitGlyphs()
 		glyphs[i] = {104, 5, 3, 5}; //This draws a '.' for unkown glyphs
 	}
 
-	for(unsigned char c = 'a'; c <= 'z'; c++)
-		glyphs[c] = {(unsigned char)(c * 4), 0, 3, 5};
-	for(unsigned char c = 'A'; c <= 'Z'; c++)
-		glyphs[c] = {(unsigned char)(c * 4), 0, 3, 5};
-	for(unsigned char c = '1'; c <= '9'; c++)
-		glyphs[c] = {(unsigned char)(c * 4), 5, 3, 5};
+	for(unsigned char i = 0; i < 26; i++)
+		glyphs['a' + i] = {(unsigned char)(i * 4), 0, 3, 5};
+	for(unsigned char i = 0; i < 26; i++)
+		glyphs['A' + i] = {(unsigned char)(i * 4), 0, 3, 5};
+	for(unsigned char i = 0; i < 9; i++)
+		glyphs['1' + i] = {(unsigned char)(i * 4), 5, 3, 5};
 	glyphs['0'] = {40, 5, 3, 5};
 
    glyphs['\\'] = {104, 0, 3, 5};
@@ -54,6 +62,7 @@ static void InitGlyphs()
 
 static void DrawText(const char* text, int x, int y)
 {
+	int startX = x;
 	while(Hall::GetIsGPUBusy());
 	Hall::SetImage((const Hall::Color*)Assets::minifont5x3, MINIFONT5X3_WIDTH, MINIFONT5X3_HEIGHT);
 
@@ -69,6 +78,7 @@ static void DrawText(const char* text, int x, int y)
 		if(symbol == '\n')
 		{
 			y += rect.height + 1;
+			x = startX;
 			continue;
 		}
 
@@ -81,6 +91,61 @@ static void DrawText(const char* text, int x, int y)
 	}
 }
 
+
+/// @brief 
+/// @param number 
+/// @param buffer 
+/// @param bufferSize 
+/// @return A pointer to the first valid char within the given buffer
+static char* ToString(int number, char* buffer, int bufferSize)
+{
+	buffer[bufferSize - 1] = '\0';
+	bufferSize--;
+
+	bool isNegative = false;
+	if(number < 0)
+	{
+		number = -number;
+		isNegative = true;
+	}
+
+	char chars[10] = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9'};
+	do
+	{
+		int digit = number % 10;
+		buffer[bufferSize - 1] = chars[digit];
+		bufferSize--;
+
+		number = number / 10;
+	} while(number != 0 && bufferSize > 0);
+	
+	if(isNegative && bufferSize > 0)
+	{
+		buffer[bufferSize - 1] = '-';
+		bufferSize--;
+	}
+
+	return buffer + bufferSize;
+}
+
+static bool fileRead(el_ctx* ctx, void* dest, size_t nb, size_t offset)
+{
+	if (f_lseek(&elfFile, offset))
+		return false;
+
+	unsigned int bytesRead;
+	if (f_read(&elfFile, dest, nb, &bytesRead))
+		return false;
+
+	return true;
+}
+
+static void* memoryAllocation(el_ctx* ctx, Elf_Addr physicalAddress, Elf_Addr virtualAddress, Elf_Addr size)
+{
+	//This is what the example does, but I don't know why one can just return the virtual address
+	return (void*)physicalAddress;
+}
+
 int main()
 {
 	Hall::Init();
@@ -91,7 +156,16 @@ int main()
 	Hall::SetScreenPosition(10, 10);
 	Hall::Draw();
 
-	DrawText("Hallo!\n >> Ich bin ein Text :D", 10, 100);
+	DrawText("Hallo!\n>> Ich bin ein Text :D", 10, 100);
+	DrawText("Hallo!\n>> Ich bin ein anderer Text :D\n>> Kannst du mich lesen?", 10, 120);
+
+	char buffer[32];
+	char* number = ToString(12345678, buffer, 32);
+	DrawText(number, 150, 10);
+	number = ToString(-988776655, buffer, 32);
+	DrawText(number, 150, 20);
+	number = ToString(0, buffer, 32);
+	DrawText(number, 150, 30);
 
 	while(Hall::GetIsGPUBusy());
 	Hall::SetCommandSwapBuffers();

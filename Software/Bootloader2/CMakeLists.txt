@@ -11,7 +11,6 @@ add_compile_options(
 	-fno-rtti
 	-march=rv32im
 	-Os
-	-ffreestanding
 	-Bstatic
 	-nostdinc
 )
