@@ -33,20 +33,21 @@ static void InitGlyphs()
 		glyphs['A' + i] = {(unsigned char)(i * 4), 0};
 	for(unsigned char i = 0; i < 9; i++)
 		glyphs['1' + i] = {(unsigned char)(i * 4), 5};
-	glyphs['0'] = {40, 5};
+	glyphs['0'] = {36, 5};
 
    glyphs['\\'] = {104, 0};
 	glyphs['/'] = {108, 0};
 	glyphs['<'] = {112, 0};
 	glyphs['>'] = {116, 0};
 
-	glyphs['!'] = {44, 5};
-	glyphs['"'] = {48, 5};
-	glyphs['$'] = {52, 5};
-	glyphs['%'] = {56, 5};
-	glyphs['^'] = {60, 5};
-	glyphs['*'] = {64, 5};
-	glyphs['('] = {68, 5};
+	glyphs['!'] = {40, 5};
+	glyphs['"'] = {44, 5};
+	glyphs['$'] = {48, 5};
+	glyphs['%'] = {52, 5};
+	glyphs['^'] = {56, 5};
+	glyphs['*'] = {60, 5};
+	glyphs['('] = {64, 5};
+	glyphs[')'] = {68, 5};
 	glyphs['`'] = {72, 5};
    glyphs['\''] = {76, 5};
 	glyphs['-'] = {80, 5};
