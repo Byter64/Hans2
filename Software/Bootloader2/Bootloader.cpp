@@ -195,15 +195,16 @@ int main()
 	while(Hall::GetIsGPUBusy());
 	Hall::SetCommandSwapBuffers();
 
-	Print("Hallo!");
-	Print("Ich bin ein anderer Text :D");
 	Print("Kannst du mich lesen?");
 
+	Print("Ist das -988006655?");
 	char* number = ToString(-988006655, buffer, BUFFER_SIZE);
 	Print(number);
 	number = ToString(testNumber, buffer, BUFFER_SIZE);
+	Print("Ist das 0?");
 	Print(number);
 	number = ToString(testNumber2, buffer, BUFFER_SIZE);
+	Print("Ist das 313445?");
 	Print(number);
 
 	//Das hier ist neu
