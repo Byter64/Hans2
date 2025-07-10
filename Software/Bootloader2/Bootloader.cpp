@@ -207,8 +207,10 @@ int main()
 	Print("Ist das 313445?");
 	Print(number);
 
-	//Das hier ist neu
-	
+	//###################################
+	//Finding the elf
+	//###################################
+
 	FRESULT fatfsResult;
 	
 	Print("Mounting SD-Card...");
@@ -263,6 +265,48 @@ int main()
 		while(true);
 	}
 	Print("Open succeeded");
+
+	//################################
+	//Loading the elf
+	//################################
+	el_ctx ctx;
+	ctx.pread = fileRead;
+	
+	Print("Initialising elfloader...");
+	el_status result = el_init(&ctx);
+	if(result)
+	{
+		Print("Init FAILED:");
+		Print(ToString(result, buffer, BUFFER_SIZE));
+		while(true);
+	}
+	
+	ctx.base_load_vaddr = (uintptr_t)loadAddress;
+	ctx.base_load_paddr = (uintptr_t)loadAddress;
+	
+	Print("Loading .elf file...");
+	result = el_load(&ctx, memoryAllocation);
+	if(result)
+	{
+		Print("Load FAILED:");
+		Print(ToString(result, buffer, BUFFER_SIZE));
+		while(true);
+	}
+
+	Print("Resolving relocations...");
+	result = el_relocate(&ctx);
+	if(result)
+	{
+		Print("Relocs FAILED:");
+		Print(ToString(result, buffer, BUFFER_SIZE));
+		while(true);
+	}
+
+	uintptr_t entryPoint = ctx.ehdr.e_entry + (uintptr_t)loadAddress;
+
+	Print("Succeeded. What a journey man, Have fun :)");
+	int (*loadedMain)() = (int (*)())entryPoint;
+	loadedMain();
 
 	while(true);
 	return 0;
