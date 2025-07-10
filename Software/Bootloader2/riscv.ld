@@ -127,7 +127,7 @@ SECTIONS
   .jcr            : { KEEP (*(.jcr)) } > ram
   .data.rel.ro : { *(.data.rel.ro.local* .gnu.linkonce.d.rel.ro.local.*) *(.data.rel.ro .data.rel.ro.* .gnu.linkonce.d.rel.ro.*) } > ram
   .dynamic        : { *(.dynamic) } > ram
-  . = DATA_SEGMENT_RELRO_END (0, .);
+  /*. = DATA_SEGMENT_RELRO_END (0, .); Idk why we should need page aligment*/
   .data           :
   {
     *(.data .data.* .gnu.linkonce.d.*)
