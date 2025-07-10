@@ -18,7 +18,7 @@ MEMORY
 MEMORY
 {
   ram (rwx) : ORIGIN = 0x00000000, LENGTH = 0x02000000
-  fram (rwx): ORIGIN = 0x02010000, LENGTH = 32768    /*fast ram 
+  /*fram (rwx): ORIGIN = 0x02010000, LENGTH = 32768    /*fast ram 
 }
 */
 SECTIONS
@@ -153,7 +153,7 @@ SECTIONS
     *(.sbss .sbss.* .gnu.linkonce.sb.*)
     *(.scommon)
   } > ram
-  .bss            : /* .bss should be (NOLOAD) for the games */
+  .bss            :
   {
    *(.dynbss)
    *(.bss .bss.* .gnu.linkonce.b.*)

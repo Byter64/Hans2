@@ -93,6 +93,29 @@ static void DrawText(const char* text, int x, int y)
 	}
 }
 
+static void Print(const char* text)
+{
+	static int x = 5;
+	static int y = 5;
+	DrawText(">", x - 4, y);
+	DrawText(text, x, y);
+	
+	while(Hall::GetIsGPUBusy());
+	Hall::SetCommandSwapBuffers();
+
+	DrawText(">", x - 4, y);
+	DrawText(text, x, y);
+	while(Hall::GetIsGPUBusy());
+	Hall::SetCommandSwapBuffers();
+
+	y += 6;
+	if (y >= 190)
+	{
+		y = 5;
+		x += 70;
+	}
+}
+
 
 /// @brief 
 /// @param number 
@@ -151,31 +174,94 @@ static void* memoryAllocation(el_ctx* ctx, Elf_Addr physicalAddress, Elf_Addr vi
 int testNumber;
 int testNumber2 = 313445;
 
+extern FATFS FatFs;
+extern BYTE is_mounted;
+
 int main()
 {
 	Hall::Init();
 	InitGlyphs();
+	static const int BUFFER_SIZE = 64;
+	char buffer[BUFFER_SIZE];
 
 	Hall::SetImage((const Hall::Color*)Assets::minifont5x3, MINIFONT5X3_WIDTH, MINIFONT5X3_HEIGHT);
 	Hall::SetExcerpt(0, 0, MINIFONT5X3_WIDTH, MINIFONT5X3_HEIGHT);
-	Hall::SetScreenPosition(10, 10);
+	Hall::SetScreenPosition(380, 10);
 	Hall::Draw();
-
-	DrawText("Hallo!\n>> Ich bin ein Text :D", 10, 100);
-	DrawText("Hallo!\n>> Ich bin ein anderer Text :D\n>> Kannst du mich lesen?", 10, 120);
-
-	char buffer[32];
-	char* number = ToString(-988776655, buffer, 32);
-	DrawText(number, 150, 10);
-	number = ToString(testNumber, buffer, 32);
-	DrawText(number, 150, 20);
-	number = ToString(testNumber2, buffer, 32);
-	DrawText(number, 150, 30);
-
 	while(Hall::GetIsGPUBusy());
 	Hall::SetCommandSwapBuffers();
 
+	Hall::Draw();
+	while(Hall::GetIsGPUBusy());
+	Hall::SetCommandSwapBuffers();
 
+	Print("Hallo!");
+	Print("Ich bin ein anderer Text :D");
+	Print("Kannst du mich lesen?");
+
+	char* number = ToString(-988006655, buffer, BUFFER_SIZE);
+	Print(number);
+	number = ToString(testNumber, buffer, BUFFER_SIZE);
+	Print(number);
+	number = ToString(testNumber2, buffer, BUFFER_SIZE);
+	Print(number);
+
+	//Das hier ist neu
+	
+	FRESULT fatfsResult;
+	
+	Print("Mounting SD-Card...");
+	
+	fatfsResult = f_mount(&FatFs, "", 0);
+    is_mounted = 1;
+	
+	if(fatfsResult)
+	{
+		Print("Error:");
+		Print(ToString(fatfsResult, buffer, BUFFER_SIZE));
+		while(true);
+	}
+	Print(ToString(fatfsResult, buffer, BUFFER_SIZE));
+
+	Print("Searching *.elf...");
+	DIR directory;
+	FILINFO fileInfo;
+	fatfsResult = f_findfirst(&directory, &fileInfo, "/", "*.elf");
+
+	if(fileInfo.fname[0] == '\0' || fatfsResult)
+	{
+		Print("Error:");
+		Print(ToString(fatfsResult, buffer, BUFFER_SIZE));
+		Print("No .elf found");
+		while(true);
+	}
+	
+	if(fatfsResult != FR_OK) while(true);
+
+	char elfFilePath[16] = "/";
+	char debugMessage[32] = "Opening ";
+	int i;
+	for(i = 0; fileInfo.fname[i] != '\0'; i++)
+	{
+		elfFilePath[i + 1] = fileInfo.fname[i];
+		debugMessage[i + 8] = fileInfo.fname[i];
+	}
+	elfFilePath[i + 1] = '\0';
+	debugMessage[i + 8] = '.';
+	debugMessage[i + 9] = '.';
+	debugMessage[i + 10] = '.';
+	debugMessage[i + 11] = '\0';
+	Print(debugMessage);
+
+	fatfsResult = f_open(&elfFile, elfFilePath, FA_READ);
+	if(fatfsResult)
+	{
+		Print("Error:");
+		Print(ToString(fatfsResult, buffer, BUFFER_SIZE));
+		Print("Open failed");
+		while(true);
+	}
+	Print("Open succeeded");
 
 	while(true);
 	return 0;
