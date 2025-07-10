@@ -186,7 +186,7 @@ int main()
 
 	Hall::SetImage((const Hall::Color*)Assets::minifont5x3, MINIFONT5X3_WIDTH, MINIFONT5X3_HEIGHT);
 	Hall::SetExcerpt(0, 0, MINIFONT5X3_WIDTH, MINIFONT5X3_HEIGHT);
-	Hall::SetScreenPosition(380, 10);
+	Hall::SetScreenPosition(280, 10);
 	Hall::Draw();
 	while(Hall::GetIsGPUBusy());
 	Hall::SetCommandSwapBuffers();
@@ -307,6 +307,7 @@ int main()
 	Print("Succeeded. What a journey man, Have fun :)");
 	int (*loadedMain)() = (int (*)())entryPoint;
 	loadedMain();
+	Print("This should not be readable!");
 
 	while(true);
 	return 0;
