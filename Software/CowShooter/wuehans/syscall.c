@@ -3,7 +3,6 @@
 #include <errno.h>
 #include <stdio.h>
 #include <sys/stat.h>
-/* #include <DebugHelper.h> */
 
 void *__dso_handle = 0;
 
@@ -39,21 +38,19 @@ int _write(int fd, char *ptr, int len) {
     }
 
     UINT written = 0;
-
     fr = f_write(&write_file, ptr, len, &written);
     if (fr != 0) {
-      // TODO: Set errno
       return -1;
     }
 
     f_close(&write_file);
 
-    // HACK: Hackermann
+    // HACK: Hackerman
     volatile int* x = (int*) 0x80000000;
     int b = *x;
-    // HACK: Hackermann Ende
-
+    // HACK: Hackerman Ende
     return written;
+
   } else if (fd > 2 && (fd-3) < FILE_AMOUNT && fd_data[fd-3].is_open) {
     UINT bw = 0;
     f_write(&fd_data[fd-3].fp, ptr, len, &bw);
@@ -68,7 +65,7 @@ int _read(int fd, char *ptr, int len) {
   if (fd > 2 && (fd-3) < FILE_AMOUNT && fd_data[fd-3].is_open) {
     UINT bytesRead = 0;
     FRESULT result = f_read(&fd_data[fd-3].fp, ptr, len, &bytesRead);
-    /* ScreenPrint("_read"); */
+
     return bytesRead;
   }
 
@@ -85,18 +82,11 @@ void *_sbrk(int incr) {
   }
   prev_heap = heap;
 
-  if ((int)heap + incr < heap_begin + HEAP_SIZE) {
+  if ((int)heap + incr < (int) &heap_begin + HEAP_SIZE) {
     heap += incr;
   }
 
-  /* ScreenPrint("_sbrk"); */
   return prev_heap;
-}
-
-int _fstat(int fd, struct stat *st) {
-  st->st_mode = S_IFREG;
-  /* ScreenPrint("_fstat"); */
-  return 0;
 }
 
 int _lseek(int fd, int offset, int whence) {
@@ -142,7 +132,7 @@ int _open(const char *name, int flags, int mode) {
       // Entry already in use
       continue;
     }
-    mode = FA_READ;
+
     FRESULT fr = f_open(&fd_data[i].fp, name, mode);
     if (fr != FR_OK) {
       return -1;
@@ -159,6 +149,7 @@ int _open(const char *name, int flags, int mode) {
 
 int _close(int fd) {
   if (fd > 2 && (fd-3) < FILE_AMOUNT) {
+    f_close(&fd_data[fd-3].fp);
     fd_data[fd-3].is_open = 0;
     return 0;
   }
@@ -166,11 +157,15 @@ int _close(int fd) {
   return -1;
 }
 
+int _fstat(int fd, struct stat *st) {
+  st->st_mode = S_IFREG;
+  return 0;
+}
+
 int _isatty(int fd)
 { 
   errno = ENOTTY;
-  /* ScreenPrint("isatty"); */
-  return 0; 
+  return 0;
 }
 
 void _exit(int status) {
