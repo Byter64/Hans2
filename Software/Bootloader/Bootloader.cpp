@@ -4,7 +4,7 @@
 }
 
 #include "ff.h"
-#include "Hapi.h"
+//#include "Hapi.h"
 
 FIL elfFile;
 void* loadAddress = 0;
@@ -31,9 +31,9 @@ static void check(el_status stat, const char* text)
 {
 	if(stat)
 	{
-		ScreenPrint("Error:");
-		ScreenPrintByte(stat);
-		SetStatus(text, -1, 20);
+		//ScreenPrint("Error:");
+		//ScreenPrintByte(stat);
+		//SetStatus(text, -1, 20);
 		while(true);
 	}
 }
@@ -41,51 +41,48 @@ static void check(el_status stat, const char* text)
 extern FATFS FatFs;
 extern BYTE is_mounted;
 
-volatile int* x = (int*)0x2010000;
 int main()
 {
 
-	Hapi::Init();
+	//Hapi::Init();
+	
+	//ScreenPrint("Can you read?");
+	
 	FRESULT fatfsResult;
 	#ifndef SIMULATION
 	WaitFrame(120);
 	#endif
-
+	
 	#ifndef SIMULATION
-	SetStatus("Mounting SD-Card...", 0, 15);
+	//SetStatus("Mounting SD-Card...", 0, 15);
 	#endif
+	
 	fatfsResult = f_mount(&FatFs, "", 0);
     is_mounted = 1;
-
-	#ifdef SIMULATION
-	*(int*)0x01FFFFC = fatfsResult;
-	#endif
+	
 	if(fatfsResult)
 	{
-		ScreenPrint("Error:");
-		ScreenPrint(FRESULTToString(fatfsResult));
+		//ScreenPrint("Error:");
+		//ScreenPrint(FRESULTToString(fatfsResult));
 		while(true);
 	}
 	#ifndef SIMULATION
-	SetStatus(FRESULTToString(fatfsResult), 10, 10);
+	//SetStatus(FRESULTToString(fatfsResult), 10, 10);
 	#endif
 
 	//Find main program to load
 	#ifndef SIMULATION
-	SetStatus("Searching *.elf...", 15, 15);
+	//SetStatus("Searching *.elf...", 15, 15);
 	#endif
 	DIR directory;
 	FILINFO fileInfo;
 	fatfsResult = f_findfirst(&directory, &fileInfo, "/", "*.elf");
 
-	#ifdef SIMULATION
-	*(int*)0x01FFFFC = fatfsResult;
-	#endif
 	if(fileInfo.fname[0] == '\0' || fatfsResult)
 	{
-		ScreenPrint("Error:");
-		ScreenPrint(FRESULTToString(fatfsResult));
-		SetStatus("No .elf found", 20, 0);
+		//ScreenPrint("Error:");
+		//ScreenPrint(FRESULTToString(fatfsResult));
+		//SetStatus("No .elf found", 20, 0);
 		while(true);
 	}
 	
@@ -105,27 +102,29 @@ int main()
 	debugMessage[i + 10] = '.';
 	debugMessage[i + 11] = '\0';
 	
+
 	#ifndef SIMULATION
-	SetStatus(debugMessage, 25, 10);
+	//SetStatus(debugMessage, 25, 10);
 	#endif
+
 	fatfsResult = f_open(&elfFile, elfFilePath, FA_READ);
 
 	if(fatfsResult)
 	{
-		ScreenPrint("Error:");
-		ScreenPrint(FRESULTToString(fatfsResult));
-		SetStatus("Open failed", 20, 0);
+		//ScreenPrint("Error:");
+		//ScreenPrint(FRESULTToString(fatfsResult));
+		//SetStatus("Open failed", 20, 0);
 		while(true);
 	}
 	#ifndef SIMULATION
-	SetStatus("Open succeeded", 30, 20);
+	//SetStatus("Open succeeded", 30, 20);
 	#endif
-
+	
 	el_ctx ctx;
 	ctx.pread = fileRead;
 	
 	#ifndef SIMULATION
-	SetStatus("Initialising elfloader...", 35, 20);
+	//SetStatus("Initialising elfloader...", 35, 20);
 	#endif
 	el_status result = el_init(&ctx);
 	check(result, "Init FAILED!");
@@ -134,13 +133,13 @@ int main()
 	ctx.base_load_paddr = (uintptr_t)loadAddress;
 	
 	#ifndef SIMULATION
-	SetStatus("Loading .elf file...", 40, 55);
+	//SetStatus("Loading .elf file...", 40, 55);
 	#endif
 	result = el_load(&ctx, memoryAllocation);
 	check(result, "Load FAILED!");
 
 	#ifndef SIMULATION
-	SetStatus("Resolving relocations...", 80, 15);
+	//SetStatus("Resolving relocations...", 80, 15);
 	#endif
 	result = el_relocate(&ctx);
 	check(result, "Relocs FAILED!");
@@ -148,7 +147,7 @@ int main()
 	uintptr_t entryPoint = ctx.ehdr.e_entry + (uintptr_t)loadAddress;
 
 	#ifndef SIMULATION
-	SetStatus("Succeeded. What a journey man, Have fun :)", 100, 40);
+	//SetStatus("Succeeded. What a journey man, Have fun :)", 100, 40);
 	#endif
 	int (*loadedMain)() = (int (*)())entryPoint;
 	loadedMain();

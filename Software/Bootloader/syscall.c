@@ -22,7 +22,7 @@ typedef struct FD_Data FD_Data;
 
 #define FILE_AMOUNT 1
 static FD_Data fd_data[FILE_AMOUNT];
-
+/*
 int _write(int fd, char *ptr, int len) {
   if (is_mounted == 0) {
     f_mount(&FatFs, "", 0);
@@ -55,7 +55,7 @@ int _write(int fd, char *ptr, int len) {
 
   return -1;
 }
-
+*/
 int _read(int fd, char *ptr, int len) {
   if (fd > 2 && (fd-3) < FILE_AMOUNT && fd_data[fd-3].is_open) {
     UINT bytesRead = 0;

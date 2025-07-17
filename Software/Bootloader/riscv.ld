@@ -10,8 +10,8 @@ OUTPUT_ARCH(riscv)
 ENTRY(_start)
 SECTIONS
 {
-  /*The bootloader can savely use the whole SDRAM as heap*/
-  . = 0;
+  /*The bootloader should be able to use the highest 2 megabyte as heap*/
+  . = 0x01E00000;
   PROVIDE(heap_begin = .);
 
 

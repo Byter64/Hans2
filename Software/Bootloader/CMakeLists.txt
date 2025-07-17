@@ -4,7 +4,9 @@ enable_language(C CXX ASM)
 
 add_compile_definitions("__riscv32__")
 
-add_compile_options(
+add_executable("Bootloader.elf")
+
+target_compile_options("Bootloader.elf" PUBLIC
 	-fno-exceptions
 	-nostdlib
 	-fno-unwind-tables
@@ -16,19 +18,20 @@ add_compile_options(
 	-nostdinc
 )
 
-add_link_options(
+target_link_options("Bootloader.elf" PRIVATE -Wl,--gc-sections)
+
+target_link_options("Bootloader.elf" PUBLIC
 	-nostdlib
 	-nostartfiles
 	-T ${CMAKE_CURRENT_SOURCE_DIR}/riscv.ld
-	-Wl,--gc-sections
+	#-Wl,--gc-sections
 	-ffreestanding
 	-Bstatic
 	-nostdlib 
 	-nostartfiles
 )
 
-
-include_directories(Bootloader.elf
+include_directories("Bootloader.elf"
 	PUBLIC SYSTEM ${CMAKE_CURRENT_SOURCE_DIR}/../newlib/newlib-4.5.0.20241231/newlib/libc/include
 	PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include
 	PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/fatfs
@@ -41,9 +44,7 @@ add_subdirectory("fatfs")
 add_subdirectory("Graphics")
 add_subdirectory("Hall-main")
 
-add_executable (Bootloader.elf)
-
-target_link_libraries(Bootloader.elf 
+target_link_libraries("Bootloader.elf" 
 	${CMAKE_CURRENT_SOURCE_DIR}/newlib/libc.a
 	${CMAKE_CURRENT_SOURCE_DIR}/newlib/libg.a
 	${CMAKE_CURRENT_SOURCE_DIR}/newlib/libgloss.a
@@ -53,16 +54,16 @@ target_link_libraries(Bootloader.elf
 	Graphic_Hans_API
 	Hall)
 
-target_sources(Bootloader.elf PUBLIC
+target_sources("Bootloader.elf" PUBLIC
 	"syscall.c"
 	"start.S"
 	"Bootloader.cpp"
 	"DebugHelper.cpp"
 )
 
-add_custom_command(TARGET Bootloader.elf POST_BUILD
-	COMMAND objcopy ARGS -O verilog Bootloader.elf Bootloader.hex)
+add_custom_command(TARGET "Bootloader.elf" POST_BUILD
+	COMMAND objcopy ARGS -O verilog "Bootloader.elf" Bootloader.hex)
 
-add_custom_command(TARGET Bootloader.elf POST_BUILD
+add_custom_command(TARGET "Bootloader.elf" POST_BUILD
 	COMMAND python ARGS ${CMAKE_CURRENT_SOURCE_DIR}/hex8tohex32.py Bootloader.hex > Bootloader32.hex
 )
