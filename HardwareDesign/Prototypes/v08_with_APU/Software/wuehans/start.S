@@ -37,7 +37,7 @@ addi x30, zero, 0
 addi x31, zero, 0
 
 /* set stack pointer */
-.equ STACK_START, 0x2010000 + 32768
+.equ STACK_START, 0x02000000
 lui sp, %hi(STACK_START)
 addi sp, sp, %lo(STACK_START)
 
@@ -49,6 +49,5 @@ sw zero,4(sp)
 sw zero,8(sp)
 sw zero,12(sp)
 
-/* jump to libc init */
-j _Z4mainv
-//j main
+/* jump to init */
+j _Z5_mainv //See start.cpp
