@@ -1,5 +1,4 @@
 #include <Hall/Hall.h>
-#include "sabre_dance_short.h"
 
 Hall::Color test[6]  __attribute__ ((__aligned__(4))) = 
 {

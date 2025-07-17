@@ -12,13 +12,12 @@ ENTRY(_start)
 
 MEMORY
 {
-  ram (rwx) : ORIGIN = 0x00000000, LENGTH = 0x02000000
-  /*fram (rwx): ORIGIN = 0x02010000, LENGTH = 32768    /*fast ram */
+  ram (rwx): ORIGIN = 0x02010000, LENGTH = 32768    /*fast ram */
 }
 
 SECTIONS
 {
-  . = 0x00000000;
+  . = 0x2010000;
 
   .startSection   :
   {

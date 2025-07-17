@@ -37,7 +37,7 @@ int main();
 
 void _main()
 {
-    Hall::Clear(0b1111111111111111);
+    /*Hall::Clear(0b1111111111111111);
     while(Hall::GetIsGPUBusy());
     Hall::SetCommandSwapBuffers();
 
@@ -51,7 +51,7 @@ void _main()
 	__libc_init_array();
 
     char buffer[64];
-
+*/
 	main();
 	while(1);
 }

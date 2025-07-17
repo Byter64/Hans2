@@ -79,7 +79,7 @@ initial begin
 	$dumpvars(0, Top.GraphicSystem);
 	//$dumpvars(0, Top.ColourTable);
 
-	#80000000
+	#4000000
 	$finish;
 end
 
