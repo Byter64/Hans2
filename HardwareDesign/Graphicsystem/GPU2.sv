@@ -156,6 +156,7 @@ GPU_3_Memory Stage3
 
     .re_valid(st2_se_valid),
     .re_ready(st3_re_ready),
+    .re_base_address(image_start),
     .re_address(st2_memory_address),
     .re_sprite_sheet_address(st2_sprite_sheet_address),
     .re_ct_type(ct_type),
@@ -608,6 +609,7 @@ module GPU_3_Memory (
 
     input  logic re_valid,
     output logic re_ready,
+    input  logic[31:0] re_base_address,
     input  logic[31:0] re_address,
     input  logic[31:0] re_sprite_sheet_address,
     input  CTType      re_ct_type,
@@ -663,7 +665,7 @@ logic[15:0] cache_framebuffer_x;
 logic[15:0] cache_framebuffer_y;
 
 logic[15:0] bitmask;
-wire[31:0] bit_address = re_sprite_sheet_address * re_ct_type;
+wire[31:0] bit_address = re_sprite_sheet_address * re_ct_type + (re_base_address[1] * 16);
 logic[15:0] shift_amount;
 
 //This is a long path. Maybe split it up into two cycles???
