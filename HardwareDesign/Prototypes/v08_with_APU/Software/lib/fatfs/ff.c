@@ -3673,12 +3673,11 @@ FRESULT f_mount (
 	const TCHAR* path,	/* Logical drive number to be mounted/unmounted */
 	BYTE opt			/* Mount option: 0=Do not mount (delayed mount), 1=Mount immediately */
 )
-{
+{	
 	FATFS *cfs;
 	int vol;
 	FRESULT res;
 	const TCHAR *rp = path;
-
 
 	/* Get volume ID (logical drive number) */
 	vol = get_ldnumber(&rp);
@@ -3716,7 +3715,6 @@ FRESULT f_mount (
 	}
 
 	if (opt == 0) return FR_OK;	/* Do not mount now, it will be mounted in subsequent file functions */
-
 	res = mount_volume(&path, &fs, 0);	/* Force mounted the volume */
 	LEAVE_FF(fs, res);
 }

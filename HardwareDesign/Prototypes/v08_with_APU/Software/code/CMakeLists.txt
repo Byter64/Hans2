@@ -27,6 +27,7 @@ target_link_libraries(Game.elf
 
 target_sources(Game.elf PUBLIC
   PUBLIC ${WUEHANS_ROOT}/wuehans/start.S
+  PUBLIC ${WUEHANS_ROOT}/wuehans/start.cpp
   PUBLIC ${WUEHANS_ROOT}/wuehans/syscall.c
 
   # Add your .cpp files here

@@ -3,7 +3,6 @@
 #include <errno.h>
 #include <stdio.h>
 #include <sys/stat.h>
-
 void *__dso_handle = 0;
 
 const TCHAR STDOUT[30] = "stdout.txt";
@@ -117,27 +116,38 @@ int _lseek(int fd, int offset, int whence) {
   }
 
   FRESULT result = f_lseek(&fd_data[fd-3].fp, ofs);
-  return result;
+  if(result) return -1;
+  return ofs;
 }
 
 int _open(const char *name, int flags, int mode) {
-  if (is_mounted == 0) {
+  if (is_mounted == 0) 
+  {
+    f_unmount("");
     f_mount(&FatFs, "", 0);
     is_mounted = 1;
   }
+  //Flag actually contains the r/b/append whatever shit
 
+  //mode is always 438 (octal 0666) so we just set ff_mode to the same
+  //Note: this will not ignore append modes and such
+  BYTE ff_mode = FA_READ | FA_WRITE;
+  
   int i;
   for (i = 0; i < FILE_AMOUNT; i++) {
     if (fd_data[i].is_open == 1) {
       // Entry already in use
       continue;
     }
-
-    FRESULT fr = f_open(&fd_data[i].fp, name, mode);
+    
+    FRESULT fr = f_open(&fd_data[i].fp, name, ff_mode);
     if (fr != FR_OK) {
+      printf("Failed opening %s\n", name);
+      printf("Error: %i\n", fr);
+      printf("\n");
       return -1;
     }
-
+    printf("wueHans: Succeeded opening: %s\n", name);
     fd_data[i].mode = mode;
     fd_data[i].is_open = 1;
     // Exclude stdout, stderr, stdin
