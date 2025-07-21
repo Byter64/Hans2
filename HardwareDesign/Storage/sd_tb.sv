@@ -15,7 +15,7 @@ module top;
     always #5 clk_25mhz = ~clk_25mhz;
     integer idx;
     initial begin
-        $dumpfile("dump.vcd");
+        $dumpfile("dump");
 
         $dumpvars(0,top);
         for (idx = 0; idx < 128; idx++) begin

@@ -39,7 +39,6 @@ module sd_card_reader #(
     // For SPI mode, SD_DAT[2] and SD_DAT[1] should be held HIGH.
     // SD_RESET should be held LOW.
 );
-    // TODO AXI-L Read is one addr to low
     ///////////////////////////////////////////////////////////////////////
     // Reset signal
     logic rst;
@@ -73,7 +72,7 @@ module sd_card_reader #(
     
     ControllerState state = Initialize;
 
-    (* ram_style = "logic" *)
+    //(* ram_style = "logic" *)
     logic [31:0] ram[0:127];
 
     logic [6:0] ram_waddr;
@@ -116,56 +115,63 @@ module sd_card_reader #(
     logic [8:0] byte_counter = 0;
 
     /////////////////////AXI-LITE/////////////////////
+    logic aw_holding, w_holding;
+    logic ar_holding;
     /////////////////// AW /////////////////////
+    assign s_axil_awready = !aw_holding && !ar_holding && (state == Idle);
     always_ff @(posedge aclk) begin
-        // Logic to determine S_AXIS_AWREADY
-        s_axil_awready <= (state == Idle);
-    end
-
-    always_ff @(posedge aclk) begin
-        if (s_axil_awvalid && s_axil_awready) begin //Never add any other conditions. This is likely to break axi
+        if (!aresetn) begin
+            aw_holding <= 0;
+        end else if (s_axil_awvalid && s_axil_awready) begin
+            aw_holding <= 1;
             data_addr_write <= s_axil_awaddr - OFFSET;
+        end else if (write_data) begin
+            aw_holding <= 0;
         end
     end
+
 
     /////////////////// W ///////////////////// 
+    assign s_axil_wready  = !w_holding  && !ar_holding && (state == Idle);
     always_ff @(posedge aclk) begin
-        // Logic to determine S_AXIS_WREADY
-        s_axil_wready <= (state == Idle) && ~read_data && ~write_data && !(s_axil_awready && s_axil_awvalid) && !s_axil_awvalid;
-    end
-
-  always_ff @(posedge aclk) begin
-    write_data <= 0;
-    if (s_axil_wvalid && s_axil_wready) begin //Never add any other conditions. This is likely to break axi
-      data_in <= s_axil_wdata;
-      write_data <= 1;
-      write_mask <= s_axil_wstrb;
-    end
-  end
-
-    /////////////////// AR /////////////////////
-    always_ff @(posedge aclk) begin
-        // Logic to determine S_AXIS_ARREADY
-        s_axil_arready <= (state == Idle) && ~(s_axil_wvalid && s_axil_wready) && ~read_data && ~write_data;
-    end
-
-    always_ff @(posedge aclk) begin
-        read_data <= 0;
-        if (s_axil_arvalid && s_axil_arready) begin //Never add any other conditions. This is likely to break axi
-            data_addr_read <= s_axil_araddr - OFFSET;
-            read_data <= 1;
+        if (!aresetn) begin
+            w_holding <= 0;
+        end else if (s_axil_wvalid && s_axil_wready) begin
+            w_holding <= 1;
+            data_in <= s_axil_wdata;
+            write_mask <= s_axil_wstrb;
+        end else if (write_data) begin
+            w_holding <= 0; // Clear after write is started
         end
     end
 
+    assign write_data = aw_holding && w_holding && (state == Idle);
+    /////////////////// AR /////////////////////
+    assign s_axil_arready = !ar_holding && !aw_holding && !w_holding && (state == Idle) && !s_axil_awvalid;
+
+    always_ff @(posedge aclk) begin
+        if(!aresetn) begin
+            ar_holding <= 0;
+        end else begin
+            if (s_axil_arvalid && s_axil_arready) begin //Never add any other conditions. This is likely to break axi
+                data_addr_read <= s_axil_araddr - OFFSET;
+                ar_holding <= 1;
+            end
+            if(read_data) begin
+                ar_holding <= 0;
+            end
+        end
+    end
+    assign read_data = ar_holding && (state == Idle);
     /////////////////// B /////////////////////
     logic pending_write_answer = 0;
     logic next_bvalid; //Assign your valid logic to this signal
     logic[1:0] next_bresp; //Assign the data here
-    assign next_bvalid = pending_write_answer && (state == Idle && tag == data_addr_write[31:9] && ~write_data);
+    assign next_bvalid = aw_holding && w_holding;
     assign next_bresp = 0;
 
     always_ff @(posedge aclk) begin
-        if(s_axil_wready && s_axil_wvalid)
+        if(write_data)
             pending_write_answer <= 1;
         if (s_axil_bready && s_axil_bvalid)
             pending_write_answer <= 0; 
@@ -216,16 +222,25 @@ module sd_card_reader #(
     end
     ///////////////////AXI-LITE END///////////////////
 
-    // Connections to sdcontroller
+    // CDC for control signals going to SD controller (aclk -> sdclk[1])
+    localparam SD_CDC_DEPTH = 64;
+    logic [SD_CDC_DEPTH-1:0] sd_card_read_cdc;
+    logic [SD_CDC_DEPTH-1:0] sd_card_write_cdc;
+
+    always @(posedge aclk) begin
+        sd_card_read_cdc <= {sd_card_read_cdc[SD_CDC_DEPTH-2:0], sd_card_read};
+        sd_card_write_cdc <= {sd_card_write_cdc[SD_CDC_DEPTH-2:0], sd_card_write};
+    end
+
     sd_controller sd1 (
         .cs(cs),
         .mosi(mosi),
         .miso(miso),
         .sclk(sclk),
-        .rd(sd_card_read),
+        .rd(|sd_card_read_cdc),
         .dout(sd_card_dout),
         .byte_available(sd_card_byte_available),
-        .wr(sd_card_write),
+        .wr(|sd_card_write_cdc),
         .din(sd_card_din),
         .ready_for_next_byte(sd_card_ready_for_next_byte),
         .ready(sd_card_ready),
