@@ -10,7 +10,8 @@ add_compile_options(
 	-fno-unwind-tables
 	-fno-rtti
 	-ffreestanding
-	-march=rv32im
+	-march=rv32imf
+	-mabi=ilp32f
 	-Os
 	-Bstatic
 	-nostdinc
