@@ -50,6 +50,9 @@ endfunction()
 
 function(add_synthesis
     name, top, sources)
+  ############
+  ### FPGA ###
+  ############
   # Synthesis
   add_custom_command(OUTPUT ${name}.json
     DEPENDS ${sources}
@@ -93,4 +96,18 @@ function(add_synthesis
     DEPENDS ${name}.bit
     COMMAND fujprog -j flash ${CMAKE_CURRENT_BINARY_DIR}/${name}.bit
   )
+  
+  ############
+  ### ASIC ###
+  ############
+  add_custom_target(${name}_config
+	DEPENDS ${sources}
+	COMMAND python \"${CMAKE_SOURCE_DIR}/Scripts/ConfigGenerator.py\" -f \"${sources}\" -o \"${CMAKE_CURRENT_BINARY_DIR}/${name}_config.json\"
+  )
+  
+  add_custom_target(${name}_librelane
+	DEPENDS ${name}_config
+	COMMAND librelane ${CMAKE_CURRENT_BINARY_DIR}/${name}_config.json
+  )
+  
 endfunction()
