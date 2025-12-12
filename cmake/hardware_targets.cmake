@@ -102,7 +102,7 @@ function(add_synthesis
   ############
   add_custom_target(${name}_config
 	DEPENDS ${sources}
-	COMMAND python \"${CMAKE_SOURCE_DIR}/Scripts/ConfigGenerator.py\" -f \"${sources}\" -o \"${CMAKE_CURRENT_BINARY_DIR}/${name}_config.json\"
+	COMMAND python \"${CMAKE_SOURCE_DIR}/Scripts/ConfigGenerator.py\" -n \"${name}\" -f 50000000 -i \"${sources}\" -o \"${CMAKE_CURRENT_BINARY_DIR}/${name}_config.json\"
   )
   
   add_custom_target(${name}_librelane
