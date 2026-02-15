@@ -38,8 +38,6 @@ assign s_axil_rresp = 0;
 
 bit[ADDR_WIDTH-1:0] memory[MEMORY_DEPTH];
 initial $readmemh("C:/Repos/Hans2/build/Software/Bootloader2/Bootloader32.hex", memory);
-//initial $readmemh("C:/Users/Yanni/Desktop/Hans2/HardwareDesign/Prototypes/v08_with_APU/Software/build/code/Game32.hex", memory);
-
 
 //Address Write
 logic[ADDR_WIDTH-1:0] aw_address = 'b0;
