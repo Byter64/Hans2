@@ -1,5 +1,5 @@
 # Define the name for the targets (must be unambiguous)
-set(name "Storage")
+set(name "SD-Card")
 
 # Define variables for simulation
 set(testbench "top")
