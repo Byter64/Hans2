@@ -14,7 +14,10 @@ function(add_simulation_with_resources
   list(JOIN arg_SOURCES " " sources_var)
   add_custom_command(OUTPUT ${arg_NAME}.out
     DEPENDS ${arg_SOURCES}
-    COMMAND iverilog -g2012 -s ${arg_TESTBENCH} -o ${CMAKE_CURRENT_BINARY_DIR}/${arg_NAME}.out ${sources_var}
+    COMMAND iverilog
+            -DSTARTSCREEN_PATH=${CMAKE_SOURCE_DIR}/HardwareDesignGraphicsystem/StartScreen.hex
+            -DBOOTLOADER_PATH=${CMAKE_BINARY_DIR}/Software/Bootloader/Bootloader.hex
+            -g2012 -s ${arg_TESTBENCH} -o ${CMAKE_CURRENT_BINARY_DIR}/${arg_NAME}.out ${sources_var}
   )
 
   # Copy all resources to the binary dir
@@ -53,7 +56,10 @@ function(add_synthesis
   # Synthesis
   add_custom_command(OUTPUT ${name}.json
     DEPENDS ${sources}
-    COMMAND yosys -p \"synth_ecp5 -top ${top}\; write_json ${CMAKE_CURRENT_BINARY_DIR}/${name}.json\" ${sources}
+    COMMAND yosys
+            -DSTARTSCREEN_PATH=${CMAKE_SOURCE_DIR}/HardwareDesign/Graphicsystem/StartScreen.hex
+            -DBOOTLOADER_PATH=${CMAKE_BINARY_DIR}/Software/Bootloader/Bootloader.hex
+            -p \"synth_ecp5 -top ${top}\; write_json ${CMAKE_CURRENT_BINARY_DIR}/${name}.json\" ${sources}
   )
 
   add_custom_target(${name}_synthesis

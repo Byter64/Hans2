@@ -16,7 +16,7 @@ module Framebuffer #(
 );
  
 reg[WIDTH-1:0] memory[DEPTH-1];
-initial $readmemh("C:/Repos/Hans2/HardwareDesign/Graphicsystem/StartScreen.hex", memory);
+initial $readmemh(`"`STARTSCREEN_PATH`", memory);
 
 always @(posedge clkA) begin
     if(writeEnableA)

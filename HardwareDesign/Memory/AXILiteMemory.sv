@@ -37,7 +37,7 @@ module AXILiteMemory #(
 assign s_axil_rresp = 0;
 
 bit[ADDR_WIDTH-1:0] memory[MEMORY_DEPTH];
-initial $readmemh("C:/Repos/Hans2/build/Software/Bootloader/Bootloader32.hex", memory);
+initial $readmemh(`"`BOOTLOADER_PATH`", memory);
 
 //Address Write
 logic[ADDR_WIDTH-1:0] aw_address = 'b0;
