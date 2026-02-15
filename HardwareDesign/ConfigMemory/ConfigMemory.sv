@@ -1,3 +1,8 @@
+typedef enum logic[9:0] { 
+	CONFIG1, 
+	CONFIG2
+} ConfigType;
+
 module ConfigMemory #(
     parameter OFFSET = 0, //The address of the first byte in the bootloader
     parameter ADDR_WIDTH = 32,
@@ -33,9 +38,6 @@ module ConfigMemory #(
 
 assign s_axil_rresp = 0;
 
-bit[DATA_WIDTH-1:0] memory[2048];
-initial $readmemh(`"`BOOTLOADER_PATH`", memory);
-
 //Address Write
 logic[ADDR_WIDTH-1:0] aw_address = 'b0;
 logic[31:0] aw_address_real;
@@ -58,10 +60,10 @@ end
 logic write_happened = 0;
 always @(posedge aclk) begin
 	if (s_axil_wvalid && s_axil_wready) begin //Never add any other conditions. This is likely to break axi
-    if(s_axil_wstrb[0]) memory[aw_address_real[31:2]][7 -: 8] <= s_axil_wdata[7 -: 8];
-    if(s_axil_wstrb[1]) memory[aw_address_real[31:2]][15 -: 8] <= s_axil_wdata[15 -: 8];
-    if(s_axil_wstrb[2]) memory[aw_address_real[31:2]][23 -: 8] <= s_axil_wdata[23 -: 8];
-    if(s_axil_wstrb[3]) memory[aw_address_real[31:2]][31 -: 8] <= s_axil_wdata[31 -: 8];
+    case (aw_address_real)
+      CONFIG1: ?? <= s_axil_wdata; break;
+      CONFIG2: ?? <= s_axil_wdata; break;
+    endcase
     write_happened <= 1;
   end
   if(s_axil_bvalid && s_axil_bready)
@@ -117,7 +119,10 @@ always_ff @(posedge aclk) begin
 		s_axil_rdata <= 0;
 	else if (!s_axil_rvalid || s_axil_rready)
 	begin
-		s_axil_rdata <= memory[ar_address_real[31:2]];
+    case (ar_address_real)
+      CONFIG1: s_axil_rdata <= ??; break;
+      CONFIG2: s_axil_rdata <= ??; break;
+    endcase
 	end
 end
 endmodule
