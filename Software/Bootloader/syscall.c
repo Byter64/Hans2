@@ -3,7 +3,6 @@
 #include <errno.h>
 #include <stdio.h>
 #include <sys/stat.h>
-#include "DebugHelper.h"
 
 void *__dso_handle = 0;
 
@@ -22,7 +21,7 @@ typedef struct FD_Data FD_Data;
 
 #define FILE_AMOUNT 1
 static FD_Data fd_data[FILE_AMOUNT];
-/*
+
 int _write(int fd, char *ptr, int len) {
   if (is_mounted == 0) {
     f_mount(&FatFs, "", 0);
@@ -55,12 +54,11 @@ int _write(int fd, char *ptr, int len) {
 
   return -1;
 }
-*/
+
 int _read(int fd, char *ptr, int len) {
   if (fd > 2 && (fd-3) < FILE_AMOUNT && fd_data[fd-3].is_open) {
     UINT bytesRead = 0;
     FRESULT result = f_read(&fd_data[fd-3].fp, ptr, len, &bytesRead);
-    ScreenPrint("_read");
     return bytesRead;
   }
 
@@ -80,14 +78,11 @@ void *_sbrk(int incr) {
   if ((int)heap + incr < heap_begin + HEAP_SIZE) {
     heap += incr;
   }
-
-  ScreenPrint("_sbrk");
   return prev_heap;
 }
 
 int _fstat([[maybe_unused]] int fd, struct stat *st) {
   st->st_mode = S_IFREG;
-  ScreenPrint("_fstat");
   return 0;
 }
 
@@ -161,7 +156,6 @@ int _close(int fd) {
 int _isatty([[maybe_unused]] int fd) 
 { 
   errno = ENOTTY;
-  ScreenPrint("isatty");
   return 0; 
 }
 
