@@ -20,6 +20,6 @@ list(APPEND sources_synth
 
 # Generating the targets
 # add_simulation(${name}, ${testbench}, "${sources_sim}")
-add_synthesis(${name}, ${top}, "${sources_synth}")
+#add_synthesis(${name}, ${top}, "${sources_synth}")
 unset(sources_sim)
 unset(sources_synth)
