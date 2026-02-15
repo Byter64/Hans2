@@ -1,5 +1,3 @@
-//This memory does not use s_axil_wstrb!! You can't mask the writing data
-//EDIT: uses s_axil_wstrb now :)
 module AXILiteColourTable #(
     parameter OFFSET = 0, //The address of the first byte in the bootloader
     parameter ADDR_WIDTH = 32,

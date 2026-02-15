@@ -6,6 +6,7 @@ set(testbench "testbench")
 
 list(APPEND sources_all
   ${CMAKE_CURRENT_SOURCE_DIR}/wueHans.sv
+  ${CMAKE_CURRENT_SOURCE_DIR}/../ConfigMemory/ConfigMemory.sv
   ${CMAKE_CURRENT_SOURCE_DIR}/../Memory/AXILiteMemory.sv
   ${CMAKE_CURRENT_SOURCE_DIR}/../Memory/AXILiteColourTable.sv
   ${CMAKE_CURRENT_SOURCE_DIR}/../AXI/mkaxi2axil_bridge.v

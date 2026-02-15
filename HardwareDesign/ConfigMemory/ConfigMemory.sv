@@ -1,11 +1,8 @@
-//This memory does not use s_axil_wstrb!! You can't mask the writing data
-//EDIT: uses s_axil_wstrb now :)
-module AXILiteMemory #(
+module ConfigMemory #(
     parameter OFFSET = 0, //The address of the first byte in the bootloader
     parameter ADDR_WIDTH = 32,
     parameter DATA_WIDTH = 32,
-    parameter STRB_WIDTH = DATA_WIDTH / 8,
-    parameter MEMORY_DEPTH = 119808 //This is the whole available BRAM on the ecp5 85F
+    parameter STRB_WIDTH = DATA_WIDTH / 8
 ) (
     input  logic                         aclk,
     input  logic                         aresetn,
@@ -36,7 +33,7 @@ module AXILiteMemory #(
 
 assign s_axil_rresp = 0;
 
-bit[DATA_WIDTH-1:0] memory[MEMORY_DEPTH];
+bit[DATA_WIDTH-1:0] memory[2048];
 initial $readmemh(`"`BOOTLOADER_PATH`", memory);
 
 //Address Write
