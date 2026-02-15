@@ -23,7 +23,7 @@ list(APPEND sources_all
   ${CMAKE_CURRENT_SOURCE_DIR}/../pll/ecp5pll.sv
   ${CMAKE_CURRENT_SOURCE_DIR}/../Graphicsystem/BufferController.v
   ${CMAKE_CURRENT_SOURCE_DIR}/../Graphicsystem/Framebuffer.v
-  ${CMAKE_CURRENT_SOURCE_DIR}/../Graphicsystem/GPU2.sv
+  ${CMAKE_CURRENT_SOURCE_DIR}/../Graphicsystem/GPU.sv
   ${CMAKE_CURRENT_SOURCE_DIR}/../Graphicsystem/GraphicSystem.sv
   ${CMAKE_CURRENT_SOURCE_DIR}/../Graphicsystem/HDMI_Out.v
   ${CMAKE_CURRENT_SOURCE_DIR}/../Graphicsystem/ULX3S_hdmi/TMDS_encoder.v
