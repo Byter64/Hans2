@@ -1,5 +1,5 @@
 typedef enum logic[9:0] { 
-	CONFIG1, 
+	CONFIG1, //Hier nächstes mal Optionen für das Grafiksystem einbauen 
 	CONFIG2
 } ConfigType;
 
