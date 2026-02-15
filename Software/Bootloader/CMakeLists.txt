@@ -4,66 +4,69 @@ enable_language(C CXX ASM)
 
 add_compile_definitions("__riscv32__")
 
-add_executable("Bootloader.elf")
-
-target_compile_options("Bootloader.elf" PUBLIC
+add_compile_options(
 	-fno-exceptions
 	-nostdlib
 	-fno-unwind-tables
 	-fno-rtti
-	-march=rv32im
-	-Os
 	-ffreestanding
+	-march=rv32imf
+	-mabi=ilp32f
+	-Os
 	-Bstatic
 	-nostdinc
 )
 
-target_link_options("Bootloader.elf" PRIVATE -Wl,--gc-sections)
-
-target_link_options("Bootloader.elf" PUBLIC
+add_link_options(
 	-nostdlib
 	-nostartfiles
 	-T ${CMAKE_CURRENT_SOURCE_DIR}/riscv.ld
-	#-Wl,--gc-sections
+	-Wl,--gc-sections
 	-ffreestanding
 	-Bstatic
 	-nostdlib 
 	-nostartfiles
 )
 
-include_directories("Bootloader.elf"
-	PUBLIC SYSTEM ${CMAKE_CURRENT_SOURCE_DIR}/../newlib/newlib-4.5.0.20241231/newlib/libc/include
+
+include_directories(Bootloader.elf
+	PUBLIC SYSTEM ${CMAKE_CURRENT_SOURCE_DIR}/newlib/libc/include
 	PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include
 	PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/fatfs
-	PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/Graphics/include
-	PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/Hall-main/include
 )
+
+include(FetchContent)
+FetchContent_Declare(Hall
+	GIT_REPOSITORY "https://github.com/Byter64/Hall"
+	GIT_TAG main
+)
+FetchContent_MakeAvailable(Hall)
 
 add_subdirectory("elfload")
 add_subdirectory("fatfs")
-add_subdirectory("Graphics")
-add_subdirectory("Hall-main")
+add_executable (Bootloader.elf)
 
-target_link_libraries("Bootloader.elf" 
+target_link_libraries(Bootloader.elf 
 	${CMAKE_CURRENT_SOURCE_DIR}/newlib/libc.a
 	${CMAKE_CURRENT_SOURCE_DIR}/newlib/libg.a
 	${CMAKE_CURRENT_SOURCE_DIR}/newlib/libgloss.a
 	${CMAKE_CURRENT_SOURCE_DIR}/newlib/libm.a
 	elfload
 	fatfs
-	Graphic_Hans_API
-	Hall)
+	Hall
+	)
 
-target_sources("Bootloader.elf" PUBLIC
+target_sources(Bootloader.elf PUBLIC
 	"syscall.c"
 	"start.S"
+	"start.cpp"
 	"Bootloader.cpp"
-	"DebugHelper.cpp"
+
 )
 
-add_custom_command(TARGET "Bootloader.elf" POST_BUILD
-	COMMAND objcopy ARGS -O verilog "Bootloader.elf" Bootloader.hex)
+add_custom_command(TARGET Bootloader.elf POST_BUILD
+	COMMAND objcopy ARGS -O verilog Bootloader.elf Bootloader.hex)
 
-add_custom_command(TARGET "Bootloader.elf" POST_BUILD
+add_custom_command(TARGET Bootloader.elf POST_BUILD
 	COMMAND python ARGS ${CMAKE_CURRENT_SOURCE_DIR}/hex8tohex32.py Bootloader.hex > Bootloader32.hex
 )

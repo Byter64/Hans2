@@ -49,5 +49,5 @@ sw zero,4(sp)
 sw zero,8(sp)
 sw zero,12(sp)
 
-/* jump to libc init */
-j _Z4mainv
+/* jump to init */
+j _Z5_mainv //See start.cpp

@@ -1,5 +1,0 @@
-compile:
-	riscv32-unknown-elf-g++ -nostdlib -T riscv.ld -o test.elf test.cpp syscall.cpp diskio.c ff.c start.S -lc -lm
-
-dump:
-	riscv32-unknown-elf-objdump -d test.elf
