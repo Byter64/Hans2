@@ -71,7 +71,7 @@ function(add_synthesis
     DEPENDS ${name}.json
     DEPENDS ulx3s.lpf
 
-    COMMAND nextpnr-ecp5 --85k --package CABGA381 --lpf ${CMAKE_CURRENT_SOURCE_DIR}/ulx3s.lpf --lpf-allow-unconstrained --json ${CMAKE_CURRENT_BINARY_DIR}/${name}.json --textcfg ${CMAKE_CURRENT_BINARY_DIR}/${name}.config
+    COMMAND nextpnr-ecp5 --85k --package CABGA381 --lpf ${CMAKE_CURRENT_SOURCE_DIR}/ulx3s.lpf --lpf-allow-unconstrained --json ${CMAKE_CURRENT_BINARY_DIR}/${name}.json --textcfg ${CMAKE_CURRENT_BINARY_DIR}/${name}.config --report ${CMAKE_CURRENT_BINARY_DIR}/report.json
   )
 
   add_custom_target(${name}_pr
