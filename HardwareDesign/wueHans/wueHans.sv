@@ -34,7 +34,10 @@ module Top
 	output logic audio_bclk,
 	output logic audio_lrclk,
 	output logic audio_dout
-);         
+);    
+
+//Signals
+logic rotateVideoOutput;
 
 logic hdmi_pixClk;   
 logic resetn = 0;    
@@ -48,7 +51,6 @@ always_ff @(posedge hdmi_pixClk) begin
 end
   
 wire clk_50mhz;
-wire clk_130mhz;
 ecp5pll #(
   .in_hz       (25000000),
   .out0_hz    (130000000),
@@ -65,7 +67,7 @@ ecp5pll #(
   .out3_tol_hz (       0)     
 ) TopLevelPLL (
   .clk_i(clk_25mhz),  
-  .clk_o({clk_50mhz, clk_130mhz})  
+  .clk_o({clk_50mhz})  
 );  
                   
 localparam S_COUNT = 4;
@@ -75,11 +77,9 @@ localparam DATA_WIDTH = 32;
 localparam STRB_WIDTH = 4;
 localparam BOOTLOADER_START = 32'h0201_0000;
 localparam CONFIG_START = 32'h0200_0400;
-//						  {SDRAM, Graphicsystem,Audiosystem, 	Bootloader, 	  Colour Table,	Controller,		Counter,
-localparam M_BASE_ADDR  = {32'h0, 32'h200_0000,	32'h200_0100,	BOOTLOADER_START, 32'h02002000,	32'h02000200,	32'h02000300, 	
-//	SDCARD, Config Memory}
-	32'h8000_0000, CONFIG_START};
-localparam M_ADDR_WIDTH = {32'd25, 32'd8,		32'd8,			32'd16,			  32'd12,		32'd2,			32'd8,			32'd31, 32'd10};
+//						  {SDRAM, Graphicsystem,Audiosystem, 	Bootloader, 	  Colour Table,	Controller,		Counter,		SDCARD, 		Config Memory}
+localparam M_BASE_ADDR  = {32'h0, 32'h0200_0000,32'h0200_0100,	BOOTLOADER_START, 32'h0200_2000,32'h0200_0200,	32'h0200_0300, 	32'h8000_0000, 	CONFIG_START};
+localparam M_ADDR_WIDTH = {32'd25,32'd8,		32'd8,			32'd16,			  32'd12,		32'd2,			32'd8,			32'd31, 		32'd10};
            
 logic         DCPU_mem_axi_awvalid;
 logic         DCPU_mem_axi_awready;
