@@ -1,6 +1,5 @@
 typedef enum logic[9:0] { 
-	CONFIG1, //Hier nächstes mal Optionen für das Grafiksystem einbauen 
-	CONFIG2
+	ROTATE_VIDEO_OUTPUT
 } ConfigType;
 
 module ConfigMemory #(
@@ -33,7 +32,9 @@ module ConfigMemory #(
     output logic[DATA_WIDTH-1:0]         s_axil_rdata,
     output logic[1:0]                    s_axil_rresp,
     output logic                         s_axil_rvalid,
-    input  logic                         s_axil_rready
+    input  logic                         s_axil_rready,
+
+    output logic rotateVideoOutput = 0
 );
 
 assign s_axil_rresp = 0;
@@ -61,8 +62,7 @@ logic write_happened = 0;
 always @(posedge aclk) begin
 	if (s_axil_wvalid && s_axil_wready) begin //Never add any other conditions. This is likely to break axi
     case (aw_address_real)
-      CONFIG1: ?? <= s_axil_wdata; break;
-      CONFIG2: ?? <= s_axil_wdata; break;
+      ROTATE_VIDEO_OUTPUT: rotateVideoOutput <= s_axil_wdata;
     endcase
     write_happened <= 1;
   end
@@ -120,8 +120,7 @@ always_ff @(posedge aclk) begin
 	else if (!s_axil_rvalid || s_axil_rready)
 	begin
     case (ar_address_real)
-      CONFIG1: s_axil_rdata <= ??; break;
-      CONFIG2: s_axil_rdata <= ??; break;
+      ROTATE_VIDEO_OUTPUT: s_axil_rdata <= rotateVideoOutput;
     endcase
 	end
 end

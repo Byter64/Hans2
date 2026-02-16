@@ -36,8 +36,8 @@ module Top
 	output logic audio_dout
 );         
        
-logic canBeDeleted;
-//logic canBeDeleted2n;
+//Option signals
+logic rotateVideoOutput;
          
 logic hdmi_pixClk;   
 logic resetn = 0;    
@@ -400,7 +400,9 @@ GraphicSystem GraphicSystem
 	.m_axil_rready(GS_m_axil_rready),
 
 	.ct_address(CT_portb_address),
-	.ct_colour(CT_portb_data)
+	.ct_colour(CT_portb_data),
+
+	.rotateVideoOutput(rotateVideoOutput)
 );
 
 
@@ -652,7 +654,8 @@ ConfigMemory #(
     .s_axil_rdata(CONF_s_axil_rdata),
     .s_axil_rresp(CONF_s_axil_rresp),
     .s_axil_rvalid(CONF_s_axil_rvalid),
-    .s_axil_rready(CONF_s_axil_rready)
+    .s_axil_rready(CONF_s_axil_rready),
+	.rotateVideoOutput(rotateVideoOutput)
 );
 
  
