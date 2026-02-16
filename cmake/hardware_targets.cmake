@@ -16,7 +16,7 @@ function(add_simulation_with_resources
     DEPENDS ${arg_SOURCES}
     COMMAND iverilog
             -DSTARTSCREEN_PATH=${CMAKE_SOURCE_DIR}/HardwareDesignGraphicsystem/StartScreen.hex
-            -DBOOTLOADER_PATH=${CMAKE_BINARY_DIR}/Software/Bootloader/Bootloader.hex
+            -DBOOTLOADER_PATH=${CMAKE_BINARY_DIR}/Software/Bootloader/Bootloader32.hex
             -g2012 -s ${arg_TESTBENCH} -o ${CMAKE_CURRENT_BINARY_DIR}/${arg_NAME}.out ${sources_var}
   )
 
@@ -58,7 +58,7 @@ function(add_synthesis
     DEPENDS ${sources}
     COMMAND yosys
             -DSTARTSCREEN_PATH=${CMAKE_SOURCE_DIR}/HardwareDesign/Graphicsystem/StartScreen.hex
-            -DBOOTLOADER_PATH=${CMAKE_BINARY_DIR}/Software/Bootloader/Bootloader.hex
+            -DBOOTLOADER_PATH=${CMAKE_BINARY_DIR}/Software/Bootloader/Bootloader32.hex
             -p \"synth_ecp5 -top ${top}\; write_json ${CMAKE_CURRENT_BINARY_DIR}/${name}.json\" ${sources}
   )
 
