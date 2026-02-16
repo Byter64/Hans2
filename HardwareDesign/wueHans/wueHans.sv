@@ -35,10 +35,7 @@ module Top
 	output logic audio_lrclk,
 	output logic audio_dout
 );         
-       
-//Option signals
-logic rotateVideoOutput;
-         
+
 logic hdmi_pixClk;   
 logic resetn = 0;    
 logic trap;        
