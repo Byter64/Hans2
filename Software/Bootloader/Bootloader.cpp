@@ -197,16 +197,6 @@ int main()
 
 	Print("Kannst du mich lesen?");
 
-	Print("Ist das -988006655?");
-	char* number = ToString(-988006655, buffer, BUFFER_SIZE);
-	Print(number);
-	number = ToString(testNumber, buffer, BUFFER_SIZE);
-	Print("Ist das 0?");
-	Print(number);
-	number = ToString(testNumber2, buffer, BUFFER_SIZE);
-	Print("Ist das 313445?");
-	Print(number);
-
 	//###################################
 	//Finding the elf
 	//###################################
@@ -214,9 +204,9 @@ int main()
 	FRESULT fatfsResult;
 	
 	Print("Mounting SD-Card...");
-	
 	fatfsResult = f_mount(&FatFs, "", 0);
     is_mounted = 1;
+	Print("Finished Mounting SD-Card");
 	
 	if(fatfsResult)
 	{
@@ -230,16 +220,16 @@ int main()
 	DIR directory;
 	FILINFO fileInfo;
 	fatfsResult = f_findfirst(&directory, &fileInfo, "/", "*.elf");
+	Print("Finished searching *.elf");
 
 	if(fileInfo.fname[0] == '\0' || fatfsResult)
 	{
 		Print("Error:");
 		Print(ToString(fatfsResult, buffer, BUFFER_SIZE));
 		Print("No .elf found");
+		Print("Entering loop of eternal nothing");
 		while(true);
 	}
-	
-	if(fatfsResult != FR_OK) while(true);
 
 	char elfFilePath[16] = "/";
 	char debugMessage[32] = "Opening ";
