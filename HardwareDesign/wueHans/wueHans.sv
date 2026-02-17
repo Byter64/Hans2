@@ -36,6 +36,9 @@ module Top
 	output logic audio_dout
 );    
 
+logic deleteMe;
+logic deleteMe2;
+
 //Signals
 logic rotateVideoOutput;
 
@@ -53,12 +56,12 @@ end
 wire clk_50mhz;
 ecp5pll #(
   .in_hz       (25000000),
-  .out0_hz    (130000000),
+  .out0_hz    (50000000),
   .out0_deg    (       0),
   .out0_tol_hz (       0),  
-  .out1_hz     (50000000),
+  .out1_hz     (       0),
   .out1_deg    (       0),
-  .out1_tol_hz ( 1000000),
+  .out1_tol_hz (       0),
   .out2_hz     (       0),
   .out2_deg    (       0),
   .out2_tol_hz (       0),
