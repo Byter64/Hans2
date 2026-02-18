@@ -3414,7 +3414,9 @@ static FRESULT mount_volume (	/* FR_OK(0): successful, !=0: an error occurred */
 
 	/* Get logical drive number */
 	*rfs = 0;
+	PrintC("get ldnumber");
 	vol = get_ldnumber(path);
+	PrintC("get ldnumber - finished");
 	if (vol < 0) return FR_INVALID_DRIVE;
 
 	/* Check if the filesystem object is valid or not */
@@ -4620,11 +4622,15 @@ FRESULT f_opendir (
 	if (!dp) return FR_INVALID_OBJECT;
 
 	/* Get logical drive */
+	PrintC("Mount volume");
 	res = mount_volume(&path, &fs, 0);
+	PrintC("Mount volume finished");
 	if (res == FR_OK) {
 		dp->obj.fs = fs;
 		INIT_NAMBUF(fs);
+		PrintC("follow path");
 		res = follow_path(dp, path);			/* Follow the path to the directory */
+		PrintC("follow path - finshed");
 		if (res == FR_OK) {						/* Follow completed */
 			if (!(dp->fn[NSFLAG] & NS_NONAME)) {	/* It is not the origin directory itself */
 				if (dp->obj.attr & AM_DIR) {		/* This object is a sub-directory */
