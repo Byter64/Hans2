@@ -238,7 +238,7 @@ logic[1:0]             SDC_s_axil_rresp;
 logic                  SDC_s_axil_rvalid;
 logic                  SDC_s_axil_rready;
 assign sd_d[3] = sd_cs;
-
+assign sd_d[2:1] = 2'b11;
 sd_card_reader #(
 	.OFFSET('h8000_0000)
 ) SDCard (
