@@ -27,20 +27,20 @@ set data_trace_delays_ns {
   0.763
 };
 
-set clock_pin "A20";
+#set clock_pin "A20";
 set clock_trace_delay_ns 0.713;
 
 # I/O bank voltage for the clock and all the data signals.
 # Must be same as the peripheral device voltage.
-set iostandard "LVCMOS33";
+#set iostandard "LVCMOS33";
 
 # ---------------------------------------------------------------------------------
 # Create and constrain output clock.
 # ---------------------------------------------------------------------------------
 set clock_port [get_ports "sd_clk"];
-puts "Constraining ${clock_port} to ${clock_pin}";
-set_property "PACKAGE_PIN" ${clock_pin} ${clock_port};
-set_property "IOSTANDARD" ${iostandard} ${clock_port};
+#puts "Constraining ${clock_port} to ${clock_pin}";
+#set_property "PACKAGE_PIN" ${clock_pin} ${clock_port};
+#set_property "IOSTANDARD" ${iostandard} ${clock_port};
 
 set oddr_wrapper_inst "output_source_synchronous_block.oddr_wrapper_inst";
 set oddr_primitive_inst "${oddr_wrapper_inst}/mock_or_oddr_gen.oddr_primitive_inst";
@@ -105,7 +105,7 @@ for {set data_index 0} {${data_index} < [llength ${data_pins}]} {incr data_index
   set data_port [get_ports "output_source_synchronous_data[${data_index}]"];
   puts "Constraining ${data_port} to ${data_pin}";
   set_property "PACKAGE_PIN" ${data_pin} ${data_port};
-  set_property "IOSTANDARD" ${iostandard} ${data_port};
+  #set_property "IOSTANDARD" ${iostandard} ${data_port};
   set_property "IOB" "TRUE" ${data_port};
 
   set data_trace_delay_min_ns [expr 0.9 * [lindex ${data_trace_delays_ns} ${data_index}]];
