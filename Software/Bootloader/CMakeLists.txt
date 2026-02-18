@@ -61,7 +61,8 @@ target_sources(Bootloader.elf PUBLIC
 	"start.S"
 	"start.cpp"
 	"Bootloader.cpp"
-
+	"Helper.cpp"
+	"HelperC.cpp"
 )
 
 add_custom_command(TARGET Bootloader.elf POST_BUILD

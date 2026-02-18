@@ -17,7 +17,7 @@
 / by use of this software.
 /
 /----------------------------------------------------------------------------*/
-
+#include "../HelperC.h"
 
 #include <string.h>
 #include "ff.h"			/* Declarations of FatFs API */
@@ -4774,9 +4774,13 @@ FRESULT f_findfirst (
 
 
 	dp->pat = pattern;		/* Save pointer to pattern string */
+	PrintC("Opening dir");
 	res = f_opendir(dp, path);		/* Open the target directory */
+	PrintC("Finished opening dir");
 	if (res == FR_OK) {
+		PrintC("Find next");
 		res = f_findnext(dp, fno);	/* Find the first item */
+		PrintC("Finished Find next");
 	}
 	return res;
 }
