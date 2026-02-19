@@ -35,9 +35,11 @@ module sd_card_reader #(
     input logic miso,    // Connect to SD_DAT[0].
     output logic sclk,   // Connect to SD_SCK.
     output logic cs,     // Connect to SD_DAT[3].
-    output logic mosi    // Connect to SD_CMD.
+    output logic mosi,   // Connect to SD_CMD.
     // For SPI mode, SD_DAT[2] and SD_DAT[1] should be held HIGH.
     // SD_RESET should be held LOW.
+
+    output logic[4:0] status
 );
     // TODO AXI-L Read is one addr to low
     ///////////////////////////////////////////////////////////////////////
@@ -231,7 +233,8 @@ module sd_card_reader #(
         .ready(sd_card_ready),
         .address({tag,9'b0}),
         .clk(aclk),
-        .reset(rst)
+        .reset(rst),
+        .status(status)
     );
 
     logic old_sd_card_ready_for_next_byte;

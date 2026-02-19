@@ -27,8 +27,9 @@ module Top
 	output logic		c2latch,
 	input  logic		c2data,
 
-	//Buttons for debug
+	//Buttons and leds for debug
 	input logic[6:0]	btn,
+	output logic[7:0]   led,
 
 	//Audio
 	output logic audio_bclk,
@@ -237,8 +238,10 @@ logic[DATA_WIDTH-1:0]  SDC_s_axil_rdata;
 logic[1:0]             SDC_s_axil_rresp;
 logic                  SDC_s_axil_rvalid;
 logic                  SDC_s_axil_rready;
+logic[4:0]			   SDC_status;
 assign sd_d[3] = sd_cs;
 assign sd_d[2:1] = 2'b11;
+assign led[7:0] = {3'b0, SDC_status};
 sd_card_reader #(
 	.OFFSET('h8000_0000)
 ) SDCard (
@@ -267,7 +270,8 @@ sd_card_reader #(
 	.s_axil_rdata(SDC_s_axil_rdata),
 	.s_axil_rresp(SDC_s_axil_rresp),
 	.s_axil_rvalid(SDC_s_axil_rvalid),
-	.s_axil_rready(SDC_s_axil_rready)
+	.s_axil_rready(SDC_s_axil_rready),
+	.status(SDC_status)
 );
 
 //Colour Table
