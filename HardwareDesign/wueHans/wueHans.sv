@@ -38,7 +38,7 @@ module Top
 );    
 
 logic deleteMe;
-logic deleteMe2;
+//logic deleteMe2;
 
 //Signals
 logic rotateVideoOutput;
