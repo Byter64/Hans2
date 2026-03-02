@@ -5,7 +5,9 @@
 `timescale 1ns/1ps
 
 module VexRiscvAxi4 #(
-  parameter PROGADDR_RESET = 32'h02010000
+  parameter PROGADDR_RESET = 32'h02010000,
+  parameter MTVEC_BASE = 30'h1fffc000,
+  parameter MTVEC_MODE = 2'd0
 ) (
   input  wire          timerInterrupt,
   input  wire          externalInterrupt,
@@ -5177,8 +5179,8 @@ module VexRiscvAxi4 #(
 
   assign CsrPlugin_misa_base = 2'b01;
   assign CsrPlugin_misa_extensions = 26'h0000042;
-  assign CsrPlugin_mtvec_mode = 2'b00;
-  assign CsrPlugin_mtvec_base = 30'h1fffc000;
+  assign CsrPlugin_mtvec_mode = MTVEC_MODE;
+  assign CsrPlugin_mtvec_base = MTVEC_BASE;
   assign _zz_when_CsrPlugin_l1302 = (CsrPlugin_mip_MTIP && CsrPlugin_mie_MTIE);
   assign _zz_when_CsrPlugin_l1302_1 = (CsrPlugin_mip_MSIP && CsrPlugin_mie_MSIE);
   assign _zz_when_CsrPlugin_l1302_2 = (CsrPlugin_mip_MEIP && CsrPlugin_mie_MEIE);
