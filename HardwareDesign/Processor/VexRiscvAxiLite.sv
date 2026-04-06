@@ -1,8 +1,12 @@
 module VexRiscvAxiLite #(
-    parameter PROGADDR_RESET = 32'h02010000
+    parameter PROGADDR_RESET = 32'h02010000,
+    parameter MTVEC_BASE = 30'h1fffc000,
+    parameter MTVEC_MODE = 2'd0
 ) (
     input aclk,
     input aresetn,
+
+    input logic interrupt,
 
     output logic[31:0]             i_m_axil_araddr,
     output logic[2:0]              i_m_axil_arprot,
@@ -237,8 +241,14 @@ module VexRiscvAxiLite #(
 
     // VexRiscvAxi4 instance
     VexRiscvAxi4 #(
-        .PROGADDR_RESET(PROGADDR_RESET)
+        .PROGADDR_RESET(PROGADDR_RESET),
+        .MTVEC_BASE(MTVEC_BASE),
+        .MTVEC_MODE(MTVEC_MODE)
     ) VexCPU (
+        .timerInterrupt(1'b0),
+        .externalInterrupt(interrupt),
+        .softwareInterrupt(1'b0),
+
         // Instruction AXI4
         .iBusAxi_ar_valid(i_axi_ar_valid),
         .iBusAxi_ar_ready(i_axi_ar_ready),

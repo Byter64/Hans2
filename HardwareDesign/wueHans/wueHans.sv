@@ -34,7 +34,11 @@ module Top
 	//Audio
 	output logic audio_bclk,
 	output logic audio_lrclk,
-	output logic audio_dout
+	output logic audio_dout,
+
+	//UART bridge
+	input ftdi_txd, // from the ftdi chip
+	output ftdi_rxd, // to the ftdi chip
 );    
 
 logic deleteMe;
@@ -84,7 +88,9 @@ localparam CONFIG_START = 32'h0200_0400;
 //						  {SDRAM, Graphicsystem,Audiosystem, 	Bootloader, 	  Colour Table,	Controller,		Counter,		SDCARD, 		Config Memory}
 localparam M_BASE_ADDR  = {32'h0, 32'h0200_0000,32'h0200_0100,	BOOTLOADER_START, 32'h0200_2000,32'h0200_0200,	32'h0200_0300, 	32'h8000_0000, 	CONFIG_START};
 localparam M_ADDR_WIDTH = {32'd25,32'd8,		32'd8,			32'd16,			  32'd12,		32'd2,			32'd8,			32'd31, 		32'd10};
-           
+
+
+logic 		  CPU_interrupt;
 logic         DCPU_mem_axi_awvalid;
 logic         DCPU_mem_axi_awready;
 logic [31:0]  DCPU_mem_axi_awaddr;  
@@ -128,10 +134,13 @@ assign 		  ICPU_mem_axi_bready = 0;
 logic [ 1:0]  ICPU_mem_axi_bresp;
  
 VexRiscvAxiLite #(
-        .PROGADDR_RESET(32'h2010000)
+    .PROGADDR_RESET(32'h2010000),
+	.MTVEC_BASE(MTVEC_BASE),
+    .MTVEC_MODE(MTVEC_MODE)
 ) Processor (
 	.aclk(clk_50mhz),
 	.aresetn(resetn),
+	.interrupt(CPU_interrupt), //should be high level sensitive
 
 	.d_m_axil_awaddr(DCPU_mem_axi_awaddr),
 	.d_m_axil_awready(DCPU_mem_axi_awready),
