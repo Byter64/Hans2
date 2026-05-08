@@ -236,35 +236,35 @@ logic                  SDC_s_axil_rvalid;
 logic                  SDC_s_axil_rready;
 assign sd_d[3] = sd_cs;
 assign sd_d[2:1] = 2'b11;
-sd_card_reader #(
-	.OFFSET('h8000_0000)
+sd_axi_lite #(
+	.BASE_ADDR('h8000_0000)
 ) SDCard (
-	.miso(sd_d[0]),
-	.sclk(sd_clk),
-	.cs(sd_cs),
-	.mosi(sd_cmd),
+	.sd_miso(sd_d[0]),
+	.sd_sclk(sd_clk),
+	.sd_cs_n(sd_cs),
+	.sd_mosi(sd_cmd),
 
 	.aclk(clk_50mhz),
 	.aresetn(resetn),
-	.s_axil_awaddr(SDC_s_axil_awaddr),
-	.s_axil_awprot(SDC_s_axil_awprot),
-	.s_axil_awvalid(SDC_s_axil_awvalid),
-	.s_axil_awready(SDC_s_axil_awready),
-	.s_axil_wdata(SDC_s_axil_wdata),
-	.s_axil_wstrb(SDC_s_axil_wstrb),
-	.s_axil_wvalid(SDC_s_axil_wvalid),
-	.s_axil_wready(SDC_s_axil_wready),
-	.s_axil_bresp(SDC_s_axil_bresp),
-	.s_axil_bvalid(SDC_s_axil_bvalid),
-	.s_axil_bready(SDC_s_axil_bready),
-	.s_axil_araddr(SDC_s_axil_araddr),
-	.s_axil_arprot(SDC_s_axil_arprot),
-	.s_axil_arvalid(SDC_s_axil_arvalid),
-	.s_axil_arready(SDC_s_axil_arready),
-	.s_axil_rdata(SDC_s_axil_rdata),
-	.s_axil_rresp(SDC_s_axil_rresp),
-	.s_axil_rvalid(SDC_s_axil_rvalid),
-	.s_axil_rready(SDC_s_axil_rready)
+	.awaddr(SDC_s_axil_awaddr),
+	// .awprot(SDC_s_axil_awprot),
+	.awvalid(SDC_s_axil_awvalid),
+	.awready(SDC_s_axil_awready),
+	.wdata(SDC_s_axil_wdata),
+	.wstrb(SDC_s_axil_wstrb),
+	.wvalid(SDC_s_axil_wvalid),
+	.wready(SDC_s_axil_wready),
+	.bresp(SDC_s_axil_bresp),
+	.bvalid(SDC_s_axil_bvalid),
+	.bready(SDC_s_axil_bready),
+	.araddr(SDC_s_axil_araddr),
+	// .arprot(SDC_s_axil_arprot),
+	.arvalid(SDC_s_axil_arvalid),
+	.arready(SDC_s_axil_arready),
+	.rdata(SDC_s_axil_rdata),
+	.rresp(SDC_s_axil_rresp),
+	.rvalid(SDC_s_axil_rvalid),
+	.rready(SDC_s_axil_rready)
 );
 
 //Colour Table
