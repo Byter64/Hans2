@@ -10,8 +10,16 @@
 // File adapted for Hans2
 #include "diskio.h" /* Declarations of disk functions */
 #include "ff.h"     /* Obtains integer types */
+#include <stdint.h>
 
 static volatile void* const SD_CARD_START = (void*)0x80000000;
+static volatile uint32_t* const SD_CARD_STATUS = (volatile uint32_t*)0xFFFFFFF0;
+
+#define SD_INIT_DONE  (1 << 0)
+#define SD_INIT_ERR   (1 << 1)
+#define SD_CACHE_VAL  (1 << 2)
+#define SD_CACHE_DIRTY (1 << 3)
+#define SD_ERR_CODE_MASK (0x000000F0)
 
 /*-----------------------------------------------------------------------*/
 /* Get Drive Status                                                      */
@@ -19,7 +27,15 @@ static volatile void* const SD_CARD_START = (void*)0x80000000;
 
 DSTATUS disk_status(BYTE pdrv /* Physical drive nmuber to identify the drive */
 ) {
-  return 0;
+    uint32_t status;
+    if (pdrv != 0) return STA_NOINIT;
+    status = *SD_CARD_STATUS;
+
+    if (!(status & SD_INIT_DONE) || (status & SD_INIT_ERR)) {
+        return STA_NOINIT;
+    }
+
+    return 0;
 }
 
 /*-----------------------------------------------------------------------*/
@@ -29,8 +45,25 @@ DSTATUS disk_status(BYTE pdrv /* Physical drive nmuber to identify the drive */
 DSTATUS
 disk_initialize(BYTE pdrv /* Physical drive nmuber to identify the drive */
 ) {
+    volatile int timeout;
 
-  return 0;
+    if (pdrv != 0) return STA_NOINIT;
+
+    timeout = 10000000; 
+    while (timeout > 0) {
+        uint32_t status = *SD_CARD_STATUS;
+        
+        if (status & SD_INIT_DONE) {
+            if (status & SD_INIT_ERR) {
+                return STA_NOINIT;
+            }
+            return 0;
+        }
+        
+        timeout--;
+        volatile __nop();
+    }
+    return STA_NOINIT;
 }
 
 /*-----------------------------------------------------------------------*/
@@ -63,13 +96,22 @@ DRESULT disk_write(BYTE pdrv, /* Physical drive nmuber to identify the drive */
                    LBA_t sector,     /* Start sector in LBA */
                    UINT count        /* Number of sectors to write */
 ) {
-  DRESULT res = RES_OK;
+  if (pdrv != 0) return RES_PARERR;
 
-  BYTE *baseAddress = ((BYTE*)(SD_CARD_START)) + (sector * 512);
+    BYTE *baseAddress = ((BYTE*)(SD_CARD_START)) + (sector * 512);
 
-  for (int i = 0; i < count * 512; i++)
-    baseAddress[i] = buff[i];
-  return res;
+    for (int i = 0; i < count * 512; i++) {
+        baseAddress[i] = buff[i];
+    }
+
+    volatile uint32_t* const SD_CARD_CONTROL = (volatile uint32_t*)0xFFFFFFF4;
+    *SD_CARD_CONTROL = 0x01;
+
+    while (*SD_CARD_STATUS & SD_CACHE_DIRTY) {
+        volatile __nop();
+    }
+
+    return RES_OK;
 }
 
 #endif

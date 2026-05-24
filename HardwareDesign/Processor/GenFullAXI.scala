@@ -57,7 +57,8 @@ object GenFullAXI{
         )
       ),
       new StaticMemoryTranslatorPlugin(
-        ioRange  = (addr:UInt) => addr >= 0x02000000 && addr < 0x2010000
+        ioRange  = (addr:UInt) => addr >= 0x02000000 && addr < 0x2010000  ||
+                                  (addr >= 0x8FFFFFF0 && addr <= 0x8FFFFFFF)
       ),
       new DecoderSimplePlugin(
         catchIllegalInstruction = false

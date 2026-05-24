@@ -32,17 +32,21 @@ module sd_axi_lite #(
     input  logic sd_miso
 );
 
-    logic bram_we, hw_read_bram_we;
-    logic [8:0] bram_waddr, hw_read_bram_waddr, top_bram_waddr;
-    logic [7:0] bram_wdata, hw_read_bram_wdata, top_bram_wdata;
-    logic [8:0] bram_raddr, hw_write_bram_raddr, top_bram_raddr;
-    logic [7:0] bram_rdata;
+    logic [3:0]  mem_we;
+    logic [6:0]  mem_waddr;
+    logic [31:0] mem_wdata;
+    logic [6:0]  mem_raddr;
+    logic [31:0] mem_rdata;
     
     (* ram_style = "logic" *)
-    logic [7:0] sector_buffer [0:511];
+    logic [31:0] sector_buffer [0:127];
+    
     always_ff @(posedge aclk) begin
-        if (bram_we) sector_buffer[bram_waddr] <= bram_wdata;
-        bram_rdata <= sector_buffer[bram_raddr];
+        if (mem_we[0]) sector_buffer[mem_waddr][7:0]   <= mem_wdata[7:0];
+        if (mem_we[1]) sector_buffer[mem_waddr][15:8]  <= mem_wdata[15:8];
+        if (mem_we[2]) sector_buffer[mem_waddr][23:16] <= mem_wdata[23:16];
+        if (mem_we[3]) sector_buffer[mem_waddr][31:24] <= mem_wdata[31:24];
+        mem_rdata <= sector_buffer[mem_raddr];
     end
 
     logic hw_init_done, hw_init_err, hw_read_reinit_req;
@@ -53,19 +57,25 @@ module sd_axi_lite #(
     
     logic hw_init_spi_start, hw_init_sd_cs_n, hw_init_spi_slow_clk;
     logic [7:0] hw_init_spi_tx_data;
+    
+    logic hw_read_mem_we;
+    logic [8:0] hw_read_mem_waddr;
+    logic [7:0] hw_read_mem_wdata;
     logic hw_read_start, hw_read_busy, hw_read_err, hw_read_spi_start, hw_read_sd_cs_n;
     logic [3:0] hw_read_err_code;
     logic [31:0] hw_read_sector;
     logic [7:0] hw_read_spi_tx_data;
+    
+    logic [8:0] hw_write_mem_raddr;
+    logic [7:0] hw_write_mem_rdata; // Multiplexed byte for the 8-bit writer
     logic hw_write_start, hw_write_busy, hw_write_err, hw_write_spi_start, hw_write_sd_cs_n;
     logic [3:0] hw_write_err_code;
     logic [31:0] hw_write_sector;
     logic [7:0] hw_write_spi_tx_data;
 
-    logic cache_valid, cache_dirty, is_write, top_bram_we;
+    logic cache_valid, cache_dirty, is_write, top_mem_we;
     logic [31:0] cached_sector, req_addr, req_data, read_val;
     logic [3:0] req_strb;
-    logic [2:0] local_byte_cnt;
     logic [3:0] last_err_code;
 
     logic aw_full, w_full, ar_full;
@@ -76,7 +86,7 @@ module sd_axi_lite #(
         S_IDLE, 
         S_CACHE_CHECK, S_FLUSH_START, S_FLUSH_WAIT_B, S_FLUSH_WAIT_D,
         S_FETCH_START, S_FETCH_WAIT_B, S_FETCH_WAIT_D,
-        S_BRAM_RW_EXEC, S_BRAM_W_NEXT, S_BRAM_R_WAIT1, S_BRAM_R_WAIT2, S_BRAM_R_STORE,
+        S_BRAM_RW_EXEC, S_BRAM_R_WAIT1, S_BRAM_R_STORE,
         S_CTRL_EXEC, S_FINISH_OK, S_FINISH_ERR, S_WAIT_BREADY, S_WAIT_RREADY
     } state_t;
     state_t state;
@@ -122,22 +132,32 @@ module sd_axi_lite #(
     end
 
     always_comb begin
-        bram_we = 0; bram_waddr = 0; bram_wdata = 0; bram_raddr = 0;
+        mem_we    = 4'b0000;
+        mem_waddr = req_addr[8:2];
+        mem_wdata = req_data;
+        mem_raddr = req_addr[8:2];
+        hw_write_mem_rdata = 8'h00;
+
         if (hw_read_busy) begin
-            bram_we = hw_read_bram_we; 
-            bram_waddr = hw_read_bram_waddr; 
-            bram_wdata = hw_read_bram_wdata;
+            mem_waddr = hw_read_mem_waddr[8:2];
+            mem_wdata = {hw_read_mem_wdata, hw_read_mem_wdata, hw_read_mem_wdata, hw_read_mem_wdata}; 
+            mem_we    = hw_read_mem_we ? (4'b0001 << hw_read_mem_waddr[1:0]) : 4'b0000;
         end 
         else if (hw_write_busy) begin
-            bram_raddr = hw_write_bram_raddr; 
+            mem_raddr = hw_write_mem_raddr[8:2];
+            hw_write_mem_rdata = (hw_write_mem_raddr[1:0] == 2'b00) ? mem_rdata[7:0]   :
+                                  (hw_write_mem_raddr[1:0] == 2'b01) ? mem_rdata[15:8]  :
+                                  (hw_write_mem_raddr[1:0] == 2'b10) ? mem_rdata[23:16] : 
+                                                                        mem_rdata[31:24];
         end 
         else begin
-            bram_we = top_bram_we;
-            bram_waddr = top_bram_waddr;
-            bram_wdata = top_bram_wdata; 
-            bram_raddr = top_bram_raddr; 
+            mem_we    = top_mem_we ? req_strb : 4'b0000;
+            mem_waddr = req_addr[8:2];
+            mem_wdata = req_data;
+            mem_raddr = req_addr[8:2];
         end
 
+        // SPI Signal multiplexer
         if (!hw_init_done || hw_init_err) begin
             spi_start = hw_init_spi_start;
             spi_tx_data = hw_init_spi_tx_data;
@@ -200,9 +220,9 @@ module sd_axi_lite #(
         .err(hw_read_err),
         .err_code(hw_read_err_code),
         .reinit_req(hw_read_reinit_req),
-        .bram_we(hw_read_bram_we),
-        .bram_waddr(hw_read_bram_waddr),
-        .bram_wdata(hw_read_bram_wdata),
+        .mem_we(hw_read_mem_we),
+        .mem_waddr(hw_read_mem_waddr),
+        .mem_wdata(hw_read_mem_wdata),
         .spi_start(hw_read_spi_start),
         .spi_tx_data(hw_read_spi_tx_data),
         .spi_rx_data(spi_rx_data),
@@ -218,8 +238,8 @@ module sd_axi_lite #(
         .busy(hw_write_busy),
         .err(hw_write_err),
         .err_code(hw_write_err_code),
-        .bram_raddr(hw_write_bram_raddr),
-        .bram_rdata(bram_rdata),
+        .mem_raddr(hw_write_mem_raddr),
+        .mem_rdata(hw_write_mem_rdata),
         .spi_start(hw_write_spi_start),
         .spi_tx_data(hw_write_spi_tx_data),
         .spi_rx_data(spi_rx_data),
@@ -233,7 +253,7 @@ module sd_axi_lite #(
             cache_dirty <= 0;
             bvalid <= 0;
             rvalid <= 0;
-            top_bram_we <= 0; 
+            top_mem_we <= 0; 
             ctrl_reinit_req <= 0;
             last_err_code <= 0;
             hw_write_start <= 0;
@@ -285,7 +305,7 @@ module sd_axi_lite #(
                         if (cache_valid && cache_dirty) state <= S_FLUSH_START;
                         else state <= S_FETCH_START;
                     end else begin
-                        local_byte_cnt <= 0; state <= S_BRAM_RW_EXEC;
+                        state <= S_BRAM_RW_EXEC;
                     end
                 end
                 
@@ -324,48 +344,34 @@ module sd_axi_lite #(
                     end
                     else if (!hw_read_busy) begin
                         cache_valid <= 1; cached_sector <= {9'd0, req_addr[30:9]};
-                        local_byte_cnt <= 0; state <= S_BRAM_RW_EXEC;
+                        state <= S_BRAM_RW_EXEC;
                     end
                 end
                 
                 S_BRAM_RW_EXEC: begin
                     if (is_write) begin
-                        top_bram_waddr <= req_addr[8:0] + local_byte_cnt;
-                        top_bram_wdata <= (local_byte_cnt==0) ? req_data[7:0] : 
-                                          (local_byte_cnt==1) ? req_data[15:8] :
-                                          (local_byte_cnt==2) ? req_data[23:16] : req_data[31:24];
-                        top_bram_we <= req_strb[local_byte_cnt]; 
-                        state <= S_BRAM_W_NEXT;
-                    end else begin
-                        top_bram_raddr <= req_addr[8:0] + local_byte_cnt; state <= S_BRAM_R_WAIT1;
-                    end
-                end
-                
-                S_BRAM_W_NEXT: begin
-                    top_bram_we <= 0;
-                    if (local_byte_cnt == 3) begin
-                        cache_dirty <= 1;
+                        top_mem_we <= 1;
                         state <= S_FINISH_OK;
-                    end
-                    else begin
-                        local_byte_cnt <= local_byte_cnt + 1;
-                        state <= S_BRAM_RW_EXEC;
+                    end else begin
+                        state <= S_BRAM_R_WAIT1;
                     end
                 end
                 
-                S_BRAM_R_WAIT1: state <= S_BRAM_R_WAIT2;
-                S_BRAM_R_WAIT2: state <= S_BRAM_R_STORE;
+                S_BRAM_R_WAIT1: begin
+                    state <= S_BRAM_R_STORE;
+                end
+                
                 S_BRAM_R_STORE: begin
-                    read_val <= {bram_rdata, read_val[31:8]};
-                    if (local_byte_cnt == 3) state <= S_FINISH_OK;
-                    else begin
-                        local_byte_cnt <= local_byte_cnt + 1;
-                        state <= S_BRAM_RW_EXEC;
-                    end
+                    read_val <= mem_rdata;
+                    state <= S_FINISH_OK;
                 end
                 
                 S_FINISH_OK: begin
+                    top_mem_we <= 0;
                     if (is_write) begin
+                        if (req_addr < 32'h7FFF_FFF0) begin
+                            cache_dirty <= 1;
+                        end
                         bresp <= 2'b00;
                         bvalid <= 1;
                         state <= S_WAIT_BREADY;
@@ -378,6 +384,7 @@ module sd_axi_lite #(
                     end
                 end
                 S_FINISH_ERR: begin
+                    top_mem_we <= 0;
                     if (is_write) begin
                         bresp <= 2'b10;
                         bvalid <= 1;
@@ -490,8 +497,8 @@ module sd_hw_write (
     output logic busy, err,
     output logic [3:0] err_code,
     
-    output logic [8:0] bram_raddr,
-    input  logic [7:0] bram_rdata,
+    output logic [8:0] mem_raddr,
+    input  logic [7:0] mem_rdata,
     
     output logic spi_start,
     output logic [7:0] spi_tx_data,
@@ -521,7 +528,7 @@ module sd_hw_write (
             err_code <= 0;
             sd_cs_n <= 1;
             spi_start <= 0;
-            bram_raddr <= 0;
+            mem_raddr <= 0;
         end else begin
             case (state)
                 S_IDLE: begin
@@ -593,7 +600,7 @@ module sd_hw_write (
                 
                 S_SEND_TOKEN: begin
                     spi_tx_data <= 8'hFE;
-                    bram_raddr <= 0; data_cnt <= 0;
+                    mem_raddr <= 0; data_cnt <= 0;
                     return_state <= S_WRITE_DATA;
                     state <= S_SPI_START;
                 end
@@ -601,8 +608,8 @@ module sd_hw_write (
                 S_WRITE_DATA: begin
                     if (data_cnt == 512) state <= S_WRITE_CRC1;
                     else begin
-                        spi_tx_data <= bram_rdata;
-                        bram_raddr <= data_cnt[8:0] + 1;
+                        spi_tx_data <= mem_rdata;
+                        mem_raddr <= data_cnt[8:0] + 1;
                         data_cnt <= data_cnt + 1;
                         return_state <= S_WRITE_DATA;
                         state <= S_SPI_START;
@@ -704,9 +711,9 @@ module sd_hw_read (
     output logic busy, err, reinit_req,
     output logic [3:0] err_code,
     
-    output logic bram_we,
-    output logic [8:0] bram_waddr,
-    output logic [7:0] bram_wdata,
+    output logic mem_we,
+    output logic [8:0] mem_waddr,
+    output logic [7:0] mem_wdata,
     
     output logic spi_start,
     output logic [7:0] spi_tx_data,
@@ -731,9 +738,9 @@ module sd_hw_read (
         if (rst) begin
             state <= S_IDLE;
             busy <= 0; err <= 0; reinit_req <= 0; err_code <= 0;
-            sd_cs_n <= 1; spi_start <= 0; bram_we <= 0;
+            sd_cs_n <= 1; spi_start <= 0; mem_we <= 0;
         end else begin
-            bram_we <= 0;
+            mem_we <= 0;
             reinit_req <= 0;
 
             case (state)
@@ -810,9 +817,9 @@ module sd_hw_read (
                     spi_tx_data <= 8'hFF;
                     return_state <= S_READ_DATA;
                     if (data_cnt > 0) begin
-                        bram_we <= 1;
-                        bram_waddr <= data_cnt[8:0] - 1;
-                        bram_wdata <= spi_rx_data;
+                        mem_we <= 1;
+                        mem_waddr <= data_cnt[8:0] - 1;
+                        mem_wdata <= spi_rx_data;
                     end
                     if (data_cnt == 512) state <= S_READ_CRC1;
                     else begin

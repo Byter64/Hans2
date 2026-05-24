@@ -215,17 +215,16 @@ int main()
 	
 	Print("Mounting SD-Card...");
 	
-	fatfsResult = f_mount(&FatFs, "", 0);
+	fatfsResult = f_mount(&FatFs, "", 1);
     is_mounted = 1;
 	
 	if(fatfsResult)
 	{
-		Print("Error:");
+		Print("SD Init Failed:");
 		Print(ToString(fatfsResult, buffer, BUFFER_SIZE));
 		while(true);
 	}
-	Print(ToString(fatfsResult, buffer, BUFFER_SIZE));
-
+	Print("SD Init Suceeded");
 	Print("Searching *.elf...");
 	DIR directory;
 	FILINFO fileInfo;
