@@ -38,6 +38,7 @@ module sd_axi_lite #(
     logic [8:0] bram_raddr, hw_write_bram_raddr, top_bram_raddr;
     logic [7:0] bram_rdata;
     
+    (* ram_style = "logic" *)
     logic [7:0] sector_buffer [0:511];
     always_ff @(posedge aclk) begin
         if (bram_we) sector_buffer[bram_waddr] <= bram_wdata;

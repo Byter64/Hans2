@@ -31,7 +31,7 @@ list(APPEND sources_all
   ${CMAKE_CURRENT_SOURCE_DIR}/../SDRAM-Controller/core_sdram_axi4-master/src_v/sdram_axi.v
   ${CMAKE_CURRENT_SOURCE_DIR}/../SDRAM-Controller/core_sdram_axi4-master/src_v/sdram_axi_core.v
   ${CMAKE_CURRENT_SOURCE_DIR}/../SDRAM-Controller/core_sdram_axi4-master/src_v/sdram_axi_pmem.v
-  ${CMAKE_CURRENT_SOURCE_DIR}/../SD-Card/sd_card_reader.sv
+  ${CMAKE_CURRENT_SOURCE_DIR}/../SD-Card/sdcard.sv
   ${CMAKE_CURRENT_SOURCE_DIR}/../Controller/controller.sv
   ${CMAKE_CURRENT_SOURCE_DIR}/../Counter/counter.sv
   ${CMAKE_CURRENT_SOURCE_DIR}/../Audiosystem/Audiosystem.sv
@@ -46,14 +46,14 @@ list(APPEND sources_sim
   ${CMAKE_CURRENT_SOURCE_DIR}/../ecp5u/EHXPLLL.v
   ${CMAKE_CURRENT_SOURCE_DIR}/../ecp5u/ODDRX1F.v
   ${CMAKE_CURRENT_SOURCE_DIR}/../SDRAM-Controller/42s16160.v
-  ${CMAKE_CURRENT_SOURCE_DIR}/../SD-Card/sd_card_controller_test.sv
+  #${CMAKE_CURRENT_SOURCE_DIR}/../SD-Card/sd_card_controller_test.sv
   ${sources_all}
 )
 
 # Defining variables for synthesis
 set(top "Top")
 list(APPEND sources_synth
-  ${CMAKE_CURRENT_SOURCE_DIR}/../SD-Card/sd_card_controller.sv  
+  #${CMAKE_CURRENT_SOURCE_DIR}/../SD-Card/sd_card_controller.sv  
   ${sources_all}
 )
 
