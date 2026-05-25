@@ -61,7 +61,7 @@ disk_initialize(BYTE pdrv /* Physical drive nmuber to identify the drive */
         }
         
         timeout--;
-        volatile __nop();
+        __asm__ volatile ("nop");
     }
     return STA_NOINIT;
 }
@@ -108,7 +108,7 @@ DRESULT disk_write(BYTE pdrv, /* Physical drive nmuber to identify the drive */
     *SD_CARD_CONTROL = 0x01;
 
     while (*SD_CARD_STATUS & SD_CACHE_DIRTY) {
-        volatile __nop();
+        __asm__ volatile ("nop");
     }
 
     return RES_OK;
