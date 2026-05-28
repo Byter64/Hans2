@@ -215,16 +215,34 @@ int main()
 	
 	Print("Mounting SD-Card...");
 	
-	fatfsResult = f_mount(&FatFs, "", 1);
-    is_mounted = 1;
-	
-	if(fatfsResult)
+	volatile uint32_t* const SD_CARD_CONTROL = (volatile uint32_t*)0xFFFFFFF4;
+	int retry_count = 0;
+
+	do {
+		fatfsResult = f_mount(&FatFs, "", 1);
+		is_mounted = 1;
+		
+		if(fatfsResult != FR_OK)
+		{
+			retry_count++;
+			Print("Init failed, retrying...");
+
+			*SD_CARD_CONTROL = 0x02; 
+			
+			for(volatile int delay = 0; delay < 5000000; delay++) {
+				__asm__ volatile ("nop");
+			}
+		}
+	} while (fatfsResult != FR_OK && retry_count < 5);
+
+	if(fatfsResult != FR_OK)
 	{
-		Print("SD Init Failed:");
+		Print("SD Init Permanently Failed:");
 		Print(ToString(fatfsResult, buffer, BUFFER_SIZE));
 		while(true);
 	}
-	Print("SD Init Suceeded");
+	
+	Print("SD Init Succeeded!");
 	Print("Searching *.elf...");
 	DIR directory;
 	FILINFO fileInfo;
